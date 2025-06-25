@@ -1,15 +1,19 @@
-import { pgTable, uuid, text, timestamp, boolean, jsonb, serial, integer } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, jsonb, integer } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey().default("gen_random_uuid()"),
-  username: text("username").notNull(),
-  email: text("email").notNull(),
-  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  email: text("email").notNull().unique(),
   password_hash: text("password_hash").notNull(),
+  name: text("name"),
+  notifications: boolean("notifications").notNull().default(true),
+  location: boolean("location").notNull().default(true),
+  emails: boolean("emails").notNull().default(false),
+  language: text("language").notNull().default("en"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
   role: text("role"),
   bio: text("bio"),
   avatar_url: text("avatar_url"),
-  location: text("location"),
   is_verified: boolean("is_verified").default(false),
   can_create_events: boolean("can_create_events").default(false),
   joined_via: text("joined_via"),

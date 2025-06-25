@@ -22,9 +22,9 @@ export const protests = pgTable("protests", {
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  password_hash: text("password_hash").notNull(),
   email: text("email").notNull(),
-  name: text("name").notNull(),
+  name: text("name"),
   notifications: boolean("notifications").notNull().default(true),
   location: boolean("location").notNull().default(true),
   emails: boolean("emails").notNull().default(false),

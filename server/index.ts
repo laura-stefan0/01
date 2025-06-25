@@ -4,14 +4,9 @@ dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import usersRoutes from './routes/users';
-
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Register API routes
-app.use('/api/users', usersRoutes);
 
 app.use((req, res, next) => {
   const start = Date.now();

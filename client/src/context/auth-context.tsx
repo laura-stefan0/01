@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({
           username,
           email,
-          password_hash: password, // In a real app, this would be hashed on the server
+          password, // Server will hash this
         }),
       });
 
