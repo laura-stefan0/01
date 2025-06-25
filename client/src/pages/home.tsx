@@ -6,7 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
-
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,10 +14,18 @@ import { Label } from "@/components/ui/label";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
-  const [searchQuery, setSearchQuery] = useState(""); // Add searchQuery state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
+
+  const filters = [
+    { id: "all", label: "All" },
+    { id: "today", label: "Today" },
+    { id: "week", label: "This Week" },
+    { id: "popular", label: "Popular" },
+  ];
 
   const renderHomeContent = () => (
     <div className="px-4 py-4 max-w-md mx-auto">
@@ -301,8 +308,8 @@ export default function Home() {
         return renderHomeContent();
       case "map":
         return (
-          <div className="max-w-md mx-auto">
-            <section className="px-4 py-4">
+          <div className="px-4 py-4 max-w-md mx-auto">
+            <section className="mb-6">
               <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
 
               <div className="space-y-3">
@@ -349,6 +356,15 @@ export default function Home() {
                 )}
               </div>
             </section>
+
+            {/* Floating Map Button */}
+            <Button 
+              className="fixed bottom-24 right-4 bg-activist-blue hover:bg-activist-blue/90 text-white rounded-full shadow-lg z-50"
+              size="lg"
+            >
+              <MapPin className="w-5 h-5 mr-2" />
+              View on Map
+            </Button>
           </div>
         );
       case "resources":
@@ -379,13 +395,7 @@ export default function Home() {
     }
   };
 
-    const filters = [
-        { id: "all", label: "All" },
-        { id: "today", label: "Today" },
-        { id: "week", label: "This Week" },
-        { id: "popular", label: "Popular" },
-    ];
-    const [activeFilter, setActiveFilter] = useState("all");
+    
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">

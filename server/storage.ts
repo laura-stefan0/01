@@ -31,30 +31,41 @@ export class MemStorage implements IStorage {
       const today = new Date(2024, 5, 25); // June 25th, 2024 (month is 0-indexed)
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
-      
+
       const diffTime = date.getTime() - today.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+
       // Check if it's today
       if (date.toDateString() === today.toDateString()) {
         return "Today";
       }
-      
+
       // Check if it's tomorrow
       if (date.toDateString() === tomorrow.toDateString()) {
         return "Tomorrow";
       }
-      
+
       // Check if it's within the next week
       if (diffDays > 0 && diffDays <= 7) {
         const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         return `Next ${dayNames[date.getDay()]}`;
       }
-      
+
       // For dates over a week away
       const monthNames = ["January", "February", "March", "April", "May", "June", 
                          "July", "August", "September", "October", "November", "December"];
-      return `on ${monthNames[date.getMonth()]} ${date.getDate()}`;
+      const day = date.getDate();
+      let dayStr = String(day);
+      if (day === 1 || day === 21 || day === 31) {
+          dayStr += "st";
+      } else if (day === 2 || day === 22) {
+          dayStr += "nd";
+      } else if (day === 3 || day === 23) {
+          dayStr += "rd";
+      } else {
+          dayStr += "th";
+      }
+      return `on ${monthNames[date.getMonth()]} ${dayStr}`;
     };
 
     // Generate specific dates for testing
@@ -80,7 +91,7 @@ export class MemStorage implements IStorage {
 
     // Seed with sample protests
     const specificDates = getSpecificDates();
-    
+
     const sampleProtests: Omit<Protest, 'id'>[] = [
       {
         title: "Global Climate Strike",
