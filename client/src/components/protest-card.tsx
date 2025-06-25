@@ -37,39 +37,26 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
 
   if (variant === "featured") {
     return (
-      <Card className="w-full hover:shadow-lg transition-shadow cursor-pointer border-0 shadow-md">
-        <CardContent className="p-0">
-          <div className="relative h-28 bg-gradient-to-r from-activist-blue to-rally-red rounded-t-lg overflow-hidden">
-            <img 
-              src={protest.imageUrl}
-              alt={protest.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
-            />
-            <div className="absolute inset-0 bg-black/20 rounded-t-lg" />
-            <div className="absolute top-2 left-2">
+      <Card className="min-w-0 w-3/4 flex-shrink-0 overflow-hidden h-64">
+        <img 
+          src={protest.imageUrl} 
+          alt={protest.title}
+          className="w-full h-32 object-cover"
+        />
+        <CardContent className="p-4 h-32 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
               <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
                 {protest.category}
               </Badge>
+              <span className="text-sm text-gray-500">{protest.distance}</span>
             </div>
-            <div className="absolute top-2 right-2 text-white text-xs font-medium">
-              {protest.attendees} going
-            </div>
+            <h3 className="font-semibold text-dark-slate mb-1 line-clamp-2">{protest.title}</h3>
+            <p className="text-sm text-gray-600 mb-2 line-clamp-2">{protest.description}</p>
           </div>
-          <div className="p-3">
-            <h3 className="font-semibold text-dark-slate mb-2 line-clamp-2 text-sm">{protest.title}</h3>
-            <div className="flex items-center text-xs text-gray-600 mb-2">
-              <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
-              <span className="truncate">{protest.location}</span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500">{protest.date}</span>
-              <span className="text-gray-500">{protest.time}</span>
-            </div>
-            <p className="text-xs text-gray-600 mt-2 line-clamp-2">{protest.description}</p>
+          <div className="text-sm text-gray-500">
+            <p>{protest.date}, {protest.time}</p>
+            <p className="truncate">{protest.location}</p>
           </div>
         </CardContent>
       </Card>
@@ -79,28 +66,23 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   return (
     <Card className="overflow-hidden h-20">
       <div className="flex h-full">
-        <div className="w-20 h-full bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-          <img 
-            src={protest.imageUrl}
-            alt={protest.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-              target.parentElement!.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-activist-blue to-rally-red flex items-center justify-center text-white text-xs font-bold">' + protest.category.charAt(0) + '</div>';
-            }}
-          />
-        </div>
-        <CardContent className="p-3 flex-1">
+        <img 
+          src={protest.imageUrl}
+          alt={protest.title}
+          className="w-20 h-full object-cover flex-shrink-0"
+        />
+        <CardContent className="p-3 flex-1 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">
             <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
               {protest.category}
             </Badge>
             <span className="text-xs text-gray-500">{protest.attendees} going</span>
           </div>
-          <h3 className="font-medium text-dark-slate text-sm mb-1">{protest.title}</h3>
-          <p className="text-xs text-gray-500 mb-1">{protest.location} • {protest.distance}</p>
-          <p className="text-xs text-gray-600">{protest.time}</p>
+          <div className="flex-1">
+            <h3 className="font-medium text-dark-slate text-sm mb-1 line-clamp-1">{protest.title}</h3>
+            <p className="text-xs text-gray-500 mb-1">{protest.location} • {protest.distance}</p>
+            <p className="text-xs text-gray-600">{protest.time}</p>
+          </div>
         </CardContent>
       </div>
     </Card>

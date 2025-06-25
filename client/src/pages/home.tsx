@@ -297,7 +297,11 @@ export default function Home() {
       case "home":
         return renderHomeContent();
       case "map":
-        return <MapView />;
+        return (
+          <div className="h-full">
+            <MapView />
+          </div>
+        );
       case "resources":
         return renderResourcesContent();
       case "community":
@@ -312,7 +316,7 @@ export default function Home() {
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "home":
-        return "For you";
+        return "Corteo";
       case "map":
         return "Search";
       case "resources":
@@ -322,14 +326,14 @@ export default function Home() {
       case "profile":
         return "Profile";
       default:
-        return "For you";
+        return "Corteo";
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen relative">
+    <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">
       {/* Header */}
-      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-bold text-dark-slate">{getHeaderTitle()}</h1>
@@ -338,17 +342,62 @@ export default function Home() {
                 <Bell className="w-5 h-5 text-gray-600" />
               </Button>
             )}
-            </div>
+            {activeTab === "map" && (
+              <Button variant="outline" size="sm" className="bg-activist-blue text-white hover:bg-activist-blue/90">
+                List View
+              </Button>
+            )}
+          </div>
+          
+          {/* Search Bar - Only show on home tab */}
+          {activeTab === "home" && (
+            <>
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search protests by name or cause..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
+                />
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              </div>
+              
+              {/* Filter Tags */}
+              <div className="flex space-x-2 mt-3 overflow-x-auto pb-1">
+                {filters.map((filter) => (
+                  <Badge
+                    key={filter.id}
+                    variant={activeFilter === filter.id ? "default" : "secondary"}
+                    className={`cursor-pointer whitespace-nowrap ${
+                      activeFilter === filter.id
+                        ? "bg-activist-blue text-white hover:bg-activist-blue/90"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                    onClick={() => setActiveFilter(filter.id)}
+                  >
+                    {filter.label}
+                  </Badge>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="pb-20">
+      <main className={`flex-1 ${activeTab === "map" ? "" : "pb-20"} ${activeTab === "map" ? "overflow-hidden" : ""}`}>
         {renderContent()}
       </main>
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      {activeTab !== "map" && <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />}
+      {activeTab === "map" && (
+        <div className="absolute bottom-0 left-0 right-0 z-50">
+          <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+        </div>
+      )}
     </div>
   );
 }

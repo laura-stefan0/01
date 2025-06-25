@@ -116,6 +116,27 @@
   .bg-dark-slate {
     background-color: var(--dark-slate);
   }
+
+  /* Remove shadows from all cards */
+  .card {
+    box-shadow: none !important;
+    border: 1px solid hsl(220, 13%, 91%) !important;
+  }
+  
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 }
 
 /* Custom toggle switch styles */
