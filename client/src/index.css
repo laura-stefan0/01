@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(210, 40%, 98%);
+  --foreground: hsl(215, 25%, 27%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(215, 25%, 27%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(215, 25%, 27%);
+  --border: hsl(220, 13%, 91%);
+  --input: hsl(220, 13%, 91%);
+  --primary: hsl(217, 91%, 60%); /* #2563EB activist blue */
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(222, 84%, 5%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(222, 84%, 5%);
+  --destructive: hsl(0, 84%, 60%); /* #DC2626 rally red */
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(215, 25%, 27%);
+  --radius: 0.5rem;
+  
+  /* Custom Corteo colors */
+  --activist-blue: hsl(217, 91%, 60%); /* #2563EB */
+  --rally-red: hsl(0, 74%, 50%); /* #DC2626 */
+  --movement-green: hsl(158, 89%, 40%); /* #059669 */
+  --clean-white: hsl(210, 40%, 98%); /* #F8FAFC */
+  --dark-slate: hsl(215, 25%, 27%); /* #1E293B */
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(217, 91%, 60%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .activist-blue {
+    color: var(--activist-blue);
+  }
+  
+  .bg-activist-blue {
+    background-color: var(--activist-blue);
+  }
+  
+  .rally-red {
+    color: var(--rally-red);
+  }
+  
+  .bg-rally-red {
+    background-color: var(--rally-red);
+  }
+  
+  .movement-green {
+    color: var(--movement-green);
+  }
+  
+  .bg-movement-green {
+    background-color: var(--movement-green);
+  }
+  
+  .clean-white {
+    color: var(--clean-white);
+  }
+  
+  .bg-clean-white {
+    background-color: var(--clean-white);
+  }
+  
+  .dark-slate {
+    color: var(--dark-slate);
+  }
+  
+  .bg-dark-slate {
+    background-color: var(--dark-slate);
+  }
+}
+
+/* Custom toggle switch styles */
+.toggle-switch {
+  appearance: none;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-switch:checked {
+  background-color: var(--activist-blue);
+}
+
+.toggle-switch::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  background-color: white;
+  transition: transform 0.3s;
+}
+
+.toggle-switch:checked::before {
+  transform: translateX(20px);
+}
