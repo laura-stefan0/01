@@ -49,6 +49,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - `GET /api/protests/:id` - Single protest details by ID
 - `GET /api/protests/category/:category` - Category filtering
 - `GET /api/protests/search?q=query` - Text search functionality
+- `GET /api/user/profile` - Current user profile information
 
 ## Data Flow
 
@@ -99,6 +100,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes
+- January 2025: Added personalized "Hi, {username}!" greeting in header for home page
+- January 2025: Added user profile API endpoint and integrated user data display
 - January 2025: Added clickable protest events with detailed view pages
 - January 2025: Implemented back button navigation and native sharing functionality
 - January 2025: Added "I'm Going" and "Get Directions" action buttons
