@@ -1,73 +1,59 @@
-import { db } from "../db/index";
-import { users } from "../shared/schema";
-import { eq } from "drizzle-orm";
+import { supabase } from "../db/index";
 import type { User, InsertUser, Protest, InsertProtest } from "../shared/schema";
 import { IStorage } from "./storage";
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    // For now, we'll continue using the in-memory user since we need to migrate the schema
-    // In a real implementation, this would query the database
-    if (id === 1) {
-      return {
-        id: 1,
-        username: "alex_rodriguez",
-        password_hash: "$2b$10$example", // Sample hash
-        email: "alex@example.com",
-        name: "Alex Rodriguez",
-        notifications: true,
-        location: true,
-        emails: false,
-        language: "en",
-        created_at: new Date(),
-        role: null,
-        bio: null,
-        avatar_url: null,
-        is_verified: false,
-        can_create_events: false,
-        joined_via: null,
-        last_login: null,
-        preferences: null,
-      };
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
+        return undefined;
+      }
+
+      return data as User;
+    } catch (error) {
+      console.error("Error fetching user by id:", error);
+      return undefined;
     }
-    return undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    // Similar temporary implementation
-    if (username === "alex_rodriguez") {
-      return {
-        id: 1,
-        username: "alex_rodriguez",
-        password_hash: "$2b$10$example", // Sample hash
-        email: "alex@example.com",
-        name: "Alex Rodriguez",
-        notifications: true,
-        location: true,
-        emails: false,
-        language: "en",
-        created_at: new Date(),
-        role: null,
-        bio: null,
-        avatar_url: null,
-        is_verified: false,
-        can_create_events: false,
-        joined_via: null,
-        last_login: null,
-        preferences: null,
-      };
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .single();
+
+      if (error || !data) {
+        return undefined;
+      }
+
+      return data as User;
+    } catch (error) {
+      console.error("Error fetching user by username:", error);
+      return undefined;
     }
-    return undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
-      const result = await db
-        .insert(users)
-        .values(insertUser)
-        .returning();
-      
-      return result[0];
+      const { data, error } = await supabase
+        .from('users')
+        .insert(insertUser)
+        .select()
+        .single();
+
+      if (error || !data) {
+        throw new Error(`Failed to create user: ${error?.message || 'Unknown error'}`);
+      }
+
+      return data as User;
     } catch (error) {
       console.error("Error creating user:", error);
       throw error;

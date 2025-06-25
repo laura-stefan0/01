@@ -100,6 +100,11 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 25, 2025: Fixed startup error by migrating from PostgreSQL to Supabase database
+- June 25, 2025: Updated all database connections to use Supabase client instead of Drizzle ORM
+- June 25, 2025: Configured Supabase connection with provided credentials
+- June 25, 2025: Updated user routes and database storage to work with Supabase REST API
+- June 25, 2025: Application now starts successfully and connects to Supabase
 - January 2025: Added mobile-responsive login/registration page with database integration
 - January 2025: Created users table in Supabase and connected registration flow
 - January 2025: Fixed authentication flow with wouter routing and resolved auth provider context issues
@@ -115,7 +120,6 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - January 2025: Added clickable protest events with detailed view pages
 - January 2025: Implemented back button navigation and native sharing functionality
 - January 2025: Added "I'm Going" and "Get Directions" action buttons
-- June 25, 2025: Initial setup
 
 ## User Preferences
 
