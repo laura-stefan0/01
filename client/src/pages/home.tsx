@@ -1,12 +1,10 @@
-import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, Bell, Users, MapPin } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Bell, Users, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ProtestCard } from "@/components/protest-card";
 import { MapView } from "@/components/map-view";
 import { BottomNavigation } from "@/components/bottom-navigation";
-import { useFeaturedProtests, useNearbyProtests, useProtestsByCategory, useSearchProtests } from "@/hooks/use-protests";
+import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,76 +13,9 @@ import { Label } from "@/components/ui/label";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [showMoreFilters, setShowMoreFilters] = useState(false);
-  const [activeTimeFilter, setActiveTimeFilter] = useState("");
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Debounce search query
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowMoreFilters(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
-  const { data: filteredProtests = [], isLoading: filterLoading } = useProtestsByCategory(activeFilter);
-  const { data: searchResults = [], isLoading: searchLoading } = useSearchProtests(debouncedSearch);
-
-  // Determine which protests to show
-  const displayedProtests = useMemo(() => {
-    if (debouncedSearch && searchResults.length > 0) {
-      return searchResults;
-    }
-    if (activeFilter !== "all") {
-      return filteredProtests;
-    }
-    return nearbyProtests;
-  }, [debouncedSearch, searchResults, activeFilter, filteredProtests, nearbyProtests]);
-
-  const isLoading = featuredLoading || nearbyLoading || filterLoading || searchLoading;
-
-  const mainFilters = [
-    { id: "all", label: "All", color: "" },
-    { id: "environment", label: "Environment", color: "#4CAF50" },
-    { id: "lgbtq", label: "LGBTQ+", color: "#E91E63" },
-    { id: "womens-rights", label: "Women's Rights", color: "#D81B60" },
-    { id: "labor", label: "Labor", color: "#FF9800" },
-    { id: "racial-social-justice", label: "Racial & Social Justice", color: "#9C27B0" },
-  ];
-
-  const additionalFilters = [
-    { id: "civil-human-rights", label: "Civil & Human Rights", color: "#2196F3" },
-    { id: "healthcare-education", label: "Healthcare & Education", color: "#009688" },
-    { id: "peace-anti-war", label: "Peace & Anti-War", color: "#03A9F4" },
-    { id: "transparency-anti-corruption", label: "Transparency & Anti-Corruption", color: "#607D8B" },
-  ];
-
-  const timeFilters = [
-    { id: "today", label: "Today" },
-    { id: "tomorrow", label: "Tomorrow" },
-    { id: "this-week", label: "This week" },
-    { id: "this-month", label: "This month" },
-  ];
 
   const renderHomeContent = () => (
     <div>
@@ -96,18 +27,18 @@ export default function Home() {
             variant="ghost" 
             size="sm" 
             className="text-activist-blue font-medium"
-            onClick={() => setActiveFilter("all")}
           >
             View All
           </Button>
         </div>
         
-        {/* Horizontal Scrolling Featured Cards */}
-        <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Horizontal Scrolling Featured Cards - Narrower */}
+        <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {featuredLoading ? (
             <>
-              <Skeleton className="min-w-80 h-64 flex-shrink-0" />
-              <Skeleton className="min-w-80 h-64 flex-shrink-0" />
+              <Skeleton className="min-w-64 h-56 flex-shrink-0" />
+              <Skeleton className="min-w-64 h-56 flex-shrink-0" />
+              <Skeleton className="min-w-64 h-56 flex-shrink-0" />
             </>
           ) : (
             featuredProtests.map((protest) => (
@@ -119,28 +50,23 @@ export default function Home() {
 
       {/* Nearby Protests */}
       <section className="px-4 py-4">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">
-          {debouncedSearch ? "Search Results" : activeFilter !== "all" ? `${mainFilters.concat(additionalFilters).find(f => f.id === activeFilter)?.label || activeFilter} Protests` : "Nearby Protests"}
-        </h2>
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby Protests</h2>
         
         {/* Vertical List of Protest Cards */}
         <div className="space-y-3">
-          {isLoading ? (
+          {nearbyLoading ? (
             <>
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-20 w-full" />
             </>
-          ) : displayedProtests.length > 0 ? (
-            displayedProtests.map((protest) => (
+          ) : nearbyProtests.length > 0 ? (
+            nearbyProtests.map((protest) => (
               <ProtestCard key={protest.id} protest={protest} />
             ))
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-500">No protests found</p>
-              {debouncedSearch && (
-                <p className="text-sm text-gray-400 mt-1">Try adjusting your search terms</p>
-              )}
             </div>
           )}
         </div>
@@ -370,9 +296,9 @@ export default function Home() {
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "home":
-        return "Corteo";
+        return "For you";
       case "map":
-        return "Protest Map";
+        return "Search";
       case "resources":
         return "Resources";
       case "community":
@@ -380,7 +306,7 @@ export default function Home() {
       case "profile":
         return "Profile";
       default:
-        return "Corteo";
+        return "For you";
     }
   };
 
@@ -396,114 +322,7 @@ export default function Home() {
                 <Bell className="w-5 h-5 text-gray-600" />
               </Button>
             )}
-            {activeTab === "map" && (
-              <Button variant="outline" size="sm" className="bg-activist-blue text-white hover:bg-activist-blue/90">
-                List View
-              </Button>
-            )}
-          </div>
-          
-          {/* Search Bar - Only show on home tab */}
-          {activeTab === "home" && (
-            <>
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search protests by name or cause..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
-                />
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              </div>
-              
-              {/* Filter Tags */}
-              <div className="flex space-x-2 mt-3 overflow-x-auto pb-1">
-                {mainFilters.map((filter) => (
-                  <Badge
-                    key={filter.id}
-                    variant={activeFilter === filter.id ? "default" : "secondary"}
-                    className={`cursor-pointer whitespace-nowrap ${
-                      activeFilter === filter.id
-                        ? filter.id === "all" 
-                          ? "bg-activist-blue text-white hover:bg-activist-blue/90"
-                          : `text-white hover:opacity-90`
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                    style={activeFilter === filter.id && filter.id !== "all" ? { backgroundColor: filter.color } : {}}
-                    onClick={() => setActiveFilter(filter.id)}
-                  >
-                    {filter.label}
-                  </Badge>
-                ))}
-                
-                {/* More Filters Dropdown */}
-                <div className="relative" ref={dropdownRef}>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    onClick={() => setShowMoreFilters(!showMoreFilters)}
-                  >
-                    More filters
-                  </Badge>
-                  
-                  {showMoreFilters && (
-                    <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48">
-                      <div className="p-3">
-                        <h4 className="font-medium text-sm text-gray-700 mb-2">Categories</h4>
-                        <div className="space-y-2">
-                          {additionalFilters.map((filter) => (
-                            <button
-                              key={filter.id}
-                              className={`w-full text-left px-2 py-1 rounded text-sm ${
-                                activeFilter === filter.id
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-600 hover:bg-gray-50"
-                              }`}
-                              onClick={() => {
-                                setActiveFilter(filter.id);
-                                setShowMoreFilters(false);
-                              }}
-                            >
-                              <div className="flex items-center">
-                                <div 
-                                  className="w-3 h-3 rounded-full mr-2"
-                                  style={{ backgroundColor: filter.color }}
-                                ></div>
-                                {filter.label}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                        
-                        <hr className="my-3" />
-                        
-                        <h4 className="font-medium text-sm text-gray-700 mb-2">Time</h4>
-                        <div className="space-y-2">
-                          {timeFilters.map((filter) => (
-                            <button
-                              key={filter.id}
-                              className={`w-full text-left px-2 py-1 rounded text-sm ${
-                                activeTimeFilter === filter.id
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-600 hover:bg-gray-50"
-                              }`}
-                              onClick={() => {
-                                setActiveTimeFilter(activeTimeFilter === filter.id ? "" : filter.id);
-                                setShowMoreFilters(false);
-                              }}
-                            >
-                              {filter.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
+            </div>
         </div>
       </header>
 

@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Protest } from "@shared/schema";
+import { MapPin } from "lucide-react";
 
 interface ProtestCardProps {
   protest: Protest;
@@ -36,24 +37,30 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
 
   if (variant === "featured") {
     return (
-      <Card className="min-w-80 flex-shrink-0 overflow-hidden">
-        <img 
-          src={protest.imageUrl} 
-          alt={protest.title}
-          className="w-full h-32 object-cover"
-        />
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
-              {protest.category}
-            </Badge>
-            <span className="text-sm text-gray-500">{protest.distance}</span>
+      <Card className="min-w-64 flex-shrink-0 hover:shadow-lg transition-shadow cursor-pointer border-0 shadow-md">
+        <CardContent className="p-0">
+          <div className="relative h-28 bg-gradient-to-r from-activist-blue to-rally-red rounded-t-lg">
+            <div className="absolute inset-0 bg-black/20 rounded-t-lg" />
+            <div className="absolute top-2 left-2">
+              <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
+                {protest.category}
+              </Badge>
+            </div>
+            <div className="absolute top-2 right-2 text-white text-xs font-medium">
+              {protest.attendees} going
+            </div>
           </div>
-          <h3 className="font-semibold text-dark-slate mb-1">{protest.title}</h3>
-          <p className="text-sm text-gray-600 mb-2">{protest.description}</p>
-          <div className="text-sm text-gray-500">
-            <p>{protest.date}, {protest.time}</p>
-            <p>{protest.location}</p>
+          <div className="p-3">
+            <h3 className="font-semibold text-dark-slate mb-2 line-clamp-2 text-sm">{protest.title}</h3>
+            <div className="flex items-center text-xs text-gray-600 mb-2">
+              <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="truncate">{protest.location}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-500">{protest.date}</span>
+              <span className="text-gray-500">{protest.time}</span>
+            </div>
+            <p className="text-xs text-gray-600 mt-2 line-clamp-2">{protest.description}</p>
           </div>
         </CardContent>
       </Card>
