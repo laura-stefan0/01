@@ -16,6 +16,7 @@ export interface SupabaseUser {
 }
 
 export class SupabaseService {
+  public supabase = supabase;
   // Create user in Supabase
   async createUser(userData: {
     username: string;
@@ -25,29 +26,44 @@ export class SupabaseService {
   }): Promise<SupabaseUser> {
     const { username, email, password, name } = userData;
     
+    console.log('🔄 Creating user with data:', { username, email, name });
+    
     // Hash password
     const saltRounds = 10;
     const password_hash = await bcrypt.hash(password, saltRounds);
+    console.log('🔒 Password hashed successfully');
+    
+    const insertData = {
+      username,
+      email,
+      password_hash,
+      name: name || null,
+      notifications: true,
+      location: true,
+      emails: false,
+      language: 'en'
+    };
+    
+    console.log('📤 Inserting to Supabase:', { ...insertData, password_hash: '[REDACTED]' });
     
     const { data, error } = await supabase
       .from('users')
-      .insert({
-        username,
-        email,
-        password_hash,
-        name: name || null,
-        notifications: true,
-        location: true,
-        emails: false,
-        language: 'en'
-      })
+      .insert(insertData)
       .select()
       .single();
 
     if (error) {
+      console.error('❌ Supabase insert error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        hint: error.hint,
+        details: error.details,
+        code: error.code
+      });
       throw new Error(`Failed to create user: ${error.message}`);
     }
 
+    console.log('✅ User created successfully in Supabase:', data.id);
     return data;
   }
 

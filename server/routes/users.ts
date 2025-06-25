@@ -3,6 +3,41 @@ import { supabaseService } from '../supabase-service';
 
 const router = express.Router();
 
+// Test Supabase connection
+router.get('/test-connection', async (req, res) => {
+  try {
+    console.log('🔍 Testing Supabase connection...');
+    
+    // Test basic connection
+    const { data, error, count } = await supabaseService.supabase
+      .from('users')
+      .select('*', { count: 'exact' });
+    
+    if (error) {
+      console.error('❌ Connection test failed:', error);
+      return res.status(500).json({ 
+        success: false, 
+        error: error.message,
+        details: error
+      });
+    }
+    
+    console.log('✅ Connection test successful');
+    res.json({ 
+      success: true, 
+      message: 'Supabase connection working',
+      userCount: count,
+      users: data
+    });
+  } catch (error) {
+    console.error('❌ Connection test exception:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // Get all users
 router.get('/', async (req, res) => {
   try {
