@@ -21,15 +21,15 @@ export default function Home() {
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
 
   const renderHomeContent = () => (
-    <div className="max-w-md mx-auto">
+    <div className="px-4 py-4 max-w-md mx-auto">
       {/* Featured Section */}
-      <section className="px-4 py-4">
+      <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold text-dark-slate">Featured Protests</h2>
         </div>
 
         {/* Horizontal Scrolling Featured Cards - Wider */}
-        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {featuredLoading ? (
             <>
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
@@ -47,7 +47,7 @@ export default function Home() {
       </section>
 
       {/* Nearby Protests */}
-      <section className="px-4 py-4">
+      <section className="mb-6">
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby Protests</h2>
 
         {/* Vertical List of Protest Cards */}
@@ -71,7 +71,7 @@ export default function Home() {
       </section>
 
       {/* Donations Section */}
-      <section className="px-4 py-4">
+      <section>
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Support the Movement</h2>
         <Card className="bg-gradient-to-r from-activist-blue to-rally-red">
           <CardContent className="p-4 text-white">
