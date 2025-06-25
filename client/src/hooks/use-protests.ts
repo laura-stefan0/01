@@ -22,6 +22,13 @@ export function useNearbyProtests() {
 export function useProtestsByCategory(category: string) {
   return useQuery<Protest[]>({
     queryKey: ["/api/protests/category", category],
+    queryFn: async () => {
+      const response = await fetch(`/api/protests/category/${category}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch protests by category');
+      }
+      return response.json();
+    },
     enabled: !!category,
   });
 }

@@ -65,7 +65,7 @@ export default function Home() {
         </div>
         
         {/* Horizontal Scrolling Featured Cards */}
-        <div className="flex space-x-4 overflow-x-auto pb-2">
+        <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {featuredLoading ? (
             <>
               <Skeleton className="min-w-80 h-64 flex-shrink-0" />
