@@ -37,7 +37,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
 
   if (variant === "featured") {
     return (
-      <Card className="min-w-64 flex-shrink-0 hover:shadow-lg transition-shadow cursor-pointer border-0 shadow-md">
+      <Card className="w-full hover:shadow-lg transition-shadow cursor-pointer border-0 shadow-md">
         <CardContent className="p-0">
           <div className="relative h-28 bg-gradient-to-r from-activist-blue to-rally-red rounded-t-lg overflow-hidden">
             <img 
@@ -77,9 +77,9 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   }
 
   return (
-    <Card className="overflow-hidden">
-      <div className="flex">
-        <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+    <Card className="overflow-hidden h-20">
+      <div className="flex h-full">
+        <div className="w-20 h-full bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
           <img 
             src={protest.imageUrl}
             alt={protest.title}

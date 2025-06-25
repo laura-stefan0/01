@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useProtests, useProtestsByCategory, useSearchProtests } from "@/hooks/use-protests";
 import { Badge } from "@/components/ui/badge";
@@ -55,19 +54,19 @@ export function MapView() {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !lastMousePos) return;
-    
+
     const deltaX = e.clientX - lastMousePos.x;
     const deltaY = e.clientY - lastMousePos.y;
-    
+
     // Convert pixel movement to lat/lng movement (simplified)
     const latChange = -deltaY * 0.0001 * (mapZoom / 12);
     const lngChange = deltaX * 0.0001 * (mapZoom / 12);
-    
+
     setMapCenter(prev => ({
       lat: prev.lat + latChange,
       lng: prev.lng + lngChange
     }));
-    
+
     setLastMousePos({ x: e.clientX, y: e.clientY });
   };
 
@@ -177,7 +176,7 @@ export function MapView() {
     const tileSize = 256;
     const tilesX = Math.ceil(window.innerWidth / tileSize) + 2;
     const tilesY = Math.ceil(window.innerHeight / tileSize) + 2;
-    
+
     return Array.from({ length: tilesX * tilesY }, (_, i) => {
       const x = i % tilesX;
       const y = Math.floor(i / tilesX);
@@ -189,7 +188,7 @@ export function MapView() {
     <div className="relative h-screen bg-gray-100">
       {/* Header Space */}
       <div className="h-16 bg-white border-b border-gray-100"></div>
-      
+
       {/* Map Background */}
       <div className="absolute inset-0 top-16 bg-gray-200 overflow-hidden">
         <div 
@@ -229,18 +228,18 @@ export function MapView() {
               </div>
             ))}
           </div>
-          
+
           {/* Protest markers */}
           {displayedProtests.slice(0, 12).map((protest, index) => {
             const markerLat = 45.4642 + (index * 0.01) - 0.05;
             const markerLng = 9.1900 + ((index % 4) * 0.015) - 0.02;
-            
+
             // Calculate position relative to map center
             const latDiff = markerLat - mapCenter.lat;
             const lngDiff = markerLng - mapCenter.lng;
             const pixelX = 50 + (lngDiff * 10000 * mapZoom / 12);
             const pixelY = 50 - (latDiff * 10000 * mapZoom / 12);
-            
+
             return (
               <div
                 key={protest.id}
@@ -256,7 +255,7 @@ export function MapView() {
               </div>
             );
           })}
-          
+
           {/* User location marker */}
           {userLocation && (
             <div
@@ -308,7 +307,7 @@ export function MapView() {
               {filter.label}
             </Badge>
           ))}
-          
+
           {/* More Filters Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <Button
@@ -319,7 +318,7 @@ export function MapView() {
             >
               More filters
             </Button>
-            
+
             {showMoreFilters && (
               <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48">
                 <div className="p-3">
@@ -348,9 +347,9 @@ export function MapView() {
                       </button>
                     ))}
                   </div>
-                  
+
                   <hr className="my-3" />
-                  
+
                   <h4 className="font-medium text-sm text-gray-700 mb-2">Time</h4>
                   <div className="space-y-2">
                     {timeFilters.map((filter) => (
@@ -388,7 +387,7 @@ export function MapView() {
         >
           <Navigation className="w-4 h-4" />
         </Button>
-        
+
         {/* Zoom Controls */}
         <div className="flex flex-col bg-white/95 backdrop-blur-sm rounded-md shadow-lg">
           <Button
@@ -408,7 +407,7 @@ export function MapView() {
             <Minus className="w-4 h-4" />
           </Button>
         </div>
-        
+
         {/* Zoom Level Indicator */}
         <div className="bg-white/95 backdrop-blur-sm rounded-md shadow-lg px-2 py-1 text-xs text-gray-600">
           {mapZoom}x
@@ -429,7 +428,7 @@ export function MapView() {
         >
           <div className="w-10 h-1 bg-gray-300 rounded-full" />
         </div>
-        
+
         {/* Header */}
         <div className="px-4 pb-3 border-b border-gray-100">
           <div className="flex items-center justify-between">
@@ -445,7 +444,7 @@ export function MapView() {
             </Button>
           </div>
         </div>
-        
+
         {/* Event List */}
         <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 100px)' }}>
           <div className="px-4 py-3 space-y-3">

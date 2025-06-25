@@ -29,13 +29,15 @@ export default function Home() {
         <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {featuredLoading ? (
             <>
-              <Skeleton className="min-w-64 h-56 flex-shrink-0" />
-              <Skeleton className="min-w-64 h-56 flex-shrink-0" />
-              <Skeleton className="min-w-64 h-56 flex-shrink-0" />
+              <Skeleton className="w-3/4 h-56 flex-shrink-0" />
+              <Skeleton className="w-3/4 h-56 flex-shrink-0" />
+              <Skeleton className="w-3/4 h-56 flex-shrink-0" />
             </>
           ) : (
             featuredProtests.map((protest) => (
-              <ProtestCard key={protest.id} protest={protest} variant="featured" />
+              <div key={protest.id} className="w-3/4 flex-shrink-0">
+                <ProtestCard protest={protest} variant="featured" />
+              </div>
             ))
           )}
         </div>
@@ -63,6 +65,20 @@ export default function Home() {
             </div>
           )}
         </div>
+      </section>
+
+      {/* Donations Section */}
+      <section className="px-4 py-4">
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Support the Movement</h2>
+        <Card className="bg-gradient-to-r from-activist-blue to-rally-red">
+          <CardContent className="p-4 text-white">
+            <h3 className="font-semibold mb-2">Make a Difference</h3>
+            <p className="text-sm mb-3 opacity-90">Your donation helps support activists and organizations fighting for change.</p>
+            <Button className="w-full bg-white text-activist-blue hover:bg-gray-100">
+              Donate Now
+            </Button>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
