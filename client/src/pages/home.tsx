@@ -8,6 +8,7 @@ import { Bell, Users, MapPin, Search } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
+import { useUser } from "@/hooks/use-user";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,7 @@ export default function Home() {
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
+  const { data: user } = useUser();
 
   const filters = [
     { id: "all", label: "All" },
@@ -207,11 +209,11 @@ export default function Home() {
         <CardContent className="p-4">
           <div className="flex items-center mb-4">
             <div className="w-16 h-16 bg-activist-blue rounded-full flex items-center justify-center text-white font-semibold text-xl">
-              A
+              {user?.name?.[0]?.toUpperCase() || "A"}
             </div>
             <div className="ml-4">
-              <h3 className="font-semibold text-dark-slate">Alex Rodriguez</h3>
-              <p className="text-sm text-gray-600">alex@example.com</p>
+              <h3 className="font-semibold text-dark-slate">{user?.name || "Alex Rodriguez"}</h3>
+              <p className="text-sm text-gray-600">{user?.email || "alex@example.com"}</p>
             </div>
           </div>
           <Button variant="outline" className="w-full">
@@ -383,7 +385,7 @@ export default function Home() {
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "home":
-        return "Corteo";
+        return user ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
       case "map":
         return "Search";
       case "resources":
@@ -393,7 +395,7 @@ export default function Home() {
       case "profile":
         return "Profile";
       default:
-        return "Corteo";
+        return user ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
     }
   };
 
