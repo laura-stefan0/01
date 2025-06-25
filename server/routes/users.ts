@@ -87,6 +87,7 @@ router.post('/', async (req, res) => {
     };
 
     console.log('📤 Inserting to Supabase:', { ...insertData, password_hash: '[REDACTED]' });
+    console.log('🔑 Using admin client with service key:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
     // Create new user in Supabase
     const { data: newUser, error: insertError } = await supabaseAdmin
@@ -103,13 +104,36 @@ router.post('/', async (req, res) => {
         details: insertError.details,
         code: insertError.code
       });
+      
+      // Provide specific guidance based on error type
+      if (insertError.code === '42501') {
+        console.error('🚨 PERMISSION DENIED: This usually means the service role key is missing or incorrect');
+        console.error('   Check that SUPABASE_SERVICE_ROLE_KEY is set in Replit secrets');
+      } else if (insertError.code === '23505') {
+        console.error('🚨 DUPLICATE KEY: User with this username or email already exists');
+      }
+      
       return res.status(500).json({ 
         message: "Failed to create user", 
-        error: insertError.message 
+        error: insertError.message,
+        code: insertError.code
       });
     }
 
     console.log('✅ User created successfully in Supabase:', newUser.id);
+    
+    // Verify the user was actually inserted
+    const { data: verifyUser, error: verifyError } = await supabase
+      .from('users')
+      .select('id, username, email')
+      .eq('id', newUser.id)
+      .single();
+    
+    if (verifyError) {
+      console.error('⚠️  Could not verify user creation:', verifyError.message);
+    } else {
+      console.log('✅ User verified in database:', verifyUser);
+    }
 
     // Don't return password hash
     const { password_hash: _, ...userResponse } = newUser;
