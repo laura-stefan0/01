@@ -5,9 +5,29 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import ProtestDetail from "@/pages/protest-detail";
+import SignIn from "@/pages/sign-in";
 import NotFound from "@/pages/not-found";
+import { AuthProvider, useAuth } from "@/context/auth-context";
+import ProtectedRoute from "@/components/protected-route";
 
-function Router() {
+function AuthenticatedRouter() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <SignIn />;
+  }
+
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -17,13 +37,26 @@ function Router() {
   );
 }
 
+function Router() {
+  return (
+    <Switch>
+      <Route path="/sign-in" component={SignIn} />
+      <Route path="/*">
+        <AuthenticatedRouter />
+      </Route>
+    </Switch>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

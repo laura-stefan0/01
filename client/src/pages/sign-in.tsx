@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { useAuth } from '../context/auth-context';
 
 export default function SignIn() {
@@ -7,7 +7,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -17,7 +17,7 @@ export default function SignIn() {
 
     try {
       await signIn(username, password);
-      navigate('/');
+      setLocation('/');
     } catch (error) {
       setError('Invalid username or password');
     } finally {
@@ -29,7 +29,7 @@ export default function SignIn() {
     setIsLoading(true);
     try {
       await signIn('alex_rodriguez', 'password123');
-      navigate('/');
+      setLocation('/');
     } catch (error) {
       setError('Demo sign-in failed');
     } finally {

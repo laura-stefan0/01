@@ -12,6 +12,7 @@ import { useUser } from "@/hooks/use-user";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/auth-context";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
@@ -21,6 +22,15 @@ export default function Home() {
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
   const { data: user } = useUser();
+  
+  // Add a safe check for useAuth
+  let signOut = () => {};
+  try {
+    const auth = useAuth();
+    signOut = auth.signOut;
+  } catch (error) {
+    console.log("Auth context not available");
+  }
 
   const filters = [
     { id: "all", label: "All" },
@@ -298,7 +308,10 @@ export default function Home() {
       </Card>
 
       {/* Sign Out */}
-      <Button className="w-full bg-rally-red hover:bg-rally-red/90 text-white">
+      <Button 
+        onClick={signOut}
+        className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
+      >
         Sign Out
       </Button>
     </div>

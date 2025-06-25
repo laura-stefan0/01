@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { useAuth } from '../context/auth-context';
 
 interface ProtectedRouteProps {
@@ -8,6 +8,13 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  React.useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      setLocation('/sign-in');
+    }
+  }, [isAuthenticated, isLoading, setLocation]);
 
   if (isLoading) {
     return (
@@ -21,7 +28,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/sign-in" replace />;
+    return null;
   }
 
   return <>{children}</>;
