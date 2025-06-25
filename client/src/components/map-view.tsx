@@ -19,7 +19,10 @@ export function MapView() {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [mapCenter, setMapCenter] = useState<{lat: number, lng: number}>({ lat: 45.4642, lng: 9.1900 }); // Milan
   const [mapZoom, setMapZoom] = useState(12);
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastMousePos, setLastMousePos] = useState<{x: number, y: number} | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   // Debounce search query
   useEffect(() => {
@@ -43,6 +46,41 @@ export function MapView() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Map interaction handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setLastMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !lastMousePos) return;
+    
+    const deltaX = e.clientX - lastMousePos.x;
+    const deltaY = e.clientY - lastMousePos.y;
+    
+    // Convert pixel movement to lat/lng movement (simplified)
+    const latChange = -deltaY * 0.0001 * (mapZoom / 12);
+    const lngChange = deltaX * 0.0001 * (mapZoom / 12);
+    
+    setMapCenter(prev => ({
+      lat: prev.lat + latChange,
+      lng: prev.lng + lngChange
+    }));
+    
+    setLastMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setLastMousePos(null);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const zoomDelta = e.deltaY > 0 ? -1 : 1;
+    setMapZoom(prev => Math.max(1, Math.min(18, prev + zoomDelta)));
+  };
 
   const { data: protests = [], isLoading } = useProtests();
   const { data: filteredProtests = [], isLoading: filterLoading } = useProtestsByCategory(activeFilter);
@@ -121,7 +159,7 @@ export function MapView() {
         },
         (error) => {
           console.error("Error getting location:", error);
-          alert("Unable to get your location. Please enable location services.");
+          alert("Unable to get your location. Please enable location services and try again.");
         },
         {
           enableHighAccuracy: true,
@@ -134,64 +172,110 @@ export function MapView() {
     }
   };
 
+  // Generate map tiles based on zoom and center
+  const generateMapTiles = () => {
+    const tileSize = 256;
+    const tilesX = Math.ceil(window.innerWidth / tileSize) + 2;
+    const tilesY = Math.ceil(window.innerHeight / tileSize) + 2;
+    
+    return Array.from({ length: tilesX * tilesY }, (_, i) => {
+      const x = i % tilesX;
+      const y = Math.floor(i / tilesX);
+      return { x, y, i };
+    });
+  };
+
   return (
     <div className="relative h-screen bg-gray-100">
+      {/* Header Space */}
+      <div className="h-16 bg-white border-b border-gray-100"></div>
+      
       {/* Map Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-blue-100">
-        {/* Map placeholder with interactive elements */}
-        <div className="w-full h-full relative overflow-hidden">
-          {/* Simulated map tiles */}
-          <div className="absolute inset-0 grid grid-cols-4 grid-rows-6 gap-px">
-            {Array.from({ length: 24 }, (_, i) => (
-              <div key={i} className="bg-blue-50 border border-blue-100" />
+      <div className="absolute inset-0 top-16 bg-gray-200 overflow-hidden">
+        <div 
+          ref={mapRef}
+          className="w-full h-full relative cursor-grab select-none"
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onWheel={handleWheel}
+        >
+          {/* Simulated map tiles with street map appearance */}
+          <div className="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-px">
+            {generateMapTiles().slice(0, 64).map((tile) => (
+              <div 
+                key={tile.i} 
+                className="bg-gradient-to-br from-green-50 to-blue-50 border border-gray-200 relative"
+                style={{
+                  transform: `translate(${(tile.x - 4) * (mapZoom / 8)}px, ${(tile.y - 4) * (mapZoom / 8)}px)`,
+                }}
+              >
+                {/* Street lines */}
+                {tile.i % 3 === 0 && (
+                  <div className="absolute inset-0">
+                    <div className="absolute top-1/2 left-0 right-0 h-px bg-gray-300"></div>
+                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-300"></div>
+                  </div>
+                )}
+                {/* Buildings */}
+                {tile.i % 5 === 0 && (
+                  <div className="absolute top-2 left-2 w-3 h-3 bg-gray-400 rounded-sm"></div>
+                )}
+                {tile.i % 7 === 0 && (
+                  <div className="absolute bottom-2 right-2 w-2 h-2 bg-gray-500 rounded-sm"></div>
+                )}
+              </div>
             ))}
           </div>
           
           {/* Protest markers */}
-          {displayedProtests.slice(0, 8).map((protest, index) => (
-            <div
-              key={protest.id}
-              className={`absolute w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-110 transition-transform ${getCategoryColor(protest.category)}`}
-              style={{
-                left: `${15 + (index * 10) + (index % 3) * 5}%`,
-                top: `${20 + (index % 4) * 15}%`,
-                zIndex: 10
-              }}
-              title={protest.title}
-            />
-          ))}
+          {displayedProtests.slice(0, 12).map((protest, index) => {
+            const markerLat = 45.4642 + (index * 0.01) - 0.05;
+            const markerLng = 9.1900 + ((index % 4) * 0.015) - 0.02;
+            
+            // Calculate position relative to map center
+            const latDiff = markerLat - mapCenter.lat;
+            const lngDiff = markerLng - mapCenter.lng;
+            const pixelX = 50 + (lngDiff * 10000 * mapZoom / 12);
+            const pixelY = 50 - (latDiff * 10000 * mapZoom / 12);
+            
+            return (
+              <div
+                key={protest.id}
+                className={`absolute w-8 h-8 rounded-full border-3 border-white shadow-lg cursor-pointer hover:scale-110 transition-transform ${getCategoryColor(protest.category)} flex items-center justify-center`}
+                style={{
+                  left: `${pixelX}%`,
+                  top: `${pixelY}%`,
+                  zIndex: 10
+                }}
+                title={protest.title}
+              >
+                <MapPin className="w-4 h-4 text-white" />
+              </div>
+            );
+          })}
           
           {/* User location marker */}
           {userLocation && (
             <div
-              className="absolute w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg animate-pulse"
+              className="absolute w-6 h-6 bg-blue-600 rounded-full border-3 border-white shadow-lg animate-pulse flex items-center justify-center"
               style={{
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%)',
                 zIndex: 15
               }}
-            />
-          )}
-          
-          {/* Milan location marker (default) */}
-          {!userLocation && (
-            <div
-              className="absolute w-3 h-3 bg-gray-600 rounded-full border-2 border-white shadow-md"
-              style={{
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 15
-              }}
-              title="Milan, Italy"
-            />
+            >
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+            </div>
           )}
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="absolute top-4 left-4 right-4 z-20">
+      <div className="absolute top-20 left-4 right-4 z-20">
         <div className="relative">
           <Input
             type="text"
@@ -205,7 +289,7 @@ export function MapView() {
       </div>
 
       {/* Filter Tags */}
-      <div className="absolute top-16 left-4 right-4 z-20">
+      <div className="absolute top-32 left-4 right-4 z-20">
         <div className="flex space-x-2 overflow-x-auto pb-1">
           {mainFilters.map((filter) => (
             <Badge
@@ -294,7 +378,7 @@ export function MapView() {
       </div>
 
       {/* Map Controls */}
-      <div className="absolute right-4 top-32 z-20 flex flex-col space-y-2">
+      <div className="absolute right-4 top-48 z-20 flex flex-col space-y-2">
         {/* GPS Button */}
         <Button
           size="sm"
@@ -323,6 +407,11 @@ export function MapView() {
           >
             <Minus className="w-4 h-4" />
           </Button>
+        </div>
+        
+        {/* Zoom Level Indicator */}
+        <div className="bg-white/95 backdrop-blur-sm rounded-md shadow-lg px-2 py-1 text-xs text-gray-600">
+          {mapZoom}x
         </div>
       </div>
 

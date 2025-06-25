@@ -39,7 +39,16 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     return (
       <Card className="min-w-64 flex-shrink-0 hover:shadow-lg transition-shadow cursor-pointer border-0 shadow-md">
         <CardContent className="p-0">
-          <div className="relative h-28 bg-gradient-to-r from-activist-blue to-rally-red rounded-t-lg">
+          <div className="relative h-28 bg-gradient-to-r from-activist-blue to-rally-red rounded-t-lg overflow-hidden">
+            <img 
+              src={protest.imageUrl}
+              alt={protest.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
             <div className="absolute inset-0 bg-black/20 rounded-t-lg" />
             <div className="absolute top-2 left-2">
               <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
@@ -70,11 +79,18 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   return (
     <Card className="overflow-hidden">
       <div className="flex">
-        <img 
-          src={protest.imageUrl}
-          alt={protest.title}
-          className="w-20 h-20 object-cover flex-shrink-0"
-        />
+        <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+          <img 
+            src={protest.imageUrl}
+            alt={protest.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              target.parentElement!.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-activist-blue to-rally-red flex items-center justify-center text-white text-xs font-bold">' + protest.category.charAt(0) + '</div>';
+            }}
+          />
+        </div>
         <CardContent className="p-3 flex-1">
           <div className="flex items-center justify-between mb-1">
             <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
