@@ -1,5 +1,5 @@
 import express from 'express';
-import { supabase } from '../../db/index';
+import { supabase, supabaseAdmin } from '../../db/index';
 import bcrypt from 'bcryptjs';
 
 const router = express.Router();

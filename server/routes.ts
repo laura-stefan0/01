@@ -78,39 +78,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // User registration endpoint - simplified for demo
-  app.post("/api/users", async (req, res) => {
-    try {
-      const { username, email, password } = req.body;
-
-      if (!username || !email || !password) {
-        return res.status(400).json({ message: "Username, email, and password are required" });
-      }
-
-      console.log("Creating demo user for:", email);
-      
-      // For demo purposes, create a simple user record
-      const newUser = {
-        id: `demo-${Date.now()}`,
-        username,
-        email,
-        name: req.body.name || username
-      };
-
-      console.log("Demo user created:", newUser.id);
-
-      res.status(201).json({ 
-        message: 'User created successfully', 
-        user: newUser 
-      });
-    } catch (error) {
-      console.error("Failed to create user:", error);
-      res.status(500).json({ 
-        message: "Failed to create user", 
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  });
+  
 
   // User sign-in endpoint - simplified for demo
   app.post("/api/auth/signin", async (req, res) => {
