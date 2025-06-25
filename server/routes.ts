@@ -1,8 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { registerUserRoutes } from "./routes/users";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register user routes
+  registerUserRoutes(app);
   // Get all protests
   app.get("/api/protests", async (req, res) => {
     try {
@@ -62,19 +65,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get current user profile
-  app.get("/api/user/profile", async (req, res) => {
-    try {
-      // For now, return the sample user. In a real app, this would be based on session/auth
-      const user = await storage.getUser(1);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      res.json(user);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch user profile" });
-    }
-  });
+
 
   // Search protests
   app.get("/api/protests/search", async (req, res) => {
