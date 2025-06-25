@@ -194,13 +194,22 @@ export class MemStorage implements IStorage {
     // Seed with sample user
     const sampleUser: Omit<User, 'id'> = {
       username: "alex_rodriguez",
-      password: "password123",
+      password_hash: "$2b$10$hashedpassword123",
       email: "alex@example.com",
       name: "Alex Rodriguez",
       notifications: true,
       location: true,
       emails: false,
       language: "en",
+      created_at: new Date(),
+      role: null,
+      bio: null,
+      avatar_url: null,
+      is_verified: false,
+      can_create_events: false,
+      joined_via: null,
+      last_login: null,
+      preferences: null,
     };
 
     const userId = this.currentUserId++;
@@ -220,12 +229,24 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
     const user: User = { 
-      ...insertUser, 
       id,
+      username: insertUser.username,
+      email: insertUser.email,
+      password_hash: insertUser.password_hash,
+      name: insertUser.name || insertUser.username,
       notifications: true,
       location: true,
       emails: false,
       language: "en",
+      created_at: new Date(),
+      role: null,
+      bio: null,
+      avatar_url: null,
+      is_verified: false,
+      can_create_events: false,
+      joined_via: null,
+      last_login: null,
+      preferences: null,
     };
     this.users.set(id, user);
     return user;
@@ -270,4 +291,5 @@ export class MemStorage implements IStorage {
 
 import { DatabaseStorage } from "./db-storage";
 
-export const storage = new DatabaseStorage();
+// Use in-memory storage for development since database tables don't exist yet
+export const storage = new MemStorage();
