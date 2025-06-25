@@ -15,9 +15,22 @@ import { Label } from "@/components/ui/label";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
+
+  // Filter options
+  const filters = [
+    { id: "all", label: "All" },
+    { id: "climate", label: "Climate" },
+    { id: "pride", label: "Pride" },
+    { id: "workers", label: "Workers" },
+    { id: "justice", label: "Justice" },
+    { id: "environment", label: "Environment" },
+    { id: "education", label: "Education" }
+  ];
 
   const renderHomeContent = () => (
     <div>
@@ -86,166 +99,65 @@ export default function Home() {
   );
 
   const renderResourcesContent = () => (
-    <div className="px-4 py-4 space-y-4">
-      {/* Legal Rights Section */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3 flex items-center">
-            <div className="w-5 h-5 mr-2 text-activist-blue">⚖️</div>
-            Legal Rights
-          </h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>You have the right to peaceful assembly and free speech</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Police cannot search you without probable cause</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>You have the right to remain silent if arrested</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Document any violations of your rights</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* Safety Tips Section */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3 flex items-center">
-            <div className="w-5 h-5 mr-2 text-movement-green">🛡️</div>
-            Safety Tips
-          </h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Stay hydrated and bring water</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Travel in groups when possible</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Have emergency contacts readily available</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Know your exit strategies</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* FAQ Section */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3 flex items-center">
-            <div className="w-5 h-5 mr-2 text-rally-red">❓</div>
-            Frequently Asked Questions
-          </h3>
-          <div className="space-y-3">
-            <div>
-              <h4 className="font-medium text-dark-slate text-sm">Do I need permits to protest?</h4>
-              <p className="text-sm text-gray-600 mt-1">Check with local authorities about permit requirements for organized events.</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-dark-slate text-sm">What should I bring to a protest?</h4>
-              <p className="text-sm text-gray-600 mt-1">Water, snacks, comfortable shoes, emergency contacts, and any necessary medications.</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-dark-slate text-sm">How can I stay safe during protests?</h4>
-              <p className="text-sm text-gray-600 mt-1">Stay aware of your surroundings, follow organizer guidelines, and have an exit plan.</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Emergency Contacts */}
-      <Card className="bg-rally-red text-white">
-        <CardContent className="p-4">
-          <h3 className="font-semibold mb-2">Emergency Contacts</h3>
-          <div className="text-sm space-y-1">
-            <p>Emergency: 911</p>
-            <p>Legal Aid Hotline: 1-800-XXX-XXXX</p>
-            <p>Protest Safety Line: 1-800-XXX-XXXX</p>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="px-4 py-4">
+      <h2 className="text-lg font-semibold text-dark-slate mb-3">Resources</h2>
+      <p className="text-gray-600">Resources content coming soon...</p>
     </div>
   );
 
   const renderCommunityContent = () => (
     <div className="px-4 py-4">
-      <div className="text-center py-16">
-        <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-semibold text-dark-slate mb-2">Community Features</h3>
-        <p className="text-gray-600 mb-4">Connect with like-minded activists and organizers in your area.</p>
-        <p className="text-sm text-gray-500">Coming Soon</p>
-      </div>
+      <h2 className="text-lg font-semibold text-dark-slate mb-3">Community</h2>
+      <p className="text-gray-600">Community content coming soon...</p>
     </div>
   );
 
   const renderProfileContent = () => (
-    <div className="px-4 py-4 space-y-4">
-      {/* Profile Info */}
+    <div className="space-y-4">
+      {/* Profile Header */}
       <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center mb-4">
-            <div className="w-16 h-16 bg-activist-blue rounded-full flex items-center justify-center text-white font-semibold text-xl">
-              A
-            </div>
-            <div className="ml-4">
-              <h3 className="font-semibold text-dark-slate">Alex Rodriguez</h3>
-              <p className="text-sm text-gray-600">alex@example.com</p>
-            </div>
+        <CardContent className="p-4 text-center">
+          <div className="w-20 h-20 bg-activist-blue rounded-full mx-auto mb-3 flex items-center justify-center">
+            <Users className="w-8 h-8 text-white" />
           </div>
-          <Button variant="outline" className="w-full">
-            Edit Profile
-          </Button>
+          <h2 className="text-xl font-semibold text-dark-slate">Activist Name</h2>
+          <p className="text-gray-600">Member since 2024</p>
         </CardContent>
       </Card>
 
-      {/* Settings */}
+      {/* Activity Stats */}
       <Card>
-        <CardContent className="p-0">
-          <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-dark-slate">Settings</h3>
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-dark-slate mb-3">Your Activity</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-activist-blue">12</div>
+              <div className="text-sm text-gray-600">Protests Attended</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-rally-red">5</div>
+              <div className="text-sm text-gray-600">Events Organized</div>
+            </div>
           </div>
-          <div className="divide-y divide-gray-100">
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <Bell className="w-5 h-5 mr-3 text-gray-400" />
-                <Label htmlFor="notifications">Notifications</Label>
-              </div>
-              <Switch id="notifications" defaultChecked />
+        </CardContent>
+      </Card>
+
+      {/* Preferences */}
+      <Card>
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-dark-slate mb-3">Preferences</h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="notifications">Push Notifications</Label>
+              <Switch id="notifications" />
             </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <MapPin className="w-5 h-5 mr-3 text-gray-400" />
-                <Label htmlFor="location">Location Services</Label>
-              </div>
-              <Switch id="location" defaultChecked />
+            <div className="flex items-center justify-between">
+              <Label htmlFor="location">Share Location</Label>
+              <Switch id="location" />
             </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">📧</div>
-                <Label htmlFor="emails">Email Updates</Label>
-              </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="emails">Email Updates</Label>
               <Switch id="emails" />
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">🌙</div>
-                <Label htmlFor="darkmode">Dark Mode</Label>
-              </div>
-              <Switch id="darkmode" />
             </div>
           </div>
         </CardContent>
