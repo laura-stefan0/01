@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell, Users, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProtestCard } from "@/components/protest-card";
 import { MapView } from "@/components/map-view";
@@ -23,13 +23,6 @@ export default function Home() {
       <section className="px-4 py-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold text-dark-slate">Featured Protests</h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-activist-blue font-medium"
-          >
-            View All
-          </Button>
         </div>
         
         {/* Horizontal Scrolling Featured Cards - Narrower */}
