@@ -1,5 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
+import { supabase, supabaseAdmin } from '../../db/index';
 
 // Supabase configuration
 const SUPABASE_URL = 'https://mfzlajgnahbhwswpqzkj.supabase.co';
