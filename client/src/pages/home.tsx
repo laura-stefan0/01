@@ -29,73 +29,68 @@ export default function Home() {
   ];
 
   const renderHomeContent = () => (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
-      {/* Featured Protests Section */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-dark-slate">Featured Protests</h3>
-          </div>
-          <div className="p-4">
-            {/* Horizontal Scrolling Featured Cards */}
-            <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {featuredLoading ? (
-                <>
-                  <Skeleton className="w-5/6 h-56 flex-shrink-0" />
-                  <Skeleton className="w-5/6 h-56 flex-shrink-0" />
-                  <Skeleton className="w-5/6 h-56 flex-shrink-0" />
-                </>
-              ) : (
-                featuredProtests.map((protest) => (
-                  <div key={protest.id} className="w-5/6 flex-shrink-0">
-                    <ProtestCard protest={protest} variant="featured" />
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="px-4 py-4 max-w-md mx-auto">
+      {/* Featured Section */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-dark-slate">Featured Protests</h2>
+        </div>
 
-      {/* Nearby Protests Section */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-dark-slate">Nearby Protests</h3>
-          </div>
-          <div className="p-4">
-            {/* Vertical List of Protest Cards */}
-            <div className="space-y-3">
-              {nearbyLoading ? (
-                <>
-                  <Skeleton className="h-20 w-full" />
-                  <Skeleton className="h-20 w-full" />
-                  <Skeleton className="h-20 w-full" />
-                </>
-              ) : nearbyProtests.length > 0 ? (
-                nearbyProtests.map((protest) => (
-                  <ProtestCard key={protest.id} protest={protest} />
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">No protests found</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Horizontal Scrolling Featured Cards - Wider */}
+        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {featuredLoading ? (
+            <>
+              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
+              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
+              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
+            </>
+          ) : (
+            featuredProtests.map((protest) => (
+              <div key={protest.id} className="w-5/6 flex-shrink-0">
+                <ProtestCard protest={protest} variant="featured" />
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
-      {/* Support the Movement Section */}
-      <Card className="bg-gradient-to-r from-activist-blue to-rally-red">
-        <CardContent className="p-4 text-white">
-          <h3 className="font-semibold mb-2">Support the Movement</h3>
-          <p className="text-sm mb-3 opacity-90">Your donation helps support activists and organizations fighting for change.</p>
-          <Button className="w-full bg-white text-activist-blue hover:bg-gray-100">
-            Donate Now
-          </Button>
-        </CardContent>
-      </Card>
+      {/* Nearby Protests */}
+      <section className="mb-6">
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby Protests</h2>
+
+        {/* Vertical List of Protest Cards */}
+        <div className="space-y-3">
+          {nearbyLoading ? (
+            <>
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+            </>
+          ) : nearbyProtests.length > 0 ? (
+            nearbyProtests.map((protest) => (
+              <ProtestCard key={protest.id} protest={protest} />
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No protests found</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Donations Section */}
+      <section>
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Support the Movement</h2>
+        <Card className="bg-gradient-to-r from-activist-blue to-rally-red">
+          <CardContent className="p-4 text-white">
+            <h3 className="font-semibold mb-2">Make a Difference</h3>
+            <p className="text-sm mb-3 opacity-90">Your donation helps support activists and organizations fighting for change.</p>
+            <Button className="w-full bg-white text-activist-blue hover:bg-gray-100">
+              Donate Now
+            </Button>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
 
@@ -314,7 +309,7 @@ export default function Home() {
         return renderHomeContent();
       case "map":
         return (
-          <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
+          <div className="px-4 py-4 max-w-md mx-auto">
             <section className="mb-6">
               <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
 
