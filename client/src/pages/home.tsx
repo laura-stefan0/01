@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Bell, Users, MapPin } from "lucide-react";
+import { Bell, Users, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { ProtestCard } from "@/components/protest-card";
 import { MapView } from "@/components/map-view";
 import { BottomNavigation } from "@/components/bottom-navigation";
@@ -382,7 +384,6 @@ export default function Home() {
               </div>
             </>
           )}
-        </div>
         </div>
       </header>
 
