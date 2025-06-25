@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Search, Bell, Users, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,9 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
+  const [activeTimeFilter, setActiveTimeFilter] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Debounce search query
   useEffect(() => {
@@ -27,6 +30,20 @@ export default function Home() {
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowMoreFilters(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
@@ -46,11 +63,27 @@ export default function Home() {
 
   const isLoading = featuredLoading || nearbyLoading || filterLoading || searchLoading;
 
-  const filters = [
-    { id: "all", label: "All" },
-    { id: "pride", label: "Pride" },
-    { id: "climate", label: "Climate" },
-    { id: "workers", label: "Workers" },
+  const mainFilters = [
+    { id: "all", label: "All", color: "" },
+    { id: "environment", label: "Environment", color: "#4CAF50" },
+    { id: "lgbtq", label: "LGBTQ+", color: "#E91E63" },
+    { id: "womens-rights", label: "Women's Rights", color: "#D81B60" },
+    { id: "labor", label: "Labor", color: "#FF9800" },
+    { id: "racial-social-justice", label: "Racial & Social Justice", color: "#9C27B0" },
+  ];
+
+  const additionalFilters = [
+    { id: "civil-human-rights", label: "Civil & Human Rights", color: "#2196F3" },
+    { id: "healthcare-education", label: "Healthcare & Education", color: "#009688" },
+    { id: "peace-anti-war", label: "Peace & Anti-War", color: "#03A9F4" },
+    { id: "transparency-anti-corruption", label: "Transparency & Anti-Corruption", color: "#607D8B" },
+  ];
+
+  const timeFilters = [
+    { id: "today", label: "Today" },
+    { id: "tomorrow", label: "Tomorrow" },
+    { id: "this-week", label: "This week" },
+    { id: "this-month", label: "This month" },
   ];
 
   const renderHomeContent = () => (
@@ -59,7 +92,12 @@ export default function Home() {
       <section className="px-4 py-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold text-dark-slate">Featured Protests</h2>
-          <Button variant="ghost" size="sm" className="text-activist-blue font-medium">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-activist-blue font-medium"
+            onClick={() => setActiveFilter("all")}
+          >
             View All
           </Button>
         </div>
@@ -82,7 +120,7 @@ export default function Home() {
       {/* Nearby Protests */}
       <section className="px-4 py-4">
         <h2 className="text-lg font-semibold text-dark-slate mb-3">
-          {debouncedSearch ? "Search Results" : activeFilter !== "all" ? `${activeFilter} Protests` : "Nearby Protests"}
+          {debouncedSearch ? "Search Results" : activeFilter !== "all" ? `${mainFilters.concat(additionalFilters).find(f => f.id === activeFilter)?.label || activeFilter} Protests` : "Nearby Protests"}
         </h2>
         
         {/* Vertical List of Protest Cards */}
@@ -381,20 +419,88 @@ export default function Home() {
               
               {/* Filter Tags */}
               <div className="flex space-x-2 mt-3 overflow-x-auto pb-1">
-                {filters.map((filter) => (
+                {mainFilters.map((filter) => (
                   <Badge
                     key={filter.id}
                     variant={activeFilter === filter.id ? "default" : "secondary"}
                     className={`cursor-pointer whitespace-nowrap ${
                       activeFilter === filter.id
-                        ? "bg-activist-blue text-white hover:bg-activist-blue/90"
+                        ? filter.id === "all" 
+                          ? "bg-activist-blue text-white hover:bg-activist-blue/90"
+                          : `text-white hover:opacity-90`
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
+                    style={activeFilter === filter.id && filter.id !== "all" ? { backgroundColor: filter.color } : {}}
                     onClick={() => setActiveFilter(filter.id)}
                   >
                     {filter.label}
                   </Badge>
                 ))}
+                
+                {/* More Filters Dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <Badge
+                    variant="secondary"
+                    className="cursor-pointer whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    onClick={() => setShowMoreFilters(!showMoreFilters)}
+                  >
+                    More filters
+                  </Badge>
+                  
+                  {showMoreFilters && (
+                    <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48">
+                      <div className="p-3">
+                        <h4 className="font-medium text-sm text-gray-700 mb-2">Categories</h4>
+                        <div className="space-y-2">
+                          {additionalFilters.map((filter) => (
+                            <button
+                              key={filter.id}
+                              className={`w-full text-left px-2 py-1 rounded text-sm ${
+                                activeFilter === filter.id
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-600 hover:bg-gray-50"
+                              }`}
+                              onClick={() => {
+                                setActiveFilter(filter.id);
+                                setShowMoreFilters(false);
+                              }}
+                            >
+                              <div className="flex items-center">
+                                <div 
+                                  className="w-3 h-3 rounded-full mr-2"
+                                  style={{ backgroundColor: filter.color }}
+                                ></div>
+                                {filter.label}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        
+                        <hr className="my-3" />
+                        
+                        <h4 className="font-medium text-sm text-gray-700 mb-2">Time</h4>
+                        <div className="space-y-2">
+                          {timeFilters.map((filter) => (
+                            <button
+                              key={filter.id}
+                              className={`w-full text-left px-2 py-1 rounded text-sm ${
+                                activeTimeFilter === filter.id
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-600 hover:bg-gray-50"
+                              }`}
+                              onClick={() => {
+                                setActiveTimeFilter(activeTimeFilter === filter.id ? "" : filter.id);
+                                setShowMoreFilters(false);
+                              }}
+                            >
+                              {filter.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </>
           )}

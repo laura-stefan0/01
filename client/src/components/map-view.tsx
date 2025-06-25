@@ -11,15 +11,25 @@ export function MapView() {
 
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
-      case "climate":
       case "environment":
-        return "bg-movement-green";
-      case "pride":
-      case "justice":
-        return "bg-rally-red";
-      case "workers":
-      case "education":
-        return "bg-activist-blue";
+        return "bg-green-500";
+      case "lgbtq+":
+      case "lgbt+ & equality":
+        return "bg-pink-500";
+      case "women's rights":
+        return "bg-pink-600";
+      case "labor":
+        return "bg-orange-500";
+      case "racial & social justice":
+        return "bg-purple-600";
+      case "civil & human rights":
+        return "bg-blue-500";
+      case "healthcare & education":
+        return "bg-teal-600";
+      case "peace & anti-war":
+        return "bg-blue-400";
+      case "transparency & anti-corruption":
+        return "bg-gray-500";
       default:
         return "bg-activist-blue";
     }

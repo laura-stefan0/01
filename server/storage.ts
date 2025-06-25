@@ -31,7 +31,7 @@ export class MemStorage implements IStorage {
       {
         title: "Global Climate Strike",
         description: "Join thousands demanding immediate climate action",
-        category: "Climate",
+        category: "Environment",
         location: "City Hall Plaza",
         address: "100 City Hall Plaza, Downtown",
         latitude: "40.7128",
@@ -46,7 +46,7 @@ export class MemStorage implements IStorage {
       {
         title: "Pride Rights March",
         description: "Celebrating equality and fighting discrimination",
-        category: "Pride",
+        category: "LGBTQ+",
         location: "Main Street",
         address: "Main Street & 1st Ave",
         latitude: "40.7589",
@@ -61,7 +61,7 @@ export class MemStorage implements IStorage {
       {
         title: "Fair Wage Strike",
         description: "Workers demanding fair compensation and benefits",
-        category: "Workers",
+        category: "Labor",
         location: "Downtown Square",
         address: "Downtown Square, Business District",
         latitude: "40.7505",
