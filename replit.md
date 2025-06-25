@@ -36,7 +36,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Categories**: Pride, Climate, Workers, Justice, Environment, Education
 
 ### Frontend Components
-- **ProtestCard**: Reusable component with featured and compact variants
+- **ProtestCard**: Reusable component with featured and compact variants (now clickable)
+- **ProtestDetail**: Full-page event details with share functionality and action buttons
 - **MapView**: Interactive map using Leaflet with custom category-based markers
 - **BottomNavigation**: Mobile-optimized tab navigation
 - **UI Components**: Complete shadcn/ui component library implementation
@@ -45,6 +46,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - `GET /api/protests` - All protests
 - `GET /api/protests/featured` - Featured protests
 - `GET /api/protests/nearby` - Location-based protests
+- `GET /api/protests/:id` - Single protest details by ID
 - `GET /api/protests/category/:category` - Category filtering
 - `GET /api/protests/search?q=query` - Text search functionality
 
@@ -96,8 +98,11 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **NODE_ENV**: Environment flag (development/production)
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
-## Changelog
-- June 25, 2025. Initial setup
+## Recent Changes
+- January 2025: Added clickable protest events with detailed view pages
+- January 2025: Implemented back button navigation and native sharing functionality
+- January 2025: Added "I'm Going" and "Get Directions" action buttons
+- June 25, 2025: Initial setup
 
 ## User Preferences
 
