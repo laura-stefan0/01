@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -358,14 +357,16 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Floating Map Button */}
-            <Button 
-              className="fixed bottom-24 right-4 bg-activist-blue hover:bg-activist-blue/90 text-white rounded-full shadow-lg z-50"
-              size="lg"
-            >
-              <MapPin className="w-5 h-5 mr-2" />
-              View on Map
-            </Button>
+            {/* View on Map Button */}
+            <div className="mt-6 mb-4">
+              <Button 
+                className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+                size="lg"
+              >
+                <MapPin className="w-5 h-5 mr-2" />
+                View on Map
+              </Button>
+            </div>
           </div>
         );
       case "resources":
