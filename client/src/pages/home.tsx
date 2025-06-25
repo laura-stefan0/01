@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ProtestCard } from "@/components/protest-card";
-import { MapView } from "@/components/map-view";
+
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -300,7 +300,57 @@ export default function Home() {
       case "home":
         return renderHomeContent();
       case "map":
-        return <MapView />;
+        return (
+          <div>
+            <section className="px-4 py-4">
+              <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
+              
+              <div className="space-y-3">
+                {nearbyLoading ? (
+                  <>
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                  </>
+                ) : [...featuredProtests, ...nearbyProtests].length > 0 ? (
+                  [...featuredProtests, ...nearbyProtests]
+                    .filter((protest) => {
+                      if (searchQuery) {
+                        const query = searchQuery.toLowerCase();
+                        return (
+                          protest.title.toLowerCase().includes(query) ||
+                          protest.description.toLowerCase().includes(query) ||
+                          protest.category.toLowerCase().includes(query) ||
+                          protest.location.toLowerCase().includes(query)
+                        );
+                      }
+                      return true;
+                    })
+                    .filter((protest) => {
+                      if (activeFilter === "today") {
+                        return protest.date === "Today";
+                      } else if (activeFilter === "week") {
+                        return ["Today", "Tomorrow"].includes(protest.date) || protest.date.startsWith("Next");
+                      } else if (activeFilter === "popular") {
+                        return protest.attendees > 500;
+                      }
+                      return true;
+                    })
+                    .map((protest) => (
+                      <ProtestCard key={protest.id} protest={protest} />
+                    ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No protests found</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        );
       case "resources":
         return renderResourcesContent();
       case "community":
@@ -316,6 +366,8 @@ export default function Home() {
     switch (activeTab) {
       case "home":
         return "Corteo";
+      case "map":
+        return "Search";
       case "resources":
         return "Resources";
       case "community":
@@ -338,8 +390,7 @@ export default function Home() {
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">
       {/* Header */}
-      {activeTab !== "map" && (
-        <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-bold text-dark-slate">{getHeaderTitle()}</h1>
@@ -351,8 +402,8 @@ export default function Home() {
             
           </div>
 
-          {/* Search Bar - Only show on home tab */}
-          {activeTab === "home" && (
+          {/* Search Bar - Show on home and map tabs */}
+          {(activeTab === "home" || activeTab === "map") && (
             <>
               <div className="relative">
                 <Input
@@ -386,20 +437,14 @@ export default function Home() {
           )}
         </div>
       </header>
-      )}
 
       {/* Main Content */}
-      <main className={`flex-1 ${activeTab === "map" ? "pb-0 overflow-hidden" : "pb-20"}`}>
+      <main className="flex-1 pb-20">
         {renderContent()}
       </main>
 
       {/* Bottom Navigation */}
-      {activeTab !== "map" && <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />}
-      {activeTab === "map" && (
-        <div className="absolute bottom-0 left-0 right-0 z-50">
-          <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
-      )}
+      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }

@@ -26,11 +26,42 @@ export class MemStorage implements IStorage {
   }
 
   private seedData() {
+    // Date formatting functions
+    const formatDate = (date: Date) => {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      
+      const diffTime = date.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      // Check if it's today
+      if (date.toDateString() === today.toDateString()) {
+        return "Today";
+      }
+      
+      // Check if it's tomorrow
+      if (date.toDateString() === tomorrow.toDateString()) {
+        return "Tomorrow";
+      }
+      
+      // Check if it's within the next week
+      if (diffDays > 0 && diffDays <= 7) {
+        const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        return `Next ${dayNames[date.getDay()]}`;
+      }
+      
+      // For dates over a week away
+      const monthNames = ["January", "February", "March", "April", "May", "June", 
+                         "July", "August", "September", "October", "November", "December"];
+      return `on ${monthNames[date.getMonth()]} ${date.getDate()}`;
+    };
+
     // Generate random dates for testing
     const getRandomDate = () => {
       const today = new Date();
       const futureDate = new Date(today.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000); // Next 30 days
-      return futureDate.toISOString().split('T')[0];
+      return formatDate(futureDate);
     };
 
     const getRandomTime = () => {
