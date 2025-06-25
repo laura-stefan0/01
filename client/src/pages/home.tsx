@@ -28,17 +28,17 @@ export default function Home() {
           <h2 className="text-lg font-semibold text-dark-slate">Featured Protests</h2>
         </div>
 
-        {/* Horizontal Scrolling Featured Cards - Narrower */}
-        <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Horizontal Scrolling Featured Cards - Wider */}
+        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {featuredLoading ? (
             <>
-              <Skeleton className="w-3/4 h-56 flex-shrink-0" />
-              <Skeleton className="w-3/4 h-56 flex-shrink-0" />
-              <Skeleton className="w-3/4 h-56 flex-shrink-0" />
+              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
+              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
+              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
             </>
           ) : (
             featuredProtests.map((protest) => (
-              <div key={protest.id} className="w-3/4 flex-shrink-0">
+              <div key={protest.id} className="w-5/6 flex-shrink-0">
                 <ProtestCard protest={protest} variant="featured" />
               </div>
             ))
@@ -300,11 +300,7 @@ export default function Home() {
       case "home":
         return renderHomeContent();
       case "map":
-        return (
-          <div className="h-full">
-            <MapView />
-          </div>
-        );
+        return <MapView />;
       case "resources":
         return renderResourcesContent();
       case "community":
@@ -320,8 +316,6 @@ export default function Home() {
     switch (activeTab) {
       case "home":
         return "Corteo";
-      case "map":
-        return "Search";
       case "resources":
         return "Resources";
       case "community":
@@ -344,7 +338,8 @@ export default function Home() {
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">
       {/* Header */}
-      <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
+      {activeTab !== "map" && (
+        <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-bold text-dark-slate">{getHeaderTitle()}</h1>
@@ -353,11 +348,7 @@ export default function Home() {
                 <Bell className="w-5 h-5 text-gray-600" />
               </Button>
             )}
-            {activeTab === "map" && (
-              <Button variant="outline" size="sm" className="bg-activist-blue text-white hover:bg-activist-blue/90">
-                List View
-              </Button>
-            )}
+            
           </div>
 
           {/* Search Bar - Only show on home tab */}
@@ -395,9 +386,10 @@ export default function Home() {
           )}
         </div>
       </header>
+      )}
 
       {/* Main Content */}
-      <main className={`flex-1 ${activeTab === "map" ? "" : "pb-20"} ${activeTab === "map" ? "overflow-hidden" : ""}`}>
+      <main className={`flex-1 ${activeTab === "map" ? "pb-0 overflow-hidden" : "pb-20"}`}>
         {renderContent()}
       </main>
 

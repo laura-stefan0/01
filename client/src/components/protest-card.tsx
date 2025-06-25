@@ -37,7 +37,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
 
   if (variant === "featured") {
     return (
-      <Card className="min-w-0 w-3/4 flex-shrink-0 overflow-hidden h-64">
+      <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64">
         <img 
           src={protest.imageUrl} 
           alt={protest.title}

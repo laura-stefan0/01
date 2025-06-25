@@ -26,6 +26,21 @@ export class MemStorage implements IStorage {
   }
 
   private seedData() {
+    // Generate random dates for testing
+    const getRandomDate = () => {
+      const today = new Date();
+      const futureDate = new Date(today.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000); // Next 30 days
+      return futureDate.toISOString().split('T')[0];
+    };
+
+    const getRandomTime = () => {
+      const hours = Math.floor(Math.random() * 12) + 9; // 9 AM to 8 PM
+      const minutes = Math.random() < 0.5 ? "00" : "30";
+      const ampm = hours < 12 ? "AM" : "PM";
+      const displayHour = hours > 12 ? hours - 12 : hours;
+      return `${displayHour}:${minutes} ${ampm}`;
+    };
+
     // Seed with sample protests
     const sampleProtests: Omit<Protest, 'id'>[] = [
       {
@@ -36,8 +51,8 @@ export class MemStorage implements IStorage {
         address: "100 City Hall Plaza, Downtown",
         latitude: "40.7128",
         longitude: "-74.0060",
-        date: "Today",
-        time: "2:00 PM",
+        date: getRandomDate(),
+        time: getRandomTime(),
         attendees: 1250,
         distance: "0.8 mi",
         imageUrl: "https://images.unsplash.com/photo-1573152958734-1922c188fba3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
@@ -51,8 +66,8 @@ export class MemStorage implements IStorage {
         address: "Main Street & 1st Ave",
         latitude: "40.7589",
         longitude: "-73.9851",
-        date: "Tomorrow",
-        time: "11:00 AM",
+        date: getRandomDate(),
+        time: getRandomTime(),
         attendees: 892,
         distance: "1.2 mi",
         imageUrl: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
@@ -66,8 +81,8 @@ export class MemStorage implements IStorage {
         address: "Downtown Square, Business District",
         latitude: "40.7505",
         longitude: "-73.9934",
-        date: "Today",
-        time: "3:00 PM - 6:00 PM",
+        date: getRandomDate(),
+        time: getRandomTime(),
         attendees: 247,
         distance: "0.5 mi",
         imageUrl: "https://images.unsplash.com/photo-1569098644584-210bcd375b59?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
@@ -81,8 +96,8 @@ export class MemStorage implements IStorage {
         address: "Central Park South Entrance",
         latitude: "40.7829",
         longitude: "-73.9654",
-        date: "Tomorrow",
-        time: "1:00 PM",
+        date: getRandomDate(),
+        time: getRandomTime(),
         attendees: 156,
         distance: "1.1 mi",
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
@@ -96,8 +111,8 @@ export class MemStorage implements IStorage {
         address: "Riverside Park, West Side",
         latitude: "40.8021",
         longitude: "-73.9708",
-        date: "Saturday",
-        time: "9:00 AM",
+        date: getRandomDate(),
+        time: getRandomTime(),
         attendees: 89,
         distance: "2.1 mi",
         imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
@@ -111,8 +126,8 @@ export class MemStorage implements IStorage {
         address: "University Campus, Academic Quad",
         latitude: "40.8075",
         longitude: "-73.9626",
-        date: "Friday",
-        time: "4:00 PM",
+        date: getRandomDate(),
+        time: getRandomTime(),
         attendees: 312,
         distance: "0.9 mi",
         imageUrl: "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
