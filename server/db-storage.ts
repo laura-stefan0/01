@@ -1,7 +1,7 @@
-import { db } from "./db/index";
-import { users } from "./db/schema";
+import { db } from "../db/index";
+import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
-import type { User, InsertUser, Protest, InsertProtest } from "./db/schema";
+import type { User, InsertUser, Protest, InsertProtest } from "../db/schema";
 import { IStorage } from "./storage";
 
 export class DatabaseStorage implements IStorage {

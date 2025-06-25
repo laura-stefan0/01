@@ -1,11 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { registerUserRoutes } from "./routes/users";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Register user routes
-  registerUserRoutes(app);
   // Get all protests
   app.get("/api/protests", async (req, res) => {
     try {
