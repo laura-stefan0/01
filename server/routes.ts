@@ -1,17 +1,9 @@
-` tags.
-
-```text
-The code has been modified to include necessary imports for Supabase and bcrypt, ensuring compatibility with the intended functionalities.
-```
-
-```
-<replit_final_file>
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcryptjs";
 import { db } from "../db";
-import { users } from "../db/schema";
+import { users } from "../shared/schema";
 import { eq } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -73,8 +65,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch protest" });
     }
   });
-
-
 
   // Search protests
   app.get("/api/protests/search", async (req, res) => {
