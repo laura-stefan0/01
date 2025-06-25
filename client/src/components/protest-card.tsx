@@ -55,7 +55,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
             <p className="text-sm text-gray-600 mb-2 line-clamp-2">{protest.description}</p>
           </div>
           <div className="text-sm text-gray-500">
-            <p>{protest.date}, {protest.time}</p>
+            <p className="font-medium">{protest.date}, {protest.time}</p>
             <p className="truncate">{protest.location}</p>
           </div>
         </CardContent>
@@ -81,7 +81,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
           <div className="flex-1">
             <h3 className="font-medium text-dark-slate text-sm mb-1 line-clamp-1">{protest.title}</h3>
             <p className="text-xs text-gray-500 mb-1">{protest.location} • {protest.distance}</p>
-            <p className="text-xs text-gray-600">{protest.time}</p>
+            <p className="text-xs text-gray-600 font-medium">{protest.date}, {protest.time}</p>
           </div>
         </CardContent>
       </div>

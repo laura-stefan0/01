@@ -21,7 +21,7 @@ export default function Home() {
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
 
   const renderHomeContent = () => (
-    <div>
+    <div className="max-w-md mx-auto">
       {/* Featured Section */}
       <section className="px-4 py-4">
         <div className="flex items-center justify-between mb-3">
@@ -87,7 +87,7 @@ export default function Home() {
   );
 
   const renderResourcesContent = () => (
-    <div className="px-4 py-4 space-y-4">
+    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
       {/* Legal Rights Section */}
       <Card>
         <CardContent className="p-4">
@@ -183,7 +183,7 @@ export default function Home() {
   );
 
   const renderCommunityContent = () => (
-    <div className="px-4 py-4">
+    <div className="px-4 py-4 max-w-md mx-auto">
       <div className="text-center py-16">
         <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
         <h3 className="text-lg font-semibold text-dark-slate mb-2">Community Features</h3>
@@ -194,7 +194,7 @@ export default function Home() {
   );
 
   const renderProfileContent = () => (
-    <div className="px-4 py-4 space-y-4">
+    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
       {/* Profile Info */}
       <Card>
         <CardContent className="p-4">
@@ -301,7 +301,7 @@ export default function Home() {
         return renderHomeContent();
       case "map":
         return (
-          <div>
+          <div className="max-w-md mx-auto">
             <section className="px-4 py-4">
               <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
 
