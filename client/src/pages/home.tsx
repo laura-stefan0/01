@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Users, MapPin } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProtestCard } from "@/components/protest-card";
 import { MapView } from "@/components/map-view";

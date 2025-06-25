@@ -136,7 +136,7 @@ export class MemStorage implements IStorage {
       emails: false,
       language: "en",
     };
-    
+
     const userId = this.currentUserId++;
     this.users.set(userId, { ...sampleUser, id: userId });
   }

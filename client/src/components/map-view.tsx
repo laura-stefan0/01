@@ -17,6 +17,7 @@ export function MapView() {
   const [activeTimeFilter, setActiveTimeFilter] = useState("");
   const [listExpanded, setListExpanded] = useState(false);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [mapCenter, setMapCenter] = useState<{lat: number, lng: number}>({ lat: 45.4642, lng: 9.1900 }); // Milan
   const [mapZoom, setMapZoom] = useState(12);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -111,15 +112,25 @@ export function MapView() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
+          const newLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
-          });
+          };
+          setUserLocation(newLocation);
+          setMapCenter(newLocation);
         },
         (error) => {
           console.error("Error getting location:", error);
+          alert("Unable to get your location. Please enable location services.");
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
         }
       );
+    } else {
+      alert("Geolocation is not supported by this browser.");
     }
   };
 
@@ -153,13 +164,27 @@ export function MapView() {
           {/* User location marker */}
           {userLocation && (
             <div
-              className="absolute w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg"
+              className="absolute w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg animate-pulse"
               style={{
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%)',
                 zIndex: 15
               }}
+            />
+          )}
+          
+          {/* Milan location marker (default) */}
+          {!userLocation && (
+            <div
+              className="absolute w-3 h-3 bg-gray-600 rounded-full border-2 border-white shadow-md"
+              style={{
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 15
+              }}
+              title="Milan, Italy"
             />
           )}
         </div>
@@ -202,13 +227,14 @@ export function MapView() {
           
           {/* More Filters Dropdown */}
           <div className="relative" ref={dropdownRef}>
-            <Badge
-              variant="secondary"
-              className="cursor-pointer whitespace-nowrap bg-white/90 text-gray-700 hover:bg-white shadow-sm"
+            <Button
+              variant="outline"
+              size="sm"
+              className="whitespace-nowrap bg-white/90 text-gray-700 hover:bg-white border-gray-200 shadow-sm"
               onClick={() => setShowMoreFilters(!showMoreFilters)}
             >
               More filters
-            </Badge>
+            </Button>
             
             {showMoreFilters && (
               <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48">
