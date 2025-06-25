@@ -44,6 +44,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get single protest by ID
+  app.get("/api/protests/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const protestId = parseInt(id);
+      if (isNaN(protestId)) {
+        return res.status(400).json({ message: "Invalid protest ID" });
+      }
+      const protest = await storage.getProtestById(protestId);
+      if (!protest) {
+        return res.status(404).json({ message: "Protest not found" });
+      }
+      res.json(protest);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch protest" });
+    }
+  });
+
   // Search protests
   app.get("/api/protests/search", async (req, res) => {
     try {

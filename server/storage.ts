@@ -7,6 +7,7 @@ export interface IStorage {
   getAllProtests(): Promise<Protest[]>;
   getFeaturedProtests(): Promise<Protest[]>;
   getNearbyProtests(): Promise<Protest[]>;
+  getProtestById(id: number): Promise<Protest | undefined>;
   getProtestsByCategory(category: string): Promise<Protest[]>;
   searchProtests(query: string): Promise<Protest[]>;
 }
@@ -240,6 +241,10 @@ export class MemStorage implements IStorage {
 
   async getNearbyProtests(): Promise<Protest[]> {
     return Array.from(this.protests.values()).filter(protest => !protest.featured);
+  }
+
+  async getProtestById(id: number): Promise<Protest | undefined> {
+    return this.protests.get(id);
   }
 
   async getProtestsByCategory(category: string): Promise<Protest[]> {

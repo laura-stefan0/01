@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Protest } from "@shared/schema";
 import { MapPin } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface ProtestCardProps {
   protest: Protest;
@@ -9,6 +10,12 @@ interface ProtestCardProps {
 }
 
 export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) {
+  const [, setLocation] = useLocation();
+
+  const handleClick = () => {
+    setLocation(`/protest/${protest.id}`);
+  };
+
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case "environment":
@@ -37,7 +44,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
 
   if (variant === "featured") {
     return (
-      <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64">
+      <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64 cursor-pointer hover:shadow-lg transition-shadow" onClick={handleClick}>
         <img 
           src={protest.imageUrl} 
           alt={protest.title}
@@ -64,7 +71,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   }
 
   return (
-    <Card className="overflow-hidden h-20">
+    <Card className="overflow-hidden h-20 cursor-pointer hover:shadow-lg transition-shadow" onClick={handleClick}>
       <div className="flex h-full">
         <img 
           src={protest.imageUrl}
