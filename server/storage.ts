@@ -26,9 +26,9 @@ export class MemStorage implements IStorage {
   }
 
   private seedData() {
-    // Date formatting functions
+    // Date formatting functions - pretending today is June 25th
     const formatDate = (date: Date) => {
-      const today = new Date();
+      const today = new Date(2024, 5, 25); // June 25th, 2024 (month is 0-indexed)
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
       
@@ -57,11 +57,17 @@ export class MemStorage implements IStorage {
       return `on ${monthNames[date.getMonth()]} ${date.getDate()}`;
     };
 
-    // Generate random dates for testing
-    const getRandomDate = () => {
-      const today = new Date();
-      const futureDate = new Date(today.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000); // Next 30 days
-      return formatDate(futureDate);
+    // Generate specific dates for testing
+    const getSpecificDates = () => {
+      const today = new Date(2024, 5, 25); // June 25th, 2024
+      return [
+        formatDate(today), // Today
+        formatDate(new Date(2024, 5, 26)), // Tomorrow
+        formatDate(new Date(2024, 5, 27)), // Next Thursday
+        formatDate(new Date(2024, 5, 29)), // Next Saturday
+        formatDate(new Date(2024, 6, 2)), // Over a week - July 2nd
+        formatDate(new Date(2024, 6, 15)), // Over a week - July 15th
+      ];
     };
 
     const getRandomTime = () => {
@@ -73,6 +79,8 @@ export class MemStorage implements IStorage {
     };
 
     // Seed with sample protests
+    const specificDates = getSpecificDates();
+    
     const sampleProtests: Omit<Protest, 'id'>[] = [
       {
         title: "Global Climate Strike",
@@ -82,7 +90,7 @@ export class MemStorage implements IStorage {
         address: "100 City Hall Plaza, Downtown",
         latitude: "40.7128",
         longitude: "-74.0060",
-        date: getRandomDate(),
+        date: specificDates[0], // Today
         time: getRandomTime(),
         attendees: 1250,
         distance: "0.8 mi",
@@ -97,7 +105,7 @@ export class MemStorage implements IStorage {
         address: "Main Street & 1st Ave",
         latitude: "40.7589",
         longitude: "-73.9851",
-        date: getRandomDate(),
+        date: specificDates[4], // Over a week - July 2nd
         time: getRandomTime(),
         attendees: 892,
         distance: "1.2 mi",
@@ -112,7 +120,7 @@ export class MemStorage implements IStorage {
         address: "Downtown Square, Business District",
         latitude: "40.7505",
         longitude: "-73.9934",
-        date: getRandomDate(),
+        date: specificDates[1], // Tomorrow
         time: getRandomTime(),
         attendees: 247,
         distance: "0.5 mi",
@@ -127,7 +135,7 @@ export class MemStorage implements IStorage {
         address: "Central Park South Entrance",
         latitude: "40.7829",
         longitude: "-73.9654",
-        date: getRandomDate(),
+        date: specificDates[2], // Next Thursday
         time: getRandomTime(),
         attendees: 156,
         distance: "1.1 mi",
@@ -142,7 +150,7 @@ export class MemStorage implements IStorage {
         address: "Riverside Park, West Side",
         latitude: "40.8021",
         longitude: "-73.9708",
-        date: getRandomDate(),
+        date: specificDates[5], // Over a week - July 15th
         time: getRandomTime(),
         attendees: 89,
         distance: "2.1 mi",
@@ -157,7 +165,7 @@ export class MemStorage implements IStorage {
         address: "University Campus, Academic Quad",
         latitude: "40.8075",
         longitude: "-73.9626",
-        date: getRandomDate(),
+        date: specificDates[3], // Next Saturday
         time: getRandomTime(),
         attendees: 312,
         distance: "0.9 mi",

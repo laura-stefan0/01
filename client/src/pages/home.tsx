@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Bell, Users, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Bell, Users, MapPin, Search } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
 
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -304,7 +304,7 @@ export default function Home() {
           <div>
             <section className="px-4 py-4">
               <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
-              
+
               <div className="space-y-3">
                 {nearbyLoading ? (
                   <>
@@ -399,7 +399,7 @@ export default function Home() {
                 <Bell className="w-5 h-5 text-gray-600" />
               </Button>
             )}
-            
+
           </div>
 
           {/* Search Bar - Show on home and map tabs */}
