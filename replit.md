@@ -100,6 +100,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- January 2025: Added mobile-responsive login/registration page with database integration
+- January 2025: Created users table in Supabase and connected registration flow
 - January 2025: Fixed authentication flow with wouter routing and resolved auth provider context issues
 - January 2025: Added complete authentication system with sign-in screen, auth context, and protected routes
 - January 2025: Added sign-out functionality to profile page with proper state management

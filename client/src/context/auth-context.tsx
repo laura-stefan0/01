@@ -16,6 +16,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   signIn: (username: string, password: string) => Promise<void>;
+  signUp: (username: string, email: string, password: string) => Promise<void>;
   signOut: () => void;
 }
 
@@ -65,6 +66,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const signUp = async (username: string, email: string, password: string): Promise<void> => {
+    setIsLoading(true);
+    
+    try {
+      // Create user account via API
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password_hash: password, // In a real app, this would be hashed on the server
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      // After successful registration, sign the user in
+      await signIn(username, password);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const signOut = () => {
     setUser(null);
     localStorage.removeItem('corteo_user');
@@ -75,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: !!user,
     isLoading,
     signIn,
+    signUp,
     signOut,
   };
 
