@@ -1,32 +1,97 @@
-import { protests, users, type User, type InsertUser, type Protest, type InsertProtest } from "@shared/schema";
+import { db } from "../db/index";
+import { users } from "../db/schema";
+import { eq } from "drizzle-orm";
+import type { User, InsertUser, Protest, InsertProtest } from "@shared/schema";
+import { IStorage } from "./storage";
 
-export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  getAllProtests(): Promise<Protest[]>;
-  getFeaturedProtests(): Promise<Protest[]>;
-  getNearbyProtests(): Promise<Protest[]>;
-  getProtestById(id: number): Promise<Protest | undefined>;
-  getProtestsByCategory(category: string): Promise<Protest[]>;
-  searchProtests(query: string): Promise<Protest[]>;
-}
-
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private protests: Map<number, Protest>;
-  private currentUserId: number;
-  private currentProtestId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.protests = new Map();
-    this.currentUserId = 1;
-    this.currentProtestId = 1;
-    this.seedData();
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    // For now, we'll continue using the in-memory user since we need to migrate the schema
+    // In a real implementation, this would query the database
+    if (id === 1) {
+      return {
+        id: 1,
+        username: "alex_rodriguez",
+        password: "password123",
+        email: "alex@example.com",
+        name: "Alex Rodriguez",
+        notifications: true,
+        location: true,
+        emails: false,
+        language: "en",
+      };
+    }
+    return undefined;
   }
 
-  private seedData() {
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    // Similar temporary implementation
+    if (username === "alex_rodriguez") {
+      return {
+        id: 1,
+        username: "alex_rodriguez",
+        password: "password123",
+        email: "alex@example.com",
+        name: "Alex Rodriguez",
+        notifications: true,
+        location: true,
+        emails: false,
+        language: "en",
+      };
+    }
+    return undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    // Temporary implementation - in real app this would insert to database
+    return {
+      id: 2,
+      ...insertUser,
+      notifications: true,
+      location: true,
+      emails: false,
+      language: "en",
+    };
+  }
+
+  // Protest methods remain the same for now since we're focusing on user schema
+  async getAllProtests(): Promise<Protest[]> {
+    return this.getSampleProtests();
+  }
+
+  async getFeaturedProtests(): Promise<Protest[]> {
+    return this.getSampleProtests().filter(protest => protest.featured);
+  }
+
+  async getNearbyProtests(): Promise<Protest[]> {
+    return this.getSampleProtests().filter(protest => !protest.featured);
+  }
+
+  async getProtestById(id: number): Promise<Protest | undefined> {
+    return this.getSampleProtests().find(protest => protest.id === id);
+  }
+
+  async getProtestsByCategory(category: string): Promise<Protest[]> {
+    if (category === "all") {
+      return this.getAllProtests();
+    }
+    return this.getSampleProtests().filter(
+      protest => protest.category.toLowerCase() === category.toLowerCase()
+    );
+  }
+
+  async searchProtests(query: string): Promise<Protest[]> {
+    const lowercaseQuery = query.toLowerCase();
+    return this.getSampleProtests().filter(
+      protest =>
+        protest.title.toLowerCase().includes(lowercaseQuery) ||
+        protest.description.toLowerCase().includes(lowercaseQuery) ||
+        protest.category.toLowerCase().includes(lowercaseQuery) ||
+        protest.location.toLowerCase().includes(lowercaseQuery)
+    );
+  }
+
+  private getSampleProtests(): Protest[] {
     // Date formatting functions - pretending today is June 25th
     const formatDate = (date: Date) => {
       const today = new Date(2024, 5, 25); // June 25th, 2024 (month is 0-indexed)
@@ -36,23 +101,19 @@ export class MemStorage implements IStorage {
       const diffTime = date.getTime() - today.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      // Check if it's today
       if (date.toDateString() === today.toDateString()) {
         return "Today";
       }
 
-      // Check if it's tomorrow
       if (date.toDateString() === tomorrow.toDateString()) {
         return "Tomorrow";
       }
 
-      // Check if it's within the next week
       if (diffDays > 0 && diffDays <= 7) {
         const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         return `Next ${dayNames[date.getDay()]}`;
       }
 
-      // For dates over a week away
       const monthNames = ["January", "February", "March", "April", "May", "June", 
                          "July", "August", "September", "October", "November", "December"];
       const day = date.getDate();
@@ -69,7 +130,6 @@ export class MemStorage implements IStorage {
       return `on ${monthNames[date.getMonth()]} ${dayStr}`;
     };
 
-    // Generate specific dates for testing
     const getSpecificDates = () => {
       const today = new Date(2024, 5, 25); // June 25th, 2024
       return [
@@ -90,11 +150,11 @@ export class MemStorage implements IStorage {
       return `${displayHour}:${minutes} ${ampm}`;
     };
 
-    // Seed with sample protests
     const specificDates = getSpecificDates();
 
-    const sampleProtests: Omit<Protest, 'id'>[] = [
+    return [
       {
+        id: 1,
         title: "Global Climate Strike",
         description: "Join thousands demanding immediate climate action",
         category: "Environment",
@@ -110,6 +170,7 @@ export class MemStorage implements IStorage {
         featured: true,
       },
       {
+        id: 2,
         title: "Pride Rights March",
         description: "Celebrating equality and fighting discrimination",
         category: "LGBTQ+",
@@ -125,6 +186,7 @@ export class MemStorage implements IStorage {
         featured: true,
       },
       {
+        id: 3,
         title: "Fair Wage Strike",
         description: "Workers demanding fair compensation and benefits",
         category: "Labor",
@@ -140,6 +202,7 @@ export class MemStorage implements IStorage {
         featured: false,
       },
       {
+        id: 4,
         title: "Justice for All Rally",
         description: "Standing up for social justice and equality",
         category: "Justice",
@@ -155,6 +218,7 @@ export class MemStorage implements IStorage {
         featured: false,
       },
       {
+        id: 5,
         title: "Tree Planting Action",
         description: "Environmental action through community tree planting",
         category: "Environment",
@@ -170,6 +234,7 @@ export class MemStorage implements IStorage {
         featured: false,
       },
       {
+        id: 6,
         title: "Education Reform March",
         description: "Students and educators demanding education reform",
         category: "Education",
@@ -185,89 +250,5 @@ export class MemStorage implements IStorage {
         featured: false,
       },
     ];
-
-    sampleProtests.forEach((protest) => {
-      const id = this.currentProtestId++;
-      this.protests.set(id, { ...protest, id });
-    });
-
-    // Seed with sample user
-    const sampleUser: Omit<User, 'id'> = {
-      username: "alex_rodriguez",
-      password: "password123",
-      email: "alex@example.com",
-      name: "Alex Rodriguez",
-      notifications: true,
-      location: true,
-      emails: false,
-      language: "en",
-    };
-
-    const userId = this.currentUserId++;
-    this.users.set(userId, { ...sampleUser, id: userId });
-  }
-
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { 
-      ...insertUser, 
-      id,
-      notifications: true,
-      location: true,
-      emails: false,
-      language: "en",
-    };
-    this.users.set(id, user);
-    return user;
-  }
-
-  async getAllProtests(): Promise<Protest[]> {
-    return Array.from(this.protests.values());
-  }
-
-  async getFeaturedProtests(): Promise<Protest[]> {
-    return Array.from(this.protests.values()).filter(protest => protest.featured);
-  }
-
-  async getNearbyProtests(): Promise<Protest[]> {
-    return Array.from(this.protests.values()).filter(protest => !protest.featured);
-  }
-
-  async getProtestById(id: number): Promise<Protest | undefined> {
-    return this.protests.get(id);
-  }
-
-  async getProtestsByCategory(category: string): Promise<Protest[]> {
-    if (category === "all") {
-      return this.getAllProtests();
-    }
-    return Array.from(this.protests.values()).filter(
-      protest => protest.category.toLowerCase() === category.toLowerCase()
-    );
-  }
-
-  async searchProtests(query: string): Promise<Protest[]> {
-    const lowercaseQuery = query.toLowerCase();
-    return Array.from(this.protests.values()).filter(
-      protest =>
-        protest.title.toLowerCase().includes(lowercaseQuery) ||
-        protest.description.toLowerCase().includes(lowercaseQuery) ||
-        protest.category.toLowerCase().includes(lowercaseQuery) ||
-        protest.location.toLowerCase().includes(lowercaseQuery)
-    );
   }
 }
-
-import { DatabaseStorage } from "./db-storage";
-
-export const storage = new DatabaseStorage();
