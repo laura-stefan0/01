@@ -1,7 +1,7 @@
 import { db } from "../db/index";
-import { users } from "../db/schema";
+import { users } from "../shared/schema";
 import { eq } from "drizzle-orm";
-import type { User, InsertUser, Protest, InsertProtest } from "../db/schema";
+import type { User, InsertUser, Protest, InsertProtest } from "../shared/schema";
 import { IStorage } from "./storage";
 
 export class DatabaseStorage implements IStorage {
@@ -12,13 +12,22 @@ export class DatabaseStorage implements IStorage {
       return {
         id: 1,
         username: "alex_rodriguez",
-        password: "password123",
+        password_hash: "$2b$10$example", // Sample hash
         email: "alex@example.com",
         name: "Alex Rodriguez",
         notifications: true,
         location: true,
         emails: false,
         language: "en",
+        created_at: new Date(),
+        role: null,
+        bio: null,
+        avatar_url: null,
+        is_verified: false,
+        can_create_events: false,
+        joined_via: null,
+        last_login: null,
+        preferences: null,
       };
     }
     return undefined;
@@ -30,28 +39,39 @@ export class DatabaseStorage implements IStorage {
       return {
         id: 1,
         username: "alex_rodriguez",
-        password: "password123",
+        password_hash: "$2b$10$example", // Sample hash
         email: "alex@example.com",
         name: "Alex Rodriguez",
         notifications: true,
         location: true,
         emails: false,
         language: "en",
+        created_at: new Date(),
+        role: null,
+        bio: null,
+        avatar_url: null,
+        is_verified: false,
+        can_create_events: false,
+        joined_via: null,
+        last_login: null,
+        preferences: null,
       };
     }
     return undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    // Temporary implementation - in real app this would insert to database
-    return {
-      id: 2,
-      ...insertUser,
-      notifications: true,
-      location: true,
-      emails: false,
-      language: "en",
-    };
+    try {
+      const result = await db
+        .insert(users)
+        .values(insertUser)
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
   }
 
   // Protest methods remain the same for now since we're focusing on user schema

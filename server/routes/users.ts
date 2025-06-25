@@ -1,90 +1,10 @@
 import express from 'express';
-import { supabaseService } from '../supabase-service';
+import { db } from '../../db/index';
+import { users } from '../../shared/schema';
+import { eq } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
 
 const router = express.Router();
-
-// Test Supabase connection
-router.get('/test-connection', async (req, res) => {
-  try {
-    console.log('🔍 Testing Supabase connection...');
-    
-    // Test basic connection
-    const { data, error, count } = await supabaseService.supabase
-      .from('users')
-      .select('*', { count: 'exact' });
-    
-    if (error) {
-      console.error('❌ Connection test failed:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: error.message,
-        details: error
-      });
-    }
-    
-    console.log('✅ Connection test successful');
-    res.json({ 
-      success: true, 
-      message: 'Supabase connection working',
-      userCount: count,
-      users: data
-    });
-  } catch (error) {
-    console.error('❌ Connection test exception:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
-
-// Get all users
-router.get('/', async (req, res) => {
-  try {
-    const allUsers = await supabaseService.getAllUsers();
-    res.json(allUsers);
-  } catch (error) {
-    console.error("Failed to fetch users:", error);
-    res.status(500).json({ message: "Failed to fetch users" });
-  }
-});
-
-// Add a user (duplicate of main registration endpoint, but keeping for API consistency)
-router.post('/', async (req, res) => {
-  try {
-    const { username, email, password, name } = req.body;
-
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: "Username, email, and password are required" });
-    }
-
-    // Check if user already exists
-    const existingUserByUsername = await supabaseService.getUserByUsername(username);
-    if (existingUserByUsername) {
-      return res.status(409).json({ message: "Username already exists" });
-    }
-
-    const existingUserByEmail = await supabaseService.getUserByEmail(email);
-    if (existingUserByEmail) {
-      return res.status(409).json({ message: "Email already exists" });
-    }
-
-    // Create new user
-    const newUser = await supabaseService.createUser({
-      username,
-      email,
-      password,
-      name
-    });
-
-    // Don't return password hash
-    const { password_hash, ...userResponse } = newUser;
-    res.status(201).json({ message: 'User added', user: userResponse });
-  } catch (error) {
-    console.error("Failed to create user:", error);
-    res.status(500).json({ message: "Failed to create user" });
-  }
-});
 
 // Get current user profile (for demo purposes, returns sample user)
 router.get('/profile', async (req, res) => {
@@ -94,7 +14,6 @@ router.get('/profile', async (req, res) => {
     const sampleUser = {
       id: 1,
       username: "alex_rodriguez",
-      password: "password123",
       email: "alex@example.com",
       name: "Alex Rodriguez",
       notifications: true,
@@ -110,19 +29,78 @@ router.get('/profile', async (req, res) => {
   }
 });
 
+// Create a new user
+router.post('/', async (req, res) => {
+  try {
+    const { username, email, password, name } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "Username, email, and password are required" });
+    }
+
+    // Check if user already exists by username
+    const existingUserByUsername = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
+
+    if (existingUserByUsername.length > 0) {
+      return res.status(409).json({ message: "Username already exists" });
+    }
+
+    // Check if user already exists by email
+    const existingUserByEmail = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (existingUserByEmail.length > 0) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
+
+    // Hash the password
+    const saltRounds = 10;
+    const password_hash = await bcrypt.hash(password, saltRounds);
+
+    // Create new user
+    const newUser = await db
+      .insert(users)
+      .values({
+        username,
+        email,
+        password_hash,
+        name,
+      })
+      .returning();
+
+    // Don't return password hash
+    const { password_hash: _, ...userResponse } = newUser[0];
+    res.status(201).json({ message: 'User created successfully', user: userResponse });
+  } catch (error) {
+    console.error("Failed to create user:", error);
+    res.status(500).json({ message: "Failed to create user" });
+  }
+});
+
 // Get user by username
 router.get('/:username', async (req, res) => {
   try {
     const { username } = req.params;
 
-    const user = await supabaseService.getUserByUsername(username);
+    const userResult = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
 
-    if (!user) {
+    if (userResult.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Don't return password hash
-    const { password_hash, ...userResponse } = user;
+    const { password_hash, ...userResponse } = userResult[0];
     res.json(userResponse);
   } catch (error) {
     console.error("Failed to fetch user:", error);
