@@ -1,15 +1,3 @@
-console.log('SUPABASE_SERVICE_ROLE_KEY env var:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'Missing');
-
-export const supabaseAdmin = createClient(
-  SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY,
-  {
-    auth: { autoRefreshToken: false, persistSession: false }
-  }
-);
-
-console.log('supabaseAdmin initialized with key:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Service Role Key' : 'Anon Key');
-
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration
