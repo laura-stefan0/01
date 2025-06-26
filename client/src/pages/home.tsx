@@ -164,7 +164,10 @@ const renderResourcesContent = () => (
         <CardContent className="p-4">
           <h2 className="text-lg font-semibold text-dark-slate mb-4">For Protesters</h2>
           <div className="grid grid-cols-2 gap-3">
-            <Card className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200">
+            <Card 
+              className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200"
+              onClick={() => setLocation("/know-your-rights")}
+            >
               <CardContent className="p-3 text-center">
                 <Shield className="w-6 h-6 mx-auto mb-2 text-activist-blue" />
                 <h3 className="font-medium text-dark-slate text-xs">Know Your Rights</h3>

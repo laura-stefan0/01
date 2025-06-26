@@ -139,3 +139,39 @@ export default function KnowYourRights() {
     </div>
   );
 }
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useLocation } from "wouter";
+
+export default function KnowYourRights() {
+  const [, setLocation] = useLocation();
+
+  return (
+    <div className="max-w-md mx-auto bg-white min-h-screen">
+      {/* Header */}
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
+        <div className="px-4 py-3 flex items-center">
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-dark-slate ml-3">Know Your Rights</h1>
+        </div>
+      </header>
+
+      {/* Content */}
+      <main className="px-4 py-6 space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Your Right to Protest</h2>
+            <div className="space-y-4 text-gray-700 leading-relaxed">
+              <p>
+                This is your Know Your Rights page. Content about protest rights will go here.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
+}
