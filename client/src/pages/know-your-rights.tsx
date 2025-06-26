@@ -1,26 +1,14 @@
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BookOpen, ArrowLeft } from "lucide-react";
-import { useLaws } from "@/hooks/use-laws";
+import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
 
 export default function KnowYourRights() {
   const [, setLocation] = useLocation();
-  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
-    return localStorage.getItem('selectedCountry') || 'it';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('selectedCountry', selectedCountry);
-  }, [selectedCountry]);
-
-  const { data: laws = [], isLoading: lawsLoading } = useLaws(selectedCountry);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="max-w-md mx-auto bg-white min-h-screen">
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center">
@@ -31,68 +19,92 @@ export default function KnowYourRights() {
         </div>
       </header>
 
-      <div className="flex-1 p-4 pb-20">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <BookOpen className="h-8 w-8 text-red-600" />
-              <h1 className="text-3xl font-bold text-gray-900">Know Your Rights</h1>
+      {/* Content */}
+      <main className="px-4 py-6 space-y-6">
+        {/* Right to Peaceful Assembly */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Right to Peaceful Assembly</h2>
+            <div className="space-y-4 text-gray-700 leading-relaxed">
+              <p>
+                Article 17 of the Italian Constitution guarantees the right to peaceful assembly without arms. 
+                Citizens may gather in public or private places, but public gatherings in public places must be notified to authorities in advance.
+              </p>
+              <p className="font-medium">Key provisions:</p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>No authorization required for private gatherings</li>
+                <li>Public gatherings require advance notification to local authorities (Questura)</li>
+                <li>Peaceful nature must be maintained at all times</li>
+                <li>Authorities cannot ban assemblies without justified security concerns</li>
+                <li>Right applies to all citizens and legal residents</li>
+              </ul>
             </div>
-            <p className="text-gray-600">Legal information and rights related to protests and demonstrations</p>
-          </div>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Legal Information</CardTitle>
-              <CardDescription>
-                Understanding your rights and legal protections during protests and demonstrations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {lawsLoading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="animate-pulse">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
-                      <div className="h-16 bg-gray-200 rounded w-full"></div>
-                    </div>
-                  ))}
-                </div>
-              ) : laws.length === 0 ? (
-                <div className="text-center py-12">
-                  <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">
-                    No legal information available for your selected country.
-                  </p>
-                  <p className="text-gray-400 text-sm mt-2">
-                    Check back later or switch countries to see available rights information.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {laws.map((law) => (
-                    <div key={law.id} className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-                      <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-xl font-semibold text-gray-900">{law.title}</h3>
-                        <Badge variant="outline" className="ml-2 bg-red-50 text-red-700 border-red-200">
-                          {law.category.replace('_', ' ').toUpperCase()}
-                        </Badge>
-                      </div>
-                      {law.description && (
-                        <p className="text-gray-600 mb-4 font-medium">{law.description}</p>
-                      )}
-                      <div className="prose prose-sm max-w-none text-gray-700">
-                        <p className="whitespace-pre-wrap">{law.content}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+        {/* Freedom of Expression */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Freedom of Expression</h2>
+            <div className="space-y-4 text-gray-700 leading-relaxed">
+              <p>
+                Article 21 of the Italian Constitution protects freedom of thought and expression. 
+                This right extends to peaceful protests and demonstrations.
+              </p>
+              <p className="font-medium">Key protections:</p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Right to express opinions through speech, writing, and other means</li>
+                <li>Protection extends to protest signs, banners, and symbolic expression</li>
+                <li>Content cannot be censored prior to expression</li>
+                <li>Limitations only apply to expressions that incite violence or hatred</li>
+                <li>Right to distribute leaflets and informational materials</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Rights When Detained */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Rights When Detained</h2>
+            <div className="space-y-4 text-gray-700 leading-relaxed">
+              <p>
+                If detained during a protest in Italy, you have specific rights that must be respected by law enforcement.
+              </p>
+              <p className="font-medium">Your rights include:</p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Right to remain silent (you don't have to answer questions)</li>
+                <li>Right to know the reason for detention</li>
+                <li>Right to contact a lawyer immediately</li>
+                <li>Right to have someone notified of your detention</li>
+                <li>Right to medical assistance if needed</li>
+                <li>Right to an interpreter if you don't speak Italian</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Notification Requirements */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Notification Requirements</h2>
+            <div className="space-y-4 text-gray-700 leading-relaxed">
+              <p>
+                Italian law requires advance notification for public assemblies in public spaces. 
+                This is not an authorization request but an informational requirement.
+              </p>
+              <p className="font-medium">Requirements:</p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Notify local Questura (police headquarters) at least 3 days in advance</li>
+                <li>Provide details: date, time, location, estimated participants, purpose</li>
+                <li>Include organizer contact information</li>
+                <li>Specify planned route for marches or processions</li>
+                <li>No fee required for notification</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }
