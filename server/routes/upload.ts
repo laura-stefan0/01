@@ -82,7 +82,7 @@ router.post('/image', upload.single('image'), async (req: RequestWithFile, res: 
     console.log('Image uploaded to Supabase storage:', uniqueFileName);
     res.json({ 
       message: 'Image uploaded successfully',
-      imageUrl: urlData.publicUrl,
+      image_url: urlData.publicUrl,
       filename: uniqueFileName
     });
   } catch (error) {

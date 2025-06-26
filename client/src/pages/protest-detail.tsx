@@ -148,9 +148,13 @@ export default function ProtestDetail() {
         {/* Hero Image */}
         <div className="relative">
           <img 
-            src={protest.imageUrl} 
+            src={protest.image_url ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`} 
             alt={protest.title}
             className="w-full h-64 object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`;
+            }}
           />
           <div className="absolute top-4 left-4">
             <Badge className={`${getCategoryColor(protest.category)} text-white`}>

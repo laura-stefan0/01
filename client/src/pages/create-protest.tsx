@@ -60,12 +60,12 @@ export default function CreateProtest() {
       }
       
       const result = await response.json();
-      return result.imageUrl;
+      return result.image_url;
     },
   });
 
   const createProtestMutation = useMutation({
-    mutationFn: async (data: CreateProtestData & { imageUrl?: string }) => {
+    mutationFn: async (data: CreateProtestData & { image_url?: string }) => {
       const response = await fetch("/api/protests", {
         method: "POST",
         headers: {
@@ -73,7 +73,7 @@ export default function CreateProtest() {
         },
         body: JSON.stringify({
           ...data,
-          image_url: data.imageUrl || data.image_url,
+          image_url: data.image_url,
         }),
       });
       
@@ -144,7 +144,7 @@ export default function CreateProtest() {
       }
       
       // Create protest with image URL
-      createProtestMutation.mutate({ ...formData, imageUrl });
+      createProtestMutation.mutate({ ...formData, image_url: imageUrl });
     } catch (error) {
       toast({
         title: "Error",
