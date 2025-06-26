@@ -31,9 +31,15 @@ export default function Home() {
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(selectedCountry);
   const { data: user } = useUser();
   
-  // Use user's country_code when available, otherwise fallback to selectedCountry
-  const effectiveCountryCode = user?.country_code || selectedCountry.toUpperCase();
-  const { data: whatsNewData = [], isLoading: whatsNewLoading } = useWhatsNew(effectiveCountryCode);
+  // Map selected country to country code for What's new filtering
+  const countryCodeMapping = {
+    'it': 'IT',
+    'us': 'US',
+    'uk': 'UK'
+  };
+  const whatsNewCountryCode = countryCodeMapping[selectedCountry as keyof typeof countryCodeMapping] || selectedCountry.toUpperCase();
+
+  const { data: whatsNewData = [], isLoading: whatsNewLoading } = useWhatsNew(whatsNewCountryCode);
   const { signOut, isAuthenticated } = useAuth();
 
   // Handle country selection change
@@ -100,14 +106,17 @@ export default function Home() {
                 return (
                   <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden">
                     <img 
-                      src={news.image_url} 
+                      src={news.image_url || ''} 
                       alt={news.title}
                       className="w-full h-full object-cover"
                       onLoad={() => console.log('✅ Image loaded successfully:', news.image_url)}
                       onError={(e) => {
                         console.error('❌ Image failed to load:', news.image_url);
-                        console.error('❌ Error details:', e);
-                        e.currentTarget.parentElement?.remove();
+                        // Hide the entire card if image fails to load
+                        const parentDiv = e.currentTarget.parentElement;
+                        if (parentDiv && parentDiv.parentNode) {
+                          parentDiv.style.display = 'none';
+                        }
                       }}
                     />
                   </div>

@@ -102,9 +102,11 @@ Corteo is a full-stack web application for discovering and organizing protests a
 ## Recent Changes  
 - June 26, 2025: Successfully completed migration from Replit Agent to standard Replit environment with full functionality
 - June 26, 2025: Updated "What's new" cards to display only images without titles, timestamps, or dark overlays for cleaner visual presentation
-- June 26, 2025: Implemented country-based filtering for "What's new" section using user's country_code field from profile
+- June 26, 2025: Implemented and fixed country-based filtering for "What's new" section based on user's country selection in settings
+- June 26, 2025: Fixed filtering logic to use selectedCountry from UI dropdown instead of hardcoded user profile country_code
 - June 26, 2025: Verified whats_new table is fully editable in Supabase with insert, update, and delete permissions working
 - June 26, 2025: Added sample news data for multiple countries (IT, US, UK) to demonstrate country filtering functionality
+- June 26, 2025: Fixed blank space issue by filtering out items without valid images and hiding failed image cards
 - June 26, 2025: Updated Resources page to show only 3 essential items: Know Your Rights, Safety Tips, Emergency Contacts
 - June 26, 2025: Removed "For Organizers" section from Resources tab in home page as requested by user
 - June 26, 2025: Renamed Supabase "resources" table to "safety-tips" and updated all API endpoints and references
