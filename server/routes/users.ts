@@ -11,9 +11,9 @@ router.get('/profile', async (req, res) => {
     // In a real app, this would be based on session/auth
     const sampleUser = {
       id: 1,
-      username: "alex_rodriguez",
-      email: "alex@example.com",
-      name: "Alex Rodriguez",
+      username: "janedoe",
+      email: "jane@example.com",
+      name: "Jane",
       notifications: true,
       location: true,
       emails: false,

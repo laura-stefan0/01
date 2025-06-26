@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       // For demo purposes, we'll accept the demo credentials or any valid-looking credentials
-      if ((username === 'alex_rodriguez' && password === 'password123') || 
+      if ((username === 'janedoe' && password === 'password123') || 
           (username.length > 0 && password.length > 0)) {
         
         // Get user profile from API

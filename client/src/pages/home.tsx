@@ -248,7 +248,7 @@ export default function Home() {
             <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-gray-200">
               {isAuthenticated ? (
                 <img 
-                  src="https://images.unsplash.com/photo-1494790108755-2616b612b639?w=64&h=64&fit=crop&crop=face" 
+                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face" 
                   alt="Profile picture"
                   className="w-full h-full object-cover"
                 />
