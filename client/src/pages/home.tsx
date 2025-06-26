@@ -87,32 +87,37 @@ export default function Home() {
               <Skeleton className="w-48 h-32 flex-shrink-0" />
             </>
           ) : whatsNewData.length > 0 ? (
-            whatsNewData.map((news) => (
-              <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-100">
-                {news.image_url ? (
-                  <>
-                    <img 
-                      src={news.image_url} 
-                      alt={news.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                    <div className="absolute inset-0 p-3 flex flex-col justify-end">
-                      <h3 className="font-medium text-sm mb-1 line-clamp-2 leading-tight text-white drop-shadow-md">{news.title}</h3>
-                      <span className="text-xs text-gray-200">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
+            whatsNewData.map((news) => {
+              console.log('News item:', news.title, 'Image URL:', news.image_url);
+              return (
+                <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-100">
+                  {news.image_url ? (
+                    <>
+                      <img 
+                        src={news.image_url} 
+                        alt={news.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onLoad={() => console.log('Image loaded successfully:', news.image_url)}
+                        onError={(e) => {
+                          console.error('Image failed to load:', news.image_url);
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                      <div className="absolute inset-0 p-3 flex flex-col justify-end">
+                        <h3 className="font-medium text-sm mb-1 line-clamp-2 leading-tight text-white drop-shadow-md">{news.title}</h3>
+                        <span className="text-xs text-gray-200">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 p-3 flex flex-col justify-end bg-gray-50">
+                      <h3 className="font-medium text-sm mb-1 line-clamp-2 leading-tight text-dark-slate">{news.title}</h3>
+                      <span className="text-xs text-gray-400">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
                     </div>
-                  </>
-                ) : (
-                  <div className="absolute inset-0 p-3 flex flex-col justify-end bg-gray-50">
-                    <h3 className="font-medium text-sm mb-1 line-clamp-2 leading-tight text-dark-slate">{news.title}</h3>
-                    <span className="text-xs text-gray-400">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
-                  </div>
-                )}
-              </div>
-            ))
+                  )}
+                </div>
+              );
+            })
           ) : (
             <div className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
               <div className="absolute inset-0 p-3 flex flex-col justify-end">
