@@ -3,13 +3,14 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Home from "@/pages/home";
-import ProtestDetail from "@/pages/protest-detail";
-import SignIn from "@/pages/sign-in";
-import Filter from "@/pages/filter";
-import CreateProtest from "@/pages/create-protest";
-import Transparency from "@/pages/transparency";
-import NotFound from "@/pages/not-found";
+import Home from "./pages/home";
+import SignIn from "./pages/sign-in";
+import CreateProtest from "./pages/create-protest";
+import ProtestDetail from "./pages/protest-detail";
+import Filter from "./pages/filter";
+import Resources from "./pages/resources";
+import Transparency from "./pages/transparency";
+import NotFound from "./pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 
 function AuthenticatedRouter() {
@@ -33,6 +34,7 @@ function AuthenticatedRouter() {
         <Route path="/" component={Home} />
         <Route path="/protest/:id" component={ProtestDetail} />
         <Route path="/filter" component={Filter} />
+        <Route path="/resources" component={Resources} />
         <Route path="/create-protest" component={CreateProtest} />
         <Route path="/transparency" component={Transparency} />
         <Route component={NotFound} />
@@ -43,7 +45,7 @@ function AuthenticatedRouter() {
 
 function AppRouter() {
   const [location] = useLocation();
-  
+
   return (
     <div key={location} className="animate-in fade-in duration-300">
       <Switch>
