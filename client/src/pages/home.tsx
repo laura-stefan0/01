@@ -276,16 +276,6 @@ export default function Home() {
             <h3 className="font-semibold text-dark-slate">Settings</h3>
           </div>
           <div className="divide-y divide-gray-100">
-            {isAuthenticated && (
-              <div className="p-4">
-                <Button 
-                  className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-                  onClick={() => setLocation("/create-protest")}
-                >
-                  Create New Protest
-                </Button>
-              </div>
-            )}
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center">
                 <Bell className="w-5 h-5 mr-3 text-gray-400" />
@@ -313,6 +303,15 @@ export default function Home() {
                 <Label htmlFor="darkmode">Dark Mode</Label>
               </div>
               <Switch id="darkmode" />
+            </div>
+            <div className="p-4">
+              <Button 
+                className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+                onClick={() => setLocation("/create-protest")}
+                disabled={!isAuthenticated}
+              >
+                {isAuthenticated ? "Create New Protest" : "Sign In to Create Protests"}
+              </Button>
             </div>
           </div>
         </CardContent>
