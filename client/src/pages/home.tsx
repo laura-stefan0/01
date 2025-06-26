@@ -30,7 +30,10 @@ export default function Home() {
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(selectedCountry);
   const { data: user } = useUser();
-  const { data: whatsNewData = [], isLoading: whatsNewLoading } = useWhatsNew(selectedCountry);
+  
+  // Use user's country_code when available, otherwise fallback to selectedCountry
+  const effectiveCountryCode = user?.country_code || selectedCountry.toUpperCase();
+  const { data: whatsNewData = [], isLoading: whatsNewLoading } = useWhatsNew(effectiveCountryCode);
   const { signOut, isAuthenticated } = useAuth();
 
   // Handle country selection change

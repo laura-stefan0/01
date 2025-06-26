@@ -15,6 +15,7 @@ router.get('/profile', async (req, res) => {
       email: "jane@example.com",
       name: "Jane",
       avatar_url: "https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=100&h=100&fit=crop&crop=face",
+      country_code: "US", // User's selected country
       notifications: true,
       location: true,
       emails: false,
