@@ -11,13 +11,30 @@ router.get("/", async (req, res) => {
     console.log(`🔍 Fetching what's new data from whats_new table for country: ${country}`);
     
     // Get card data from the whats_new database table
-    const { data: newsData, error: tableError } = await supabase
+    // First try with country_code, if that fails, get all items
+    let { data: newsData, error: tableError } = await supabase
       .from("whats_new")
       .select("*")
       .eq("country_code", country)
       .order("created_at", { ascending: false });
     
-    if (tableError) {
+    // If country_code column doesn't exist, try without it
+    if (tableError && tableError.code === '42703') {
+      console.log("⚠️ country_code column not found, fetching all items");
+      const { data: allData, error: fallbackError } = await supabase
+        .from("whats_new")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      if (fallbackError) {
+        console.error("❌ Error fetching from whats_new table:", fallbackError);
+        res.status(500).json({ error: "Failed to fetch what's new items from database" });
+        return;
+      }
+      
+      newsData = allData;
+      tableError = null;
+    } else if (tableError) {
       console.error("❌ Error fetching from whats_new table:", tableError);
       res.status(500).json({ error: "Failed to fetch what's new items from database" });
       return;
