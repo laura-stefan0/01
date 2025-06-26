@@ -17,7 +17,12 @@ export default function Resources() {
 
   const handleKnowYourRights = () => {
     console.log("Know Your Rights clicked, navigating to /123");
-    setLocation("/123");
+    try {
+      setLocation("/123");
+      console.log("Navigation attempted to /123");
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   };
 
   const handleTabChange = (tab: string) => {
@@ -55,8 +60,16 @@ export default function Resources() {
             <h2 className="text-xl font-semibold text-gray-900">For Protesters</h2>
             <div className="grid grid-cols-2 gap-4">
               <Card 
-                className="cursor-pointer hover:shadow-lg hover:bg-gray-50 transition-all duration-200 border-2 hover:border-red-300"
+                className="cursor-pointer hover:shadow-lg hover:bg-gray-50 transition-all duration-200 border-2 hover:border-red-300 active:scale-95"
                 onClick={handleKnowYourRights}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleKnowYourRights();
+                  }
+                }}
               >
                 <CardContent className="p-4 text-center">
                   <BookOpen className="w-8 h-8 mx-auto mb-3 text-red-600" />

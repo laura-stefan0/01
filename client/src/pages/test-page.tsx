@@ -7,12 +7,19 @@ import { useLocation } from "wouter";
 export default function TestPage() {
   const [, setLocation] = useLocation();
 
+  const handleBackClick = () => {
+    console.log("Back button clicked, navigating to /resources");
+    setLocation("/resources");
+  };
+
+  console.log("TestPage component rendered");
+
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen">
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/resources")}>
+          <Button variant="ghost" size="sm" onClick={handleBackClick}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-dark-slate ml-3">123 Test Page</h1>
@@ -30,6 +37,9 @@ export default function TestPage() {
                 This page was created by duplicating the Transparency page. 
                 It serves as a test to demonstrate that the "Know Your Rights" button 
                 can successfully navigate to a new page.
+              </p>
+              <p className="text-green-600 font-semibold">
+                SUCCESS! The navigation is working correctly!
               </p>
             </div>
           </CardContent>
@@ -63,7 +73,10 @@ export default function TestPage() {
             <p className="text-gray-700 text-sm mb-4">
               The "Know Your Rights" button is now working and navigating to this test page.
             </p>
-            <Button className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
+            <Button 
+              className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+              onClick={() => console.log("Test button clicked!")}
+            >
               Test Button
             </Button>
           </CardContent>
