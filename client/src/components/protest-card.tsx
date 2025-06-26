@@ -51,7 +51,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     return (
       <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64 cursor-pointer border border-gray-200" onClick={handleClick}>
         <img 
-          src={protest.imageUrl ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`} 
+          src={protest.image_url ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`} 
           alt={protest.title}
           className="w-full h-32 object-cover"
           onError={handleImageError}
@@ -80,7 +80,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     <Card className="overflow-hidden h-20 cursor-pointer border border-gray-200" onClick={handleClick}>
       <div className="flex h-full">
         <img 
-          src={protest.imageUrl ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`}
+          src={protest.image_url ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`}
           alt={protest.title}
           className="w-20 h-full object-cover flex-shrink-0"
           onError={handleImageError}
