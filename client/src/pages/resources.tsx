@@ -30,7 +30,7 @@ export default function Resources() {
             <p className="text-gray-600">Essential information for protesters and organizers</p>
           </div>
 
-          {/* Know Your Rights Section with Laws */}
+          {/* Know Your Rights Section - Clickable Card */}
           <Card 
             className="mb-6 cursor-pointer hover:shadow-lg hover:bg-gray-50 transition-all duration-200 border-2 hover:border-red-300" 
             onClick={() => setLocation("/know-your-rights")}
@@ -46,32 +46,26 @@ export default function Resources() {
             </CardHeader>
             <CardContent>
               {lawsLoading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="animate-pulse">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                    </div>
-                  ))}
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                 </div>
               ) : laws.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">
-                  No legal information available for your selected country.
+                <p className="text-gray-500 text-sm">
+                  No legal information available for your selected country. Click to learn more.
                 </p>
               ) : (
-                <div className="space-y-4">
-                  {laws.map((law) => (
-                    <div key={law.id} className="border-l-4 border-red-600 pl-4 py-2">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-gray-900">{law.title}</h3>
-                        <Badge variant="outline" className="ml-2">
-                          {law.category.replace('_', ' ').toUpperCase()}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-2">{law.description}</p>
-                      <p className="text-sm text-gray-700">{law.content}</p>
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {laws.length} legal {laws.length === 1 ? 'resource' : 'resources'} available
+                  </p>
+                  {laws.length > 0 && (
+                    <div className="border-l-4 border-red-600 pl-4 py-2">
+                      <h3 className="font-semibold text-gray-900 text-sm">{laws[0].title}</h3>
+                      <p className="text-xs text-gray-600 line-clamp-2">{laws[0].description}</p>
                     </div>
-                  ))}
+                  )}
+                  <p className="text-xs text-red-600 mt-2 font-medium">Click to view all rights and legal information →</p>
                 </div>
               )}
             </CardContent>
