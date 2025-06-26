@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Added Transparency page in Profile section explaining Corteo's mission, values, and "why" with dedicated route
 - June 26, 2025: Implemented DD-MM-YYYY date format and 24-hour time format throughout application with utility functions
 - June 26, 2025: Restructured Resources page with "For Protesters" and "For Organizers" containers as requested
 - June 26, 2025: Fixed React hooks violation by restructuring conditional rendering in Home component

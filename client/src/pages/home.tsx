@@ -344,6 +344,10 @@ const renderResourcesContent = () => (
       {/* App Info */}
       <Card>
         <CardContent className="p-0 divide-y divide-gray-100">
+          <div className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50" onClick={() => setLocation("/transparency")}>
+            <span className="text-dark-slate">Transparency</span>
+            <div className="w-4 h-4 text-gray-400">→</div>
+          </div>
           <div className="p-4 flex items-center justify-between">
             <span className="text-dark-slate">Privacy Policy</span>
             <div className="w-4 h-4 text-gray-400">→</div>
