@@ -49,7 +49,7 @@ export default function Home() {
       setAllProtests(uniqueProtests);
     }
     setIsLoadingProtests(featuredLoading || nearbyLoading);
-  }, [featuredProtests.length, nearbyProtests.length, featuredLoading, nearbyLoading]);
+  }, [featuredProtests, nearbyProtests, featuredLoading, nearbyLoading]);
 
   const filters = [
     { id: "all", label: "All" },
