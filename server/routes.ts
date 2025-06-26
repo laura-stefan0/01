@@ -47,12 +47,13 @@ export function registerRoutes(app: Express) {
 
   // User profile route (demo)
   app.get("/api/user/profile", (req, res) => {
+    const countryCode = (req.query.country as string) || "IT";
     res.json({
       id: 1,
       username: "janedoe",
       email: "jane@example.com",
       name: "Jane",
-      country_code: "IT",
+      country_code: countryCode,
       notifications: true,
       location: true,
       emails: false,

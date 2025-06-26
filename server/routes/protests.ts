@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { supabase, supabaseAdmin } from '../../db/index';
 
@@ -7,11 +6,11 @@ const router = express.Router();
 // Get all protests filtered by user's country
 router.get('/', async (req, res) => {
   try {
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching protests from protests table for country:', userCountryCode);
-    
+
     const { data: protests, error } = await supabase
       .from('protests')
       .select('*')
@@ -34,11 +33,11 @@ router.get('/', async (req, res) => {
 // Get featured protests filtered by user's country
 router.get('/featured', async (req, res) => {
   try {
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching featured protests from protests table for country:', userCountryCode);
-    
+
     const { data: protests, error } = await supabase
       .from('protests')
       .select('*')
@@ -62,11 +61,11 @@ router.get('/featured', async (req, res) => {
 // Get nearby protests filtered by user's country
 router.get('/nearby', async (req, res) => {
   try {
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching nearby protests from protests table for country:', userCountryCode);
-    
+
     const { data: protests, error } = await supabase
       .from('protests')
       .select('*')
@@ -91,11 +90,11 @@ router.get('/nearby', async (req, res) => {
 router.get('/category/:category', async (req, res) => {
   try {
     const { category } = req.params;
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching protests for category:', category, 'and country:', userCountryCode);
-    
+
     const { data: protests, error } = await supabase
       .from('protests')
       .select('*')
@@ -120,15 +119,15 @@ router.get('/category/:category', async (req, res) => {
 router.get('/search', async (req, res) => {
   try {
     const { q: query } = req.query;
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     if (!query) {
       return res.status(400).json({ message: "Search query is required" });
     }
-    
+
     console.log('🔍 Searching protests for query:', query, 'in country:', userCountryCode);
-    
+
     const { data: protests, error } = await supabase
       .from('protests')
       .select('*')
@@ -186,8 +185,8 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: "Required fields missing" });
     }
 
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
 
     console.log('🔄 Creating protest in protests table:', { title, category, location, country: userCountryCode });
 

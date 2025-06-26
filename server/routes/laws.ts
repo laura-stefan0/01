@@ -6,11 +6,11 @@ const router = express.Router();
 // Get all laws filtered by user's country
 router.get('/', async (req, res) => {
   try {
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching laws for country:', userCountryCode);
-    
+
     const { data: laws, error } = await supabase
       .from('laws')
       .select('*')
@@ -34,11 +34,11 @@ router.get('/', async (req, res) => {
 router.get('/category/:category', async (req, res) => {
   try {
     const { category } = req.params;
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching laws for category:', category, 'and country:', userCountryCode);
-    
+
     const { data: laws, error } = await supabase
       .from('laws')
       .select('*')

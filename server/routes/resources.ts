@@ -6,11 +6,11 @@ const router = express.Router();
 // Get all resources filtered by user's country
 router.get('/', async (req, res) => {
   try {
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching resources for country:', userCountryCode);
-    
+
     const { data: resources, error } = await supabase
       .from('resources')
       .select('*')
@@ -34,11 +34,11 @@ router.get('/', async (req, res) => {
 router.get('/category/:category', async (req, res) => {
   try {
     const { category } = req.params;
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching resources for category:', category, 'and country:', userCountryCode);
-    
+
     const { data: resources, error } = await supabase
       .from('resources')
       .select('*')
@@ -63,11 +63,11 @@ router.get('/category/:category', async (req, res) => {
 router.get('/type/:type', async (req, res) => {
   try {
     const { type } = req.params;
-    // For now, assume user country is IT (as requested)
-    const userCountryCode = 'IT';
-    
+    // Get country code from query params or default to IT
+    const userCountryCode = (req.query.country as string) || 'IT';
+
     console.log('🔍 Fetching resources for type:', type, 'and country:', userCountryCode);
-    
+
     const { data: resources, error } = await supabase
       .from('resources')
       .select('*')

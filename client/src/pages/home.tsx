@@ -307,6 +307,7 @@ const renderResourcesContent = () => (
             </SelectTrigger>
             <SelectContent side="top" align="start">
               <SelectItem value="it">Italy</SelectItem>
+              <SelectItem value="us">United States</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
