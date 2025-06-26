@@ -245,8 +245,18 @@ export default function Home() {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-activist-blue rounded-full flex items-center justify-center text-white font-semibold text-xl flex-shrink-0">
-              {isAuthenticated ? "J" : "G"}
+            <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-gray-200">
+              {isAuthenticated ? (
+                <img 
+                  src="https://images.unsplash.com/photo-1494790108755-2616b612b639?w=64&h=64&fit=crop&crop=face" 
+                  alt="Profile picture"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-activist-blue flex items-center justify-center text-white font-semibold text-xl">
+                  G
+                </div>
+              )}
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-dark-slate text-lg">
