@@ -107,6 +107,9 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - June 26, 2025: Verified whats_new table is fully editable in Supabase with insert, update, and delete permissions working
 - June 26, 2025: Added sample news data for multiple countries (IT, US, UK) to demonstrate country filtering functionality
 - June 26, 2025: Fixed blank space issue by filtering out items without valid images and hiding failed image cards
+- June 26, 2025: Implemented clickable functionality for "What's new" cards using cta_url field from whats_new table
+- June 26, 2025: Added support for text-based cards without images using gradient backgrounds and titles
+- June 26, 2025: Created "Find protests in your area" card linking to /filter and "Know Your Rights in Italy" card linking to UNHCR website
 - June 26, 2025: Updated Resources page to show only 3 essential items: Know Your Rights, Safety Tips, Emergency Contacts
 - June 26, 2025: Removed "For Organizers" section from Resources tab in home page as requested by user
 - June 26, 2025: Renamed Supabase "resources" table to "safety-tips" and updated all API endpoints and references

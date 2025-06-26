@@ -96,9 +96,7 @@ export default function Home() {
               <Skeleton className="w-48 h-32 flex-shrink-0" />
             </>
           ) : whatsNewData.length > 0 ? (
-            whatsNewData
-              .filter((news) => news.image_url && news.image_url !== null)
-              .map((news) => {
+            whatsNewData.map((news) => {
                 console.log('📄 News item:', news.title);
                 console.log('🖼️ Image URL:', news.image_url);
                 console.log('📊 Full news object:', news);
@@ -122,7 +120,7 @@ export default function Home() {
                 return (
                   <div 
                     key={news.id} 
-                    className={`relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden ${
+                    className={`relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 ${
                       news.cta_url ? 'cursor-pointer hover:scale-105 transition-transform' : ''
                     }`}
                     onClick={handleCardClick}
@@ -135,20 +133,30 @@ export default function Home() {
                       }
                     }}
                   >
-                    <img 
-                      src={news.image_url || ''} 
-                      alt={news.title}
-                      className="w-full h-full object-cover"
-                      onLoad={() => console.log('✅ Image loaded successfully:', news.image_url)}
-                      onError={(e) => {
-                        console.error('❌ Image failed to load:', news.image_url);
-                        // Hide the entire card if image fails to load
-                        const parentDiv = e.currentTarget.parentElement;
-                        if (parentDiv && parentDiv.parentNode) {
-                          parentDiv.style.display = 'none';
-                        }
-                      }}
-                    />
+                    {news.image_url ? (
+                      <img 
+                        src={news.image_url} 
+                        alt={news.title}
+                        className="w-full h-full object-cover"
+                        onLoad={() => console.log('✅ Image loaded successfully:', news.image_url)}
+                        onError={(e) => {
+                          console.error('❌ Image failed to load:', news.image_url);
+                          // Hide the entire card if image fails to load
+                          const parentDiv = e.currentTarget.parentElement;
+                          if (parentDiv && parentDiv.parentNode) {
+                            parentDiv.style.display = 'none';
+                          }
+                        }}
+                      />
+                    ) : (
+                      // Show text-based card for items without images
+                      <div className="w-full h-full bg-gradient-to-br from-activist-blue to-activist-blue/80 flex flex-col justify-center items-center p-3 text-white">
+                        <h3 className="text-sm font-semibold text-center leading-tight mb-1">{news.title}</h3>
+                        {news.cta_text && (
+                          <p className="text-xs opacity-90 text-center">{news.cta_text}</p>
+                        )}
+                      </div>
+                    )}
                     {news.cta_url && (
                       <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
                     )}
