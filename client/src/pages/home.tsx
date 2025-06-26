@@ -144,7 +144,7 @@ export default function Home() {
       {/* Donations Section */}
       <section>
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Support Us</h2>
-        <Card className="bg-gradient-to-r from-activist-blue to-rally-red">
+        <Card className="bg-activist-blue">
           <CardContent className="p-4">
             <h3 className="font-semibold mb-2 text-white">Make a Difference</h3>
             <p className="text-sm mb-3 text-white">Your donation helps support activists and organizations fighting for change.</p>
