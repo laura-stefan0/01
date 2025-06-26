@@ -3,14 +3,16 @@ import { useProtests } from "@/hooks/use-protests";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLocation } from "wouter";
 import type { Protest } from "@shared/schema";
 
 export function MapView() {
   const { data: protests = [], isLoading } = useProtests();
   const [searchQuery, setSearchQuery] = useState("");
+  const [, setLocation] = useLocation();
 
   const filters = [
     { id: "all", label: "All" },
@@ -30,15 +32,25 @@ export function MapView() {
           </div>
 
           {/* Search Bar */}
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Search protests by name or cause..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
-            />
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+          <div className="flex space-x-2">
+            <div className="relative flex-1">
+              <Input
+                type="text"
+                placeholder="Search protests by name or cause..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
+              />
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+            </div>
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => setLocation("/filter")}
+              className="flex-shrink-0 bg-gray-50 border-gray-200 hover:bg-gray-100"
+            >
+              <Filter className="w-4 h-4 text-gray-600" />
+            </Button>
           </div>
 
           {/* Filter Tags */}

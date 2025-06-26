@@ -57,11 +57,11 @@ export default function Home() {
     <div className="px-4 py-4 max-w-md mx-auto">
       {/* News Section */}
       <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">News</h2>
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">What's new</h2>
         <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {newsItems.map((news) => (
-            <div key={news.id} className="border border-gray-100 rounded-lg p-3 min-w-48 flex-shrink-0">
-              <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2">{news.title}</h3>
+            <div key={news.id} className="border border-gray-100 rounded-lg p-3 min-w-40 flex-shrink-0">
+              <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">{news.title}</h3>
               <span className="text-gray-400 text-xs">{news.timestamp}</span>
             </div>
           ))}
@@ -71,7 +71,7 @@ export default function Home() {
       {/* Featured Section */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-dark-slate">Featured Protests</h2>
+          <h2 className="text-lg font-semibold text-dark-slate">Featured</h2>
         </div>
 
         {/* Horizontal Scrolling Featured Cards - Wider */}
@@ -118,7 +118,7 @@ export default function Home() {
 
       {/* Donations Section */}
       <section>
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Support the Movement</h2>
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Support Us</h2>
         <Card className="bg-gradient-to-r from-activist-blue to-rally-red">
           <CardContent className="p-4 text-white">
             <h3 className="font-semibold mb-2">Make a Difference</h3>
@@ -257,9 +257,14 @@ export default function Home() {
             <p className="text-gray-500 text-sm mb-2">
               📍 {isAuthenticated ? "San Francisco, CA" : "Location not shared"}
             </p>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-sm mb-4">
               {isAuthenticated ? "Passionate about social justice and environmental activism." : "Exploring activism opportunities in your area."}
             </p>
+            {isAuthenticated && (
+              <Button variant="outline" className="mt-2">
+                Edit profile
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

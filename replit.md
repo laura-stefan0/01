@@ -100,6 +100,10 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Successfully migrated project from Replit Agent to standard Replit environment
+- June 26, 2025: Updated "For you" page: removed searchbar, renamed "News" to "What's new", made cards narrower, changed "Featured Protests" to "Featured", changed "Support the Movement" to "Support Us"
+- June 26, 2025: Added Filter button to Search page that opens dedicated filter page with cause, date, and organizer filtering options
+- June 26, 2025: Added "Edit profile" button to Profile page for authenticated users
 - June 26, 2025: Fixed Profile page sign-out button to be red and properly redirect to sign-in page
 - June 26, 2025: Redesigned Profile page user section with centered layout, profile picture, location, and description
 - June 26, 2025: Made News section horizontally scrollable with simplified cards showing only title and timestamp
