@@ -19,12 +19,24 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [isLoadingProtests, setIsLoadingProtests] = useState(true);
+  const [allProtests, setAllProtests] = useState<any[]>([]);
   const [, setLocation] = useLocation();
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
   const { data: user } = useUser();
   const { signOut, isAuthenticated } = useAuth();
+
+  // Combine protests data for map view
+  useEffect(() => {
+    const combinedProtests = [...featuredProtests, ...nearbyProtests];
+    const uniqueProtests = combinedProtests.filter((protest, index, self) =>
+      index === self.findIndex((p) => p.id === protest.id)
+    );
+    setAllProtests(uniqueProtests);
+    setIsLoadingProtests(featuredLoading || nearbyLoading);
+  }, [featuredProtests, nearbyProtests, featuredLoading, nearbyLoading]);
 
   const filters = [
     { id: "all", label: "All" },
@@ -345,20 +357,6 @@ const renderResourcesContent = () => (
   );
 
   const renderMapContent = () => {
-    const [isLoadingProtests, setIsLoadingProtests] = useState(true);
-    const [allProtests, setAllProtests] = useState([]);
-
-    useEffect(() => {
-      // Simulate loading delay
-      setTimeout(() => {
-        const combinedProtests = [...featuredProtests, ...nearbyProtests];
-        const uniqueProtests = combinedProtests.filter((protest, index, self) =>
-          index === self.findIndex((p) => p.id === protest.id)
-        );
-        setAllProtests(uniqueProtests);
-        setIsLoadingProtests(false);
-      }, 500);
-    }, [featuredProtests, nearbyProtests]);
 
     return (
       <div className="px-4 py-4 max-w-md mx-auto">
@@ -425,26 +423,14 @@ const renderResourcesContent = () => (
   };
 
   const renderContent = () => {
-    const content = (() => {
-      switch (activeTab) {
-        case "home":
-          return renderHomeContent();
-        case "map":
-          return renderMapContent();
-        case "resources":
-          return renderResourcesContent();
-        case "community":
-          return renderCommunityContent();
-        case "profile":
-          return renderProfileContent();
-        default:
-          return renderHomeContent();
-      }
-    })();
-
     return (
       <div key={activeTab} className="animate-in fade-in duration-300">
-        {content}
+        {activeTab === "home" && renderHomeContent()}
+        {activeTab === "map" && renderMapContent()}
+        {activeTab === "resources" && renderResourcesContent()}
+        {activeTab === "community" && renderCommunityContent()}
+        {activeTab === "profile" && renderProfileContent()}
+        {!["home", "map", "resources", "community", "profile"].includes(activeTab) && renderHomeContent()}
       </div>
     );
   };
