@@ -49,7 +49,7 @@ export default function Home() {
       setAllProtests(uniqueProtests);
     }
     setIsLoadingProtests(featuredLoading || nearbyLoading);
-  }, [featuredProtests, nearbyProtests, featuredLoading, nearbyLoading]);
+  }, [featuredProtests.length, nearbyProtests.length, featuredLoading, nearbyLoading]);
 
   const filters = [
     { id: "all", label: "All" },
@@ -88,18 +88,22 @@ export default function Home() {
             </>
           ) : whatsNewData.length > 0 ? (
             whatsNewData.map((news) => {
-              console.log('News item:', news.title, 'Image URL:', news.image_url);
+              console.log('📄 News item:', news.title);
+              console.log('🖼️ Image URL:', news.image_url);
+              console.log('📊 Full news object:', news);
+              
               return (
                 <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-100">
-                  {news.image_url ? (
+                  {news.image_url && news.image_url !== null ? (
                     <>
                       <img 
                         src={news.image_url} 
                         alt={news.title}
                         className="absolute inset-0 w-full h-full object-cover"
-                        onLoad={() => console.log('Image loaded successfully:', news.image_url)}
+                        onLoad={() => console.log('✅ Image loaded successfully:', news.image_url)}
                         onError={(e) => {
-                          console.error('Image failed to load:', news.image_url);
+                          console.error('❌ Image failed to load:', news.image_url);
+                          console.error('❌ Error details:', e);
                           e.currentTarget.style.display = 'none';
                         }}
                       />
@@ -110,9 +114,10 @@ export default function Home() {
                       </div>
                     </>
                   ) : (
-                    <div className="absolute inset-0 p-3 flex flex-col justify-end bg-gray-50">
+                    <div className="absolute inset-0 p-3 flex flex-col justify-end bg-gray-100">
                       <h3 className="font-medium text-sm mb-1 line-clamp-2 leading-tight text-dark-slate">{news.title}</h3>
                       <span className="text-xs text-gray-400">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
+                      <span className="text-xs text-red-400 mt-1">No image available</span>
                     </div>
                   )}
                 </div>

@@ -55,6 +55,8 @@ router.get("/", async (req, res) => {
         });
       
       if (!bucketError && bucketData) {
+        console.log(`📸 Found ${bucketData.length} images in whats-new bucket:`, bucketData.map(img => img.name));
+        
         // Add image URLs to news items where available
         const newsWithImages = newsData.map((newsItem, index) => {
           // Try to match by ID or use index-based assignment
@@ -66,6 +68,7 @@ router.get("/", async (req, res) => {
               .from('whats-new')
               .getPublicUrl(matchingImage.name);
             imageUrl = urlData.publicUrl;
+            console.log(`🖼️ Generated URL for ${matchingImage.name}: ${imageUrl}`);
           }
           
           return {
