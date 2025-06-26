@@ -145,9 +145,9 @@ export default function Home() {
       <section>
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Support Us</h2>
         <Card className="bg-gradient-to-r from-activist-blue to-rally-red">
-          <CardContent className="p-4 text-white">
-            <h3 className="font-semibold mb-2">Make a Difference</h3>
-            <p className="text-sm mb-3 opacity-90">Your donation helps support activists and organizations fighting for change.</p>
+          <CardContent className="p-4">
+            <h3 className="font-semibold mb-2 text-white">Make a Difference</h3>
+            <p className="text-sm mb-3 text-white">Your donation helps support activists and organizations fighting for change.</p>
             <Button className="w-full bg-white text-activist-blue hover:bg-gray-100">
               Donate Now
             </Button>
