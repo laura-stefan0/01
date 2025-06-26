@@ -13,11 +13,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/auth-context";
+import { useLocation } from "wouter";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [, setLocation] = useLocation();
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
@@ -274,6 +276,16 @@ export default function Home() {
             <h3 className="font-semibold text-dark-slate">Settings</h3>
           </div>
           <div className="divide-y divide-gray-100">
+            {isAuthenticated && (
+              <div className="p-4">
+                <Button 
+                  className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+                  onClick={() => setLocation("/create-protest")}
+                >
+                  Create New Protest
+                </Button>
+              </div>
+            )}
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center">
                 <Bell className="w-5 h-5 mr-3 text-gray-400" />

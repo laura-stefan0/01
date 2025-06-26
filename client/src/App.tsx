@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import ProtestDetail from "@/pages/protest-detail";
 import SignIn from "@/pages/sign-in";
 import Filter from "@/pages/filter";
+import CreateProtest from "@/pages/create-protest";
 import NotFound from "@/pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 
@@ -29,6 +30,7 @@ function AuthenticatedRouter() {
       <Route path="/" component={Home} />
       <Route path="/protest/:id" component={ProtestDetail} />
       <Route path="/filter" component={Filter} />
+      <Route path="/create-protest" component={CreateProtest} />
       <Route component={NotFound} />
     </Switch>
   );
