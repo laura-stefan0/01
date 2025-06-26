@@ -2,8 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Users, Shield, Phone, MapPin, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Resources() {
+  const [, setLocation] = useLocation();
+
   const protestResources = [
     {
       title: "Know Your Rights",
@@ -56,8 +60,11 @@ export default function Resources() {
     <div className="max-w-md mx-auto bg-white min-h-screen">
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
-        <div className="px-4 py-3">
-          <h1 className="text-xl font-bold text-dark-slate">Resources</h1>
+        <div className="px-4 py-3 flex items-center">
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-dark-slate ml-3">Resources</h1>
         </div>
       </header>
 
