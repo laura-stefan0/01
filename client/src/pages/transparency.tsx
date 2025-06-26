@@ -20,22 +20,23 @@ export default function Transparency() {
 
       {/* Content */}
       <main className="px-4 py-6 space-y-6">
-        {/* Our Why Section */}
+        {/* Why Corteo Exists Section */}
         <Card>
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-dark-slate mb-4">Why Corteo Exists</h2>
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Why Corteo exists</h2>
             <div className="space-y-4 text-gray-700 leading-relaxed">
               <p>
-                Corteo was born from a simple belief: that peaceful protest is one of the most powerful tools for social change, 
-                and everyone should have access to organize and participate safely.
+                Corteo exists to make it safer and easier for people to mobilize, organize, and show up for what they believe in.
               </p>
               <p>
-                We recognized that activists and organizers faced significant barriers - from finding reliable ways to coordinate 
-                events to ensuring participant safety. Traditional social media platforms weren't designed with activism in mind, 
-                often lacking the specific tools and security measures that movements require.
+                Corteo was born from a simple belief: peaceful protest is a powerful tool for social change, 
+                and everyone should be able to take part safely.
               </p>
               <p>
-                Our mission is to democratize activism by providing a platform that prioritizes privacy, safety, and genuine 
+                But organizing isn't easy. Social media wasn't made for activism. It's messy, insecure, and often puts people at risk. People deserve better.
+              </p>
+              <p>
+                Corteo is built to support activists by prioritizing privacy, safety, and genuine 
                 community building over engagement metrics and data harvesting.
               </p>
             </div>
@@ -45,60 +46,54 @@ export default function Transparency() {
         {/* Our Values Section */}
         <Card>
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-dark-slate mb-4">Our Core Values</h2>
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Our core values</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="font-medium text-dark-slate mb-2">Privacy First</h3>
+                <h3 className="font-medium text-dark-slate mb-2">Privacy first</h3>
                 <p className="text-gray-700 text-sm">
                   We believe in your right to organize without surveillance. Your data belongs to you, 
-                  and we use only what's necessary to provide our services.
+                  and we collect only what's necessary to run the app.
                 </p>
               </div>
               <div>
-                <h3 className="font-medium text-dark-slate mb-2">Safety & Security</h3>
+                <h3 className="font-medium text-dark-slate mb-2">Safety matters</h3>
                 <p className="text-gray-700 text-sm">
-                  Activist safety is paramount. We provide tools and resources to help organizers 
-                  and participants stay safe during events.
+                  We offer tools and tips to help everyone stay safe at protests, from experienced organizers to first-time participants.
                 </p>
               </div>
               <div>
-                <h3 className="font-medium text-dark-slate mb-2">Inclusivity</h3>
+                <h3 className="font-medium text-dark-slate mb-2">Everyone's welcome</h3>
                 <p className="text-gray-700 text-sm">
                   Every voice matters. We're committed to creating an inclusive space for all 
                   peaceful movements, regardless of the cause.
                 </p>
               </div>
               <div>
-                <h3 className="font-medium text-dark-slate mb-2">Transparency</h3>
+                <h3 className="font-medium text-dark-slate mb-2">We're transparent</h3>
                 <p className="text-gray-700 text-sm">
-                  We operate openly about our practices, funding, and decision-making processes. 
-                  You deserve to know how the tools you use are built and maintained.
+                  You should know how the platforms you use are built. We're open about how we work, where our funding comes from, and who's behind it.
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* How We're Different Section */}
+        {/* What Makes Us Different Section */}
         <Card>
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-dark-slate mb-4">How We're Different</h2>
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">What makes us different</h2>
             <div className="space-y-3 text-gray-700">
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
-                <p className="text-sm">No advertising or data mining - we're not selling your information</p>
+                <p className="text-sm">No ads. No data selling.</p>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
-                <p className="text-sm">Built specifically for activists, with features that matter to organizers</p>
+                <p className="text-sm">Funded openly, run with care.</p>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
-                <p className="text-sm">Open about our funding sources and governance structure</p>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
-                <p className="text-sm">Community-driven development with input from real organizers</p>
+                <p className="text-sm">Community-driven development with input from real organizers.</p>
               </div>
             </div>
           </CardContent>
@@ -107,13 +102,12 @@ export default function Transparency() {
         {/* Contact Section */}
         <Card>
           <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-dark-slate mb-4">Questions or Concerns?</h2>
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Got questions?</h2>
             <p className="text-gray-700 text-sm mb-4">
-              We believe in accountability. If you have questions about our practices, 
-              suggestions for improvement, or concerns about the platform, we want to hear from you.
+              We're here to listen. Reach out if you have feedback, concerns, or suggestions.
             </p>
             <Button className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
-              Contact Our Team
+              Contact the Corteo team
             </Button>
           </CardContent>
         </Card>
