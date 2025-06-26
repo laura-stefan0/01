@@ -103,7 +103,7 @@ export default function Resources() {
       icon: BookOpen,
       color: "text-red-600",
       hoverColor: "hover:border-red-300",
-      action: () => handleCardClick("Know Your Rights")
+      action: () => setLocation("/know-your-rights")
     },
     {
       id: "emergency-contacts",
