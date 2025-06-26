@@ -100,7 +100,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
-- June 26, 2025: Successfully migrated project from Replit Agent to standard Replit environment
+- June 26, 2025: Successfully completed migration from Replit Agent to standard Replit environment with full functionality
+- June 26, 2025: Updated "What's new" cards to display only images without titles, timestamps, or dark overlays for cleaner visual presentation
 - June 26, 2025: Updated Resources page to show only 3 essential items: Know Your Rights, Safety Tips, Emergency Contacts
 - June 26, 2025: Removed "For Organizers" section from Resources tab in home page as requested by user
 - June 26, 2025: Renamed Supabase "resources" table to "safety-tips" and updated all API endpoints and references
