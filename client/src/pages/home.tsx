@@ -121,7 +121,7 @@ export default function Home() {
                   <div 
                     key={news.id} 
                     className={`relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 ${
-                      news.cta_url ? 'cursor-pointer hover:scale-105 transition-transform' : ''
+                      news.cta_url ? 'cursor-pointer' : ''
                     }`}
                     onClick={handleCardClick}
                     role={news.cta_url ? 'button' : undefined}
@@ -156,9 +156,6 @@ export default function Home() {
                           <p className="text-xs opacity-90 text-center">{news.cta_text}</p>
                         )}
                       </div>
-                    )}
-                    {news.cta_url && (
-                      <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
                     )}
                   </div>
                 );
