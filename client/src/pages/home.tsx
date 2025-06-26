@@ -363,6 +363,73 @@ export default function Home() {
     </div>
   );
 
+  const renderMapContent = () => (
+    <div className="px-4 py-4 max-w-md mx-auto">
+      <section className="mb-6">
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
+
+        <div className="space-y-3">
+          {nearbyLoading ? (
+            <>
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+            </>
+          ) : [...featuredProtests, ...nearbyProtests].length > 0 ? (
+            [...featuredProtests, ...nearbyProtests]
+              .filter((protest, index, self) => {
+                // Remove duplicates based on ID
+                return index === self.findIndex(p => p.id === protest.id);
+              })
+              .filter((protest) => {
+                if (searchQuery) {
+                  const query = searchQuery.toLowerCase();
+                  return (
+                    protest.title.toLowerCase().includes(query) ||
+                    protest.description.toLowerCase().includes(query) ||
+                    protest.category.toLowerCase().includes(query) ||
+                    protest.location.toLowerCase().includes(query)
+                  );
+                }
+                return true;
+              })
+              .filter((protest) => {
+                if (activeFilter === "today") {
+                  return protest.date === "Today";
+                } else if (activeFilter === "week") {
+                  return ["Today", "Tomorrow"].includes(protest.date) || protest.date.startsWith("Next");
+                } else if (activeFilter === "popular") {
+                  return protest.attendees > 500;
+                }
+                return true;
+              })
+              .map((protest, index) => (
+                <ProtestCard key={`map-${protest.id}-${index}`} protest={protest} />
+              ))
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No protests found</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* View on Map Button */}
+      <div className="mt-6 mb-4">
+        <Button 
+          className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+          size="lg"
+        >
+          <MapPin className="w-5 h-5 mr-2" />
+          View on Map
+        </Button>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     const content = (() => {
       switch (activeTab) {
