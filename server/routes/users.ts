@@ -30,13 +30,13 @@ router.get('/profile', async (req, res) => {
 // Create a new user
 router.post('/', async (req, res) => {
   try {
-    const { username, email, password, name } = req.body;
+    const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "Username, email, and password are required" });
     }
 
-    console.log('🔄 Creating user with data:', { username, email, name });
+    console.log('🔄 Creating user in users table with data:', { username, email });
 
     // Check if user already exists by username
     const { data: existingUserByUsername, error: usernameCheckError } = await supabase
@@ -79,7 +79,6 @@ router.post('/', async (req, res) => {
       username,
       email,
       password_hash,
-      name: name || null,
       notifications: true,
       location: true,
       emails: false,

@@ -29,8 +29,7 @@ async function testInsert() {
     const testUser = {
       username: `test_${Date.now()}`,
       email: `test${Date.now()}@example.com`,
-      password_hash: '$2b$10$testhashedpassword',
-      name: 'Test User'
+      password_hash: '$2b$10$testhashedpassword'
     };
 
     console.log('\n📤 Testing user insert...');

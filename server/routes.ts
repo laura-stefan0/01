@@ -3,140 +3,48 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcryptjs";
 import { supabase, supabaseAdmin } from "../db/index";
+import users from "./routes/users";
+import protests from "./routes/protests";
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all protests
-  app.get("/api/protests", async (req, res) => {
-    try {
-      const protests = await storage.getAllProtests();
-      res.json(protests);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch protests" });
-    }
-  });
+// Protests data (using local data for now as fallback)
+const protestsData = [
+  {
+    id: 1,
+    title: "Global Climate Strike",
+    description: "Join millions worldwide in demanding action on climate change. Bring signs, bring friends, bring hope for our planet's future.",
+    category: "Environment",
+    location: "Madrid, Spain",
+    address: "Puerta del Sol, 28013 Madrid",
+    latitude: "40.4168",
+    longitude: "-3.7038",
+    date: "2024-04-22",
+    time: "14:00",
+    attendees: 15420,
+    distance: "2.3 km",
+    imageUrl: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop",
+    featured: true
+  },
+];
 
-  // Get featured protests
-  app.get("/api/protests/featured", async (req, res) => {
-    try {
-      const protests = await storage.getFeaturedProtests();
-      res.json(protests);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch featured protests" });
-    }
-  });
+export function registerRoutes(app: Express) {
+  // Users routes - only interact with users table
+  app.use("/api/users", users);
 
-  // Get nearby protests
-  app.get("/api/protests/nearby", async (req, res) => {
-    try {
-      const protests = await storage.getNearbyProtests();
-      res.json(protests);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch nearby protests" });
-    }
-  });
+  // Protests routes - only interact with protests table
+  app.use("/api/protests", protests);
 
-  // Get protests by category
-  app.get("/api/protests/category/:category", async (req, res) => {
-    try {
-      const { category } = req.params;
-      const protests = await storage.getProtestsByCategory(category);
-      res.json(protests);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch protests by category" });
-    }
-  });
-
-  // Get single protest by ID
-  app.get("/api/protests/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-      const protestId = parseInt(id);
-      if (isNaN(protestId)) {
-        return res.status(400).json({ message: "Invalid protest ID" });
-      }
-      const protest = await storage.getProtestById(protestId);
-      if (!protest) {
-        return res.status(404).json({ message: "Protest not found" });
-      }
-      res.json(protest);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch protest" });
-    }
-  });
-
-  // Search protests
-  app.get("/api/protests/search", async (req, res) => {
-    try {
-      const { q } = req.query;
-      if (!q || typeof q !== "string") {
-        return res.status(400).json({ message: "Search query is required" });
-      }
-      const protests = await storage.searchProtests(q);
-      res.json(protests);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to search protests" });
-    }
-  });
-
-  
-
-  // User sign-in endpoint - simplified for demo
-  app.post("/api/auth/signin", async (req, res) => {
-    try {
-      const { email, password } = req.body;
-
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-      }
-
-      console.log("Demo sign-in for email:", email);
-
-      // For demo purposes, create a user session with any valid email/password
-      const userData = {
-        id: `demo-user-${email.split('@')[0]}`,
-        email,
-        username: email.split('@')[0],
-        name: email.split('@')[0]
-      };
-
-      console.log("Demo user authenticated:", userData.id);
-
-      res.json({
-        message: "Sign-in successful",
-        user: userData,
-        session: { access_token: "demo-token", user: userData }
-      });
-
-    } catch (error) {
-      console.error("Failed to sign in user:", error);
-      res.status(500).json({ 
-        message: "Failed to sign in", 
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  });
-
-  // Get user profile endpoint
-  app.get("/api/users/profile", async (req, res) => {
-    try {
-      // For demo purposes, return a sample user
-      // In a real app, this would be based on session/auth
-      const sampleUser = {
-        id: 1,
-        username: "alex_rodriguez",
-        email: "alex@example.com",
-        name: "Alex Rodriguez",
-        notifications: true,
-        location: true,
-        emails: false,
-        language: "en",
-      };
-
-      res.json(sampleUser);
-    } catch (error) {
-      console.error("Failed to fetch user profile:", error);
-      res.status(500).json({ message: "Failed to fetch user profile" });
-    }
+  // User profile route (demo)
+  app.get("/api/user/profile", (req, res) => {
+    res.json({
+      id: 1,
+      username: "janedoe",
+      email: "jane@example.com",
+      name: "Jane",
+      notifications: true,
+      location: true,
+      emails: false,
+      language: "en",
+    });
   });
 
   const httpServer = createServer(app);
