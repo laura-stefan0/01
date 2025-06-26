@@ -103,8 +103,38 @@ export default function Home() {
                 console.log('🖼️ Image URL:', news.image_url);
                 console.log('📊 Full news object:', news);
                 
+                const handleCardClick = () => {
+                  // Check if there's a CTA URL to navigate to
+                  if (news.cta_url) {
+                    if (news.cta_url.startsWith('http://') || news.cta_url.startsWith('https://')) {
+                      // External URL - open in new tab
+                      window.open(news.cta_url, '_blank');
+                    } else if (news.cta_url.startsWith('/')) {
+                      // Internal route - navigate within app
+                      setLocation(news.cta_url);
+                    } else {
+                      // Relative URL - treat as internal route
+                      setLocation(`/${news.cta_url}`);
+                    }
+                  }
+                };
+
                 return (
-                  <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden">
+                  <div 
+                    key={news.id} 
+                    className={`relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden ${
+                      news.cta_url ? 'cursor-pointer hover:scale-105 transition-transform' : ''
+                    }`}
+                    onClick={handleCardClick}
+                    role={news.cta_url ? 'button' : undefined}
+                    tabIndex={news.cta_url ? 0 : undefined}
+                    onKeyDown={(e) => {
+                      if (news.cta_url && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        handleCardClick();
+                      }
+                    }}
+                  >
                     <img 
                       src={news.image_url || ''} 
                       alt={news.title}
@@ -119,6 +149,9 @@ export default function Home() {
                         }
                       }}
                     />
+                    {news.cta_url && (
+                      <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
+                    )}
                   </div>
                 );
               })

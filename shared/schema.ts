@@ -68,6 +68,8 @@ export const whatsNew = pgTable("whats_new", {
   summary: text("summary").notNull(),
   content: text("content"),
   image_url: text("image_url"),
+  cta_text: text("cta_text"),
+  cta_url: text("cta_url"),
   country_code: text("country_code").notNull().default("IT"),
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
