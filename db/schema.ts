@@ -54,6 +54,16 @@ export const laws = pgTable("laws", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+// What's New table for news and updates
+export const whatsNew = pgTable("whats-new", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  content: text("content"),
+  country_code: text("country_code").notNull().default("IT"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 // Type exports for compatibility
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
@@ -63,3 +73,5 @@ export type SafetyTip = typeof safetyTips.$inferSelect;
 export type InsertSafetyTip = typeof safetyTips.$inferInsert;
 export type Law = typeof laws.$inferSelect;
 export type InsertLaw = typeof laws.$inferInsert;
+export type WhatsNew = typeof whatsNew.$inferSelect;
+export type InsertWhatsNew = typeof whatsNew.$inferInsert;

@@ -8,6 +8,7 @@ import protests from "./routes/protests";
 import upload from "./routes/upload";
 import safetyTips from "./routes/safety-tips";
 import laws from "./routes/laws";
+import whatsNew from "./routes/whats-new";
 
 // Protests data (using local data for now as fallback)
 const protestsData = [
@@ -41,6 +42,9 @@ export function registerRoutes(app: Express) {
 
   // Laws routes - country-filtered legal information
   app.use("/api/laws", laws);
+
+  // What's New routes - country-filtered news and updates
+  app.use("/api/whats-new", whatsNew);
 
   // Upload routes - handle file uploads
   app.use("/api/upload", upload);

@@ -9,6 +9,7 @@ import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { useUser } from "@/hooks/use-user";
+import { useWhatsNew } from "@/hooks/use-whats-new";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,7 @@ export default function Home() {
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(selectedCountry);
   const { data: user } = useUser();
+  const { data: whatsNewData = [], isLoading: whatsNewLoading } = useWhatsNew(selectedCountry);
   const { signOut, isAuthenticated } = useAuth();
 
   // Handle country selection change
@@ -56,27 +58,21 @@ export default function Home() {
     { id: "popular", label: "Popular" },
   ];
 
-  // Sample news data
-  const newsItems = [
-    {
-      id: 1,
-      title: "Climate Activists Rally for Green New Deal",
-      summary: "Major cities see coordinated protests for environmental policy reform",
-      timestamp: "2 hours ago"
-    },
-    {
-      id: 2,
-      title: "Workers Unite for Fair Wage Legislation",
-      summary: "Labor unions organize nationwide for minimum wage increases",
-      timestamp: "4 hours ago"
-    },
-    {
-      id: 3,
-      title: "Student Movement Gains Momentum",
-      summary: "University campuses join forces for education reform",
-      timestamp: "6 hours ago"
+  // Format timestamp for display
+  const formatTimestamp = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) {
+      return "Just now";
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hours ago`;
+    } else {
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays} days ago`;
     }
-  ];
+  };
 
   const renderHomeContent = () => (
     <div className="px-4 py-4 max-w-md mx-auto">
@@ -84,12 +80,25 @@ export default function Home() {
       <section className="mb-6">
         <h2 className="text-lg font-semibold text-dark-slate mb-3">What's new</h2>
         <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {newsItems.map((news) => (
-            <div key={news.id} className="border border-gray-100 rounded-lg p-3 min-w-40 flex-shrink-0">
-              <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">{news.title}</h3>
-              <span className="text-gray-400 text-xs">{news.timestamp}</span>
+          {whatsNewLoading ? (
+            <>
+              <Skeleton className="h-16 min-w-40 flex-shrink-0" />
+              <Skeleton className="h-16 min-w-40 flex-shrink-0" />
+              <Skeleton className="h-16 min-w-40 flex-shrink-0" />
+            </>
+          ) : whatsNewData.length > 0 ? (
+            whatsNewData.map((news) => (
+              <div key={news.id} className="border border-gray-100 rounded-lg p-3 min-w-40 flex-shrink-0">
+                <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">{news.title}</h3>
+                <span className="text-gray-400 text-xs">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
+              </div>
+            ))
+          ) : (
+            <div className="border border-gray-100 rounded-lg p-3 min-w-40 flex-shrink-0">
+              <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">No news available</h3>
+              <span className="text-gray-400 text-xs">Check back later</span>
             </div>
-          ))}
+          )}
         </div>
       </section>
 

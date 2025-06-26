@@ -62,6 +62,15 @@ export const laws = pgTable("laws", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+export const whatsNew = pgTable("whats-new", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  content: text("content"),
+  country_code: text("country_code").notNull().default("IT"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 export const insertProtestSchema = createInsertSchema(protests).omit({
   id: true,
 });
@@ -84,6 +93,11 @@ export const insertLawSchema = createInsertSchema(laws).omit({
   created_at: true,
 });
 
+export const insertWhatsNewSchema = createInsertSchema(whatsNew).omit({
+  id: true,
+  created_at: true,
+});
+
 export type InsertProtest = z.infer<typeof insertProtestSchema>;
 export type Protest = typeof protests.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -92,3 +106,5 @@ export type InsertSafetyTip = z.infer<typeof insertSafetyTipSchema>;
 export type SafetyTip = typeof safetyTips.$inferSelect;
 export type InsertLaw = z.infer<typeof insertLawSchema>;
 export type Law = typeof laws.$inferSelect;
+export type InsertWhatsNew = z.infer<typeof insertWhatsNewSchema>;
+export type WhatsNew = typeof whatsNew.$inferSelect;
