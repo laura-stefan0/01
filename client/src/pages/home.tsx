@@ -86,7 +86,7 @@ export default function Home() {
             </>
           ) : (
             featuredProtests.map((protest) => (
-              <div key={protest.id} className="w-5/6 flex-shrink-0">
+              <div key={`featured-${protest.id}`} className="w-5/6 flex-shrink-0">
                 <ProtestCard protest={protest} variant="featured" />
               </div>
             ))
@@ -108,7 +108,7 @@ export default function Home() {
             </>
           ) : nearbyProtests.length > 0 ? (
             nearbyProtests.map((protest) => (
-              <ProtestCard key={protest.id} protest={protest} />
+              <ProtestCard key={`nearby-${protest.id}`} protest={protest} />
             ))
           ) : (
             <div className="text-center py-8">
@@ -407,8 +407,8 @@ export default function Home() {
                       }
                       return true;
                     })
-                    .map((protest) => (
-                      <ProtestCard key={protest.id} protest={protest} />
+                    .map((protest, index) => (
+                      <ProtestCard key={`map-${protest.id}-${index}`} protest={protest} />
                     ))
                 ) : (
                   <div className="text-center py-8">
