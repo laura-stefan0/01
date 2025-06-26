@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Shield, Lock, FileText, Target, Printer } from "lucide-react";
 import { useLocation } from "wouter";
+import { BottomNavigation } from "@/components/bottom-navigation";
 
 export default function Resources() {
   const [, setLocation] = useLocation();
+  const [activeTab, setActiveTab] = useState("resources");
   const [selectedCountry, setSelectedCountry] = useState<string>(() => {
     return localStorage.getItem('selectedCountry') || 'it';
   });
@@ -15,6 +17,27 @@ export default function Resources() {
 
   const handleKnowYourRights = () => {
     setLocation("/know-your-rights");
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    switch (tab) {
+      case "home":
+        setLocation("/");
+        break;
+      case "search":
+        setLocation("/filter");
+        break;
+      case "map":
+        setLocation("/?tab=map");
+        break;
+      case "resources":
+        setLocation("/resources");
+        break;
+      case "profile":
+        setLocation("/?tab=profile");
+        break;
+    }
   };
 
   return (
@@ -84,6 +107,8 @@ export default function Resources() {
           </div>
         </div>
       </div>
+      
+      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }
