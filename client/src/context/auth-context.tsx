@@ -100,6 +100,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = () => {
     setUser(null);
     localStorage.removeItem('corteo_user');
+    // Force page reload to redirect to sign-in
+    window.location.href = '/sign-in';
   };
 
   const value = {

@@ -22,15 +22,7 @@ export default function Home() {
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
   const { data: user } = useUser();
-  
-  // Add a safe check for useAuth
-  let signOut = () => {};
-  try {
-    const auth = useAuth();
-    signOut = auth.signOut;
-  } catch (error) {
-    console.log("Auth context not available");
-  }
+  const { signOut, isAuthenticated } = useAuth();
 
   const filters = [
     { id: "all", label: "All" },
@@ -307,13 +299,22 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      {/* Sign Out */}
-      <Button 
-        onClick={signOut}
-        className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
-      >
-        Sign Out
-      </Button>
+      {/* Sign Out or Sign In */}
+      {isAuthenticated ? (
+        <Button 
+          onClick={signOut}
+          className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
+        >
+          Sign Out
+        </Button>
+      ) : (
+        <Button 
+          onClick={() => window.location.href = '/sign-in'}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          Sign In
+        </Button>
+      )}
     </div>
   );
 
@@ -398,7 +399,7 @@ export default function Home() {
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "home":
-        return user ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
+        return user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
       case "map":
         return "Search";
       case "resources":
@@ -408,7 +409,7 @@ export default function Home() {
       case "profile":
         return "Profile";
       default:
-        return user ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
+        return user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
     }
   };
 
