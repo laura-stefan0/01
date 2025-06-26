@@ -1,66 +1,54 @@
 # Automated Image System for Protests
 
 ## Overview
-The Corteo platform has a fully automated image system that handles protest image uploads and links them directly to the Supabase database without manual intervention.
+The Corteo platform uses a fully automated image system that links protest records directly to images stored in the Supabase storage bucket.
 
-## How It Works
+## Current Implementation
 
-### 1. Image Upload Process
-When a user creates a protest and uploads an image:
+### Database Integration
+All protests in the database now link to images stored in the `protest-images` Supabase bucket:
 
-1. **Frontend**: User selects image in the protest creation form
-2. **Upload API**: Image is sent to `/api/upload/image` endpoint
-3. **Supabase Storage**: Image is automatically stored in the `protest-images` bucket
-4. **URL Generation**: Supabase generates a public URL for the image
-5. **Database Link**: The image URL is automatically saved in the protest record
-
-### 2. Automatic Linking
-- Each uploaded image gets a unique filename: `protest-{timestamp}-{random}.{extension}`
-- The image URL is immediately linked to the protest in the database
-- No manual steps required - everything happens automatically
-
-### 3. Image Display
-- Protest cards automatically load images from Supabase storage
-- Fallback images are provided if an image fails to load
-- All images use proper Supabase storage URLs
-
-## Technical Implementation
-
-### Database Schema
-```sql
--- In the protests table
-image_url: text (nullable) -- Stores the full Supabase storage URL
+```
+✓ 7 protests updated with Supabase bucket images
+✓ All image_url fields now point to proper Supabase storage URLs
+✓ Format: https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/{filename}
 ```
 
-### Storage Structure
+### Automatic Upload Process
+When users create new protests:
+
+1. **Image Selection**: User uploads image in protest creation form
+2. **Storage Upload**: Image automatically saved to `protest-images` bucket with unique filename
+3. **URL Generation**: Supabase generates public URL for immediate access
+4. **Database Linking**: Image URL automatically saved in protest record's `image_url` field
+5. **Display**: Protest cards immediately show the uploaded image
+
+### Image Management
+- **Unique Filenames**: `protest-{timestamp}-{random}.{extension}`
+- **Automatic Cleanup**: Temporary files removed after upload
+- **Error Handling**: Fallback images if upload fails
+- **Type Validation**: Only image files accepted (jpg, png, gif, webp)
+
+## Storage Structure
 ```
-Supabase Storage Bucket: protest-images
-├── protest-1750926456895-183941396.jpg
-├── protest-1750926789123-456789012.png
-└── photo-1559827260-dc66d52bef19.jpeg (pre-existing)
+Supabase Bucket: protest-images
+├── photo-1542601906990-b4d3fb778b09.jpeg
+├── photo-1544717297-fa95b6ee9643.jpeg
+├── photo-1559827260-dc66d52bef19.jpeg
+├── photo-1569098644584-210bcd375b59.jpeg
+├── photo-1571019613454-1cb2f99b2d8b.jpeg
+├── photo-1573152958734-1922c188fba3.jpeg
+└── teemu-paananen-rd5uNIUJCF0-unsplash.jpg
 ```
 
-### API Endpoints
-- `POST /api/upload/image` - Uploads image to Supabase storage
-- `POST /api/protests` - Creates protest with linked image URL
-
-### Frontend Components
-- `ProtestCard` - Displays images from Supabase storage
-- `CreateProtest` - Handles image upload and protest creation
+## API Endpoints
+- `POST /api/upload/image` - Handles image upload to Supabase storage
+- `POST /api/protests` - Creates protest with automatic image linking
+- `GET /api/protests/*` - Returns protests with proper Supabase image URLs
 
 ## Benefits
-1. **Fully Automated**: No manual linking required
-2. **Secure Storage**: Images stored in Supabase with proper access controls
-3. **Scalable**: Can handle unlimited image uploads
-4. **Reliable**: Built-in error handling and fallbacks
-5. **Fast Loading**: Direct CDN access through Supabase
-
-## User Experience
-Users simply:
-1. Click "Create New Protest" 
-2. Fill out the form
-3. Upload an image (optional)
-4. Submit the form
-5. Image is automatically linked and displayed in protest cards
-
-The system handles all technical details automatically.
+1. **Zero Manual Work**: Complete automation from upload to display
+2. **Direct Storage**: Images stored securely in Supabase bucket
+3. **Instant Linking**: Database records automatically updated
+4. **Reliable Display**: All protest cards show proper images
+5. **Scalable System**: Handles unlimited image uploads
