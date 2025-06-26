@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Router } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,6 +10,7 @@ import Filter from "@/pages/filter";
 import NotFound from "@/pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import ProtectedRoute from "@/components/protected-route";
+import BottomNavigation from "@/components/bottom-navigation";
 
 function AuthenticatedRouter() {
   return (
