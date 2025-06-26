@@ -100,6 +100,11 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Enhanced "For you" page with improved header greeting logic for authenticated vs guest users
+- June 26, 2025: Removed all card shadows and hover effects throughout the application
+- June 26, 2025: Removed filter buttons from "For you" page for cleaner interface
+- June 26, 2025: Added News section with smaller cards above Featured Protests section
+- June 25, 2025: Fixed sign-out button to properly redirect authenticated users to sign-in page
 - June 25, 2025: Replaced demo account login with guest access option
 - June 25, 2025: Added "Use as guest" button with privacy message "No account needed. Corteo supports anonymity"
 - June 25, 2025: Updated authentication flow to allow anonymous browsing without account requirements

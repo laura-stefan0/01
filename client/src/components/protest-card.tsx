@@ -44,7 +44,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
 
   if (variant === "featured") {
     return (
-      <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64 cursor-pointer hover:shadow-lg transition-shadow" onClick={handleClick}>
+      <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64 cursor-pointer border border-gray-200" onClick={handleClick}>
         <img 
           src={protest.imageUrl} 
           alt={protest.title}
@@ -71,7 +71,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   }
 
   return (
-    <Card className="overflow-hidden h-20 cursor-pointer hover:shadow-lg transition-shadow" onClick={handleClick}>
+    <Card className="overflow-hidden h-20 cursor-pointer border border-gray-200" onClick={handleClick}>
       <div className="flex h-full">
         <img 
           src={protest.imageUrl}

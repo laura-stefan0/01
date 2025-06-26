@@ -31,8 +31,44 @@ export default function Home() {
     { id: "popular", label: "Popular" },
   ];
 
+  // Sample news data
+  const newsItems = [
+    {
+      id: 1,
+      title: "Climate Activists Rally for Green New Deal",
+      summary: "Major cities see coordinated protests for environmental policy reform",
+      timestamp: "2 hours ago"
+    },
+    {
+      id: 2,
+      title: "Workers Unite for Fair Wage Legislation",
+      summary: "Labor unions organize nationwide for minimum wage increases",
+      timestamp: "4 hours ago"
+    },
+    {
+      id: 3,
+      title: "Student Movement Gains Momentum",
+      summary: "University campuses join forces for education reform",
+      timestamp: "6 hours ago"
+    }
+  ];
+
   const renderHomeContent = () => (
     <div className="px-4 py-4 max-w-md mx-auto">
+      {/* News Section */}
+      <section className="mb-6">
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">News</h2>
+        <div className="space-y-2">
+          {newsItems.map((news) => (
+            <div key={news.id} className="border border-gray-100 rounded-lg p-3">
+              <h3 className="font-medium text-dark-slate text-sm mb-1">{news.title}</h3>
+              <p className="text-gray-600 text-xs mb-2">{news.summary}</p>
+              <span className="text-gray-400 text-xs">{news.timestamp}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Featured Section */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
@@ -399,7 +435,7 @@ export default function Home() {
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "home":
-        return user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
+        return isAuthenticated && user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
       case "map":
         return "Search";
       case "resources":
@@ -409,7 +445,7 @@ export default function Home() {
       case "profile":
         return "Profile";
       default:
-        return user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
+        return isAuthenticated && user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
     }
   };
 
@@ -429,36 +465,16 @@ export default function Home() {
 
           {/* Search Bar - Show on home and map tabs */}
           {(activeTab === "home" || activeTab === "map") && (
-            <>
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search protests by name or cause..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
-                />
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              </div>
-
-              {/* Filter Tags */}
-              <div className="flex space-x-2 mt-3 overflow-x-auto pb-1">
-                {filters.map((filter) => (
-                  <Badge
-                    key={filter.id}
-                    variant={activeFilter === filter.id ? "default" : "secondary"}
-                    className={`cursor-pointer whitespace-nowrap ${
-                      activeFilter === filter.id
-                        ? "bg-activist-blue text-white hover:bg-activist-blue/90"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                    onClick={() => setActiveFilter(filter.id)}
-                  >
-                    {filter.label}
-                  </Badge>
-                ))}
-              </div>
-            </>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search protests by name or cause..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
+              />
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+            </div>
           )}
         </div>
       </header>
