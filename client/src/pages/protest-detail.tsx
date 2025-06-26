@@ -171,8 +171,12 @@ export default function ProtestDetail() {
             <div className="flex items-center text-gray-600 mb-4">
               <Users className="h-4 w-4 mr-1" />
               <span className="text-sm">{protest.attendees} people going</span>
-              <span className="mx-2">•</span>
-              <span className="text-sm">{protest.distance}</span>
+              {protest.distance && (
+                <>
+                  <span className="mx-2">•</span>
+                  <span className="text-sm">{protest.distance}</span>
+                </>
+              )}
             </div>
           </div>
 
