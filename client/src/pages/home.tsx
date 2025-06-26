@@ -246,30 +246,22 @@ export default function Home() {
         <CardContent className="p-6">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-gray-200">
-              {isAuthenticated ? (
-                <img 
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face" 
-                  alt="Profile picture"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-activist-blue flex items-center justify-center text-white font-semibold text-xl">
-                  G
-                </div>
-              )}
+              <img 
+                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face" 
+                alt="Profile picture"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-dark-slate text-lg">
-                {isAuthenticated ? "Jane" : "Guest User"}
+                Jane
               </h3>
               <p className="text-gray-600 text-sm">
-                {isAuthenticated ? "@janedoe" : "Browse anonymously"}
+                @janedoe
               </p>
-              {isAuthenticated && (
-                <Button variant="outline" size="sm" className="mt-3">
-                  Edit profile
-                </Button>
-              )}
+              <Button variant="outline" size="sm" className="mt-3">
+                Edit profile
+              </Button>
             </div>
           </div>
         </CardContent>
