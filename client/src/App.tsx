@@ -11,6 +11,7 @@ import Filter from "@/pages/filter";
 import Resources from "@/pages/resources";
 import KnowYourRights from "@/pages/know-your-rights";
 import Transparency from "@/pages/transparency";
+import TestPage from "@/pages/test-page";
 import NotFound from "./pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 
@@ -39,6 +40,7 @@ function AuthenticatedRouter() {
         <Route path="/know-your-rights" component={KnowYourRights} />
         <Route path="/create-protest" component={CreateProtest} />
         <Route path="/transparency" component={Transparency} />
+        <Route path="/123" component={TestPage} />
         <Route component={NotFound} />
       </Switch>
     </div>

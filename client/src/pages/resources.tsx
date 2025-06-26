@@ -16,7 +16,8 @@ export default function Resources() {
   }, [selectedCountry]);
 
   const handleKnowYourRights = () => {
-    setLocation("/know-your-rights");
+    console.log("Know Your Rights clicked, navigating to /123");
+    setLocation("/123");
   };
 
   const handleTabChange = (tab: string) => {
