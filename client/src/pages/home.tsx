@@ -305,7 +305,7 @@ const renderResourcesContent = () => (
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="top" align="start">
               <SelectItem value="it">Italy</SelectItem>
             </SelectContent>
           </Select>
@@ -320,7 +320,7 @@ const renderResourcesContent = () => (
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="top" align="start">
               <SelectItem value="en">English</SelectItem>
             </SelectContent>
           </Select>
