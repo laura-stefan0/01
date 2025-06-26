@@ -385,6 +385,10 @@ export default function Home() {
                   </>
                 ) : [...featuredProtests, ...nearbyProtests].length > 0 ? (
                   [...featuredProtests, ...nearbyProtests]
+                    .filter((protest, index, self) => {
+                      // Remove duplicates based on ID
+                      return index === self.findIndex(p => p.id === protest.id);
+                    })
                     .filter((protest) => {
                       if (searchQuery) {
                         const query = searchQuery.toLowerCase();

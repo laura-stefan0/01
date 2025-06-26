@@ -16,7 +16,7 @@ function AuthenticatedRouter() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center animate-in fade-in duration-300">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -26,28 +26,24 @@ function AuthenticatedRouter() {
   }
 
   return (
-    <div className="animate-in fade-in duration-300">
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/protest/:id" component={ProtestDetail} />
-        <Route path="/filter" component={Filter} />
-        <Route path="/create-protest" component={CreateProtest} />
-        <Route component={NotFound} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route path="/" component={() => <div className="animate-in fade-in duration-300"><Home /></div>} />
+      <Route path="/protest/:id" component={() => <div className="animate-in fade-in duration-300"><ProtestDetail /></div>} />
+      <Route path="/filter" component={() => <div className="animate-in fade-in duration-300"><Filter /></div>} />
+      <Route path="/create-protest" component={() => <div className="animate-in fade-in duration-300"><CreateProtest /></div>} />
+      <Route component={() => <div className="animate-in fade-in duration-300"><NotFound /></div>} />
+    </Switch>
   );
 }
 
 function AppRouter() {
   return (
-    <div className="animate-in fade-in duration-300">
-      <Switch>
-        <Route path="/sign-in" component={SignIn} />
-        <Route path="/*">
-          <AuthenticatedRouter />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path="/sign-in" component={() => <div className="animate-in fade-in duration-300"><SignIn /></div>} />
+      <Route path="/*">
+        <AuthenticatedRouter />
+      </Route>
+    </Switch>
   );
 }
 

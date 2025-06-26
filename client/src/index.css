@@ -1,6 +1,31 @@
+/* Tailwind CSS base, components, and utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.duration-300 {
+  animation-duration: 300ms;
+}
 
 /* Soft fade transition */
 .fade-in {
@@ -49,7 +74,7 @@
   --destructive-foreground: hsl(210, 40%, 98%);
   --ring: hsl(215, 25%, 27%);
   --radius: 0.5rem;
-  
+
   /* Custom Corteo colors */
   --activist-blue: hsl(217, 91%, 60%); /* #2563EB */
   --rally-red: hsl(0, 74%, 50%); /* #DC2626 */
@@ -96,39 +121,39 @@
   .activist-blue {
     color: var(--activist-blue);
   }
-  
+
   .bg-activist-blue {
     background-color: var(--activist-blue);
   }
-  
+
   .rally-red {
     color: var(--rally-red);
   }
-  
+
   .bg-rally-red {
     background-color: var(--rally-red);
   }
-  
+
   .movement-green {
     color: var(--movement-green);
   }
-  
+
   .bg-movement-green {
     background-color: var(--movement-green);
   }
-  
+
   .clean-white {
     color: var(--clean-white);
   }
-  
+
   .bg-clean-white {
     background-color: var(--clean-white);
   }
-  
+
   .dark-slate {
     color: var(--dark-slate);
   }
-  
+
   .bg-dark-slate {
     background-color: var(--dark-slate);
   }
@@ -138,7 +163,7 @@
     box-shadow: none !important;
     border: 1px solid hsl(220, 13%, 91%) !important;
   }
-  
+
   /* Line clamp utilities */
   .line-clamp-1 {
     overflow: hidden;
@@ -146,7 +171,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
   }
-  
+
   .line-clamp-2 {
     overflow: hidden;
     display: -webkit-box;
