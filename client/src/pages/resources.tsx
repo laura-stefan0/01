@@ -14,6 +14,7 @@ export default function Resources() {
   }, [selectedCountry]);
 
   const handleKnowYourRights = () => {
+    console.log("Know Your Rights clicked, navigating to /know-your-rights");
     setLocation("/know-your-rights");
   };
 
