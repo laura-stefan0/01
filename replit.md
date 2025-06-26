@@ -100,6 +100,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Implemented fully automated image system linking Supabase storage to protests database
+- June 26, 2025: Fixed image display issues and created comprehensive protest-images bucket integration
 - June 26, 2025: Enhanced image handling system for proper Supabase storage integration and fallback support
 - June 26, 2025: Successfully migrated project from Replit Agent to standard Replit environment
 - June 26, 2025: Updated "For you" page: removed searchbar, renamed "News" to "What's new", made cards narrower, changed "Featured Protests" to "Featured", changed "Support the Movement" to "Support Us"

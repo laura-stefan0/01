@@ -35,8 +35,8 @@ export const protests = pgTable("protests", {
   date: text("date").notNull(),
   time: text("time").notNull(),
   attendees: integer("attendees").notNull().default(0),
-  distance: text("distance").notNull(),
-  imageUrl: text("image_url").notNull(),
+  distance: text("distance").notNull().default(""),
+  imageUrl: text("image_url"),
   featured: boolean("featured").notNull().default(false),
 });
 

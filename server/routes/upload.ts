@@ -45,28 +45,28 @@ interface RequestWithFile extends Request {
   file?: Express.Multer.File;
 }
 
-// Image upload endpoint
+// Image upload endpoint - Automatically links images to Supabase storage
 router.post('/image', upload.single('image'), async (req: RequestWithFile, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No image file provided' });
     }
 
-    // Read the uploaded file
+    // Generate unique filename with protest prefix
     const fileBuffer = fs.readFileSync(req.file.path);
-    const fileName = req.file.filename;
+    const fileExtension = req.file.originalname.split('.').pop();
+    const uniqueFileName = `protest-${Date.now()}-${Math.round(Math.random() * 1E9)}.${fileExtension}`;
     
-    // Upload to Supabase storage
+    // Upload to Supabase protest-images bucket
     const { data, error } = await supabaseAdmin.storage
       .from('protest-images')
-      .upload(fileName, fileBuffer, {
+      .upload(uniqueFileName, fileBuffer, {
         contentType: req.file.mimetype,
         upsert: false
       });
 
     if (error) {
-      console.error('❌ Supabase storage error:', error);
-      // Clean up local file
+      console.error('Supabase storage error:', error);
       fs.unlinkSync(req.file.path);
       return res.status(500).json({ message: 'Failed to upload image to storage' });
     }
@@ -74,20 +74,19 @@ router.post('/image', upload.single('image'), async (req: RequestWithFile, res: 
     // Get public URL for the uploaded image
     const { data: urlData } = supabaseAdmin.storage
       .from('protest-images')
-      .getPublicUrl(fileName);
+      .getPublicUrl(uniqueFileName);
 
-    // Clean up local file after successful upload
+    // Clean up local temporary file
     fs.unlinkSync(req.file.path);
     
-    console.log('✅ Image uploaded successfully:', fileName);
+    console.log('Image uploaded to Supabase storage:', uniqueFileName);
     res.json({ 
       message: 'Image uploaded successfully',
       imageUrl: urlData.publicUrl,
-      filename: fileName
+      filename: uniqueFileName
     });
   } catch (error) {
-    console.error('❌ Image upload error:', error);
-    // Clean up local file if it exists
+    console.error('Image upload error:', error);
     if (req.file?.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
