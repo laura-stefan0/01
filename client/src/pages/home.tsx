@@ -21,12 +21,21 @@ export default function Home() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [isLoadingProtests, setIsLoadingProtests] = useState(true);
   const [allProtests, setAllProtests] = useState<any[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
+    return localStorage.getItem('corteo_selected_country') || 'it';
+  });
   const [, setLocation] = useLocation();
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
   const { data: user } = useUser();
   const { signOut, isAuthenticated } = useAuth();
+
+  // Handle country selection change
+  const handleCountryChange = (newCountry: string) => {
+    setSelectedCountry(newCountry);
+    localStorage.setItem('corteo_selected_country', newCountry);
+  };
 
   // Combine protests data for map view
   useEffect(() => {
@@ -301,7 +310,7 @@ const renderResourcesContent = () => (
       <Card>
         <CardContent className="p-4">
           <h3 className="font-semibold text-dark-slate mb-3">Country</h3>
-          <Select defaultValue="it">
+          <Select value={selectedCountry} onValueChange={handleCountryChange}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
