@@ -100,6 +100,13 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Implemented comprehensive country-based filtering system for protests, resources, and laws
+- June 26, 2025: Added country_code fields to all database tables (users, protests, resources, laws)
+- June 26, 2025: Updated all API endpoints to filter data by user's country (defaulting to IT)
+- June 26, 2025: Created new API routes for resources and laws with country filtering
+- June 26, 2025: Fixed navigation bar movement when selecting country/language dropdowns
+- June 26, 2025: Updated Transparency page with streamlined content and moderation policies
+- June 26, 2025: Set Profile page to show only Country: Italy and Language: English
 - June 26, 2025: Added Transparency page in Profile section explaining Corteo's mission, values, and "why" with dedicated route
 - June 26, 2025: Implemented DD-MM-YYYY date format and 24-hour time format throughout application with utility functions
 - June 26, 2025: Restructured Resources page with "For Protesters" and "For Organizers" containers as requested

@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   password_hash: text("password_hash").notNull(),
   name: text("name"),
+  country_code: text("country_code").notNull().default("IT"),
   notifications: boolean("notifications").notNull().default(true),
   location: boolean("location").notNull().default(true),
   emails: boolean("emails").notNull().default(false),
@@ -37,7 +38,28 @@ export const protests = pgTable("protests", {
   attendees: integer("attendees").notNull().default(0),
   distance: text("distance").notNull().default(""),
   image_url: text("image_url"),
+  country_code: text("country_code").notNull().default("IT"),
   featured: boolean("featured").notNull().default(false),
+});
+
+export const resources = pgTable("resources", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  category: text("category").notNull(), // "protesters" or "organizers"
+  type: text("type").notNull(), // "rights", "safety", "digital_security", "glossary", "organizing", "printables"
+  country_code: text("country_code").notNull().default("IT"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const laws = pgTable("laws", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(), // "protest_rights", "assembly", "free_speech", etc.
+  content: text("content").notNull(),
+  country_code: text("country_code").notNull().default("IT"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
 export const insertProtestSchema = createInsertSchema(protests).omit({
@@ -49,9 +71,24 @@ export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
   password_hash: true,
   name: true,
+  country_code: true,
+});
+
+export const insertResourceSchema = createInsertSchema(resources).omit({
+  id: true,
+  created_at: true,
+});
+
+export const insertLawSchema = createInsertSchema(laws).omit({
+  id: true,
+  created_at: true,
 });
 
 export type InsertProtest = z.infer<typeof insertProtestSchema>;
 export type Protest = typeof protests.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type InsertResource = z.infer<typeof insertResourceSchema>;
+export type Resource = typeof resources.$inferSelect;
+export type InsertLaw = z.infer<typeof insertLawSchema>;
+export type Law = typeof laws.$inferSelect;

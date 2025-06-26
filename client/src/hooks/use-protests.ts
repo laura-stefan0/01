@@ -35,7 +35,7 @@ export function useProtestsByCategory(category: string) {
 
 export function useSearchProtests(query: string) {
   return useQuery<Protest[]>({
-    queryKey: ["/api/protests/search", { q: query }],
+    queryKey: [`/api/protests/search?q=${encodeURIComponent(query)}`],
     enabled: !!query && query.length > 0,
   });
 }
