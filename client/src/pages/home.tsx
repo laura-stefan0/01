@@ -25,11 +25,9 @@ export default function Home() {
   
   // Add a safe check for useAuth
   let signOut = () => {};
-  let isAuthenticated = false;
   try {
     const auth = useAuth();
     signOut = auth.signOut;
-    isAuthenticated = auth.isAuthenticated;
   } catch (error) {
     console.log("Auth context not available");
   }
@@ -309,25 +307,13 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      {/* Sign Out - Only show for authenticated users */}
-      {isAuthenticated && (
-        <Button 
-          onClick={signOut}
-          className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
-        >
-          Sign Out
-        </Button>
-      )}
-      
-      {/* Sign In option for guest users */}
-      {!isAuthenticated && (
-        <Button 
-          onClick={() => window.location.href = '/sign-in'}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          Sign In / Sign Up
-        </Button>
-      )}
+      {/* Sign Out */}
+      <Button 
+        onClick={signOut}
+        className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
+      >
+        Sign Out
+      </Button>
     </div>
   );
 
@@ -412,7 +398,7 @@ export default function Home() {
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "home":
-        return user ? `Hi, ${user.name?.split(' ')[0] || user.username || 'Guest'}!` : "Hi there!";
+        return user ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
       case "map":
         return "Search";
       case "resources":
@@ -422,7 +408,7 @@ export default function Home() {
       case "profile":
         return "Profile";
       default:
-        return user ? `Hi, ${user.name?.split(' ')[0] || user.username || 'Guest'}!` : "Hi there!";
+        return user ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
     }
   };
 
