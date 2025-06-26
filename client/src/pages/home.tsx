@@ -107,8 +107,8 @@ export default function Home() {
               <Skeleton className="h-20 w-full" />
             </>
           ) : nearbyProtests.length > 0 ? (
-            nearbyProtests.map((protest, index) => (
-              <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
+            nearbyProtests.map((protest) => (
+              <ProtestCard key={`nearby-${protest.id}`} protest={protest} />
             ))
           ) : (
             <div className="text-center py-8">
@@ -407,7 +407,7 @@ export default function Home() {
                 return true;
               })
               .map((protest, index) => (
-                <ProtestCard key={`map-${protest.id}-${index}`} protest={protest} />
+                <ProtestCard key={`map-${protest.id}`} protest={protest} />
               ))
           ) : (
             <div className="text-center py-8">
@@ -488,15 +488,24 @@ export default function Home() {
 
           {/* Search Bar - Show only on map tab */}
           {activeTab === "map" && (
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Search protests by name or cause..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
-              />
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+            <div className="space-y-3">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search protests by name or cause..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
+                />
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              </div>
+              <Button 
+                variant="outline" 
+                className="w-full border-gray-200 text-gray-700 hover:bg-gray-50"
+                onClick={() => setLocation("/filter")}
+              >
+                Filters
+              </Button>
             </div>
           )}
         </div>
