@@ -26,8 +26,8 @@ export default function Home() {
   });
   const [, setLocation] = useLocation();
 
-  const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests();
-  const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests();
+  const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
+  const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(selectedCountry);
   const { data: user } = useUser();
   const { signOut, isAuthenticated } = useAuth();
 
