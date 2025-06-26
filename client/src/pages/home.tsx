@@ -406,8 +406,8 @@ export default function Home() {
                 }
                 return true;
               })
-              .map((protest, index) => (
-                <ProtestCard key={`map-${protest.id}`} protest={protest} />
+              .map((protest) => (
+                <ProtestCard key={`combined-${protest.id}`} protest={protest} />
               ))
           ) : (
             <div className="text-center py-8">
