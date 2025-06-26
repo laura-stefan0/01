@@ -25,8 +25,8 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center p-2 flex-1 ${
-                isActive ? "text-activist-blue" : "text-gray-500"
+              className={`flex flex-col items-center p-2 flex-1 transition-colors duration-200 ${
+                isActive ? "text-[#e40000]" : "text-gray-500"
               }`}
             >
               <Icon className="w-5 h-5 mb-1" />

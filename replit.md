@@ -100,6 +100,9 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Added soft fade transitions between screens using Tailwind animate-in classes
+- June 26, 2025: Updated active navigation icon color to brand color #e40000 for better brand consistency
+- June 26, 2025: Standardized database field naming to use image_url consistently throughout system
 - June 26, 2025: Implemented fully automated image system linking Supabase storage to protests database
 - June 26, 2025: Fixed image display issues and created comprehensive protest-images bucket integration
 - June 26, 2025: Enhanced image handling system for proper Supabase storage integration and fallback support

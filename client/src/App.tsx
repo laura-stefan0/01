@@ -26,24 +26,28 @@ function AuthenticatedRouter() {
   }
 
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/protest/:id" component={ProtestDetail} />
-      <Route path="/filter" component={Filter} />
-      <Route path="/create-protest" component={CreateProtest} />
-      <Route component={NotFound} />
-    </Switch>
+    <div className="animate-in fade-in duration-300">
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/protest/:id" component={ProtestDetail} />
+        <Route path="/filter" component={Filter} />
+        <Route path="/create-protest" component={CreateProtest} />
+        <Route component={NotFound} />
+      </Switch>
+    </div>
   );
 }
 
 function AppRouter() {
   return (
-    <Switch>
-      <Route path="/sign-in" component={SignIn} />
-      <Route path="/*">
-        <AuthenticatedRouter />
-      </Route>
-    </Switch>
+    <div className="animate-in fade-in duration-300">
+      <Switch>
+        <Route path="/sign-in" component={SignIn} />
+        <Route path="/*">
+          <AuthenticatedRouter />
+        </Route>
+      </Switch>
+    </div>
   );
 }
 
