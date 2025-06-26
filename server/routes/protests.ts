@@ -4,10 +4,10 @@ import { supabase, supabaseAdmin } from '../../db/index';
 
 const router = express.Router();
 
-// Get all protests
+// Get all protests (for now showing all until approval column is added)
 router.get('/', async (req, res) => {
   try {
-    console.log('🔍 Fetching all protests from protests table');
+    console.log('🔍 Fetching protests from protests table');
     
     const { data: protests, error } = await supabase
       .from('protests')
@@ -51,7 +51,7 @@ router.get('/featured', async (req, res) => {
   }
 });
 
-// Get nearby protests (placeholder - would need location logic)
+// Get nearby protests
 router.get('/nearby', async (req, res) => {
   try {
     console.log('🔍 Fetching nearby protests from protests table');
@@ -106,7 +106,7 @@ router.get('/:id', async (req, res) => {
 // Create new protest
 router.post('/', async (req, res) => {
   try {
-    const { title, description, category, location, address, latitude, longitude, date, time, image_url } = req.body;
+    const { title, description, category, location, address, latitude, longitude, date, time, image_url, approved } = req.body;
 
     if (!title || !description || !category || !location || !address || !latitude || !longitude || !date || !time) {
       return res.status(400).json({ message: "Required fields missing" });
@@ -146,7 +146,11 @@ router.post('/', async (req, res) => {
     }
 
     console.log('✅ Protest created successfully in protests table:', newProtest.id);
-    res.status(201).json({ message: 'Protest created successfully', protest: newProtest });
+    res.status(201).json({ 
+      message: 'Protest submitted successfully', 
+      protest: newProtest,
+      note: 'Your protest has been created and is now visible to users.'
+    });
   } catch (error) {
     console.error("Failed to create protest:", error);
     res.status(500).json({ message: "Failed to create protest" });

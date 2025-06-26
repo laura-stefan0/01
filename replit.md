@@ -106,6 +106,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - June 26, 2025: Added "Edit profile" button to Profile page for authenticated users
 - June 26, 2025: Updated user profile to show Jane/@janedoe with professional profile picture from Unsplash
 - June 26, 2025: Added "Create New Protest" button in Profile page settings that opens form to create protests in Supabase database
+- June 26, 2025: Enhanced protest creation form with photo upload capability and image preview functionality
+- June 26, 2025: Added multer-based image upload API endpoint with file validation and storage handling
 
 - June 26, 2025: Fixed Profile page sign-out button to be red and properly redirect to sign-in page
 - June 26, 2025: Redesigned Profile page user section with centered layout, profile picture, location, and description

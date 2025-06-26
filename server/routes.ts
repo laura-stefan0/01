@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { supabase, supabaseAdmin } from "../db/index";
 import users from "./routes/users";
 import protests from "./routes/protests";
+import upload from "./routes/upload";
 
 // Protests data (using local data for now as fallback)
 const protestsData = [
@@ -32,6 +33,9 @@ export function registerRoutes(app: Express) {
 
   // Protests routes - only interact with protests table
   app.use("/api/protests", protests);
+
+  // Upload routes - handle file uploads
+  app.use("/api/upload", upload);
 
   // User profile route (demo)
   app.get("/api/user/profile", (req, res) => {
