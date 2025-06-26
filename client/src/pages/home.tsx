@@ -301,23 +301,12 @@ const renderResourcesContent = () => (
       <Card>
         <CardContent className="p-4">
           <h3 className="font-semibold text-dark-slate mb-3">Country</h3>
-          <Select defaultValue="us">
+          <Select defaultValue="it">
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="us">United States</SelectItem>
-              <SelectItem value="ca">Canada</SelectItem>
-              <SelectItem value="uk">United Kingdom</SelectItem>
-              <SelectItem value="fr">France</SelectItem>
-              <SelectItem value="de">Germany</SelectItem>
-              <SelectItem value="es">Spain</SelectItem>
               <SelectItem value="it">Italy</SelectItem>
-              <SelectItem value="au">Australia</SelectItem>
-              <SelectItem value="jp">Japan</SelectItem>
-              <SelectItem value="br">Brazil</SelectItem>
-              <SelectItem value="mx">Mexico</SelectItem>
-              <SelectItem value="in">India</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
@@ -333,9 +322,6 @@ const renderResourcesContent = () => (
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="en">English</SelectItem>
-              <SelectItem value="es">Español</SelectItem>
-              <SelectItem value="fr">Français</SelectItem>
-              <SelectItem value="de">Deutsch</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
