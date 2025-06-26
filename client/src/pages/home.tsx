@@ -141,10 +141,16 @@ export default function Home() {
                         onLoad={() => console.log('✅ Image loaded successfully:', news.image_url)}
                         onError={(e) => {
                           console.error('❌ Image failed to load:', news.image_url);
-                          // Hide the entire card if image fails to load
-                          const parentDiv = e.currentTarget.parentElement;
-                          if (parentDiv && parentDiv.parentNode) {
-                            parentDiv.style.display = 'none';
+                          // Show text-based card instead of hiding
+                          const imgElement = e.currentTarget as HTMLImageElement;
+                          const parentDiv = imgElement.parentElement;
+                          if (parentDiv) {
+                            parentDiv.innerHTML = `
+                              <div class="w-full h-full bg-gradient-to-br from-activist-blue to-activist-blue/80 flex flex-col justify-center items-center p-3 text-white">
+                                <h3 class="text-sm font-semibold text-center leading-tight mb-1">${news.title}</h3>
+                                ${news.cta_text ? `<p class="text-xs opacity-90 text-center">${news.cta_text}</p>` : ''}
+                              </div>
+                            `;
                           }
                         }}
                       />
