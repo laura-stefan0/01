@@ -51,6 +51,14 @@ export function MapView() {
             >
               <Filter className="w-4 h-4 text-gray-600" />
             </Button>
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => setLocation("/filter")}
+              className="flex-shrink-0 bg-gray-50 border-gray-200 hover:bg-gray-100"
+            >
+              <Filter className="w-4 h-4 text-gray-600" />
+            </Button>
           </div>
 
           {/* Filter Tags */}
