@@ -82,36 +82,41 @@ export default function Home() {
         <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {whatsNewLoading ? (
             <>
-              <Skeleton className="h-16 min-w-40 flex-shrink-0" />
-              <Skeleton className="h-16 min-w-40 flex-shrink-0" />
-              <Skeleton className="h-16 min-w-40 flex-shrink-0" />
+              <Skeleton className="w-48 h-32 flex-shrink-0" />
+              <Skeleton className="w-48 h-32 flex-shrink-0" />
+              <Skeleton className="w-48 h-32 flex-shrink-0" />
             </>
           ) : whatsNewData.length > 0 ? (
             whatsNewData.map((news) => (
-              <div key={news.id} className="border border-gray-100 rounded-lg overflow-hidden min-w-40 flex-shrink-0 relative">
-                {news.image_url && (
-                  <div className="h-24 w-full bg-gray-100 relative">
+              <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-100">
+                {news.image_url ? (
+                  <>
                     <img 
                       src={news.image_url} 
                       alt={news.title}
-                      className="w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                    <div className="absolute inset-0 p-3 flex flex-col justify-end">
+                      <h3 className="font-medium text-sm mb-1 line-clamp-2 leading-tight text-white drop-shadow-md">{news.title}</h3>
+                      <span className="text-xs text-gray-200">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="absolute inset-0 p-3 flex flex-col justify-end bg-gray-50">
+                    <h3 className="font-medium text-sm mb-1 line-clamp-2 leading-tight text-dark-slate">{news.title}</h3>
+                    <span className="text-xs text-gray-400">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
                   </div>
                 )}
-                <div className={`p-3 ${news.image_url ? 'absolute bottom-0 left-0 right-0 text-white' : ''}`}>
-                  <h3 className={`font-medium text-sm mb-2 line-clamp-2 leading-tight ${news.image_url ? 'text-white drop-shadow-md' : 'text-dark-slate'}`}>{news.title}</h3>
-                  <span className={`text-xs ${news.image_url ? 'text-gray-200' : 'text-gray-400'}`}>{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
-                </div>
               </div>
             ))
           ) : (
-            <div className="border border-gray-100 rounded-lg overflow-hidden min-w-40 flex-shrink-0">
-              <div className="p-3">
-                <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">No news available</h3>
+            <div className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
+              <div className="absolute inset-0 p-3 flex flex-col justify-end">
+                <h3 className="font-medium text-dark-slate text-sm mb-1 line-clamp-2 leading-tight">No news available</h3>
                 <span className="text-gray-400 text-xs">Check back later</span>
               </div>
             </div>
