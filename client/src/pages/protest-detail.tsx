@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Protest } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import { formatDate, formatTime } from "@/lib/date-utils";
 
 export default function ProtestDetail() {
   const params = useParams();
@@ -192,8 +193,8 @@ export default function ProtestDetail() {
               <div className="flex items-start space-x-3">
                 <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
                 <div>
-                  <p className="font-medium text-gray-900">{protest.date}</p>
-                  <p className="text-sm text-gray-600">{protest.time}</p>
+                  <p className="font-medium text-gray-900">{formatDate(protest.date)}</p>
+                  <p className="text-sm text-gray-600">{formatTime(protest.time)}</p>
                 </div>
               </div>
               

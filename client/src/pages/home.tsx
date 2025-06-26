@@ -30,13 +30,15 @@ export default function Home() {
 
   // Combine protests data for map view
   useEffect(() => {
-    const combinedProtests = [...featuredProtests, ...nearbyProtests];
-    const uniqueProtests = combinedProtests.filter((protest, index, self) =>
-      index === self.findIndex((p) => p.id === protest.id)
-    );
-    setAllProtests(uniqueProtests);
+    if (featuredProtests.length > 0 || nearbyProtests.length > 0) {
+      const combinedProtests = [...featuredProtests, ...nearbyProtests];
+      const uniqueProtests = combinedProtests.filter((protest, index, self) =>
+        index === self.findIndex((p) => p.id === protest.id)
+      );
+      setAllProtests(uniqueProtests);
+    }
     setIsLoadingProtests(featuredLoading || nearbyLoading);
-  }, [featuredProtests, nearbyProtests, featuredLoading, nearbyLoading]);
+  }, [featuredProtests.length, nearbyProtests.length, featuredLoading, nearbyLoading]);
 
   const filters = [
     { id: "all", label: "All" },
@@ -147,53 +149,64 @@ export default function Home() {
   );
 
 const renderResourcesContent = () => (
-    <div className="px-4 py-4 max-w-md mx-auto">
-      <div className="grid grid-cols-2 gap-4">
-        {/* Row 1 */}
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <Shield className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
-            <h3 className="font-semibold text-dark-slate text-sm">Know Your Rights</h3>
-          </CardContent>
-        </Card>
+    <div className="px-4 py-4 max-w-md mx-auto space-y-6">
+      {/* For Protesters Container */}
+      <Card>
+        <CardContent className="p-4">
+          <h2 className="text-lg font-semibold text-dark-slate mb-4">For Protesters</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200">
+              <CardContent className="p-3 text-center">
+                <Shield className="w-6 h-6 mx-auto mb-2 text-activist-blue" />
+                <h3 className="font-medium text-dark-slate text-xs">Know Your Rights</h3>
+              </CardContent>
+            </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <CheckSquare className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
-            <h3 className="font-semibold text-dark-slate text-sm">Safety Checklist</h3>
-          </CardContent>
-        </Card>
+            <Card className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200">
+              <CardContent className="p-3 text-center">
+                <CheckSquare className="w-6 h-6 mx-auto mb-2 text-activist-blue" />
+                <h3 className="font-medium text-dark-slate text-xs">Safety Checklist</h3>
+              </CardContent>
+            </Card>
 
-        {/* Row 2 */}
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <Lock className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
-            <h3 className="font-semibold text-dark-slate text-sm">Digital Security</h3>
-          </CardContent>
-        </Card>
+            <Card className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200">
+              <CardContent className="p-3 text-center">
+                <Lock className="w-6 h-6 mx-auto mb-2 text-activist-blue" />
+                <h3 className="font-medium text-dark-slate text-xs">Digital Security</h3>
+              </CardContent>
+            </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <BookOpen className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
-            <h3 className="font-semibold text-dark-slate text-sm">Glossary</h3>
-          </CardContent>
-        </Card>
+            <Card className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200">
+              <CardContent className="p-3 text-center">
+                <BookOpen className="w-6 h-6 mx-auto mb-2 text-activist-blue" />
+                <h3 className="font-medium text-dark-slate text-xs">Glossary</h3>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Row 3 */}
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <Target className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
-            <h3 className="font-semibold text-dark-slate text-sm">Organizing 101</h3>
-          </CardContent>
-        </Card>
+      {/* For Organizers Container */}
+      <Card>
+        <CardContent className="p-4">
+          <h2 className="text-lg font-semibold text-dark-slate mb-4">For Organizers</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200">
+              <CardContent className="p-3 text-center">
+                <Target className="w-6 h-6 mx-auto mb-2 text-activist-blue" />
+                <h3 className="font-medium text-dark-slate text-xs">Organizing 101</h3>
+              </CardContent>
+            </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <Printer className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
-            <h3 className="font-semibold text-dark-slate text-sm">Printables</h3>
-          </CardContent>
-        </Card>
-      </div>
+            <Card className="cursor-pointer hover:bg-gray-50 transition-colors border-gray-200">
+              <CardContent className="p-3 text-center">
+                <Printer className="w-6 h-6 mx-auto mb-2 text-activist-blue" />
+                <h3 className="font-medium text-dark-slate text-xs">Printables</h3>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 

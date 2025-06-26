@@ -100,6 +100,10 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Implemented DD-MM-YYYY date format and 24-hour time format throughout application with utility functions
+- June 26, 2025: Restructured Resources page with "For Protesters" and "For Organizers" containers as requested
+- June 26, 2025: Fixed React hooks violation by restructuring conditional rendering in Home component
+- June 26, 2025: Successfully completed migration from Replit Agent to standard Replit environment
 - June 26, 2025: Added soft fade transitions between screens using Tailwind animate-in classes
 - June 26, 2025: Updated active navigation icon color to brand color #e40000 for better brand consistency
 - June 26, 2025: Standardized database field naming to use image_url consistently throughout system
