@@ -42,7 +42,7 @@ export const protests = pgTable("protests", {
   featured: boolean("featured").notNull().default(false),
 });
 
-export const resources = pgTable("resources", {
+export const safetyTips = pgTable("safety-tips", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   content: text("content").notNull(),
@@ -74,7 +74,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   country_code: true,
 });
 
-export const insertResourceSchema = createInsertSchema(resources).omit({
+export const insertSafetyTipSchema = createInsertSchema(safetyTips).omit({
   id: true,
   created_at: true,
 });
@@ -88,7 +88,7 @@ export type InsertProtest = z.infer<typeof insertProtestSchema>;
 export type Protest = typeof protests.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
-export type InsertResource = z.infer<typeof insertResourceSchema>;
-export type Resource = typeof resources.$inferSelect;
+export type InsertSafetyTip = z.infer<typeof insertSafetyTipSchema>;
+export type SafetyTip = typeof safetyTips.$inferSelect;
 export type InsertLaw = z.infer<typeof insertLawSchema>;
 export type Law = typeof laws.$inferSelect;

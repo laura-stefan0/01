@@ -6,7 +6,7 @@ import { supabase, supabaseAdmin } from "../db/index";
 import users from "./routes/users";
 import protests from "./routes/protests";
 import upload from "./routes/upload";
-import resources from "./routes/resources";
+import safetyTips from "./routes/safety-tips";
 import laws from "./routes/laws";
 
 // Protests data (using local data for now as fallback)
@@ -36,8 +36,8 @@ export function registerRoutes(app: Express) {
   // Protests routes - only interact with protests table
   app.use("/api/protests", protests);
 
-  // Resources routes - country-filtered content
-  app.use("/api/resources", resources);
+  // Safety Tips routes - country-filtered content
+  app.use("/api/safety-tips", safetyTips);
 
   // Laws routes - country-filtered legal information
   app.use("/api/laws", laws);

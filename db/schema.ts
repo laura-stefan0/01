@@ -32,8 +32,8 @@ export const protests = pgTable("protests", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
-// Resources table for country-specific content
-export const resources = pgTable("resources", {
+// Safety Tips table for country-specific content
+export const safetyTips = pgTable("safety-tips", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   content: text("content").notNull(),
@@ -59,7 +59,7 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Protest = typeof protests.$inferSelect;
 export type InsertProtest = typeof protests.$inferInsert;
-export type Resource = typeof resources.$inferSelect;
-export type InsertResource = typeof resources.$inferInsert;
+export type SafetyTip = typeof safetyTips.$inferSelect;
+export type InsertSafetyTip = typeof safetyTips.$inferInsert;
 export type Law = typeof laws.$inferSelect;
 export type InsertLaw = typeof laws.$inferInsert;

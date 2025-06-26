@@ -40,10 +40,10 @@ async function setupCountryFilteringData() {
       }
     }
 
-    // Add sample resources for Italy
-    console.log('📝 Adding sample resources for Italy...');
+    // Add sample safety tips for Italy
+    console.log('📝 Adding sample safety tips for Italy...');
     
-    const sampleResources = [
+    const sampleSafetyTips = [
       {
         title: "Know Your Rights in Italy",
         content: "In Italy, peaceful protest is protected under Article 17 of the Constitution. This guarantees the right to peaceful assembly without arms.",
@@ -67,15 +67,15 @@ async function setupCountryFilteringData() {
       }
     ];
 
-    for (const resource of sampleResources) {
-      const { error: resourceError } = await supabase
-        .from('resources')
-        .insert(resource);
+    for (const safetyTip of sampleSafetyTips) {
+      const { error: safetyTipError } = await supabase
+        .from('safety-tips')
+        .insert(safetyTip);
 
-      if (resourceError) {
-        console.error('❌ Error inserting resource:', resourceError);
+      if (safetyTipError) {
+        console.error('❌ Error inserting safety tip:', safetyTipError);
       } else {
-        console.log('✅ Added resource:', resource.title);
+        console.log('✅ Added safety tip:', safetyTip.title);
       }
     }
 

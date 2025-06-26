@@ -100,6 +100,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 26, 2025: Renamed Supabase "resources" table to "safety-tips" and updated all API endpoints and references
+- June 26, 2025: Updated database schema, hooks, and route files to use SafetyTip types instead of Resource types
 - June 26, 2025: Simplified Resources page to show only 3 essential items: Know Your Rights, Safety Tips, Emergency Contacts
 - June 26, 2025: Fixed app startup by resolving syntax errors in home.tsx and resources.tsx components
 - June 26, 2025: Implemented comprehensive country-based filtering system for protests, resources, and laws
