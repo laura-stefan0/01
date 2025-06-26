@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Bell, Users, MapPin, Search } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
@@ -85,8 +85,8 @@ export default function Home() {
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
             </>
           ) : (
-            featuredProtests.map((protest) => (
-              <div key={`featured-${protest.id}`} className="w-5/6 flex-shrink-0">
+            featuredProtests.map((protest, index) => (
+              <div key={`featured-${protest.id}-${index}`} className="w-5/6 flex-shrink-0">
                 <ProtestCard protest={protest} variant="featured" />
               </div>
             ))
@@ -107,8 +107,8 @@ export default function Home() {
               <Skeleton className="h-20 w-full" />
             </>
           ) : nearbyProtests.length > 0 ? (
-            nearbyProtests.map((protest) => (
-              <ProtestCard key={`nearby-${protest.id}`} protest={protest} />
+            nearbyProtests.map((protest, index) => (
+              <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
             ))
           ) : (
             <div className="text-center py-8">
@@ -140,14 +140,14 @@ const renderResourcesContent = () => (
         {/* Row 1 */}
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
-            <div className="text-3xl mb-2">⚖️</div>
+            <Shield className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
             <h3 className="font-semibold text-dark-slate text-sm">Know Your Rights</h3>
           </CardContent>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
-            <div className="text-3xl mb-2">✅</div>
+            <CheckSquare className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
             <h3 className="font-semibold text-dark-slate text-sm">Safety Checklist</h3>
           </CardContent>
         </Card>
@@ -155,14 +155,14 @@ const renderResourcesContent = () => (
         {/* Row 2 */}
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
-            <div className="text-3xl mb-2">🔒</div>
+            <Lock className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
             <h3 className="font-semibold text-dark-slate text-sm">Digital Security</h3>
           </CardContent>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
-            <div className="text-3xl mb-2">📚</div>
+            <BookOpen className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
             <h3 className="font-semibold text-dark-slate text-sm">Glossary</h3>
           </CardContent>
         </Card>
@@ -170,14 +170,14 @@ const renderResourcesContent = () => (
         {/* Row 3 */}
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
-            <div className="text-3xl mb-2">🎯</div>
+            <Target className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
             <h3 className="font-semibold text-dark-slate text-sm">Organizing 101</h3>
           </CardContent>
         </Card>
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardContent className="p-4 text-center">
-            <div className="text-3xl mb-2">🖨️</div>
+            <Printer className="w-8 h-8 mx-auto mb-2 text-activist-blue" />
             <h3 className="font-semibold text-dark-slate text-sm">Printables</h3>
           </CardContent>
         </Card>
@@ -269,6 +269,32 @@ const renderResourcesContent = () => (
               </Button>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Country Selection */}
+      <Card>
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-dark-slate mb-3">Country</h3>
+          <Select defaultValue="us">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="us">United States</SelectItem>
+              <SelectItem value="ca">Canada</SelectItem>
+              <SelectItem value="uk">United Kingdom</SelectItem>
+              <SelectItem value="fr">France</SelectItem>
+              <SelectItem value="de">Germany</SelectItem>
+              <SelectItem value="es">Spain</SelectItem>
+              <SelectItem value="it">Italy</SelectItem>
+              <SelectItem value="au">Australia</SelectItem>
+              <SelectItem value="jp">Japan</SelectItem>
+              <SelectItem value="br">Brazil</SelectItem>
+              <SelectItem value="mx">Mexico</SelectItem>
+              <SelectItem value="in">India</SelectItem>
+            </SelectContent>
+          </Select>
         </CardContent>
       </Card>
 
@@ -373,8 +399,8 @@ const renderResourcesContent = () => (
                   }
                   return true;
                 })
-                .map((protest) => (
-                  <ProtestCard key={`combined-${protest.id}`} protest={protest} />
+                .map((protest, index) => (
+                  <ProtestCard key={`map-${protest.id}-${index}`} protest={protest} />
                 ))
             ) : (
               <div className="text-center py-8">
