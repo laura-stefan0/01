@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -134,99 +134,54 @@ export default function Home() {
     </div>
   );
 
-  const renderResourcesContent = () => (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
-      {/* Legal Rights Section */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3 flex items-center">
-            <div className="w-5 h-5 mr-2 text-activist-blue">⚖️</div>
-            Legal Rights
-          </h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>You have the right to peaceful assembly and free speech</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Police cannot search you without probable cause</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>You have the right to remain silent if arrested</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-activist-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Document any violations of your rights</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
+const renderResourcesContent = () => (
+    <div className="px-4 py-4 max-w-md mx-auto">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Row 1 */}
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">⚖️</div>
+            <h3 className="font-semibold text-dark-slate text-sm">Know Your Rights</h3>
+          </CardContent>
+        </Card>
 
-      {/* Safety Tips Section */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3 flex items-center">
-            <div className="w-5 h-5 mr-2 text-movement-green">🛡️</div>
-            Safety Tips
-          </h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Stay hydrated and bring water</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Travel in groups when possible</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Have emergency contacts readily available</span>
-            </li>
-            <li className="flex items-start">
-              <div className="w-2 h-2 bg-movement-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-              <span>Know your exit strategies</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">✅</div>
+            <h3 className="font-semibold text-dark-slate text-sm">Safety Checklist</h3>
+          </CardContent>
+        </Card>
 
-      {/* FAQ Section */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3 flex items-center">
-            <div className="w-5 h-5 mr-2 text-rally-red">❓</div>
-            Frequently Asked Questions
-          </h3>
-          <div className="space-y-3">
-            <div>
-              <h4 className="font-medium text-dark-slate text-sm">Do I need permits to protest?</h4>
-              <p className="text-sm text-gray-600 mt-1">Check with local authorities about permit requirements for organized events.</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-dark-slate text-sm">What should I bring to a protest?</h4>
-              <p className="text-sm text-gray-600 mt-1">Water, snacks, comfortable shoes, emergency contacts, and any necessary medications.</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-dark-slate text-sm">How can I stay safe during protests?</h4>
-              <p className="text-sm text-gray-600 mt-1">Stay aware of your surroundings, follow organizer guidelines, and have an exit plan.</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Row 2 */}
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">🔒</div>
+            <h3 className="font-semibold text-dark-slate text-sm">Digital Security</h3>
+          </CardContent>
+        </Card>
 
-      {/* Emergency Contacts */}
-      <Card className="bg-rally-red text-white">
-        <CardContent className="p-4">
-          <h3 className="font-semibold mb-2">Emergency Contacts</h3>
-          <div className="text-sm space-y-1">
-            <p>Emergency: 911</p>
-            <p>Legal Aid Hotline: 1-800-XXX-XXXX</p>
-            <p>Protest Safety Line: 1-800-XXX-XXXX</p>
-          </div>
-        </CardContent>
-      </Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">📚</div>
+            <h3 className="font-semibold text-dark-slate text-sm">Glossary</h3>
+          </CardContent>
+        </Card>
+
+        {/* Row 3 */}
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">🎯</div>
+            <h3 className="font-semibold text-dark-slate text-sm">Organizing 101</h3>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">🖨️</div>
+            <h3 className="font-semibold text-dark-slate text-sm">Printables</h3>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 
@@ -363,72 +318,85 @@ export default function Home() {
     </div>
   );
 
-  const renderMapContent = () => (
-    <div className="px-4 py-4 max-w-md mx-auto">
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
+  const renderMapContent = () => {
+    const [isLoadingProtests, setIsLoadingProtests] = useState(true);
+    const [allProtests, setAllProtests] = useState([]);
 
-        <div className="space-y-3">
-          {nearbyLoading ? (
-            <>
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </>
-          ) : [...featuredProtests, ...nearbyProtests].length > 0 ? (
-            [...featuredProtests, ...nearbyProtests]
-              .filter((protest, index, self) => {
-                // Remove duplicates based on ID
-                return index === self.findIndex(p => p.id === protest.id);
-              })
-              .filter((protest) => {
-                if (searchQuery) {
-                  const query = searchQuery.toLowerCase();
-                  return (
-                    protest.title.toLowerCase().includes(query) ||
-                    protest.description.toLowerCase().includes(query) ||
-                    protest.category.toLowerCase().includes(query) ||
-                    protest.location.toLowerCase().includes(query)
-                  );
-                }
-                return true;
-              })
-              .filter((protest) => {
-                if (activeFilter === "today") {
-                  return protest.date === "Today";
-                } else if (activeFilter === "week") {
-                  return ["Today", "Tomorrow"].includes(protest.date) || protest.date.startsWith("Next");
-                } else if (activeFilter === "popular") {
-                  return protest.attendees > 500;
-                }
-                return true;
-              })
-              .map((protest) => (
-                <ProtestCard key={`combined-${protest.id}`} protest={protest} />
-              ))
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No protests found</p>
-            </div>
-          )}
+    useEffect(() => {
+      // Simulate loading delay
+      setTimeout(() => {
+        const combinedProtests = [...featuredProtests, ...nearbyProtests];
+        const uniqueProtests = combinedProtests.filter((protest, index, self) =>
+          index === self.findIndex((p) => p.id === protest.id)
+        );
+        setAllProtests(uniqueProtests);
+        setIsLoadingProtests(false);
+      }, 500);
+    }, [featuredProtests, nearbyProtests]);
+
+    return (
+      <div className="px-4 py-4 max-w-md mx-auto">
+        <section className="mb-6">
+          <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
+
+          <div className="space-y-3">
+            {isLoadingProtests ? (
+              <>
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </>
+            ) : allProtests.length > 0 ? (
+              allProtests
+                .filter((protest) => {
+                  if (searchQuery) {
+                    const query = searchQuery.toLowerCase();
+                    return (
+                      protest.title.toLowerCase().includes(query) ||
+                      protest.description.toLowerCase().includes(query) ||
+                      protest.category.toLowerCase().includes(query) ||
+                      protest.location.toLowerCase().includes(query)
+                    );
+                  }
+                  return true;
+                })
+                .filter((protest) => {
+                  if (activeFilter === "today") {
+                    return protest.date === "Today";
+                  } else if (activeFilter === "week") {
+                    return ["Today", "Tomorrow"].includes(protest.date) || protest.date.startsWith("Next");
+                  } else if (activeFilter === "popular") {
+                    return protest.attendees > 500;
+                  }
+                  return true;
+                })
+                .map((protest) => (
+                  <ProtestCard key={`combined-${protest.id}`} protest={protest} />
+                ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No protests found</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* View on Map Button */}
+        <div className="mt-6 mb-4">
+          <Button
+            className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+            size="lg"
+          >
+            <MapPin className="w-5 h-5 mr-2" />
+            View on Map
+          </Button>
         </div>
-      </section>
-
-      {/* View on Map Button */}
-      <div className="mt-6 mb-4">
-        <Button 
-          className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-          size="lg"
-        >
-          <MapPin className="w-5 h-5 mr-2" />
-          View on Map
-        </Button>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     const content = (() => {
