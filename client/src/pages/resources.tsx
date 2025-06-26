@@ -31,53 +31,51 @@ export default function Resources() {
           </div>
 
           {/* Know Your Rights Section with Laws */}
-          <div 
-            className="mb-6 cursor-pointer hover:shadow-md transition-shadow" 
+          <Card 
+            className="mb-6 cursor-pointer hover:shadow-lg hover:bg-gray-50 transition-all duration-200 border-2 hover:border-red-300" 
             onClick={() => setLocation("/know-your-rights")}
           >
-            <Card className="pointer-events-none">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-red-600" />
-                  Know Your Rights
-                </CardTitle>
-                <CardDescription>
-                  Legal information and rights related to protests and demonstrations
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {lawsLoading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="animate-pulse">
-                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-red-600" />
+                Know Your Rights
+              </CardTitle>
+              <CardDescription>
+                Legal information and rights related to protests and demonstrations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {lawsLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : laws.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">
+                  No legal information available for your selected country.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {laws.map((law) => (
+                    <div key={law.id} className="border-l-4 border-red-600 pl-4 py-2">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="font-semibold text-gray-900">{law.title}</h3>
+                        <Badge variant="outline" className="ml-2">
+                          {law.category.replace('_', ' ').toUpperCase()}
+                        </Badge>
                       </div>
-                    ))}
-                  </div>
-                ) : laws.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">
-                    No legal information available for your selected country.
-                  </p>
-                ) : (
-                  <div className="space-y-4">
-                    {laws.map((law) => (
-                      <div key={law.id} className="border-l-4 border-red-600 pl-4 py-2">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-semibold text-gray-900">{law.title}</h3>
-                          <Badge variant="outline" className="ml-2">
-                            {law.category.replace('_', ' ').toUpperCase()}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">{law.description}</p>
-                        <p className="text-sm text-gray-700">{law.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                      <p className="text-sm text-gray-600 mb-2">{law.description}</p>
+                      <p className="text-sm text-gray-700">{law.content}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* For Protesters Section */}
           <Card>
