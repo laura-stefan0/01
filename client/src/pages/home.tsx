@@ -373,6 +373,22 @@ export default function Home() {
     );
   };
 
+  const renderResourcesContent = () => (
+    <div className="px-4 py-4 max-w-md mx-auto">
+      <div className="text-center py-16">
+        <BookOpen className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-semibold text-dark-slate mb-2">Resources</h3>
+        <p className="text-gray-600 mb-4">Access guides, legal information, and support materials for activists.</p>
+        <Button 
+          onClick={() => setLocation("/resources")}
+          className="bg-activist-blue hover:bg-activist-blue/90 text-white"
+        >
+          View All Resources
+        </Button>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     return (
       <div key={activeTab} className="animate-in fade-in duration-300">
