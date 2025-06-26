@@ -41,16 +41,8 @@ export default function SignIn() {
     }
   };
 
-  const handleDemoSignIn = async () => {
-    setIsLoading(true);
-    try {
-      await signIn('alex_rodriguez', 'password123');
-      setLocation('/');
-    } catch (error) {
-      setError('Demo sign-in failed');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleGuestAccess = () => {
+    setLocation('/');
   };
 
   return (
@@ -184,18 +176,20 @@ export default function SignIn() {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or try the demo</span>
+                  <span className="px-2 bg-white text-gray-500">Or continue without account</span>
                 </div>
               </div>
 
               <div className="mt-6">
                 <button
-                  onClick={handleDemoSignIn}
-                  disabled={isLoading}
-                  className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleGuestAccess}
+                  className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  {isLoading ? 'Signing in...' : 'Demo Sign In (Alex Rodriguez)'}
+                  Use as guest
                 </button>
+                <p className="text-center text-sm text-gray-500 mt-2">
+                  No account needed. Corteo supports anonymity.
+                </p>
               </div>
             </div>
           )}

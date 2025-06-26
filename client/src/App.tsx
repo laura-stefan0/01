@@ -11,7 +11,7 @@ import { AuthProvider, useAuth } from "@/context/auth-context";
 import ProtectedRoute from "@/components/protected-route";
 
 function AuthenticatedRouter() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -22,10 +22,6 @@ function AuthenticatedRouter() {
         </div>
       </div>
     );
-  }
-
-  if (!isAuthenticated) {
-    return <SignIn />;
   }
 
   return (
