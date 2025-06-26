@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from "@/context/auth-context";
 
 function AuthenticatedRouter() {
   const { isLoading } = useAuth();
+  const [location] = useLocation();
 
   if (isLoading) {
     return (
@@ -26,24 +27,30 @@ function AuthenticatedRouter() {
   }
 
   return (
-    <Switch>
-      <Route path="/" component={() => <div className="animate-in fade-in duration-300"><Home /></div>} />
-      <Route path="/protest/:id" component={() => <div className="animate-in fade-in duration-300"><ProtestDetail /></div>} />
-      <Route path="/filter" component={() => <div className="animate-in fade-in duration-300"><Filter /></div>} />
-      <Route path="/create-protest" component={() => <div className="animate-in fade-in duration-300"><CreateProtest /></div>} />
-      <Route component={() => <div className="animate-in fade-in duration-300"><NotFound /></div>} />
-    </Switch>
+    <div key={location} className="animate-in fade-in duration-300">
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/protest/:id" component={ProtestDetail} />
+        <Route path="/filter" component={Filter} />
+        <Route path="/create-protest" component={CreateProtest} />
+        <Route component={NotFound} />
+      </Switch>
+    </div>
   );
 }
 
 function AppRouter() {
+  const [location] = useLocation();
+  
   return (
-    <Switch>
-      <Route path="/sign-in" component={() => <div className="animate-in fade-in duration-300"><SignIn /></div>} />
-      <Route path="/*">
-        <AuthenticatedRouter />
-      </Route>
-    </Switch>
+    <div key={location} className="animate-in fade-in duration-300">
+      <Switch>
+        <Route path="/sign-in" component={SignIn} />
+        <Route path="/*">
+          <AuthenticatedRouter />
+        </Route>
+      </Switch>
+    </div>
   );
 }
 
