@@ -212,7 +212,7 @@ export class DatabaseStorage implements IStorage {
         time: getRandomTime(),
         attendees: 1250,
         distance: "0.8 mi",
-        imageUrl: "https://images.unsplash.com/photo-1573152958734-1922c188fba3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
+        imageUrl: "https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/photo-1573152958734-1922c188fba3.jpeg",
         featured: true,
       },
       {
@@ -228,7 +228,7 @@ export class DatabaseStorage implements IStorage {
         time: getRandomTime(),
         attendees: 892,
         distance: "1.2 mi",
-        imageUrl: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
+        imageUrl: "https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/photo-1559827260-dc66d52bef19.jpeg",
         featured: true,
       },
       {
@@ -244,7 +244,7 @@ export class DatabaseStorage implements IStorage {
         time: getRandomTime(),
         attendees: 247,
         distance: "0.5 mi",
-        imageUrl: "https://images.unsplash.com/photo-1569098644584-210bcd375b59?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
+        imageUrl: "https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/photo-1569098644584-210bcd375b59.jpeg",
         featured: false,
       },
       {
@@ -260,7 +260,7 @@ export class DatabaseStorage implements IStorage {
         time: getRandomTime(),
         attendees: 156,
         distance: "1.1 mi",
-        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
+        imageUrl: "https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/photo-1571019613454-1cb2f99b2d8b.jpeg",
         featured: false,
       },
       {
@@ -276,7 +276,7 @@ export class DatabaseStorage implements IStorage {
         time: getRandomTime(),
         attendees: 89,
         distance: "2.1 mi",
-        imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
+        imageUrl: "https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/photo-1542601906990-b4d3fb778b09.jpeg",
         featured: false,
       },
       {
@@ -292,7 +292,7 @@ export class DatabaseStorage implements IStorage {
         time: getRandomTime(),
         attendees: 312,
         distance: "0.9 mi",
-        imageUrl: "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=200",
+        imageUrl: "https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/photo-1544717297-fa95b6ee9643.jpeg",
         featured: false,
       },
     ];
