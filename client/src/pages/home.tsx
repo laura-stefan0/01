@@ -244,27 +244,23 @@ export default function Home() {
       {/* Profile Info */}
       <Card>
         <CardContent className="p-6">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-20 h-20 bg-activist-blue rounded-full flex items-center justify-center text-white font-semibold text-2xl mb-4">
-              {user?.name?.[0]?.toUpperCase() || "G"}
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-activist-blue rounded-full flex items-center justify-center text-white font-semibold text-xl flex-shrink-0">
+              {isAuthenticated ? "J" : "G"}
             </div>
-            <h3 className="font-semibold text-dark-slate text-lg mb-1">
-              {isAuthenticated && user?.name ? user.name : "Guest User"}
-            </h3>
-            <p className="text-gray-600 mb-2">
-              {isAuthenticated && user?.email ? user.email : "Browse anonymously"}
-            </p>
-            <p className="text-gray-500 text-sm mb-2">
-              📍 {isAuthenticated ? "San Francisco, CA" : "Location not shared"}
-            </p>
-            <p className="text-gray-600 text-sm mb-4">
-              {isAuthenticated ? "Passionate about social justice and environmental activism." : "Exploring activism opportunities in your area."}
-            </p>
-            {isAuthenticated && (
-              <Button variant="outline" className="mt-2">
-                Edit profile
-              </Button>
-            )}
+            <div className="flex-1">
+              <h3 className="font-semibold text-dark-slate text-lg">
+                {isAuthenticated ? "Jane" : "Guest User"}
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {isAuthenticated ? "@janedoe" : "Browse anonymously"}
+              </p>
+              {isAuthenticated && (
+                <Button variant="outline" size="sm" className="mt-3">
+                  Edit profile
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -463,8 +459,8 @@ export default function Home() {
             )}
           </div>
 
-          {/* Search Bar - Show on home and map tabs */}
-          {(activeTab === "home" || activeTab === "map") && (
+          {/* Search Bar - Show only on map tab */}
+          {activeTab === "map" && (
             <div className="relative">
               <Input
                 type="text"
