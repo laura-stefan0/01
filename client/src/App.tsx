@@ -5,11 +5,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "./pages/home";
 import SignIn from "./pages/sign-in";
-import CreateProtest from "./pages/create-protest";
-import ProtestDetail from "./pages/protest-detail";
-import Filter from "./pages/filter";
-import Resources from "./pages/resources";
-import Transparency from "./pages/transparency";
+import CreateProtest from "@/pages/create-protest";
+import ProtestDetail from "@/pages/protest-detail";
+import Filter from "@/pages/filter";
+import Resources from "@/pages/resources";
+import KnowYourRights from "@/pages/know-your-rights";
+import Transparency from "@/pages/transparency";
 import NotFound from "./pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 
@@ -35,6 +36,7 @@ function AuthenticatedRouter() {
         <Route path="/protest/:id" component={ProtestDetail} />
         <Route path="/filter" component={Filter} />
         <Route path="/resources" component={Resources} />
+        <Route path="/know-your-rights" component={KnowYourRights} />
         <Route path="/create-protest" component={CreateProtest} />
         <Route path="/transparency" component={Transparency} />
         <Route component={NotFound} />

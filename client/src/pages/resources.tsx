@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { BookOpen, Shield, Users, FileText } from "lucide-react";
 import { useResourcesByCategory } from "@/hooks/use-resources";
 import { useLaws } from "@/hooks/use-laws";
+import { useLocation } from "wouter";
 
 export default function Resources() {
+  const [, setLocation] = useLocation();
   const [selectedCountry, setSelectedCountry] = useState<string>(() => {
     return localStorage.getItem('selectedCountry') || 'it';
   });
@@ -29,7 +31,7 @@ export default function Resources() {
           </div>
 
           {/* Know Your Rights Section with Laws */}
-          <Card className="mb-6">
+          <Card className="mb-6 cursor-pointer hover:shadow-md transition-shadow" onClick={() => setLocation("/know-your-rights")}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-red-600" />
