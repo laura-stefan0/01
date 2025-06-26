@@ -90,14 +90,15 @@ export default function Home() {
               <Skeleton className="w-48 h-32 flex-shrink-0" />
             </>
           ) : whatsNewData.length > 0 ? (
-            whatsNewData.map((news) => {
-              console.log('📄 News item:', news.title);
-              console.log('🖼️ Image URL:', news.image_url);
-              console.log('📊 Full news object:', news);
-              
-              return (
-                <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden">
-                  {news.image_url && news.image_url !== null ? (
+            whatsNewData
+              .filter((news) => news.image_url && news.image_url !== null)
+              .map((news) => {
+                console.log('📄 News item:', news.title);
+                console.log('🖼️ Image URL:', news.image_url);
+                console.log('📊 Full news object:', news);
+                
+                return (
+                  <div key={news.id} className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden">
                     <img 
                       src={news.image_url} 
                       alt={news.title}
@@ -106,15 +107,12 @@ export default function Home() {
                       onError={(e) => {
                         console.error('❌ Image failed to load:', news.image_url);
                         console.error('❌ Error details:', e);
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.parentElement?.remove();
                       }}
                     />
-                  ) : (
-                    <div className="w-full h-full bg-gray-100"></div>
-                  )}
-                </div>
-              );
-            })
+                  </div>
+                );
+              })
           ) : (
             <div className="w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100"></div>
           )}
