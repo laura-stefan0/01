@@ -42,6 +42,11 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     }
   };
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`;
+  };
+
   if (variant === "featured") {
     return (
       <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64 cursor-pointer border border-gray-200" onClick={handleClick}>
@@ -49,6 +54,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
           src={protest.imageUrl} 
           alt={protest.title}
           className="w-full h-32 object-cover"
+          onError={handleImageError}
         />
         <CardContent className="p-4 h-32 flex flex-col justify-between">
           <div>
@@ -77,6 +83,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
           src={protest.imageUrl}
           alt={protest.title}
           className="w-20 h-full object-cover flex-shrink-0"
+          onError={handleImageError}
         />
         <CardContent className="p-3 flex-1 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">

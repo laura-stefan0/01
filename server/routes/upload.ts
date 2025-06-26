@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { supabaseAdmin } from '../../db/index.js';
 
 const router = express.Router();
 
@@ -45,24 +46,51 @@ interface RequestWithFile extends Request {
 }
 
 // Image upload endpoint
-router.post('/image', upload.single('image'), (req: RequestWithFile, res: Response) => {
+router.post('/image', upload.single('image'), async (req: RequestWithFile, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No image file provided' });
     }
 
-    // For demo purposes, we'll use a placeholder image URL from Unsplash
-    // In production, you would upload to a cloud storage service like AWS S3, Cloudinary, etc.
-    const imageUrl = `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&protest=${req.file.filename}`;
+    // Read the uploaded file
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const fileName = req.file.filename;
     
-    console.log('✅ Image uploaded successfully:', req.file.filename);
+    // Upload to Supabase storage
+    const { data, error } = await supabaseAdmin.storage
+      .from('protest-images')
+      .upload(fileName, fileBuffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (error) {
+      console.error('❌ Supabase storage error:', error);
+      // Clean up local file
+      fs.unlinkSync(req.file.path);
+      return res.status(500).json({ message: 'Failed to upload image to storage' });
+    }
+
+    // Get public URL for the uploaded image
+    const { data: urlData } = supabaseAdmin.storage
+      .from('protest-images')
+      .getPublicUrl(fileName);
+
+    // Clean up local file after successful upload
+    fs.unlinkSync(req.file.path);
+    
+    console.log('✅ Image uploaded successfully:', fileName);
     res.json({ 
       message: 'Image uploaded successfully',
-      imageUrl,
-      filename: req.file.filename
+      imageUrl: urlData.publicUrl,
+      filename: fileName
     });
   } catch (error) {
     console.error('❌ Image upload error:', error);
+    // Clean up local file if it exists
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({ message: 'Failed to upload image' });
   }
 });
