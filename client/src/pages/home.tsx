@@ -58,11 +58,10 @@ export default function Home() {
       {/* News Section */}
       <section className="mb-6">
         <h2 className="text-lg font-semibold text-dark-slate mb-3">News</h2>
-        <div className="space-y-2">
+        <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {newsItems.map((news) => (
-            <div key={news.id} className="border border-gray-100 rounded-lg p-3">
-              <h3 className="font-medium text-dark-slate text-sm mb-1">{news.title}</h3>
-              <p className="text-gray-600 text-xs mb-2">{news.summary}</p>
+            <div key={news.id} className="border border-gray-100 rounded-lg p-3 min-w-48 flex-shrink-0">
+              <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2">{news.title}</h3>
               <span className="text-gray-400 text-xs">{news.timestamp}</span>
             </div>
           ))}
@@ -244,19 +243,24 @@ export default function Home() {
     <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
       {/* Profile Info */}
       <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center mb-4">
-            <div className="w-16 h-16 bg-activist-blue rounded-full flex items-center justify-center text-white font-semibold text-xl">
-              {user?.name?.[0]?.toUpperCase() || "A"}
+        <CardContent className="p-6">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-20 h-20 bg-activist-blue rounded-full flex items-center justify-center text-white font-semibold text-2xl mb-4">
+              {user?.name?.[0]?.toUpperCase() || "G"}
             </div>
-            <div className="ml-4">
-              <h3 className="font-semibold text-dark-slate">{user?.name || "Alex Rodriguez"}</h3>
-              <p className="text-sm text-gray-600">{user?.email || "alex@example.com"}</p>
-            </div>
+            <h3 className="font-semibold text-dark-slate text-lg mb-1">
+              {isAuthenticated && user?.name ? user.name : "Guest User"}
+            </h3>
+            <p className="text-gray-600 mb-2">
+              {isAuthenticated && user?.email ? user.email : "Browse anonymously"}
+            </p>
+            <p className="text-gray-500 text-sm mb-2">
+              📍 {isAuthenticated ? "San Francisco, CA" : "Location not shared"}
+            </p>
+            <p className="text-gray-600 text-sm">
+              {isAuthenticated ? "Passionate about social justice and environmental activism." : "Exploring activism opportunities in your area."}
+            </p>
           </div>
-          <Button variant="outline" className="w-full">
-            Edit Profile
-          </Button>
         </CardContent>
       </Card>
 
@@ -335,22 +339,13 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      {/* Sign Out or Sign In */}
-      {isAuthenticated ? (
-        <Button 
-          onClick={signOut}
-          className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
-        >
-          Sign Out
-        </Button>
-      ) : (
-        <Button 
-          onClick={() => window.location.href = '/sign-in'}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          Sign In
-        </Button>
-      )}
+      {/* Sign Out Button */}
+      <Button 
+        onClick={signOut}
+        className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
+      >
+        Sign Out
+      </Button>
     </div>
   );
 
