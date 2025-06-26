@@ -26,18 +26,10 @@ export default function Transparency() {
             <h2 className="text-lg font-semibold text-dark-slate mb-4">Why Corteo exists</h2>
             <div className="space-y-4 text-gray-700 leading-relaxed">
               <p>
-                Corteo exists to make it safer and easier for people to mobilize, organize, and show up for what they believe in.
-              </p>
-              <p>
-                Corteo was born from a simple belief: peaceful protest is a powerful tool for social change, 
-                and everyone should be able to take part safely.
-              </p>
-              <p>
-                But organizing isn't easy. Social media wasn't made for activism. It's messy, insecure, and often puts people at risk. People deserve better.
-              </p>
-              <p>
-                Corteo is built to support activists by prioritizing privacy, safety, and genuine 
-                community building over engagement metrics and data harvesting.
+                Corteo was built to make it safer and easier to organize and show up for what you believe in. 
+                Peaceful protest is a powerful force for change, but most platforms aren't designed to support it. 
+                They're disorganized, insecure, and can put people at risk. Corteo puts activists first, 
+                with a focus on privacy, safety, and real community-building.
               </p>
             </div>
           </CardContent>
@@ -95,6 +87,21 @@ export default function Transparency() {
                 <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
                 <p className="text-sm">Community-driven development with input from real organizers.</p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Moderation Policies Section */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold text-dark-slate mb-4">Moderation policies</h2>
+            <div className="space-y-3 text-gray-700">
+              <p className="text-sm">
+                User-submitted content is reviewed for abuse, hate, or spam.
+              </p>
+              <p className="text-sm">
+                Offensive content can be reported and removed.
+              </p>
             </div>
           </CardContent>
         </Card>
