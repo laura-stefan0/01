@@ -62,11 +62,12 @@ export const laws = pgTable("laws", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
-export const whatsNew = pgTable("whats-new", {
+export const whatsNew = pgTable("whats_new", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   summary: text("summary").notNull(),
   content: text("content"),
+  image_url: text("image_url"),
   country_code: text("country_code").notNull().default("IT"),
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

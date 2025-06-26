@@ -88,15 +88,31 @@ export default function Home() {
             </>
           ) : whatsNewData.length > 0 ? (
             whatsNewData.map((news) => (
-              <div key={news.id} className="border border-gray-100 rounded-lg p-3 min-w-40 flex-shrink-0">
-                <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">{news.title}</h3>
-                <span className="text-gray-400 text-xs">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
+              <div key={news.id} className="border border-gray-100 rounded-lg overflow-hidden min-w-40 flex-shrink-0">
+                {news.image_url && (
+                  <div className="h-20 w-full bg-gray-100">
+                    <img 
+                      src={news.image_url} 
+                      alt={news.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="p-3">
+                  <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">{news.title}</h3>
+                  <span className="text-gray-400 text-xs">{news.created_at ? formatTimestamp(String(news.created_at)) : "Just now"}</span>
+                </div>
               </div>
             ))
           ) : (
-            <div className="border border-gray-100 rounded-lg p-3 min-w-40 flex-shrink-0">
-              <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">No news available</h3>
-              <span className="text-gray-400 text-xs">Check back later</span>
+            <div className="border border-gray-100 rounded-lg overflow-hidden min-w-40 flex-shrink-0">
+              <div className="p-3">
+                <h3 className="font-medium text-dark-slate text-sm mb-2 line-clamp-2 leading-tight">No news available</h3>
+                <span className="text-gray-400 text-xs">Check back later</span>
+              </div>
             </div>
           )}
         </div>

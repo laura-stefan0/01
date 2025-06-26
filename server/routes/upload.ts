@@ -45,7 +45,56 @@ interface RequestWithFile extends Request {
   file?: Express.Multer.File;
 }
 
-// Image upload endpoint - Automatically links images to Supabase storage
+// User avatar upload endpoint
+router.post('/avatar', upload.single('avatar'), async (req: RequestWithFile, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No avatar file provided' });
+    }
+
+    // Generate unique filename with avatar prefix
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const fileExtension = req.file.originalname.split('.').pop();
+    const uniqueFileName = `avatar-${Date.now()}-${Math.round(Math.random() * 1E9)}.${fileExtension}`;
+    
+    // Upload to Supabase users-avatars bucket
+    const { data, error } = await supabaseAdmin.storage
+      .from('users-avatars')
+      .upload(uniqueFileName, fileBuffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Supabase storage error:', error);
+      fs.unlinkSync(req.file.path);
+      return res.status(500).json({ message: 'Failed to upload avatar to storage' });
+    }
+
+    // Get public URL for the uploaded avatar
+    const { data: urlData } = supabaseAdmin.storage
+      .from('users-avatars')
+      .getPublicUrl(uniqueFileName);
+
+    // Clean up local temporary file
+    fs.unlinkSync(req.file.path);
+    
+    console.log('Avatar uploaded to Supabase storage:', uniqueFileName);
+    res.json({ 
+      message: 'Avatar uploaded successfully',
+      avatar_url: urlData.publicUrl,
+      filename: uniqueFileName
+    });
+  } catch (error) {
+    console.error('Avatar upload error:', error);
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ message: 'Failed to upload avatar' });
+  }
+});
+
+// Protest image upload endpoint - Automatically links images to Supabase storage
 router.post('/image', upload.single('image'), async (req: RequestWithFile, res: Response) => {
   try {
     if (!req.file) {

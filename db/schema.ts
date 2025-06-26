@@ -5,6 +5,7 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   password_hash: text("password_hash").notNull(),
+  avatar_url: text("avatar_url"),
   country_code: text("country_code").notNull().default("IT"),
   notifications: boolean("notifications").notNull().default(true),
   location: boolean("location").notNull().default(true),
@@ -55,11 +56,12 @@ export const laws = pgTable("laws", {
 });
 
 // What's New table for news and updates
-export const whatsNew = pgTable("whats-new", {
+export const whatsNew = pgTable("whats_new", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   summary: text("summary").notNull(),
   content: text("content"),
+  image_url: text("image_url"),
   country_code: text("country_code").notNull().default("IT"),
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

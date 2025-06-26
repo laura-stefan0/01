@@ -14,6 +14,7 @@ router.get('/profile', async (req, res) => {
       username: "janedoe",
       email: "jane@example.com",
       name: "Jane",
+      avatar_url: "https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=100&h=100&fit=crop&crop=face",
       notifications: true,
       location: true,
       emails: false,
