@@ -195,3 +195,8 @@
 .toggle-switch:checked::before {
   transform: translateX(20px);
 }
+
+/* Hide Leaflet attribution */
+.leaflet-control-attribution {
+  display: none !important;
+}
