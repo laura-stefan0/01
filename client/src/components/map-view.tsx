@@ -679,17 +679,17 @@ export function MapView() {
       {/* Bottom Sheet with Protest List */}
       <Sheet open={isBottomSheetOpen} onOpenChange={setIsBottomSheetOpen}>
         <SheetTrigger asChild>
-          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[1001] mb-2">
+          <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-[1001]">
             <Button
               variant="default"
-              className="bg-white text-gray-700 border border-gray-200 shadow-lg hover:bg-gray-50 rounded-full px-4 py-2 flex items-center space-x-2 min-w-0"
+              className="bg-white text-gray-700 border border-gray-200 shadow-lg hover:bg-gray-50 rounded-full px-4 py-2 flex items-center space-x-2"
               onClick={() => setIsBottomSheetOpen(true)}
             >
-              <List className="w-4 h-4 flex-shrink-0" />
-              <span className="text-sm font-medium truncate">
+              <List className="w-4 h-4" />
+              <span className="text-sm font-medium">
                 {protestsInView.length} protest{protestsInView.length !== 1 ? 's' : ''} in area
               </span>
-              <ChevronUp className="w-4 h-4 flex-shrink-0" />
+              <ChevronUp className="w-4 h-4" />
             </Button>
           </div>
         </SheetTrigger>
