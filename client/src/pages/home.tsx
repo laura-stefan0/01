@@ -458,74 +458,44 @@ export default function Home() {
     const protestResources = [
       {
         title: "Know Your Rights",
-        description: "Legal information for protesters and activists",
-        category: "Legal",
         icon: Shield,
         link: "/know-your-rights"
       },
       {
         title: "Safety Tips",
-        description: "How to stay safe during protests and demonstrations",
-        category: "Safety",
         icon: Shield,
         link: "/safety-tips"
       },
       {
         title: "Emergency Contacts",
-        description: "Important numbers for legal aid and support",
-        category: "Emergency",
         icon: Phone,
         link: "#"
       }
     ];
 
-
-
     return (
-      <div className="px-4 py-4 space-y-6 max-w-md mx-auto">
-        {/* For Protesters Section */}
-        <section>
-          <h2 className="text-lg font-semibold text-dark-slate mb-3">For Protesters</h2>
-          <div className="space-y-3">
-            {protestResources.map((resource, index) => (
-              <Card key={index} className="border border-gray-100">
-                <CardContent className="p-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-activist-blue/10 flex items-center justify-center flex-shrink-0">
-                      <resource.icon className="w-5 h-5 text-activist-blue" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-medium text-dark-slate">{resource.title}</h3>
-                        <Badge variant="secondary" className="text-xs">
-                          {resource.category}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-3">{resource.description}</p>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="text-activist-blue border-activist-blue hover:bg-activist-blue hover:text-white"
-                        onClick={() => {
-                          console.log('Navigating to:', resource.link);
-                          if (resource.link !== "#") {
-                            setLocation(resource.link);
-                          }
-                        }}
-                        disabled={resource.link === "#"}
-                      >
-                        <BookOpen className="w-4 h-4 mr-1" />
-                        Learn More
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-
+      <div className="px-4 py-4">
+        <div className="grid grid-cols-3 gap-3">
+          {protestResources.map((resource, index) => (
+            <Card 
+              key={index} 
+              className="border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                console.log('Navigating to:', resource.link);
+                if (resource.link !== "#") {
+                  setLocation(resource.link);
+                }
+              }}
+            >
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
+                  <resource.icon className="w-6 h-6 text-activist-blue" />
+                </div>
+                <h3 className="font-medium text-dark-slate text-sm">{resource.title}</h3>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   };
