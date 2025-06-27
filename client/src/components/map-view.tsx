@@ -95,61 +95,18 @@ export function MapView() {
     : [41.9028, 12.4964]; // Default to Rome, Italy
 
   return (
-    <div className="space-y-4">
-      {/* Search Controls */}
-      <div>
-        {/* Search Bar */}
-        <div className="flex space-x-2 mb-3">
-          <div className="relative flex-1">
-            <Input
-              type="text"
-              placeholder="Search protests by name or cause..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
-            />
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-          </div>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={() => setLocation("/filter")}
-            className="flex-shrink-0 bg-gray-50 border-gray-200 hover:bg-gray-100"
-          >
-            <Filter className="w-4 h-4 text-gray-600" />
-          </Button>
-        </div>
-
-        {/* Filter Tags */}
-        <div className="flex space-x-2 overflow-x-auto pb-1">
-          {filters.map((filter) => (
-            <Badge
-              key={filter.id}
-              variant={activeFilter === filter.id ? "default" : "secondary"}
-              className={`cursor-pointer whitespace-nowrap ${
-                activeFilter === filter.id
-                  ? "bg-activist-blue text-white hover:bg-activist-blue/90"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-              onClick={() => setActiveFilter(filter.id)}
-            >
-              {filter.label}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      {/* Map */}
-      <div>
+    <div className="relative h-full">
+      {/* Map Container - Full Height */}
+      <div className="h-[calc(100vh-140px)] relative">
         {isLoading ? (
-          <div className="flex items-center justify-center h-96">
+          <div className="flex items-center justify-center h-full bg-gray-50">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
               <p className="text-gray-600">Loading map...</p>
             </div>
           </div>
         ) : (
-          <div className="h-96 relative rounded-lg overflow-hidden border">
+          <>
             <MapContainer
               center={mapCenter}
               zoom={filteredProtests.length > 0 ? 10 : 6}
@@ -198,30 +155,84 @@ export function MapView() {
                   </Marker>
                 ))}
             </MapContainer>
-          </div>
-        )}
-        
-        {/* Map Legend */}
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">Legend</h3>
-          <div className="flex flex-wrap gap-3 text-xs">
-            {[
-              { category: 'Climate', color: '#22c55e' },
-              { category: 'Pride', color: '#ec4899' },
-              { category: 'Workers', color: '#f59e0b' },
-              { category: 'Justice', color: '#ef4444' },
-              { category: 'Education', color: '#3b82f6' }
-            ].map(({ category, color }) => (
-              <div key={category} className="flex items-center space-x-1">
-                <div 
-                  className="w-3 h-3 rounded-full border border-white"
-                  style={{ backgroundColor: color, boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
-                ></div>
-                <span className="text-gray-600">{category}</span>
+
+            {/* Overlay Search Controls - Airbnb Style */}
+            <div className="absolute top-4 left-4 right-4 z-[1000]">
+              <div className="bg-white rounded-full shadow-lg border border-gray-200 p-2">
+                <div className="flex items-center space-x-3">
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      placeholder="Search protests by name or cause..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 pr-4 py-3 border-0 bg-transparent text-sm placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  </div>
+                  <div className="h-6 w-px bg-gray-300"></div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setLocation("/filter")}
+                    className="px-3 py-2 hover:bg-gray-50 rounded-full"
+                  >
+                    <Filter className="w-4 h-4 text-gray-600 mr-2" />
+                    Filters
+                  </Button>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+
+            {/* Filter Tags Overlay */}
+            {(searchQuery || activeFilter !== "all") && (
+              <div className="absolute top-20 left-4 right-4 z-[1000]">
+                <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+                  <div className="flex space-x-2 overflow-x-auto pb-1">
+                    {filters.map((filter) => (
+                      <Badge
+                        key={filter.id}
+                        variant={activeFilter === filter.id ? "default" : "secondary"}
+                        className={`cursor-pointer whitespace-nowrap transition-colors ${
+                          activeFilter === filter.id
+                            ? "bg-activist-blue text-white hover:bg-activist-blue/90"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                        onClick={() => setActiveFilter(filter.id)}
+                      >
+                        {filter.label}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Legend Overlay at Bottom */}
+            <div className="absolute bottom-4 left-4 z-[1000]">
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+                <h3 className="text-xs font-semibold text-gray-700 mb-2">Categories</h3>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {[
+                    { category: 'Climate', color: '#22c55e' },
+                    { category: 'Pride', color: '#ec4899' },
+                    { category: 'Workers', color: '#f59e0b' },
+                    { category: 'Justice', color: '#ef4444' },
+                    { category: 'Education', color: '#3b82f6' }
+                  ].map(({ category, color }) => (
+                    <div key={category} className="flex items-center space-x-1">
+                      <div 
+                        className="w-3 h-3 rounded-full border border-white"
+                        style={{ backgroundColor: color, boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                      ></div>
+                      <span className="text-gray-600 whitespace-nowrap">{category}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
