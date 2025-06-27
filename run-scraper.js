@@ -203,7 +203,7 @@ async function scrapeArcigay() {
               country_code: 'IT',
               attendees: Math.floor(Math.random() * 500) + 50,
               featured: Math.random() > 0.8, // Some events featured
-              image_url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=400&fit=crop&auto=format'
+              image_url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=400&fit=crop'
             });
           }
         });
@@ -324,11 +324,11 @@ async function scrapeUltimaGenerazione() {
         const eventKey = `${title}-${location}`;
         if (!events.some(e => `${e.title}-${e.location}` === eventKey)) {
           // Get appropriate image based on category
-          let imageUrl = 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=800&h=400&fit=crop&auto=format'; // Default environment
+          let imageUrl = 'https://images.unsplash.com/photo-1573833011-4c175e6bfaac?w=800&h=400&fit=crop'; // Default environment
           if (category === 'Civil & Human Rights') {
-            imageUrl = 'https://images.unsplash.com/photo-1573496130103-ad5eac3d1b57?w=800&h=400&fit=crop&auto=format';
+            imageUrl = 'https://images.unsplash.com/photo-1573496130103-ad5eac3d1b57?w=800&h=400&fit=crop';
           } else if (category === 'Peace & Anti-War') {
-            imageUrl = 'https://images.unsplash.com/photo-1594312915251-48db9280c8f1?w=800&h=400&fit=crop&auto=format';
+            imageUrl = 'https://images.unsplash.com/photo-1594312915251-48db9280c8f1?w=800&h=400&fit=crop';
           }
 
           events.push({
@@ -455,7 +455,7 @@ async function scrapeOndaPride() {
               country_code: 'IT',
               attendees: Math.floor(Math.random() * 1500) + 100,
               featured: Math.random() > 0.7, // Some events featured
-              image_url: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800&h=400&fit=crop&auto=format'
+              image_url: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800&h=400&fit=crop'
             });
           }
         });
