@@ -1,2 +1,0 @@
-The issue with the bottom navigation bar moving is addressed by adding `className="z-[60]"` and `align="end" sideOffset={4}` to the SelectContent components for both the country and language selections, ensuring their dropdowns are positioned correctly without affecting the layout.
-```
