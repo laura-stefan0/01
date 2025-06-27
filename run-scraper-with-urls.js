@@ -97,4 +97,9 @@ async function updateEventUrls() {
 }
 
 // Run the update
+updateEventUrls();or);
+  }
+}
+
+// Run the update
 updateEventUrls();
