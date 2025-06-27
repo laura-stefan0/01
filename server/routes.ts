@@ -9,6 +9,7 @@ import upload from "./routes/upload";
 import safetyTips from "./routes/safety-tips";
 import laws from "./routes/laws";
 import whatsNew from "./routes/whats-new";
+import imageUpdater from "./routes/image-updater";
 
 // Protests data (using local data for now as fallback)
 const protestsData = [
@@ -48,6 +49,9 @@ export function registerRoutes(app: Express) {
 
   // Upload routes - handle file uploads
   app.use("/api/upload", upload);
+
+  // Image updater routes - fetch and update protest images
+  app.use("/api/images", imageUpdater);
 
   // User profile route (demo)
   app.get("/api/user/profile", (req, res) => {
