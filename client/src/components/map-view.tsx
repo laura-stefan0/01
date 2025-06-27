@@ -619,28 +619,58 @@ export function MapView() {
               </Button>
             </div>
 
-            {/* Legend Overlay at Bottom */}
+            {/* Help Button with Legend */}
             <div className="absolute bottom-4 left-4 z-[1000]">
-              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
-                <h3 className="text-xs font-semibold text-gray-700 mb-2">Categories</h3>
-                <div className="flex flex-wrap gap-2 text-xs">
-                  {[
-                    { category: 'Climate', color: '#22c55e' },
-                    { category: 'Pride', color: '#ec4899' },
-                    { category: 'Workers', color: '#f59e0b' },
-                    { category: 'Justice', color: '#ef4444' },
-                    { category: 'Education', color: '#3b82f6' }
-                  ].map(({ category, color }) => (
-                    <div key={category} className="flex items-center space-x-1">
-                      <div 
-                        className="w-3 h-3 rounded-full border border-white"
-                        style={{ backgroundColor: color, boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
-                      ></div>
-                      <span className="text-gray-600 whitespace-nowrap">{category}</span>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-10 h-10 p-0 bg-white text-gray-700 border border-gray-200 shadow-lg hover:bg-gray-50 rounded-full"
+                    title="Show legend"
+                  >
+                    ?
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-auto rounded-t-lg">
+                  <SheetHeader className="pb-4">
+                    <SheetTitle className="text-left">Map Legend</SheetTitle>
+                  </SheetHeader>
+                  <div className="pb-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Protest Categories</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { category: 'Climate', color: '#22c55e' },
+                        { category: 'Pride', color: '#ec4899' },
+                        { category: 'Workers', color: '#f59e0b' },
+                        { category: 'Justice', color: '#ef4444' },
+                        { category: 'Education', color: '#3b82f6' }
+                      ].map(({ category, color }) => (
+                        <div key={category} className="flex items-center space-x-2">
+                          <div 
+                            className="w-4 h-4 rounded-full border-2 border-white"
+                            style={{ backgroundColor: color, boxShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
+                          ></div>
+                          <span className="text-gray-700 text-sm">{category}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Other Markers</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white"></div>
+                          <span className="text-gray-700 text-sm">Your Location</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 rounded-full bg-amber-500 border-2 border-white"></div>
+                          <span className="text-gray-700 text-sm">Searched Location</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </>
         )}
