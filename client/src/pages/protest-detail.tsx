@@ -185,7 +185,11 @@ export default function ProtestDetail() {
           {/* Description */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">About This Event</h3>
-            <p className="text-gray-700 leading-relaxed">{protest.description}</p>
+            <p className="text-gray-700 leading-relaxed">
+              {protest.description.length > 700 
+                ? `${protest.description.substring(0, 700)}...` 
+                : protest.description}
+            </p>
           </div>
 
           {/* Event Details */}
