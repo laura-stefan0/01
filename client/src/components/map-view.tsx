@@ -74,7 +74,7 @@ export function MapView() {
   // GPS location function
   const getUserLocation = () => {
     setIsLocating(true);
-    console.log("GPS button clicked - starting location request");
+    console.log("GPS button clicked - starting fresh location request");
     
     if (!navigator.geolocation) {
       console.error("Geolocation is not supported by this browser");
@@ -83,12 +83,35 @@ export function MapView() {
       return;
     }
 
+    // Clear any previous user location first
+    setUserLocation(null);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log("Location found:", latitude, longitude);
+        const { latitude, longitude, accuracy } = position.coords;
+        const locationDate = new Date(position.timestamp);
+        console.log("Fresh location found:", {
+          latitude, 
+          longitude, 
+          accuracy: accuracy + " meters",
+          timestamp: locationDate.toLocaleString(),
+          age: (Date.now() - position.timestamp) / 1000 + " seconds old"
+        });
+        
+        // Check if location seems reasonable (not clearly cached/wrong)
+        if (accuracy > 1000) {
+          console.warn("Location accuracy is very low:", accuracy, "meters");
+          setIsLocating(false);
+          const message = `Location accuracy is very low (${Math.round(accuracy/1000)}km). This might be cached data.\n\nOptions:\n- Check your device's location services\n- Try again in a few seconds\n- Make sure you're not using a VPN`;
+          alert(message);
+          return;
+        }
+        
         setUserLocation([latitude, longitude]);
         setIsLocating(false);
+        
+        // Show success message with accuracy
+        console.log("Map centered on your location with", Math.round(accuracy), "meter accuracy");
       },
       (error) => {
         console.error("Geolocation error:", error);
@@ -100,10 +123,10 @@ export function MapView() {
             errorMessage += "Please allow location access in your browser settings.";
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage += "Location information is unavailable.";
+            errorMessage += "Location information is unavailable. Please check your device's location services.";
             break;
           case error.TIMEOUT:
-            errorMessage += "Location request timed out.";
+            errorMessage += "Location request timed out. Please try again.";
             break;
           default:
             errorMessage += "An unknown error occurred.";
@@ -113,8 +136,8 @@ export function MapView() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000 // 5 minutes
+        timeout: 15000,
+        maximumAge: 0 // Force fresh location, no cache
       }
     );
   };
