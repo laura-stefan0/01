@@ -64,6 +64,7 @@ export default function Resources() {
                     variant="outline" 
                     size="sm"
                     className="text-activist-blue border-activist-blue hover:bg-activist-blue hover:text-white"
+                    onClick={() => setLocation(resource.link)}
                   >
                     <ExternalLink className="w-4 h-4 mr-1" />
                     Learn More
