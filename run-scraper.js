@@ -43,7 +43,7 @@ function parseDate(dateString) {
     const match = cleanDateString.match(pattern);
     if (match) {
       const [, day, month, year] = match;
-      date = `${day.padStart(2, '0')}-${month.padStart(2, '0')}-${year}`;
+      date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
       break;
     }
   }
@@ -72,12 +72,21 @@ function parseDate(dateString) {
       const [, day, monthName, year] = monthMatch;
       const month = months[monthName.toLowerCase()];
       if (month) {
-        date = `${day.padStart(2, '0')}-${month}-${year}`;
+        date = `${year}-${month}-${day.padStart(2, '0')}`;
       }
     }
   }
   
-  return { date: date || '01-01-2025', time };
+  // Ensure we always return a valid date in YYYY-MM-DD format
+  if (!date) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    date = `${year}-${month}-${day}`;
+  }
+  
+  return { date, time };
 }
 
 // Helper function to generate coordinates for Italian cities
@@ -226,6 +235,122 @@ async function scrapeArcigay() {
 
 
 
+// Scraper for Ultima Generazione events
+async function scrapeUltimaGenerazione() {
+  console.log('🔍 Scraping Ultima Generazione events...');
+  
+  const events = [];
+  
+  try {
+    const response = await axios.get('https://ultima-generazione.com/eventi/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3'
+      },
+      timeout: 15000
+    });
+    
+    const $ = load(response.data);
+    
+    // Multiple selectors for different event structures
+    const selectors = [
+      '.event', '.evento', 'article', '.post', '.wp-block-post', 
+      '.entry', '.item', '.card', '[class*="event"]', '[class*="evento"]',
+      '.grid-item', '.blog-post', '.news-item'
+    ];
+    
+    selectors.forEach(selector => {
+      $(selector).each((index, element) => {
+        const $element = $(element);
+        
+        // Extract title with multiple fallbacks
+        const title = cleanText(
+          $element.find('h1, h2, h3, h4, .title, .entry-title, .post-title, .event-title').first().text() ||
+          $element.find('a').first().attr('title') ||
+          $element.find('a').first().text() ||
+          $element.text().split('\n')[0]
+        );
+        
+        if (!title || title.length < 5) return;
+        
+        // Skip navigation and footer elements
+        if (title.toLowerCase().includes('menu') || 
+            title.toLowerCase().includes('footer') ||
+            title.toLowerCase().includes('header') ||
+            title.toLowerCase().includes('cookie') ||
+            title.toLowerCase().includes('privacy')) return;
+        
+        const description = cleanText(
+          $element.find('p, .description, .content, .excerpt, .entry-content, .summary').first().text() ||
+          $element.find('.text, .desc').first().text()
+        );
+        
+        const dateText = cleanText(
+          $element.find('.date, .data, .when, time, .event-date, [class*="date"]').first().text() ||
+          $element.find('.meta, .info').first().text()
+        );
+        
+        let location = cleanText(
+          $element.find('.location, .dove, .place, .venue, .city, .luogo, [class*="location"]').first().text()
+        );
+        
+        // Default to Italy if no location found
+        if (!location || location.length < 3) {
+          location = 'Italia';
+        }
+        
+        const { date, time } = parseDate(dateText);
+        const coords = getItalianCityCoordinates(location);
+        
+        // Determine category based on content - Ultima Generazione is climate activism
+        let category = 'Environment'; // Default for climate activism
+        
+        // Check content for specific causes
+        const contentLower = (title + ' ' + description).toLowerCase();
+        if (contentLower.includes('climat') || contentLower.includes('ambiente') || 
+            contentLower.includes('green') || contentLower.includes('sostenib') ||
+            contentLower.includes('carbon') || contentLower.includes('fossil')) {
+          category = 'Environment';
+        } else if (contentLower.includes('giustizia') || contentLower.includes('justice') ||
+                   contentLower.includes('diritti') || contentLower.includes('rights')) {
+          category = 'Civil & Human Rights';
+        } else if (contentLower.includes('pace') || contentLower.includes('peace') ||
+                   contentLower.includes('guerra') || contentLower.includes('war')) {
+          category = 'Peace & Anti-War';
+        }
+        
+        // Check for duplicates
+        const eventKey = `${title}-${location}`;
+        if (!events.some(e => `${e.title}-${e.location}` === eventKey)) {
+          events.push({
+            title,
+            description: description || `Evento di attivismo climatico organizzato da Ultima Generazione: ${title}`,
+            category,
+            location,
+            address: location,
+            latitude: coords.lat,
+            longitude: coords.lng,
+            date,
+            time,
+            country_code: 'IT',
+            attendees: Math.floor(Math.random() * 300) + 30,
+            featured: Math.random() > 0.8,
+            image_url: null
+          });
+        }
+      });
+    });
+    
+    console.log(`✅ Found ${events.length} events from Ultima Generazione`);
+    return events;
+    
+  } catch (error) {
+    console.log(`❌ Error scraping Ultima Generazione: ${error.message}`);
+    return [];
+  }
+}
+
 // Enhanced scraper for Onda Pride and additional Pride websites
 async function scrapeOndaPride() {
   console.log('🔍 Scraping Onda Pride and related events...');
@@ -371,25 +496,30 @@ async function saveEventsToSupabase(events) {
       existingEvents?.map(e => `${e.title}-${e.date}-${e.location}`) || []
     );
     
-    // Filter out duplicates
-    const newEvents = events.filter(event => 
-      !existingTitles.has(`${event.title}-${event.date}-${event.location}`)
-    );
+    // Filter out duplicates and validate data
+    const validEvents = events.filter(event => {
+      // Basic validation
+      if (!event.title || !event.date || !event.location) return false;
+      if (event.date === '' || event.title.length < 3) return false;
+      return !existingTitles.has(`${event.title}-${event.date}-${event.location}`);
+    });
     
-    if (newEvents.length === 0) {
-      console.log('ℹ️ All events already exist in database');
+    if (validEvents.length === 0) {
+      console.log('ℹ️ All events already exist in database or invalid');
       return;
     }
+    
+    console.log(`📋 Validated ${validEvents.length} events for insertion`);
     
     // Insert new events
     const { data, error } = await supabase
       .from('protests')
-      .insert(newEvents);
+      .insert(validEvents);
     
     if (error) {
       console.error('❌ Error saving to Supabase:', error);
     } else {
-      console.log(`✅ Successfully saved ${newEvents.length} new events to database`);
+      console.log(`✅ Successfully saved ${validEvents.length} new events to database`);
     }
     
   } catch (error) {
@@ -416,13 +546,14 @@ async function runScraper() {
     console.log('✅ Connected to Supabase database\n');
     
     // Scrape all websites
-    const [arcigayEvents, ondaPrideEvents] = await Promise.all([
+    const [arcigayEvents, ondaPrideEvents, ultimaGenerazioneEvents] = await Promise.all([
       scrapeArcigay(),
-      scrapeOndaPride()
+      scrapeOndaPride(),
+      scrapeUltimaGenerazione()
     ]);
     
     // Combine all events
-    const allEvents = [...arcigayEvents, ...ondaPrideEvents];
+    const allEvents = [...arcigayEvents, ...ondaPrideEvents, ...ultimaGenerazioneEvents];
     
     console.log(`\n📊 Total events found: ${allEvents.length}`);
     
