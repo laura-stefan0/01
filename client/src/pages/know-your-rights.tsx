@@ -2,25 +2,24 @@ import { ArrowLeft, Scale, Shield, AlertCircle, Phone, Users, UserCheck, AlertTr
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { BottomNavigation } from "@/components/bottom-navigation";
 
 export default function KnowYourRights() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">
+    <div className="max-w-md mx-auto bg-white min-h-screen">
       {/* Header */}
-      <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/resources")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-dark-slate ml-3">Know Your Rights</h1>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 pb-20 px-4 py-6 space-y-6">
+      {/* Content */}
+      <main className="px-4 py-6 space-y-6">
         {/* Your Right to Protest Section */}
         <Card>
           <CardContent className="p-6">
@@ -157,9 +156,6 @@ export default function KnowYourRights() {
           </CardContent>
         </Card>
       </main>
-
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab="resources" onTabChange={(tab) => setLocation(tab === "home" ? "/" : `/${tab}`)} />
     </div>
   );
 }
