@@ -1,4 +1,4 @@
-import { ArrowLeft, Scale, Shield, AlertCircle, Phone } from "lucide-react";
+import { ArrowLeft, Scale, Shield, AlertCircle, Phone, Users, UserCheck, AlertTriangle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
@@ -20,85 +20,105 @@ export default function KnowYourRights() {
 
       {/* Content */}
       <main className="px-4 py-6 space-y-6">
-        {/* Before the Protest Section */}
+        {/* Your Right to Protest Section */}
         <Card>
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold text-dark-slate mb-4 flex items-center">
-              <Shield className="w-5 h-5 mr-2 text-red-600" />
-              Before the Protest
+              <Users className="w-5 h-5 mr-2 text-red-600" />
+              Your Right to Protest
             </h2>
             <div className="space-y-3">
               <div className="flex items-start">
                 <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">You have the right to peaceful assembly</span>
+                <span className="text-sm text-gray-700">You can protest peacefully in public spaces</span>
               </div>
               <div className="flex items-start">
                 <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Check local permit requirements</span>
+                <span className="text-sm text-gray-700">You must notify police 3 days in advance for public demonstrations</span>
               </div>
               <div className="flex items-start">
                 <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Plan your transportation and exit routes</span>
-              </div>
-              <div className="flex items-start">
-                <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Inform someone of your plans</span>
+                <span className="text-sm text-gray-700">Police can restrict protests only for proven public safety reasons</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* During the Protest Section */}
+        {/* Police Powers Section */}
         <Card>
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold text-dark-slate mb-4 flex items-center">
-              <Scale className="w-5 h-5 mr-2 text-red-600" />
-              During the Protest
+              <UserCheck className="w-5 h-5 mr-2 text-red-600" />
+              Police Powers & What They Can't Do
             </h2>
-            <div className="space-y-3">
-              <div className="flex items-start">
-                <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Stay in designated public areas</span>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-gray-900 mb-2">What officers are allowed to do:</p>
+                <p className="text-sm text-gray-700">Ask for your ID, restrict your movement, order you to disperse</p>
               </div>
-              <div className="flex items-start">
-                <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Follow lawful police orders</span>
-              </div>
-              <div className="flex items-start">
-                <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">You have the right to remain silent</span>
-              </div>
-              <div className="flex items-start">
-                <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Document any incidents safely</span>
+              <div>
+                <p className="text-sm font-medium text-gray-900 mb-2">What they can't do:</p>
+                <p className="text-sm text-gray-700">Use force without warning (unless you're resisting)</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* If Detained Section */}
+        {/* Risks & Consequences Section */}
         <Card>
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold text-dark-slate mb-4 flex items-center">
-              <AlertCircle className="w-5 h-5 mr-2 text-red-600" />
-              If Detained
+              <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
+              Risks & Consequences
+            </h2>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="font-medium text-gray-900">Behavior</div>
+                <div className="font-medium text-gray-900">Risk in Italy</div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm border-t pt-2">
+                <div className="text-gray-700">Protesting without notifying authorities</div>
+                <div className="text-gray-700">Arrest / fines</div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="text-gray-700">Blocking roads / sit-ins</div>
+                <div className="text-gray-700">Up to 2 yrs prison</div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="text-gray-700">Passive resistance (e.g. refusing orders)</div>
+                <div className="text-gray-700">Now criminalized</div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="text-gray-700">Refusing to show ID</div>
+                <div className="text-gray-700">Legal if not driving</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* If You're Stopped or Arrested Section */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold text-dark-slate mb-4 flex items-center">
+              <Lock className="w-5 h-5 mr-2 text-red-600" />
+              If You're Stopped or Arrested
             </h2>
             <div className="space-y-3">
               <div className="flex items-start">
                 <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Ask if you are free to leave</span>
+                <span className="text-sm text-gray-700">Stay calm and polite</span>
               </div>
               <div className="flex items-start">
                 <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Exercise your right to remain silent</span>
+                <span className="text-sm text-gray-700">Say clearly: "I wish to remain silent and speak to a lawyer"</span>
               </div>
               <div className="flex items-start">
                 <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Request a lawyer immediately</span>
+                <span className="text-sm text-gray-700">Don't sign anything without legal advice</span>
               </div>
               <div className="flex items-start">
                 <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <span className="text-sm text-gray-700">Do not sign anything without legal counsel</span>
+                <span className="text-sm text-gray-700">You don't have to unlock your phone</span>
               </div>
             </div>
           </CardContent>
