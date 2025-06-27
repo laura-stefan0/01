@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { MapView } from "@/components/map-view";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { useUser } from "@/hooks/use-user";
 import { useWhatsNew } from "@/hooks/use-whats-new";
@@ -529,7 +530,7 @@ export default function Home() {
     return (
       <div key={activeTab} className="animate-in fade-in duration-300">
         {activeTab === "home" && renderHomeContent()}
-        {activeTab === "map" && renderMapContent()}
+        {activeTab === "map" && <MapView />}
         {activeTab === "resources" && renderResourcesContent()}
         {activeTab === "community" && renderCommunityContent()}
         {activeTab === "profile" && renderProfileContent()}
