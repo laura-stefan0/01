@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 27, 2025: Created web scraper (run-scraper.js) to collect Italian Pride events from Arcigay and Pride websites, successfully populated 7 new events in Supabase protests table
 - June 27, 2025: Fixed Resources navigation issue by removing standalone page and integrating into main app's tab system with 3-column grid layout
 - June 27, 2025: Redesigned Resources page from list layout to 3-column clickable grid with fully interactive tiles (no buttons inside)
 - June 27, 2025: Fixed Safety Tips navigation button on home page by updating link from "#" to "/safety-tips" 
