@@ -632,7 +632,7 @@ export function MapView() {
                     ?
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="bottom" className="h-auto rounded-t-lg">
+                <SheetContent side="bottom" className="h-auto rounded-t-lg z-[2000]">
                   <SheetHeader className="pb-4">
                     <SheetTitle className="text-left">Map Legend</SheetTitle>
                   </SheetHeader>
@@ -694,7 +694,7 @@ export function MapView() {
           </div>
         </SheetTrigger>
         
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-lg">
+        <SheetContent side="bottom" className="h-[70vh] rounded-t-lg z-[2000]">
           <SheetHeader className="pb-4">
             <SheetTitle className="text-left">
               Protests in this area ({protestsInView.length})
