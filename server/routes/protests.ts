@@ -179,7 +179,7 @@ router.get('/:id', async (req, res) => {
 // Create new protest
 router.post('/', async (req, res) => {
   try {
-    const { title, description, category, location, address, latitude, longitude, date, time, imageUrl } = req.body;
+    const { title, description, category, location, address, latitude, longitude, date, time, imageUrl, eventUrl } = req.body;
 
     if (!title || !description || !category || !location || !address || !latitude || !longitude || !date || !time) {
       return res.status(400).json({ message: "Required fields missing" });
@@ -204,7 +204,8 @@ router.post('/', async (req, res) => {
       country_code: userCountryCode,
       attendees: 0,
       distance: "0.5 mi",
-      featured: false
+      featured: false,
+      event_url: eventUrl || null
     };
 
     console.log('📤 Inserting protest to Supabase protests table');

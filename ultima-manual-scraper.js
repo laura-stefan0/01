@@ -53,7 +53,8 @@ async function addSampleUltimaGenerazioneEvents() {
       country_code: "IT",
       attendees: 45,
       featured: false,
-      image_url: null
+      image_url: null,
+      event_url: "https://ultima-generazione.com/"
     },
     {
       title: "Manifestazione per il Clima - Stop ai Combustibili Fossili",
@@ -68,7 +69,8 @@ async function addSampleUltimaGenerazioneEvents() {
       country_code: "IT",
       attendees: 120,
       featured: true,
-      image_url: null
+      image_url: null,
+      event_url: "https://ultima-generazione.com/"
     },
     {
       title: "Dibattito Pubblico - Futuro Sostenibile per l'Italia",
@@ -83,7 +85,8 @@ async function addSampleUltimaGenerazioneEvents() {
       country_code: "IT",
       attendees: 85,
       featured: false,
-      image_url: null
+      image_url: null,
+      event_url: "https://ultima-generazione.com/"
     },
     {
       title: "Workshop - Comunicazione Ambientale e Sensibilizzazione",
@@ -98,7 +101,8 @@ async function addSampleUltimaGenerazioneEvents() {
       country_code: "IT",
       attendees: 35,
       featured: false,
-      image_url: null
+      image_url: null,
+      event_url: "https://ultima-generazione.com/"
     },
     {
       title: "Assemblea Nazionale - Strategie per l'Azione Climatica",
@@ -113,7 +117,8 @@ async function addSampleUltimaGenerazioneEvents() {
       country_code: "IT",
       attendees: 200,
       featured: true,
-      image_url: null
+      image_url: null,
+      event_url: "https://ultima-generazione.com/"
     }
   ];
   

@@ -228,6 +228,18 @@ export default function ProtestDetail() {
               <ExternalLink className="h-4 w-4 mr-2" />
               Get Directions
             </Button>
+
+            {protest.event_url && (
+              <Button 
+                variant="outline" 
+                className="w-full"
+                size="lg"
+                onClick={() => window.open(protest.event_url, '_blank')}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                View Event Page
+              </Button>
+            )}
           </div>
 
           {/* Safety Notice */}
