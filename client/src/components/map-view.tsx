@@ -11,6 +11,7 @@ import type { Protest } from "@shared/schema";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { geocodeLocation, findItalianCity, type GeocodeResult } from "@/lib/geocoding";
 
 // Fix for default marker icons in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -60,7 +61,10 @@ export function MapView() {
   const { data: protests = [], isLoading } = useProtests();
   const [searchQuery, setSearchQuery] = useState("");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [searchLocation, setSearchLocation] = useState<[number, number] | null>(null);
+  const [searchLocationName, setSearchLocationName] = useState<string>("");
   const [isLocating, setIsLocating] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
   const [, setLocation] = useLocation();
 
   const filters = [
@@ -142,6 +146,66 @@ export function MapView() {
     );
   };
 
+  // Handle search input with geocoding
+  const handleSearchChange = async (value: string) => {
+    setSearchQuery(value);
+    
+    // Reset search location when query is cleared
+    if (!value.trim()) {
+      setSearchLocation(null);
+      setSearchLocationName("");
+      return;
+    }
+    
+    // If query looks like a city/address search (no protest matches found)
+    const query = value.toLowerCase().trim();
+    const hasProtestMatches = protests.some(protest => {
+      const searchFields = [
+        protest.title?.toLowerCase() || '',
+        protest.description?.toLowerCase() || '',
+        protest.category?.toLowerCase() || '',
+        protest.location?.toLowerCase() || '',
+        protest.address?.toLowerCase() || '',
+        protest.organizer?.toLowerCase() || ''
+      ];
+      return searchFields.some(field => field.includes(query));
+    });
+    
+    // If no protest matches and query looks like a location, try geocoding
+    if (!hasProtestMatches && query.length >= 3) {
+      setIsGeocoding(true);
+      
+      try {
+        // First try Italian cities lookup for faster response
+        const italianCity = findItalianCity(query);
+        if (italianCity) {
+          console.log(`🏛️ Found Italian city: ${italianCity.name}`);
+          setSearchLocation([italianCity.lat, italianCity.lng]);
+          setSearchLocationName(italianCity.name);
+          setIsGeocoding(false);
+          return;
+        }
+        
+        // If not found in Italian cities, try full geocoding
+        const geocodeResult = await geocodeLocation(query);
+        if (geocodeResult) {
+          console.log(`🌍 Geocoded location: ${geocodeResult.displayName}`);
+          setSearchLocation([geocodeResult.latitude, geocodeResult.longitude]);
+          setSearchLocationName(geocodeResult.city || geocodeResult.displayName);
+        } else {
+          setSearchLocation(null);
+          setSearchLocationName("");
+        }
+      } catch (error) {
+        console.error('Geocoding failed:', error);
+        setSearchLocation(null);
+        setSearchLocationName("");
+      } finally {
+        setIsGeocoding(false);
+      }
+    }
+  };
+
   // Filter protests based on search and active filter
   const filteredProtests = protests
     .filter((protest) => {
@@ -183,16 +247,29 @@ export function MapView() {
       return true;
     });
 
-  // Calculate map center based on filtered protests (if searching) or all protests
-  const protestsForCenter = searchQuery && searchQuery.trim().length > 0 ? filteredProtests : protests;
-  const validProtests = protestsForCenter.filter(p => p.latitude && p.longitude && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude)));
+  // Calculate map center - prioritize search location, then filtered protests, then all protests
+  let mapCenter: [number, number];
+  let mapZoom: number;
   
-  const mapCenter: [number, number] = validProtests.length > 0 
-    ? [
-        validProtests.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validProtests.length,
-        validProtests.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validProtests.length
-      ]
-    : [41.9028, 12.4964]; // Default to Rome, Italy
+  if (searchLocation) {
+    // If we found a location via geocoding, center on it
+    mapCenter = searchLocation;
+    mapZoom = 12;
+    console.log(`🗺️ Centering map on searched location: ${searchLocationName}`);
+  } else {
+    // Otherwise, use protest-based centering
+    const protestsForCenter = searchQuery && searchQuery.trim().length > 0 ? filteredProtests : protests;
+    const validProtests = protestsForCenter.filter(p => p.latitude && p.longitude && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude)));
+    
+    mapCenter = validProtests.length > 0 
+      ? [
+          validProtests.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validProtests.length,
+          validProtests.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validProtests.length
+        ]
+      : [41.9028, 12.4964]; // Default to Rome, Italy
+    
+    mapZoom = searchQuery && filteredProtests.length > 0 ? 12 : filteredProtests.length > 0 ? 10 : 6;
+  }
   
   // Debug logging for search results
   if (searchQuery && searchQuery.trim().length > 0) {
@@ -214,10 +291,11 @@ export function MapView() {
           <>
             <MapContainer
               center={mapCenter}
-              zoom={searchQuery && filteredProtests.length > 0 ? 12 : filteredProtests.length > 0 ? 10 : 6}
+              zoom={mapZoom}
               className="h-full w-full"
               style={{ height: '100%', width: '100%' }}
               zoomControl={false}
+              key={searchLocation ? `search-${searchLocation[0]}-${searchLocation[1]}` : 'default'}
             >
               <MapCenterUpdater center={userLocation} />
               <TileLayer
@@ -284,6 +362,30 @@ export function MapView() {
                   </Popup>
                 </Marker>
               )}
+              
+              {/* Search Location Marker */}
+              {searchLocation && (
+                <Marker
+                  position={searchLocation}
+                  icon={new L.Icon({
+                    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="#f59e0b" stroke="white" stroke-width="2"/>
+                        <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    `),
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                  })}
+                >
+                  <Popup>
+                    <div className="text-center">
+                      <p className="font-semibold text-sm">{searchLocationName}</p>
+                      <p className="text-xs text-gray-500">Searched location</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              )}
             </MapContainer>
 
             {/* Overlay Search Controls - Airbnb Style */}
@@ -293,15 +395,25 @@ export function MapView() {
                   <div className="relative flex-1">
                     <Input
                       type="text"
-                      placeholder="Search protests by name, location, or cause..."
+                      placeholder="Search protests, cities, or addresses..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => handleSearchChange(e.target.value)}
                       className="pl-10 pr-10 py-3 border-0 bg-transparent text-sm placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    {isGeocoding ? (
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      </div>
+                    ) : (
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    )}
                     {searchQuery && (
                       <button
-                        onClick={() => setSearchQuery("")}
+                        onClick={() => {
+                          setSearchQuery("");
+                          setSearchLocation(null);
+                          setSearchLocationName("");
+                        }}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 hover:text-gray-600"
                       >
                         ✕
@@ -328,8 +440,19 @@ export function MapView() {
                 <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
                   {searchQuery && (
                     <div className="text-sm text-gray-600 mb-2">
-                      {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
-                      {searchQuery && ` for "${searchQuery}"`}
+                      {searchLocation ? (
+                        <>
+                          📍 Showing location: <strong>{searchLocationName}</strong>
+                          {filteredProtests.length > 0 && (
+                            <> · {filteredProtests.length} protest{filteredProtests.length !== 1 ? 's' : ''} found</>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
+                          {searchQuery && ` for "${searchQuery}"`}
+                        </>
+                      )}
                     </div>
                   )}
                   <div className="flex space-x-2 overflow-x-auto pb-1">
