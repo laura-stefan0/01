@@ -17,7 +17,11 @@ import { useAuth } from "@/context/auth-context";
 import { useLocation } from "wouter";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState(() => {
+    // Check URL parameters for tab
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('tab') || "home";
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [isLoadingProtests, setIsLoadingProtests] = useState(true);
@@ -46,6 +50,18 @@ export default function Home() {
   const handleCountryChange = (newCountry: string) => {
     setSelectedCountry(newCountry);
     localStorage.setItem('corteo_selected_country', newCountry);
+  };
+
+  // Handle tab change and update URL
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === "home") {
+      // Clear URL parameter for home tab
+      window.history.pushState({}, '', '/');
+    } else {
+      // Update URL with tab parameter
+      window.history.pushState({}, '', `/?tab=${tab}`);
+    }
   };
 
   // Combine protests data for map view
@@ -575,7 +591,7 @@ export default function Home() {
       </main>
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }
