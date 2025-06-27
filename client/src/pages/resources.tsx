@@ -21,7 +21,7 @@ export default function Resources() {
       description: "How to stay safe during protests and demonstrations",
       category: "Safety",
       icon: Shield,
-      link: "#"
+      link: "/safety-tips"
     },
     {
       title: "Emergency Contacts",

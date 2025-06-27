@@ -10,6 +10,7 @@ import ProtestDetail from "@/pages/protest-detail";
 import Filter from "@/pages/filter";
 import Resources from "@/pages/resources";
 import KnowYourRights from "@/pages/know-your-rights";
+import SafetyTips from "@/pages/safety-tips";
 import Transparency from "@/pages/transparency";
 import NotFound from "./pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
@@ -37,6 +38,7 @@ function AuthenticatedRouter() {
         <Route path="/filter" component={Filter} />
         <Route path="/resources" component={Resources} />
         <Route path="/know-your-rights" component={KnowYourRights} />
+        <Route path="/safety-tips" component={SafetyTips} />
         <Route path="/create-protest" component={CreateProtest} />
         <Route path="/transparency" component={Transparency} />
         <Route component={NotFound} />
