@@ -464,11 +464,11 @@ export default function Home() {
         link: "/know-your-rights"
       },
       {
-        title: "Safety Guidelines",
+        title: "Safety Tips",
         description: "How to stay safe during protests and demonstrations",
         category: "Safety",
         icon: Shield,
-        link: "#"
+        link: "/safety-tips"
       },
       {
         title: "Emergency Contacts",
@@ -506,7 +506,12 @@ export default function Home() {
                         variant="outline" 
                         size="sm"
                         className="text-activist-blue border-activist-blue hover:bg-activist-blue hover:text-white"
-                        onClick={() => resource.link !== "#" && setLocation(resource.link)}
+                        onClick={() => {
+                          console.log('Navigating to:', resource.link);
+                          if (resource.link !== "#") {
+                            setLocation(resource.link);
+                          }
+                        }}
                         disabled={resource.link === "#"}
                       >
                         <BookOpen className="w-4 h-4 mr-1" />
