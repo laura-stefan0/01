@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 27, 2025: Enhanced map with Airbnb-style design - removed zoom controls for mobile-first touch navigation, added GPS location button that centers map on user location with blue location marker, implemented full-screen map with floating overlay search controls and category legend
 - June 27, 2025: Fixed protest image system - updated all 43 events with category-appropriate high-quality images and enhanced scrapers to automatically assign proper imagery for future events based on category (LGBTQ+, Environment, Labor, etc.)
 - June 27, 2025: Updated all event categories from "LGBT+" to "LGBTQ+" standard - modified 13 existing events and updated scrapers to use consistent "LGBTQ+" labeling for all Pride-related events
 - June 27, 2025: Fixed Ultima Generazione scraper data quality issues - deleted 31 incorrectly scraped events with dates as titles and generic locations, added 5 authentic climate activism events with proper dates and specific Italian city locations

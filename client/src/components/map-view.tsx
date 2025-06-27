@@ -3,7 +3,7 @@ import { useProtests } from "@/hooks/use-protests";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, MapPin } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLocation } from "wouter";
@@ -45,6 +45,8 @@ const createCategoryIcon = (category: string) => {
 export function MapView() {
   const { data: protests = [], isLoading } = useProtests();
   const [searchQuery, setSearchQuery] = useState("");
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
   const [, setLocation] = useLocation();
 
   const filters = [
@@ -54,6 +56,30 @@ export function MapView() {
     { id: "popular", label: "Popular" },
   ];
   const [activeFilter, setActiveFilter] = useState("all");
+
+  // GPS location function
+  const getUserLocation = () => {
+    setIsLocating(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+          setIsLocating(false);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          setIsLocating(false);
+          // Fallback to Rome, Italy if geolocation fails
+          setUserLocation([41.9028, 12.4964]);
+        }
+      );
+    } else {
+      setIsLocating(false);
+      // Fallback to Rome, Italy if geolocation not supported
+      setUserLocation([41.9028, 12.4964]);
+    }
+  };
 
   // Filter protests based on search and active filter
   const filteredProtests = protests
@@ -108,10 +134,11 @@ export function MapView() {
         ) : (
           <>
             <MapContainer
-              center={mapCenter}
+              center={userLocation || mapCenter}
               zoom={filteredProtests.length > 0 ? 10 : 6}
               className="h-full w-full"
               style={{ height: '100%', width: '100%' }}
+              zoomControl={false}
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -154,6 +181,29 @@ export function MapView() {
                     </Popup>
                   </Marker>
                 ))}
+              
+              {/* User Location Marker */}
+              {userLocation && (
+                <Marker
+                  position={userLocation}
+                  icon={new L.Icon({
+                    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10" cy="10" r="8" fill="#3b82f6" stroke="white" stroke-width="2"/>
+                        <circle cx="10" cy="10" r="3" fill="white"/>
+                      </svg>
+                    `),
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                  })}
+                >
+                  <Popup>
+                    <div className="text-center">
+                      <p className="font-semibold text-sm">Your Location</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              )}
             </MapContainer>
 
             {/* Overlay Search Controls - Airbnb Style */}
@@ -207,6 +257,22 @@ export function MapView() {
                 </div>
               </div>
             )}
+
+            {/* GPS Location Button */}
+            <div className="absolute bottom-4 right-4 z-[1000]">
+              <Button
+                onClick={getUserLocation}
+                disabled={isLocating}
+                className="w-12 h-12 p-0 bg-white text-gray-700 border border-gray-200 shadow-lg hover:bg-gray-50 rounded-full"
+                variant="outline"
+              >
+                {isLocating ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                ) : (
+                  <MapPin className="w-5 h-5" />
+                )}
+              </Button>
+            </div>
 
             {/* Legend Overlay at Bottom */}
             <div className="absolute bottom-4 left-4 z-[1000]">
