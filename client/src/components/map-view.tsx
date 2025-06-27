@@ -147,15 +147,27 @@ export function MapView() {
     .filter((protest) => {
       // Filter by search query - search in title, description, category, location, and address
       if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        return (
-          protest.title.toLowerCase().includes(query) ||
-          protest.description.toLowerCase().includes(query) ||
-          protest.category.toLowerCase().includes(query) ||
-          protest.location.toLowerCase().includes(query) ||
-          (protest.address && protest.address.toLowerCase().includes(query)) ||
-          (protest.organizer && protest.organizer.toLowerCase().includes(query))
-        );
+        const query = searchQuery.toLowerCase().trim();
+        if (query.length === 0) return true;
+        
+        console.log(`🔍 Searching for: "${query}"`);
+        
+        const searchFields = [
+          protest.title?.toLowerCase() || '',
+          protest.description?.toLowerCase() || '',
+          protest.category?.toLowerCase() || '',
+          protest.location?.toLowerCase() || '',
+          protest.address?.toLowerCase() || '',
+          protest.organizer?.toLowerCase() || ''
+        ];
+        
+        const matches = searchFields.some(field => field.includes(query));
+        
+        if (matches) {
+          console.log(`✅ Match found: ${protest.title} in ${protest.location}`);
+        }
+        
+        return matches;
       }
       return true;
     })
@@ -172,17 +184,20 @@ export function MapView() {
     });
 
   // Calculate map center based on filtered protests (if searching) or all protests
-  const protestsForCenter = searchQuery ? filteredProtests : protests;
-  const mapCenter: [number, number] = protestsForCenter.length > 0 
+  const protestsForCenter = searchQuery && searchQuery.trim().length > 0 ? filteredProtests : protests;
+  const validProtests = protestsForCenter.filter(p => p.latitude && p.longitude && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude)));
+  
+  const mapCenter: [number, number] = validProtests.length > 0 
     ? [
-        protestsForCenter
-          .filter(p => p.latitude && p.longitude)
-          .reduce((sum, p) => sum + parseFloat(p.latitude), 0) / protestsForCenter.filter(p => p.latitude && p.longitude).length,
-        protestsForCenter
-          .filter(p => p.latitude && p.longitude)
-          .reduce((sum, p) => sum + parseFloat(p.longitude), 0) / protestsForCenter.filter(p => p.latitude && p.longitude).length
+        validProtests.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validProtests.length,
+        validProtests.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validProtests.length
       ]
     : [41.9028, 12.4964]; // Default to Rome, Italy
+  
+  // Debug logging for search results
+  if (searchQuery && searchQuery.trim().length > 0) {
+    console.log(`🔍 Search results: ${filteredProtests.length} protests found for "${searchQuery}"`);
+  }
 
   return (
     <div className="relative h-full">
@@ -281,9 +296,17 @@ export function MapView() {
                       placeholder="Search protests by name, location, or cause..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 py-3 border-0 bg-transparent text-sm placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="pl-10 pr-10 py-3 border-0 bg-transparent text-sm placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 hover:text-gray-600"
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
                   <div className="h-6 w-px bg-gray-300"></div>
                   <Button 
@@ -303,6 +326,12 @@ export function MapView() {
             {(searchQuery || activeFilter !== "all") && (
               <div className="absolute top-20 left-4 right-4 z-[1000]">
                 <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+                  {searchQuery && (
+                    <div className="text-sm text-gray-600 mb-2">
+                      {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
+                      {searchQuery && ` for "${searchQuery}"`}
+                    </div>
+                  )}
                   <div className="flex space-x-2 overflow-x-auto pb-1">
                     {filters.map((filter) => (
                       <Badge
