@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
-import { BottomNavigation } from "@/components/bottom-navigation";
+import BottomNavigation from "@/components/bottom-navigation";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { useUser } from "@/hooks/use-user";
 import { useWhatsNew } from "@/hooks/use-whats-new";
