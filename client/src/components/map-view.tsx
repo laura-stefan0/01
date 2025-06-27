@@ -145,14 +145,16 @@ export function MapView() {
   // Filter protests based on search and active filter
   const filteredProtests = protests
     .filter((protest) => {
-      // Filter by search query
+      // Filter by search query - search in title, description, category, location, and address
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         return (
           protest.title.toLowerCase().includes(query) ||
           protest.description.toLowerCase().includes(query) ||
           protest.category.toLowerCase().includes(query) ||
-          protest.location.toLowerCase().includes(query)
+          protest.location.toLowerCase().includes(query) ||
+          (protest.address && protest.address.toLowerCase().includes(query)) ||
+          (protest.organizer && protest.organizer.toLowerCase().includes(query))
         );
       }
       return true;
@@ -169,15 +171,16 @@ export function MapView() {
       return true;
     });
 
-  // Calculate map center based on protests
-  const mapCenter: [number, number] = filteredProtests.length > 0 
+  // Calculate map center based on filtered protests (if searching) or all protests
+  const protestsForCenter = searchQuery ? filteredProtests : protests;
+  const mapCenter: [number, number] = protestsForCenter.length > 0 
     ? [
-        filteredProtests
+        protestsForCenter
           .filter(p => p.latitude && p.longitude)
-          .reduce((sum, p) => sum + parseFloat(p.latitude), 0) / filteredProtests.filter(p => p.latitude && p.longitude).length,
-        filteredProtests
+          .reduce((sum, p) => sum + parseFloat(p.latitude), 0) / protestsForCenter.filter(p => p.latitude && p.longitude).length,
+        protestsForCenter
           .filter(p => p.latitude && p.longitude)
-          .reduce((sum, p) => sum + parseFloat(p.longitude), 0) / filteredProtests.filter(p => p.latitude && p.longitude).length
+          .reduce((sum, p) => sum + parseFloat(p.longitude), 0) / protestsForCenter.filter(p => p.latitude && p.longitude).length
       ]
     : [41.9028, 12.4964]; // Default to Rome, Italy
 
@@ -196,7 +199,7 @@ export function MapView() {
           <>
             <MapContainer
               center={mapCenter}
-              zoom={filteredProtests.length > 0 ? 10 : 6}
+              zoom={searchQuery && filteredProtests.length > 0 ? 12 : filteredProtests.length > 0 ? 10 : 6}
               className="h-full w-full"
               style={{ height: '100%', width: '100%' }}
               zoomControl={false}
@@ -275,7 +278,7 @@ export function MapView() {
                   <div className="relative flex-1">
                     <Input
                       type="text"
-                      placeholder="Search protests by name or cause..."
+                      placeholder="Search protests by name, location, or cause..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 pr-4 py-3 border-0 bg-transparent text-sm placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0"
