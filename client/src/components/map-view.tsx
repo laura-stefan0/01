@@ -432,6 +432,89 @@ export function MapView() {
                   </Button>
                 </div>
               </div>
+              
+              {/* Search Results Dropdown */}
+              {searchQuery && searchQuery.trim().length > 0 && (
+                <div className="mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
+                  {/* Location Result */}
+                  {searchLocation && searchLocationName && (
+                    <div className="p-3 border-b border-gray-100">
+                      <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg">
+                        <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                          <MapPin className="w-4 h-4 text-amber-600" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{searchLocationName}</p>
+                          <p className="text-sm text-gray-500">Location</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Protest Results */}
+                  {filteredProtests.length > 0 ? (
+                    <div className="divide-y divide-gray-100">
+                      {filteredProtests.slice(0, 5).map((protest) => (
+                        <div 
+                          key={protest.id}
+                          className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                          onClick={() => setLocation(`/protest/${protest.id}`)}
+                        >
+                          <div className="flex items-start space-x-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              protest.category === 'Climate' || protest.category === 'Environment' ? 'bg-green-100' :
+                              protest.category === 'Pride' || protest.category === 'LGBTQ+' ? 'bg-pink-100' :
+                              protest.category === 'Workers' ? 'bg-amber-100' :
+                              protest.category === 'Justice' ? 'bg-red-100' :
+                              protest.category === 'Education' ? 'bg-blue-100' :
+                              'bg-gray-100'
+                            }`}>
+                              <div className={`w-3 h-3 rounded-full ${
+                                protest.category === 'Climate' || protest.category === 'Environment' ? 'bg-green-500' :
+                                protest.category === 'Pride' || protest.category === 'LGBTQ+' ? 'bg-pink-500' :
+                                protest.category === 'Workers' ? 'bg-amber-500' :
+                                protest.category === 'Justice' ? 'bg-red-500' :
+                                protest.category === 'Education' ? 'bg-blue-500' :
+                                'bg-gray-500'
+                              }`}></div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-gray-900 truncate">{protest.title}</p>
+                              <p className="text-sm text-gray-600 truncate">{protest.location}</p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <Badge className={`text-xs ${
+                                  protest.category === 'Climate' || protest.category === 'Environment' ? 'bg-green-100 text-green-800' :
+                                  protest.category === 'Pride' || protest.category === 'LGBTQ+' ? 'bg-pink-100 text-pink-800' :
+                                  protest.category === 'Workers' ? 'bg-amber-100 text-amber-800' :
+                                  protest.category === 'Justice' ? 'bg-red-100 text-red-800' :
+                                  protest.category === 'Education' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {protest.category}
+                                </Badge>
+                                <span className="text-xs text-gray-500">{protest.date} • {protest.time}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {filteredProtests.length > 5 && (
+                        <div className="p-3 text-center border-t border-gray-100">
+                          <p className="text-sm text-gray-500">
+                            {filteredProtests.length - 5} more results found
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    !searchLocation && (
+                      <div className="p-4 text-center">
+                        <p className="text-sm text-gray-500">No protests found for "{searchQuery}"</p>
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Filter Tags Overlay */}
