@@ -2,24 +2,25 @@ import { ArrowLeft, FileText, Smartphone, Brain, CheckSquare, HelpCircle, Phone,
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
+import { BottomNavigation } from "@/components/bottom-navigation";
 
 export default function SafetyTips() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen">
+    <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">
       {/* Header */}
-      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
         <div className="px-4 py-3 flex items-center">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/resources")}>
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-dark-slate ml-3">Safety Tips</h1>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="px-4 py-6 space-y-6">
+      {/* Main Content */}
+      <main className="flex-1 pb-20 px-4 py-6 space-y-6">
         {/* Write Down or Memorize Section */}
         <Card>
           <CardContent className="p-6">
@@ -205,6 +206,9 @@ export default function SafetyTips() {
           </CardContent>
         </Card>
       </main>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation activeTab="resources" onTabChange={(tab) => setLocation(tab === "home" ? "/" : `/${tab}`)} />
     </div>
   );
 }
