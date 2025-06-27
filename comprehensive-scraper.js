@@ -81,18 +81,27 @@ function getImageForEvent(event) {
   const title = event.title.toLowerCase();
   
   // Category-based images with high quality protest/activism imagery
-  if (category.includes('lgbtq') || title.includes('pride')) {
-    return 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format';
-  } else if (category.includes('environment') || category.includes('climate') || title.includes('clima')) {
-    return 'https://images.unsplash.com/photo-1573160813959-c9157b3f8e7c?w=500&h=300&fit=crop&auto=format';
-  } else if (category.includes('workers') || category.includes('labor') || title.includes('lavoro')) {
-    return 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=500&h=300&fit=crop&auto=format';
-  } else if (category.includes('justice') || title.includes('giustizia')) {
-    return 'https://images.unsplash.com/photo-1591608971362-f08b2a75731a?w=500&h=300&fit=crop&auto=format';
-  } else if (category.includes('education') || title.includes('student')) {
-    return 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=300&fit=crop&auto=format';
-  } else {
-    return 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format';
+  switch (category) {
+    case "environment":
+      return 'https://images.unsplash.com/photo-1573160813959-c9157b3f8e7c?w=500&h=300&fit=crop&auto=format';
+    case "lgbtq+":
+      return 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format';
+    case "women's rights":
+      return 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=500&h=300&fit=crop&auto=format';
+    case "labor":
+      return 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=500&h=300&fit=crop&auto=format';
+    case "racial & social justice":
+      return 'https://images.unsplash.com/photo-1591608971362-f08b2a75731a?w=500&h=300&fit=crop&auto=format';
+    case "civil & human rights":
+      return 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format';
+    case "healthcare & education":
+      return 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=300&fit=crop&auto=format';
+    case "peace & anti-war":
+      return 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500&h=300&fit=crop&auto=format';
+    case "transparency & anti-corruption":
+      return 'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=500&h=300&fit=crop&auto=format';
+    default:
+      return 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format';
   }
 }
 
@@ -175,10 +184,10 @@ async function scrapePrideEvents() {
 }
 
 async function scrapeClimateEvents() {
-  console.log('🌍 Adding Climate activism events...');
+  console.log('🌍 Adding Environmental activism events...');
   const events = [];
   
-  // Sample climate activism events based on real Italian climate movements
+  // Sample environmental activism events based on real Italian climate movements
   const climateEvents = [
     {
       title: 'Fridays for Future Milano - Sciopero per il Clima',
@@ -207,13 +216,6 @@ async function scrapeClimateEvents() {
       location: 'Genova, Italy',
       date: '2025-10-12',
       coords: { lat: '44.4056', lng: '8.9463' }
-    },
-    {
-      title: 'Sciopero del Clima - Studenti per il Futuro',
-      description: 'Gli studenti italiani si mobilitano per il clima. La nostra educazione dipende da un pianeta vivibile.',
-      location: 'Bologna, Italy',
-      date: '2025-11-29',
-      coords: { lat: '44.4949', lng: '11.3426' }
     }
   ];
   
@@ -235,15 +237,15 @@ async function scrapeClimateEvents() {
     });
   });
   
-  console.log(`✅ Added ${events.length} Climate events`);
+  console.log(`✅ Added ${events.length} Environmental events`);
   return events;
 }
 
 async function scrapeWorkerEvents() {
-  console.log('✊ Adding Workers\' Rights events...');
+  console.log('✊ Adding Labor Rights events...');
   const events = [];
   
-  // Sample workers' rights events
+  // Sample labor rights events
   const workerEvents = [
     {
       title: 'Sciopero Generale CGIL-CISL-UIL',
@@ -272,7 +274,7 @@ async function scrapeWorkerEvents() {
     events.push({
       title: event.title,
       description: event.description,
-      category: 'Workers',
+      category: 'Labor',
       location: event.location,
       address: `Piazza principale, ${event.location}`,
       latitude: event.coords.lat,
@@ -280,29 +282,22 @@ async function scrapeWorkerEvents() {
       date: event.date,
       time: '09:30',
       attendees: Math.floor(Math.random() * 3000) + 500,
-      image_url: getImageForEvent({ category: 'Workers', title: event.title }),
+      image_url: getImageForEvent({ category: 'Labor', title: event.title }),
       country_code: 'IT',
       featured: Math.random() > 0.5
     });
   });
   
-  console.log(`✅ Added ${events.length} Workers' Rights events`);
+  console.log(`✅ Added ${events.length} Labor Rights events`);
   return events;
 }
 
 async function scrapeJusticeEvents() {
-  console.log('⚖️ Adding Justice events...');
+  console.log('⚖️ Adding Civil & Human Rights events...');
   const events = [];
   
-  // Sample justice and human rights events
+  // Sample civil and human rights events
   const justiceEvents = [
-    {
-      title: 'Non Una Di Meno - Manifestazione Contro la Violenza',
-      description: 'Manifestazione nazionale contro la violenza di genere e per i diritti delle donne.',
-      location: 'Roma, Italy',
-      date: '2025-11-25',
-      coords: { lat: '41.9028', lng: '12.4964' }
-    },
     {
       title: 'Marcia per i Diritti Umani - Amnesty International',
       description: 'Marcia per i diritti umani, la libertà di espressione e la giustizia sociale.',
@@ -323,7 +318,7 @@ async function scrapeJusticeEvents() {
     events.push({
       title: event.title,
       description: event.description,
-      category: 'Justice',
+      category: 'Civil & Human Rights',
       location: event.location,
       address: `Piazza centrale, ${event.location}`,
       latitude: event.coords.lat,
@@ -331,21 +326,65 @@ async function scrapeJusticeEvents() {
       date: event.date,
       time: '16:00',
       attendees: Math.floor(Math.random() * 2000) + 300,
-      image_url: getImageForEvent({ category: 'Justice', title: event.title }),
+      image_url: getImageForEvent({ category: 'Civil & Human Rights', title: event.title }),
       country_code: 'IT',
       featured: Math.random() > 0.6
     });
   });
   
-  console.log(`✅ Added ${events.length} Justice events`);
+  console.log(`✅ Added ${events.length} Civil & Human Rights events`);
+  return events;
+}
+
+async function scrapeWomensRightsEvents() {
+  console.log('💪 Adding Women\'s Rights events...');
+  const events = [];
+  
+  // Sample women's rights events
+  const womensEvents = [
+    {
+      title: 'Non Una Di Meno - Manifestazione Contro la Violenza',
+      description: 'Manifestazione nazionale contro la violenza di genere e per i diritti delle donne.',
+      location: 'Roma, Italy',
+      date: '2025-11-25',
+      coords: { lat: '41.9028', lng: '12.4964' }
+    },
+    {
+      title: '8 Marzo - Sciopero Femminista Globale',
+      description: 'Sciopero e manifestazione per i diritti delle donne, parità salariale e contro la violenza di genere.',
+      location: 'Milano, Italy',
+      date: '2025-03-08',
+      coords: { lat: '45.4642', lng: '9.1900' }
+    }
+  ];
+  
+  womensEvents.forEach(event => {
+    events.push({
+      title: event.title,
+      description: event.description,
+      category: 'Women\'s Rights',
+      location: event.location,
+      address: `Piazza centrale, ${event.location}`,
+      latitude: event.coords.lat,
+      longitude: event.coords.lng,
+      date: event.date,
+      time: '15:00',
+      attendees: Math.floor(Math.random() * 2500) + 400,
+      image_url: getImageForEvent({ category: 'Women\'s Rights', title: event.title }),
+      country_code: 'IT',
+      featured: Math.random() > 0.7
+    });
+  });
+  
+  console.log(`✅ Added ${events.length} Women's Rights events`);
   return events;
 }
 
 async function scrapeEducationEvents() {
-  console.log('🎓 Adding Education events...');
+  console.log('🎓 Adding Healthcare & Education events...');
   const events = [];
   
-  // Sample education and student rights events
+  // Sample healthcare and education events
   const educationEvents = [
     {
       title: 'Studenti in Piazza - Diritto allo Studio',
@@ -355,8 +394,8 @@ async function scrapeEducationEvents() {
       coords: { lat: '41.9028', lng: '12.4964' }
     },
     {
-      title: 'Protesta Universitari Milano - No al Taglio Fondi',
-      description: 'Protesta contro i tagli ai fondi per l\'università pubblica e per una formazione di qualità.',
+      title: 'Protesta Sanitari - Difesa della Sanità Pubblica',
+      description: 'Manifestazione del personale sanitario per migliori condizioni di lavoro e sanità pubblica di qualità.',
       location: 'Milano, Italy',
       date: '2025-10-08',
       coords: { lat: '45.4642', lng: '9.1900' }
@@ -367,21 +406,21 @@ async function scrapeEducationEvents() {
     events.push({
       title: event.title,
       description: event.description,
-      category: 'Education',
+      category: 'Healthcare & Education',
       location: event.location,
-      address: `Campus universitario, ${event.location}`,
+      address: `Centro città, ${event.location}`,
       latitude: event.coords.lat,
       longitude: event.coords.lng,
       date: event.date,
       time: '14:00',
       attendees: Math.floor(Math.random() * 1000) + 200,
-      image_url: getImageForEvent({ category: 'Education', title: event.title }),
+      image_url: getImageForEvent({ category: 'Healthcare & Education', title: event.title }),
       country_code: 'IT',
       featured: Math.random() > 0.7
     });
   });
   
-  console.log(`✅ Added ${events.length} Education events`);
+  console.log(`✅ Added ${events.length} Healthcare & Education events`);
   return events;
 }
 
@@ -417,6 +456,9 @@ async function comprehensiveScrape() {
     
     const justiceEvents = await scrapeJusticeEvents();
     allEvents.push(...justiceEvents);
+    
+    const womensRightsEvents = await scrapeWomensRightsEvents();
+    allEvents.push(...womensRightsEvents);
     
     const educationEvents = await scrapeEducationEvents();
     allEvents.push(...educationEvents);

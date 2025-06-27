@@ -32,8 +32,6 @@ export default function ProtestDetail() {
       case "environment":
         return "bg-green-500";
       case "lgbtq+":
-      case "lgbt+":
-      case "lgbt+ & equality":
         return "bg-pink-500";
       case "women's rights":
         return "bg-pink-600";
@@ -51,6 +49,31 @@ export default function ProtestDetail() {
         return "bg-gray-500";
       default:
         return "bg-activist-blue";
+    }
+  };
+
+  const getCategoryFallbackImage = (category: string) => {
+    switch (category.toLowerCase()) {
+      case "environment":
+        return "https://images.unsplash.com/photo-1573160813959-c9157b3f8e7c?w=500&h=300&fit=crop&auto=format";
+      case "lgbtq+":
+        return "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format";
+      case "women's rights":
+        return "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=500&h=300&fit=crop&auto=format";
+      case "labor":
+        return "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=500&h=300&fit=crop&auto=format";
+      case "racial & social justice":
+        return "https://images.unsplash.com/photo-1591608971362-f08b2a75731a?w=500&h=300&fit=crop&auto=format";
+      case "civil & human rights":
+        return "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format";
+      case "healthcare & education":
+        return "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=300&fit=crop&auto=format";
+      case "peace & anti-war":
+        return "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500&h=300&fit=crop&auto=format";
+      case "transparency & anti-corruption":
+        return "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=500&h=300&fit=crop&auto=format";
+      default:
+        return "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format";
     }
   };
 
@@ -150,12 +173,12 @@ export default function ProtestDetail() {
         {/* Hero Image */}
         <div className="relative">
           <img 
-            src={protest.image_url ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`} 
+            src={protest.image_url ?? getCategoryFallbackImage(protest.category)} 
             alt={protest.title}
             className="w-full h-64 object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`;
+              target.src = getCategoryFallbackImage(protest.category);
             }}
           />
           <div className="absolute top-4 left-4">
@@ -232,18 +255,6 @@ export default function ProtestDetail() {
               <ExternalLink className="h-4 w-4 mr-2" />
               Get Directions
             </Button>
-
-            {protest.event_url && (
-              <Button 
-                variant="outline" 
-                className="w-full"
-                size="lg"
-                onClick={() => window.open(protest.event_url, '_blank')}
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Event Page
-              </Button>
-            )}
           </div>
 
           {/* Safety Notice */}
