@@ -570,28 +570,7 @@ export default function Home() {
             )}
           </div>
 
-          {/* Search Bar - Show only on map tab */}
-          {activeTab === "map" && (
-            <div className="space-y-3">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search protests by name or cause..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-50 border-gray-200 focus:ring-2 focus:ring-activist-blue focus:border-transparent"
-                />
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              </div>
-              <Button 
-                variant="outline" 
-                className="w-full border-gray-200 text-gray-700 hover:bg-gray-50"
-                onClick={() => setLocation("/filter")}
-              >
-                Filters
-              </Button>
-            </div>
-          )}
+
         </div>
       </header>
 
