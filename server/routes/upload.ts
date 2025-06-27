@@ -31,11 +31,20 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
   fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    // Only allow image files
-    if (file.mimetype.startsWith('image/')) {
+    // Allow image files (JPEG, PNG, SVG, GIF, WebP)
+    const allowedTypes = [
+      'image/jpeg',
+      'image/jpg', 
+      'image/png',
+      'image/svg+xml',
+      'image/gif',
+      'image/webp'
+    ];
+    
+    if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'));
+      cb(new Error('Only image files are allowed (JPEG, PNG, SVG, GIF, WebP)'));
     }
   }
 });
@@ -140,6 +149,55 @@ router.post('/image', upload.single('image'), async (req: RequestWithFile, res: 
       fs.unlinkSync(req.file.path);
     }
     res.status(500).json({ message: 'Failed to upload image' });
+  }
+});
+
+// What's New image upload endpoint - Supports SVG and PNG
+router.post('/whats-new', upload.single('image'), async (req: RequestWithFile, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file provided' });
+    }
+
+    // Generate unique filename with whats-new prefix
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const fileExtension = req.file.originalname.split('.').pop();
+    const uniqueFileName = `whats-new-${Date.now()}-${Math.round(Math.random() * 1E9)}.${fileExtension}`;
+    
+    // Upload to Supabase whats-new bucket
+    const { data, error } = await supabaseAdmin.storage
+      .from('whats-new')
+      .upload(uniqueFileName, fileBuffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Supabase storage error:', error);
+      fs.unlinkSync(req.file.path);
+      return res.status(500).json({ message: 'Failed to upload image to storage' });
+    }
+
+    // Get public URL for the uploaded image
+    const { data: urlData } = supabaseAdmin.storage
+      .from('whats-new')
+      .getPublicUrl(uniqueFileName);
+
+    // Clean up local temporary file
+    fs.unlinkSync(req.file.path);
+    
+    console.log('What\'s New image uploaded to Supabase storage:', uniqueFileName);
+    res.json({ 
+      message: 'What\'s New image uploaded successfully',
+      image_url: urlData.publicUrl,
+      filename: uniqueFileName
+    });
+  } catch (error) {
+    console.error('What\'s New image upload error:', error);
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ message: 'Failed to upload What\'s New image' });
   }
 });
 
