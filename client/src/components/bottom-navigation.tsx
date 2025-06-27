@@ -5,7 +5,7 @@ interface BottomNavigationProps {
   onTabChange: (tab: string) => void;
 }
 
-function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
+export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   const tabs = [
     { id: "home", label: "For you", icon: Heart },
     { id: "map", label: "Search", icon: Search },
@@ -38,5 +38,3 @@ function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
     </nav>
   );
 }
-
-export default BottomNavigation;
