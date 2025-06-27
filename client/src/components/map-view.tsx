@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useProtests } from "@/hooks/use-protests";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Search, Filter, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLocation } from "wouter";
 import type { Protest } from "@shared/schema";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -19,6 +19,20 @@ L.Icon.Default.mergeOptions({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
+
+// Component to handle map centering
+function MapCenterUpdater({ center }: { center: [number, number] | null }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (center) {
+      console.log("Centering map on:", center);
+      map.setView(center, 15);
+    }
+  }, [center, map]);
+  
+  return null;
+}
 
 // Custom marker icons based on category
 const createCategoryIcon = (category: string) => {
@@ -158,12 +172,13 @@ export function MapView() {
         ) : (
           <>
             <MapContainer
-              center={userLocation || mapCenter}
+              center={mapCenter}
               zoom={filteredProtests.length > 0 ? 10 : 6}
               className="h-full w-full"
               style={{ height: '100%', width: '100%' }}
               zoomControl={false}
             >
+              <MapCenterUpdater center={userLocation} />
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
