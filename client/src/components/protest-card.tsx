@@ -22,6 +22,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
       case "environment":
         return "bg-green-500";
       case "lgbtq+":
+      case "lgbt+":
       case "lgbt+ & equality":
         return "bg-pink-500";
       case "women's rights":

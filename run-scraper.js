@@ -193,7 +193,7 @@ async function scrapeArcigay() {
             events.push({
               title,
               description: description || `Evento LGBTQ+ organizzato da Arcigay: ${title}`,
-              category: 'LGBT+',
+              category: 'LGBTQ+',
               location,
               address: location,
               latitude: coords.lat,
@@ -437,7 +437,7 @@ async function scrapeOndaPride() {
             events.push({
               title,
               description: description || `Evento Pride: ${title}`,
-              category: 'LGBT+',
+              category: 'LGBTQ+',
               location,
               address: location,
               latitude: coords.lat,
