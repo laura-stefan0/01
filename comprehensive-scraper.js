@@ -78,31 +78,22 @@ function getItalianCityCoordinates(location) {
 
 function getImageForEvent(event) {
   const category = event.category.toLowerCase();
-  const title = event.title.toLowerCase();
   
-  // Category-based images with high quality protest/activism imagery
-  switch (category) {
-    case "environment":
-      return 'https://images.unsplash.com/photo-1573160813959-c9157b3f8e7c?w=500&h=300&fit=crop&auto=format';
-    case "lgbtq+":
-      return 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format';
-    case "women's rights":
-      return 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=500&h=300&fit=crop&auto=format';
-    case "labor":
-      return 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=500&h=300&fit=crop&auto=format';
-    case "racial & social justice":
-      return 'https://images.unsplash.com/photo-1591608971362-f08b2a75731a?w=500&h=300&fit=crop&auto=format';
-    case "civil & human rights":
-      return 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format';
-    case "healthcare & education":
-      return 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=300&fit=crop&auto=format';
-    case "peace & anti-war":
-      return 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500&h=300&fit=crop&auto=format';
-    case "transparency & anti-corruption":
-      return 'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=500&h=300&fit=crop&auto=format';
-    default:
-      return 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format';
-  }
+  // High-quality category-specific fallback images
+  const categoryImages = {
+    'environment': 'https://images.unsplash.com/photo-1573160813959-c9157b3f8e7c?w=800&h=600&fit=crop&auto=format',
+    'lgbtq+': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop&auto=format',
+    'women\'s rights': 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=800&h=600&fit=crop&auto=format',
+    'labor': 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=800&h=600&fit=crop&auto=format',
+    'racial & social justice': 'https://images.unsplash.com/photo-1591608971362-f08b2a75731a?w=800&h=600&fit=crop&auto=format',
+    'civil & human rights': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&auto=format',
+    'healthcare & education': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop&auto=format',
+    'peace & anti-war': 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800&h=600&fit=crop&auto=format',
+    'transparency & anti-corruption': 'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=800&h=600&fit=crop&auto=format',
+    'other': 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=800&h=600&fit=crop&auto=format'
+  };
+  
+  return categoryImages[category] || categoryImages.other;
 }
 
 // Scraper functions for different sources

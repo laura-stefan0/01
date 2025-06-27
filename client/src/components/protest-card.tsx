@@ -4,6 +4,7 @@ import type { Protest } from "@shared/schema";
 import { MapPin } from "lucide-react";
 import { useLocation } from "wouter";
 import { formatDateTime } from "@/lib/date-utils";
+import { getCategoryColor, getImageUrl, createImageErrorHandler } from "@/lib/image-utils";
 
 interface ProtestCardProps {
   protest: Protest;
@@ -17,73 +18,16 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     setLocation(`/protest/${protest.id}`);
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "environment":
-        return "bg-green-600";
-      case "lgbtq+":
-        return "bg-rose-500";
-      case "women's rights":
-        return "bg-pink-700";
-      case "labor":
-        return "bg-amber-600";
-      case "racial & social justice":
-        return "bg-violet-700";
-      case "civil & human rights":
-        return "bg-blue-600";
-      case "healthcare & education":
-        return "bg-cyan-600";
-      case "peace & anti-war":
-        return "bg-sky-400";
-      case "transparency & anti-corruption":
-        return "bg-gray-600";
-      case "other":
-        return "bg-indigo-600";
-      default:
-        return "bg-indigo-600";
-    }
-  };
 
-  const getCategoryFallbackImage = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "environment":
-        return "https://images.unsplash.com/photo-1573160813959-c9157b3f8e7c?w=500&h=300&fit=crop&auto=format";
-      case "lgbtq+":
-        return "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format";
-      case "women's rights":
-        return "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=500&h=300&fit=crop&auto=format";
-      case "labor":
-        return "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=500&h=300&fit=crop&auto=format";
-      case "racial & social justice":
-        return "https://images.unsplash.com/photo-1591608971362-f08b2a75731a?w=500&h=300&fit=crop&auto=format";
-      case "civil & human rights":
-        return "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format";
-      case "healthcare & education":
-        return "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=300&fit=crop&auto=format";
-      case "peace & anti-war":
-        return "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500&h=300&fit=crop&auto=format";
-      case "transparency & anti-corruption":
-        return "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=500&h=300&fit=crop&auto=format";
-      case "other":
-        return "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format";
-      default:
-        return "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format";
-    }
-  };
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.target as HTMLImageElement;
-    target.src = getCategoryFallbackImage(protest.category);
-  };
 
   if (variant === "featured") {
     return (
       <Card className="min-w-0 w-full flex-shrink-0 overflow-hidden h-64 cursor-pointer border border-gray-200 fade-in" onClick={handleClick}>
         <img 
-          src={protest.image_url ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`} 
+          src={getImageUrl(protest.image_url, protest.category)} 
           alt={protest.title}
           className="w-full h-32 object-cover"
-          onError={handleImageError}
+          onError={createImageErrorHandler(protest.category)}
         />
         <CardContent className="p-4 h-32 flex flex-col justify-between">
           <div>
@@ -109,10 +53,10 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     <Card className="overflow-hidden h-20 cursor-pointer border border-gray-200 fade-in" onClick={handleClick}>
       <div className="flex h-full">
         <img 
-          src={protest.image_url ?? `https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format`}
+          src={getImageUrl(protest.image_url, protest.category)}
           alt={protest.title}
           className="w-20 h-full object-cover flex-shrink-0"
-          onError={handleImageError}
+          onError={createImageErrorHandler(protest.category)}
         />
         <CardContent className="p-3 flex-1 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">
