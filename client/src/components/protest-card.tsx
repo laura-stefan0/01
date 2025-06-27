@@ -20,25 +20,27 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case "environment":
-        return "bg-green-500";
+        return "bg-green-600";
       case "lgbtq+":
-        return "bg-pink-500";
+        return "bg-rose-500";
       case "women's rights":
-        return "bg-pink-600";
+        return "bg-pink-700";
       case "labor":
-        return "bg-orange-500";
+        return "bg-amber-600";
       case "racial & social justice":
-        return "bg-purple-600";
+        return "bg-violet-700";
       case "civil & human rights":
-        return "bg-blue-500";
+        return "bg-blue-600";
       case "healthcare & education":
-        return "bg-teal-600";
+        return "bg-cyan-600";
       case "peace & anti-war":
-        return "bg-blue-400";
+        return "bg-sky-400";
       case "transparency & anti-corruption":
-        return "bg-gray-500";
+        return "bg-gray-600";
+      case "other":
+        return "bg-indigo-600";
       default:
-        return "bg-activist-blue";
+        return "bg-indigo-600";
     }
   };
 
@@ -62,6 +64,8 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
         return "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500&h=300&fit=crop&auto=format";
       case "transparency & anti-corruption":
         return "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=500&h=300&fit=crop&auto=format";
+      case "other":
+        return "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format";
       default:
         return "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format";
     }

@@ -66,16 +66,19 @@ function MapBoundsUpdater({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
 // Custom marker icons based on category
 const createCategoryIcon = (category: string) => {
   const colors = {
-    'Climate': '#22c55e',
-    'Environment': '#22c55e', 
-    'Pride': '#ec4899',
-    'LGBTQ+': '#ec4899',
-    'Workers': '#f59e0b',
-    'Justice': '#ef4444',
-    'Education': '#3b82f6'
+    'Environment': '#059669',
+    'LGBTQ+': '#f43f5e',
+    'Women\'s Rights': '#be185d',
+    'Labor': '#d97706',
+    'Racial & Social Justice': '#7c3aed',
+    'Civil & Human Rights': '#2563eb',
+    'Healthcare & Education': '#0891b2',
+    'Peace & Anti-War': '#0ea5e9',
+    'Transparency & Anti-Corruption': '#4b5563',
+    'Other': '#4f46e5'
   };
   
-  const color = colors[category as keyof typeof colors] || '#6b7280';
+  const color = colors[category as keyof typeof colors] || '#4f46e5';
   
   return L.divIcon({
     html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
@@ -195,8 +198,7 @@ export function MapView() {
         protest.description?.toLowerCase() || '',
         protest.category?.toLowerCase() || '',
         protest.location?.toLowerCase() || '',
-        protest.address?.toLowerCase() || '',
-        protest.organizer?.toLowerCase() || ''
+        protest.address?.toLowerCase() || ''
       ];
       return searchFields.some(field => field.includes(query));
     });
@@ -251,8 +253,7 @@ export function MapView() {
           protest.description?.toLowerCase() || '',
           protest.category?.toLowerCase() || '',
           protest.location?.toLowerCase() || '',
-          protest.address?.toLowerCase() || '',
-          protest.organizer?.toLowerCase() || ''
+          protest.address?.toLowerCase() || ''
         ];
         
         const matches = searchFields.some(field => field.includes(query));
@@ -640,11 +641,16 @@ export function MapView() {
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">Protest Categories</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { category: 'Climate', color: '#22c55e' },
-                        { category: 'Pride', color: '#ec4899' },
-                        { category: 'Workers', color: '#f59e0b' },
-                        { category: 'Justice', color: '#ef4444' },
-                        { category: 'Education', color: '#3b82f6' }
+                        { category: 'Environment', color: '#059669' },
+                        { category: 'LGBTQ+', color: '#f43f5e' },
+                        { category: 'Women\'s Rights', color: '#be185d' },
+                        { category: 'Labor', color: '#d97706' },
+                        { category: 'Racial & Social Justice', color: '#7c3aed' },
+                        { category: 'Civil & Human Rights', color: '#2563eb' },
+                        { category: 'Healthcare & Education', color: '#0891b2' },
+                        { category: 'Peace & Anti-War', color: '#0ea5e9' },
+                        { category: 'Transparency & Anti-Corruption', color: '#4b5563' },
+                        { category: 'Other', color: '#4f46e5' }
                       ].map(({ category, color }) => (
                         <div key={category} className="flex items-center space-x-2">
                           <div 

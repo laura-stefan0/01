@@ -14,12 +14,16 @@ export default function Filter() {
   const [organizerFilter, setOrganizerFilter] = useState("all");
 
   const causes = [
-    "Climate",
-    "Pride",
-    "Workers",
-    "Justice",
     "Environment",
-    "Education"
+    "LGBTQ+",
+    "Women's Rights",
+    "Labor",
+    "Racial & Social Justice",
+    "Civil & Human Rights",
+    "Healthcare & Education",
+    "Peace & Anti-War",
+    "Transparency & Anti-Corruption",
+    "Other"
   ];
 
   const handleCauseToggle = (cause: string) => {

@@ -304,13 +304,6 @@ async function scrapeJusticeEvents() {
       location: 'Milano, Italy',
       date: '2025-12-10',
       coords: { lat: '45.4642', lng: '9.1900' }
-    },
-    {
-      title: 'Sardine contro il Razzismo - Piazza Aperta',
-      description: 'Movimento delle Sardine per una società inclusiva e contro ogni forma di discriminazione.',
-      location: 'Bologna, Italy',
-      date: '2025-08-28',
-      coords: { lat: '44.4949', lng: '11.3426' }
     }
   ];
   
@@ -333,6 +326,131 @@ async function scrapeJusticeEvents() {
   });
   
   console.log(`✅ Added ${events.length} Civil & Human Rights events`);
+  return events;
+}
+
+async function scrapeRacialJusticeEvents() {
+  console.log('✊ Adding Racial & Social Justice events...');
+  const events = [];
+  
+  // Sample racial and social justice events
+  const racialEvents = [
+    {
+      title: 'Sardine contro il Razzismo - Piazza Aperta',
+      description: 'Movimento delle Sardine per una società inclusiva e contro ogni forma di discriminazione.',
+      location: 'Bologna, Italy',
+      date: '2025-08-28',
+      coords: { lat: '44.4949', lng: '11.3426' }
+    },
+    {
+      title: 'Black Lives Matter Roma - Solidarietà Internazionale',
+      description: 'Manifestazione di solidarietà per i diritti civili e contro il razzismo sistemico.',
+      location: 'Roma, Italy',
+      date: '2025-09-15',
+      coords: { lat: '41.9028', lng: '12.4964' }
+    }
+  ];
+  
+  racialEvents.forEach(event => {
+    events.push({
+      title: event.title,
+      description: event.description,
+      category: 'Racial & Social Justice',
+      location: event.location,
+      address: `Piazza centrale, ${event.location}`,
+      latitude: event.coords.lat,
+      longitude: event.coords.lng,
+      date: event.date,
+      time: '16:00',
+      attendees: Math.floor(Math.random() * 1500) + 200,
+      image_url: getImageForEvent({ category: 'Racial & Social Justice', title: event.title }),
+      country_code: 'IT',
+      featured: Math.random() > 0.6
+    });
+  });
+  
+  console.log(`✅ Added ${events.length} Racial & Social Justice events`);
+  return events;
+}
+
+async function scrapePeaceEvents() {
+  console.log('✌️ Adding Peace & Anti-War events...');
+  const events = [];
+  
+  // Sample peace and anti-war events
+  const peaceEvents = [
+    {
+      title: 'Marcia della Pace Perugia-Assisi',
+      description: 'Storica marcia per la pace, il disarmo e la non-violenza. Insieme per un mondo senza guerre.',
+      location: 'Perugia, Italy',
+      date: '2025-10-20',
+      coords: { lat: '43.1122', lng: '12.3888' }
+    },
+    {
+      title: 'No alla Guerra - Manifestazione Pacifista',
+      description: 'Manifestazione contro tutte le guerre e per la diplomazia come strumento di pace.',
+      location: 'Milano, Italy',
+      date: '2025-11-04',
+      coords: { lat: '45.4642', lng: '9.1900' }
+    }
+  ];
+  
+  peaceEvents.forEach(event => {
+    events.push({
+      title: event.title,
+      description: event.description,
+      category: 'Peace & Anti-War',
+      location: event.location,
+      address: `Centro storico, ${event.location}`,
+      latitude: event.coords.lat,
+      longitude: event.coords.lng,
+      date: event.date,
+      time: '14:30',
+      attendees: Math.floor(Math.random() * 2500) + 500,
+      image_url: getImageForEvent({ category: 'Peace & Anti-War', title: event.title }),
+      country_code: 'IT',
+      featured: Math.random() > 0.7
+    });
+  });
+  
+  console.log(`✅ Added ${events.length} Peace & Anti-War events`);
+  return events;
+}
+
+async function scrapeTransparencyEvents() {
+  console.log('🔍 Adding Transparency & Anti-Corruption events...');
+  const events = [];
+  
+  // Sample transparency and anti-corruption events
+  const transparencyEvents = [
+    {
+      title: 'Libera contro le Mafie - Giornata della Memoria',
+      description: 'Manifestazione per la legalità, contro le mafie e per la trasparenza nelle istituzioni.',
+      location: 'Palermo, Italy',
+      date: '2025-03-21',
+      coords: { lat: '38.1157', lng: '13.3615' }
+    }
+  ];
+  
+  transparencyEvents.forEach(event => {
+    events.push({
+      title: event.title,
+      description: event.description,
+      category: 'Transparency & Anti-Corruption',
+      location: event.location,
+      address: `Centro città, ${event.location}`,
+      latitude: event.coords.lat,
+      longitude: event.coords.lng,
+      date: event.date,
+      time: '10:00',
+      attendees: Math.floor(Math.random() * 1000) + 300,
+      image_url: getImageForEvent({ category: 'Transparency & Anti-Corruption', title: event.title }),
+      country_code: 'IT',
+      featured: Math.random() > 0.6
+    });
+  });
+  
+  console.log(`✅ Added ${events.length} Transparency & Anti-Corruption events`);
   return events;
 }
 
@@ -457,11 +575,20 @@ async function comprehensiveScrape() {
     const justiceEvents = await scrapeJusticeEvents();
     allEvents.push(...justiceEvents);
     
+    const racialJusticeEvents = await scrapeRacialJusticeEvents();
+    allEvents.push(...racialJusticeEvents);
+    
     const womensRightsEvents = await scrapeWomensRightsEvents();
     allEvents.push(...womensRightsEvents);
     
     const educationEvents = await scrapeEducationEvents();
     allEvents.push(...educationEvents);
+    
+    const peaceEvents = await scrapePeaceEvents();
+    allEvents.push(...peaceEvents);
+    
+    const transparencyEvents = await scrapeTransparencyEvents();
+    allEvents.push(...transparencyEvents);
     
     console.log(`📊 Total events collected: ${allEvents.length}`);
     
