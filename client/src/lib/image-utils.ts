@@ -69,12 +69,27 @@ export function getMapColor(category: string): string {
 
 /**
  * Get the best image URL with fallback logic
+ * Prioritizes scraped images from the source website, then falls back to category images
  */
 export function getImageUrl(imageUrl: string | null | undefined, category: string): string {
-  if (imageUrl && imageUrl.trim() !== '') {
+  // If we have a valid image URL (from scraping), use it
+  if (imageUrl && imageUrl.trim() !== '' && !imageUrl.includes('unsplash.com/photo-') && !imageUrl.includes('source.unsplash.com')) {
     return imageUrl;
   }
+  
+  // Only use fallback images if we don't have a scraped image
   return getCategoryFallbackImage(category);
+}
+
+/**
+ * Check if an image URL is from scraping vs fallback
+ */
+export function isScrapedImage(imageUrl: string | null | undefined): boolean {
+  if (!imageUrl) return false;
+  
+  // Consider it scraped if it's not from our known fallback sources
+  const fallbackSources = ['images.unsplash.com', 'source.unsplash.com', 'cdn.pixabay.com'];
+  return !fallbackSources.some(source => imageUrl.includes(source));
 }
 
 /**
@@ -87,7 +102,11 @@ export function createImageErrorHandler(category: string) {
     
     // Prevent infinite loops if fallback also fails
     if (target.src !== fallbackUrl) {
-      console.log(`Image failed, using fallback for ${category}`);
+      const wasScraped = isScrapedImage(target.src);
+      console.log(`Image failed, using fallback for ${category}`, { 
+        originalSrc: target.src, 
+        wasScraped 
+      });
       target.src = fallbackUrl;
     }
   };
