@@ -60,25 +60,49 @@ export function MapView() {
   // GPS location function
   const getUserLocation = () => {
     setIsLocating(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation([latitude, longitude]);
-          setIsLocating(false);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          setIsLocating(false);
-          // Fallback to Rome, Italy if geolocation fails
-          setUserLocation([41.9028, 12.4964]);
-        }
-      );
-    } else {
+    console.log("GPS button clicked - starting location request");
+    
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser");
       setIsLocating(false);
-      // Fallback to Rome, Italy if geolocation not supported
-      setUserLocation([41.9028, 12.4964]);
+      alert("Location services are not supported by your browser");
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log("Location found:", latitude, longitude);
+        setUserLocation([latitude, longitude]);
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setIsLocating(false);
+        
+        let errorMessage = "Unable to get your location. ";
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += "Please allow location access in your browser settings.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage += "Location request timed out.";
+            break;
+          default:
+            errorMessage += "An unknown error occurred.";
+            break;
+        }
+        alert(errorMessage);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
   };
 
   // Filter protests based on search and active filter
@@ -261,10 +285,14 @@ export function MapView() {
             {/* GPS Location Button */}
             <div className="absolute bottom-4 right-4 z-[1000]">
               <Button
-                onClick={getUserLocation}
+                onClick={() => {
+                  console.log("GPS button clicked");
+                  getUserLocation();
+                }}
                 disabled={isLocating}
                 className="w-12 h-12 p-0 bg-white text-gray-700 border border-gray-200 shadow-lg hover:bg-gray-50 rounded-full"
                 variant="outline"
+                title="Find my location"
               >
                 {isLocating ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
