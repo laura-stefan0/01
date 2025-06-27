@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Shield, Phone } from "lucide-react";
 import { ArrowLeft } from "lucide-react";
 import { useLocation } from "wouter";
@@ -11,22 +10,16 @@ export default function Resources() {
   const resources = [
     {
       title: "Know Your Rights",
-      description: "Legal information for protesters and activists",
-      category: "Legal",
       icon: Shield,
       link: "/know-your-rights"
     },
     {
       title: "Safety Tips",
-      description: "How to stay safe during protests and demonstrations",
-      category: "Safety",
       icon: Shield,
       link: "/safety-tips"
     },
     {
       title: "Emergency Contacts",
-      description: "Important numbers for legal aid and support",
-      category: "Emergency",
       icon: Phone,
       link: "#"
     }
@@ -61,11 +54,7 @@ export default function Resources() {
                 <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
                   <resource.icon className="w-6 h-6 text-activist-blue" />
                 </div>
-                <h3 className="font-medium text-dark-slate text-sm mb-1">{resource.title}</h3>
-                <Badge variant="secondary" className="text-xs mb-2">
-                  {resource.category}
-                </Badge>
-                <p className="text-xs text-gray-600">{resource.description}</p>
+                <h3 className="font-medium text-dark-slate text-sm">{resource.title}</h3>
               </CardContent>
             </Card>
           ))}
