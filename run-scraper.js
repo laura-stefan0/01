@@ -184,7 +184,7 @@ async function scrapeArcigay() {
             events.push({
               title,
               description: description || `Evento LGBTQ+ organizzato da Arcigay: ${title}`,
-              category: 'Pride',
+              category: 'LGBT+',
               location,
               address: location,
               latitude: coords.lat,
@@ -222,6 +222,77 @@ async function scrapeArcigay() {
   
   console.log(`✅ Found ${uniqueEvents.length} unique events from Arcigay`);
   return uniqueEvents;
+}
+
+// RSS feed scraper for Fridays For Future Italia
+async function scrapeFridaysForFutureRSS() {
+  console.log('🔍 Scraping Fridays For Future Italia RSS feed...');
+  
+  const events = [];
+  
+  try {
+    const response = await axios.get('https://fridaysforfutureitalia.it/eventi/feed/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'application/rss+xml, application/xml, text/xml'
+      },
+      timeout: 10000
+    });
+    
+    const $ = load(response.data, { xmlMode: true });
+    
+    $('item').each((index, element) => {
+      const $element = $(element);
+      
+      const title = cleanText($element.find('title').text());
+      const description = cleanText($element.find('description').text());
+      const link = $element.find('link').text();
+      const pubDate = $element.find('pubDate').text();
+      
+      if (!title || title.length < 5) return;
+      
+      // Parse publication date to get event date
+      let eventDate = '2025-06-01'; // Default date
+      let eventTime = '18:00'; // Default time
+      
+      if (pubDate) {
+        try {
+          const date = new Date(pubDate);
+          eventDate = date.toISOString().split('T')[0];
+          eventTime = date.toTimeString().split(' ')[0].substring(0, 5);
+        } catch (e) {
+          console.log('Could not parse date:', pubDate);
+        }
+      }
+      
+      // Default location to Italy (Fridays For Future events are typically in major cities)
+      const location = 'Italia';
+      const coords = getItalianCityCoordinates('roma'); // Default to Rome coordinates
+      
+      events.push({
+        title,
+        description: description || `Evento ambientale organizzato da Fridays For Future Italia: ${title}`,
+        category: 'Environment',
+        location,
+        address: location,
+        latitude: coords.lat,
+        longitude: coords.lng,
+        date: eventDate,
+        time: eventTime,
+        country_code: 'IT',
+        attendees: Math.floor(Math.random() * 1000) + 50,
+        featured: Math.random() > 0.8,
+        image_url: null
+      });
+    });
+    
+    console.log(`✅ Found ${events.length} events from Fridays For Future Italia RSS`);
+    return events;
+    
+  } catch (error) {
+    console.log(`❌ Error scraping RSS feed: ${error.message}`);
+    return [];
+  }
 }
 
 // Enhanced scraper for Onda Pride and additional Pride websites
@@ -310,7 +381,7 @@ async function scrapeOndaPride() {
             events.push({
               title,
               description: description || `Evento Pride: ${title}`,
-              category: 'Pride',
+              category: 'LGBT+',
               location,
               address: location,
               latitude: coords.lat,
@@ -414,13 +485,14 @@ async function runScraper() {
     console.log('✅ Connected to Supabase database\n');
     
     // Scrape all websites
-    const [arcigayEvents, ondaPrideEvents] = await Promise.all([
+    const [arcigayEvents, ondaPrideEvents, fridaysForFutureEvents] = await Promise.all([
       scrapeArcigay(),
-      scrapeOndaPride()
+      scrapeOndaPride(),
+      scrapeFridaysForFutureRSS()
     ]);
     
     // Combine all events
-    const allEvents = [...arcigayEvents, ...ondaPrideEvents];
+    const allEvents = [...arcigayEvents, ...ondaPrideEvents, ...fridaysForFutureEvents];
     
     console.log(`\n📊 Total events found: ${allEvents.length}`);
     
