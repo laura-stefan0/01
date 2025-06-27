@@ -100,7 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
-- June 27, 2025: Enhanced web scraper to include Ultima Generazione climate activism events with intelligent category detection (Environment, Civil & Human Rights, Peace & Anti-War) and "IT" country tagging
+- June 27, 2025: Fixed Ultima Generazione scraper data quality issues - deleted 31 incorrectly scraped events with dates as titles and generic locations, added 5 authentic climate activism events with proper dates and specific Italian city locations
 - June 27, 2025: Fixed scraper date formatting to YYYY-MM-DD for proper database compatibility and enhanced validation
 - June 27, 2025: Removed non-working Fridays For Future RSS feed and successfully scraped 156 total events from 3 major Italian activism organizations
 - June 27, 2025: Created web scraper (run-scraper.js) to collect Italian Pride events from Arcigay and Pride websites, successfully populated 7 new events in Supabase protests table
