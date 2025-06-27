@@ -3,7 +3,9 @@ import { useProtests } from "@/hooks/use-protests";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, MapPin } from "lucide-react";
+import { Search, Filter, MapPin, ChevronUp, List } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { ProtestCard } from "@/components/protest-card";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLocation } from "wouter";
@@ -31,6 +33,32 @@ function MapCenterUpdater({ center }: { center: [number, number] | null }) {
       map.setView(center, 15);
     }
   }, [center, map]);
+  
+  return null;
+}
+
+// Component to track map bounds for filtering protests
+function MapBoundsUpdater({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBounds) => void }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    const updateBounds = () => {
+      const bounds = map.getBounds();
+      onBoundsChange(bounds);
+    };
+    
+    // Update bounds initially
+    updateBounds();
+    
+    // Update bounds when map moves
+    map.on('moveend', updateBounds);
+    map.on('zoomend', updateBounds);
+    
+    return () => {
+      map.off('moveend', updateBounds);
+      map.off('zoomend', updateBounds);
+    };
+  }, [map, onBoundsChange]);
   
   return null;
 }
@@ -65,6 +93,8 @@ export function MapView() {
   const [searchLocationName, setSearchLocationName] = useState<string>("");
   const [isLocating, setIsLocating] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [, setLocation] = useLocation();
 
   const filters = [
@@ -276,6 +306,16 @@ export function MapView() {
     console.log(`🔍 Search results: ${filteredProtests.length} protests found for "${searchQuery}"`);
   }
 
+  // Filter protests that are visible in current map bounds
+  const protestsInView = mapBounds 
+    ? filteredProtests.filter(protest => {
+        if (!protest.latitude || !protest.longitude) return false;
+        const lat = parseFloat(protest.latitude);
+        const lng = parseFloat(protest.longitude);
+        return mapBounds.contains([lat, lng]);
+      })
+    : filteredProtests;
+
   return (
     <div className="relative h-full">
       {/* Map Container - Full Height */}
@@ -298,6 +338,7 @@ export function MapView() {
               key={searchLocation ? `search-${searchLocation[0]}-${searchLocation[1]}` : 'default'}
             >
               <MapCenterUpdater center={userLocation} />
+              <MapBoundsUpdater onBoundsChange={setMapBounds} />
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -604,6 +645,60 @@ export function MapView() {
           </>
         )}
       </div>
+
+      {/* Bottom Sheet with Protest List */}
+      <Sheet open={isBottomSheetOpen} onOpenChange={setIsBottomSheetOpen}>
+        <SheetTrigger asChild>
+          <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-[1001]">
+            <Button
+              variant="default"
+              className="bg-white text-gray-700 border border-gray-200 shadow-lg hover:bg-gray-50 rounded-full px-4 py-2 flex items-center space-x-2"
+              onClick={() => setIsBottomSheetOpen(true)}
+            >
+              <List className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {protestsInView.length} protest{protestsInView.length !== 1 ? 's' : ''} in area
+              </span>
+              <ChevronUp className="w-4 h-4" />
+            </Button>
+          </div>
+        </SheetTrigger>
+        
+        <SheetContent side="bottom" className="h-[70vh] rounded-t-lg">
+          <SheetHeader className="pb-4">
+            <SheetTitle className="text-left">
+              Protests in this area ({protestsInView.length})
+            </SheetTitle>
+          </SheetHeader>
+          
+          <div className="h-full overflow-y-auto pb-6">
+            {isLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            ) : protestsInView.length > 0 ? (
+              <div className="space-y-3">
+                {protestsInView.map((protest, index) => (
+                  <ProtestCard 
+                    key={`bottom-sheet-${protest.id}-${index}`} 
+                    protest={protest} 
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-32 text-center">
+                <MapPin className="w-8 h-8 text-gray-400 mb-2" />
+                <p className="text-gray-500 font-medium">No protests in this area</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  Try zooming out or searching a different location
+                </p>
+              </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
