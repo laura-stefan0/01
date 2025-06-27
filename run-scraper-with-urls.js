@@ -1,19 +1,16 @@
 
-#!/usr/bin/env node
-
-import { createClient } from '@supabase/supabase-js';
-import { load } from 'cheerio';
-import axios from 'axios';
-import { config } from 'dotenv';
-
-// Load environment variables
-config();
+const { createClient } = require('@supabase/supabase-js');
 
 // Initialize Supabase client
-const SUPABASE_URL = 'https://mfzlajgnahbhwswpqzkj.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1memxhamduYWhiaHdzd3BxemtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDU5NjYsImV4cCI6MjA2NjQyMTk2Nn0.o2OKrJrTDW7ivxZUl8lYS73M35zf7JYO_WoAmg-Djbo';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://mfzlajgnahbhwswpqzkj.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!supabaseServiceKey) {
+  console.error('❌ SUPABASE_SERVICE_ROLE_KEY environment variable is missing!');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Function to update existing events with event URLs
 async function updateEventUrls() {
@@ -93,11 +90,6 @@ async function updateEventUrls() {
     
   } catch (error) {
     console.error('Error in updateEventUrls:', error);
-  }
-}
-
-// Run the update
-updateEventUrls();or);
   }
 }
 
