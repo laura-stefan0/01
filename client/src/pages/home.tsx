@@ -459,6 +459,15 @@ export default function Home() {
           <Button
             className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
             size="lg"
+            onClick={() => {
+              setActiveTab("map");
+              // Add a small delay to ensure the tab change happens first
+              setTimeout(() => {
+                // Trigger map view in the MapView component
+                const event = new CustomEvent('showMapView');
+                window.dispatchEvent(event);
+              }, 100);
+            }}
           >
             <MapPin className="w-5 h-5 mr-2" />
             View on Map

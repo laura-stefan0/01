@@ -48,6 +48,19 @@ export function MapView() {
   const [, setLocation] = useLocation();
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
+  // Listen for custom event to show map view
+  useEffect(() => {
+    const handleShowMapView = () => {
+      setViewMode("map");
+    };
+
+    window.addEventListener('showMapView', handleShowMapView);
+    
+    return () => {
+      window.removeEventListener('showMapView', handleShowMapView);
+    };
+  }, []);
+
   const filters = [
     { id: "all", label: "All" },
     { id: "today", label: "Today" },
