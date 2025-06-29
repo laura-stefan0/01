@@ -10,7 +10,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     { id: "home", label: "For you", icon: Heart },
     { id: "map", label: "Search", icon: Search },
     { id: "resources", label: "Resources", icon: BookOpen },
-    { id: "community", label: "Community", icon: Users },
+    { id: "saved", label: "Saved", icon: Users },
     { id: "profile", label: "Profile", icon: User },
   ];
 

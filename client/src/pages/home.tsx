@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -35,7 +35,7 @@ export default function Home() {
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(selectedCountry);
   const { data: user } = useUser();
-  
+
   // Map selected country to country code for What's new filtering
   const countryCodeMapping = {
     'it': 'IT',
@@ -117,7 +117,7 @@ export default function Home() {
                 console.log('📄 News item:', news.title);
                 console.log('🖼️ Image URL:', news.image_url);
                 console.log('📊 Full news object:', news);
-                
+
                 const handleCardClick = () => {
                   // Check if there's a CTA URL to navigate to
                   if (news.cta_url) {
@@ -489,7 +489,7 @@ export default function Home() {
       },
       {
         title: "Safety Tips",
-        icon: Shield,
+        icon: Phone,
         link: "/safety-tips"
       },
       {
@@ -526,15 +526,41 @@ export default function Home() {
     );
   };
 
+  const SavedProtestsSection = () => {
+    // TODO: Implement saved protests functionality
+    // This will store user's saved protests and display them here
+
+    return (
+      <div className="space-y-4">
+        <div className="text-center py-8">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <Heart className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="font-medium text-dark-slate mb-2">No Saved Protests Yet</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Save protests you're interested in to view them here later.
+          </p>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => handleTabChange("home")}
+          >
+            Browse Protests
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     return (
       <div key={activeTab} className="animate-in fade-in duration-300">
         {activeTab === "home" && renderHomeContent()}
         {activeTab === "map" && <MapView />}
         {activeTab === "resources" && renderResourcesContent()}
-        {activeTab === "community" && renderCommunityContent()}
+        {activeTab === "saved" && <SavedProtestsSection />}
         {activeTab === "profile" && renderProfileContent()}
-        {!["home", "map", "resources", "community", "profile"].includes(activeTab) && renderHomeContent()}
+        {!["home", "map", "resources", "saved", "profile"].includes(activeTab) && renderHomeContent()}
       </div>
     );
   };
@@ -547,8 +573,8 @@ export default function Home() {
         return "Search";
       case "resources":
         return "Resources";
-      case "community":
-        return "Community";
+      case "saved":
+        return "Saved";
       case "profile":
         return "Profile";
       default:
