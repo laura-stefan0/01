@@ -190,13 +190,13 @@ export default function Home() {
       </section>
 
       {/* Featured Section */}
-      <section className="mb-6 bg-black p-4 rounded-lg -mx-4">
+      <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-white">Featured</h2>
+          <h2 className="text-lg font-semibold text-dark-slate">Featured</h2>
         </div>
 
         {/* Horizontal Scrolling Featured Cards - Wider */}
-        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}></div>
+        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {featuredLoading ? (
             <>
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
