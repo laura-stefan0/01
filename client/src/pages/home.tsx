@@ -190,13 +190,13 @@ export default function Home() {
       </section>
 
       {/* Featured Section */}
-      <section className="mb-6 bg-black -mx-4 px-4 py-4">
+      <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-white">Featured</h2>
+          <h2 className="text-lg font-semibold text-dark-slate">Featured</h2>
         </div>
 
         {/* Horizontal Scrolling Featured Cards - Wider */}
-        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {featuredLoading ? (
             <>
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
@@ -583,12 +583,12 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-black min-h-screen relative flex flex-col">
+    <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">
       {/* Header */}
-      <header className="bg-black sticky top-0 z-40 border-b border-gray-800 flex-shrink-0">
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-xl font-bold text-white">{getHeaderTitle()}</h1>
+            <h1 className="text-xl font-bold text-dark-slate">{getHeaderTitle()}</h1>
             {activeTab === "home" && (
               <Button variant="ghost" size="sm">
                 <Bell className="w-5 h-5 text-gray-600" />
