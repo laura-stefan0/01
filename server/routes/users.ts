@@ -20,6 +20,8 @@ router.get('/profile', async (req, res) => {
       location: true,
       emails: false,
       language: "en",
+      theme: "system",
+      background: "white",
     };
 
     res.json(sampleUser);
@@ -174,6 +176,54 @@ router.get('/:username', async (req, res) => {
   } catch (error) {
     console.error("Failed to fetch user:", error);
     res.status(500).json({ message: "Failed to fetch user" });
+  }
+});
+
+// Update user theme preferences
+router.patch('/:id/theme', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { theme, background } = req.body;
+
+    if (!theme || !background) {
+      return res.status(400).json({ message: "Theme and background are required" });
+    }
+
+    // Validate theme values
+    const validThemes = ['system', 'light', 'dark'];
+    const validBackgrounds = ['white', 'pink', 'green'];
+
+    if (!validThemes.includes(theme) || !validBackgrounds.includes(background)) {
+      return res.status(400).json({ message: "Invalid theme or background value" });
+    }
+
+    console.log(`🎨 Updating theme preferences for user ${id}:`, { theme, background });
+
+    // Update theme preferences in Supabase
+    const { data: updatedUser, error } = await supabaseAdmin
+      .from('users')
+      .update({ theme, background })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("❌ Failed to update user theme:", error);
+      return res.status(500).json({ message: "Failed to update theme preferences" });
+    }
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("✅ Successfully updated user theme preferences");
+
+    // Don't return password hash
+    const { password_hash, ...userResponse } = updatedUser;
+    res.json(userResponse);
+  } catch (error) {
+    console.error("Failed to update theme preferences:", error);
+    res.status(500).json({ message: "Failed to update theme preferences" });
   }
 });
 

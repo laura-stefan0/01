@@ -4,13 +4,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, User, Settings, Bell, Shield, FileText, Globe } from "lucide-react";
+import { LogOut, User, Settings, Bell, Shield, FileText, Globe, Palette } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useUser } from "@/hooks/use-user";
+import { useLocation } from "wouter";
 
 export default function Profile() {
   const { signOut } = useAuth();
   const { data: user } = useUser();
+  const [, setLocation] = useLocation();
   const [backgroundTheme, setBackgroundTheme] = useState('default');
 
   // Load saved background theme
@@ -76,7 +78,7 @@ export default function Profile() {
         <CardContent className="space-y-2.5 p-4">
           <div className="space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user?.firstName} {user?.lastName}
+              {user?.name || user?.username}
             </p>
             <p className="text-sm text-muted-foreground">
               {user?.email}
@@ -134,6 +136,25 @@ export default function Profile() {
               </h3>
               <p className="text-sm text-muted-foreground">
                 Read our terms and conditions and learn about our policies.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4">
+          <div 
+            className="flex items-center space-x-4 cursor-pointer"
+            onClick={() => setLocation('/theme-settings')}
+          >
+            <Palette className="h-4 w-4" />
+            <div>
+              <h3 className="text-sm font-medium leading-none">
+                App theme
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Customize your app appearance and background color.
               </p>
             </div>
           </div>

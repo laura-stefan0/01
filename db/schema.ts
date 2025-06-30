@@ -11,6 +11,8 @@ export const users = pgTable("users", {
   location: boolean("location").notNull().default(true),
   emails: boolean("emails").notNull().default(false),
   language: text("language").notNull().default("en"),
+  theme: text("theme").notNull().default("system"),
+  background: text("background").notNull().default("white"),
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
