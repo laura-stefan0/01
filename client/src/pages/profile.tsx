@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { BottomNavigation } from "@/components/bottom-navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   User, 
   Bell, 
@@ -25,7 +23,7 @@ import { useUser } from "@/hooks/use-user";
 
 export default function Profile() {
   const [, setLocation] = useLocation();
-  const { signOut, isAuthenticated } = useAuth();
+  const { signOut } = useAuth();
   const { data: user } = useUser();
   const [activeTab, setActiveTab] = useState("profile");
 
@@ -69,34 +67,25 @@ export default function Profile() {
         {/* User Info */}
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-gray-200">
-                <img 
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face" 
-                  alt="Profile picture"
-                  className="w-full h-full object-cover"
-                />
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <User className="w-10 h-10 text-white" />
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-dark-slate text-lg">
-                  {user?.name || "Jane"}
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  @{user?.username || "janedoe"}
-                </p>
-                <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{user?.user_location || "Milan, Italy"}</span>
-                </div>
-                <Button variant="outline" size="sm" className="mt-3">
-                  Edit profile
-                </Button>
+              <div>
+                <h2 className="text-xl font-semibold text-dark-slate">
+                  {user?.name || "Jane Doe"}
+                </h2>
+                <p className="text-gray-500">@{user?.username || "janedoe"}</p>
               </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <MapPin className="w-4 h-4" />
+                <span>{user?.user_location || "Milan, Italy"}</span>
+              </div>
+              <p className="text-sm text-gray-700 max-w-sm">
+                Passionate activist for social justice and environmental causes. 
+                Organizing for a better tomorrow.
+              </p>
             </div>
-            <p className="text-sm text-gray-700 mt-4">
-              Passionate activist for social justice and environmental causes. 
-              Organizing for a better tomorrow.
-            </p>
           </CardContent>
         </Card>
 
@@ -146,14 +135,7 @@ export default function Profile() {
                   <span className="font-medium">Language</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Select defaultValue="en">
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="en">English</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Badge variant="secondary">English</Badge>
                 </div>
               </div>
 
@@ -181,15 +163,15 @@ export default function Profile() {
             
             <div className="space-y-4">
               {/* Create New Protest */}
-              <div className="p-4">
-                <Button 
-                  className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-                  onClick={() => setLocation("/create-protest")}
-                  disabled={!isAuthenticated}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {isAuthenticated ? "Create New Protest" : "Sign In to Create Protests"}
-                </Button>
+              <div 
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg -m-2"
+                onClick={() => setLocation("/create-protest")}
+              >
+                <div className="flex items-center gap-3">
+                  <Plus className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Create New Protest</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
 
               <Separator />

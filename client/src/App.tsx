@@ -10,9 +10,6 @@ import ProtestDetail from "@/pages/protest-detail";
 import Filter from "@/pages/filter";
 import ThemeSettings from "@/pages/theme-settings";
 import Profile from "@/pages/profile";
-import Discover from "./pages/discover";
-import Resources from "./pages/resources";
-import Saved from "./pages/saved";
 
 import KnowYourRights from "@/pages/know-your-rights";
 import SafetyTips from "@/pages/safety-tips";
@@ -43,13 +40,10 @@ function AuthenticatedRouter() {
       <div key={location} className="animate-in fade-in duration-300">
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/discover" component={Discover} />
-          <Route path="/resources" component={Resources} />
-          <Route path="/saved" component={Saved} />
-          <Route path="/profile" component={Profile} />
           <Route path="/protest/:id" component={ProtestDetail} />
           <Route path="/filter" component={Filter} />
           <Route path="/theme-settings" component={ThemeSettings} />
+          <Route path="/profile" component={Profile} />
 
           <Route path="/know-your-rights" component={KnowYourRights} />
           <Route path="/safety-tips" component={SafetyTips} />

@@ -1,12 +1,10 @@
-
-import { useState } from "react";
-import { Shield, Phone, BookOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { BottomNavigation } from "@/components/bottom-navigation";
+import { Button } from "@/components/ui/button";
+import { Shield, Phone } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function Resources() {
-  const [activeTab, setActiveTab] = useState("resources");
   const [, setLocation] = useLocation();
 
   const resources = [
@@ -17,7 +15,7 @@ export default function Resources() {
     },
     {
       title: "Safety Tips",
-      icon: Phone,
+      icon: Shield,
       link: "/safety-tips"
     },
     {
@@ -27,38 +25,19 @@ export default function Resources() {
     }
   ];
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    switch (tab) {
-      case "home":
-        setLocation("/");
-        break;
-      case "discover":
-        setLocation("/discover");
-        break;
-      case "resources":
-        // Already on resources page
-        break;
-      case "saved":
-        setLocation("/saved");
-        break;
-      case "profile":
-        setLocation("/profile");
-        break;
-    }
-  };
-
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen">
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
-        <div className="px-4 py-3">
-          <h1 className="text-xl font-bold text-dark-slate">Resources</h1>
+        <div className="px-4 py-3 flex items-center">
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-dark-slate ml-3">Resources</h1>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="px-4 py-4 pb-24">
+      <div className="px-4 py-4">
         <div className="grid grid-cols-3 gap-3">
           {resources.map((resource, index) => (
             <Card 
@@ -80,10 +59,7 @@ export default function Resources() {
             </Card>
           ))}
         </div>
-      </main>
-
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      </div>
     </div>
   );
 }
