@@ -616,8 +616,8 @@ export default function Home() {
     if (activeTab === "home") {
       // Use manual location if available, otherwise use real user location, otherwise fallback
       const displayLocation = manualLocation || userRealLocation || user?.user_location || getLocationName();
-      // Parse location to get city and region/state
-      const [city, region] = displayLocation.split(', ');
+      // Parse location to get city only (remove region/state)
+      const [city] = displayLocation.split(', ');
 
       return (
         <div className="flex items-center justify-between w-full">
@@ -637,7 +637,7 @@ export default function Home() {
               {isLoadingLocation ? (
                 <span className="text-gray-500">Getting location...</span>
               ) : (
-                <span>{city}, {region}</span>
+                <span>{city}</span>
               )}
               <ChevronDown className="w-3 h-3" />
             </button>
