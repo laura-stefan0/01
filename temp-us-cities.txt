@@ -1,0 +1,297 @@
+// US cities coordinates database - COMPREHENSIVE VERSION
+const usCities: Record<string, { lat: number; lng: number; name: string }> = {
+  // Alabama
+  'birmingham': { lat: 33.5186, lng: -86.8104, name: 'Birmingham' },
+  'montgomery': { lat: 32.3792, lng: -86.3077, name: 'Montgomery' },
+  'mobile': { lat: 30.6954, lng: -88.0399, name: 'Mobile' },
+  'huntsville': { lat: 34.7304, lng: -86.5861, name: 'Huntsville' },
+  
+  // Alaska
+  'anchorage': { lat: 61.2181, lng: -149.9003, name: 'Anchorage' },
+  'fairbanks': { lat: 64.8401, lng: -147.7194, name: 'Fairbanks' },
+  'juneau': { lat: 58.3019, lng: -134.4197, name: 'Juneau' },
+  
+  // Arizona
+  'phoenix': { lat: 33.4484, lng: -112.0740, name: 'Phoenix' },
+  'tucson': { lat: 32.2226, lng: -110.9747, name: 'Tucson' },
+  'mesa': { lat: 33.4152, lng: -111.8315, name: 'Mesa' },
+  'chandler': { lat: 33.3062, lng: -111.8413, name: 'Chandler' },
+  'scottsdale': { lat: 33.4942, lng: -111.9261, name: 'Scottsdale' },
+  
+  // Arkansas
+  'little rock': { lat: 34.7465, lng: -92.2896, name: 'Little Rock' },
+  'fort smith': { lat: 35.3859, lng: -94.3985, name: 'Fort Smith' },
+  'fayetteville': { lat: 36.0626, lng: -94.1574, name: 'Fayetteville' },
+  
+  // California
+  'los angeles': { lat: 34.0522, lng: -118.2437, name: 'Los Angeles' },
+  'san francisco': { lat: 37.7749, lng: -122.4194, name: 'San Francisco' },
+  'san diego': { lat: 32.7157, lng: -117.1611, name: 'San Diego' },
+  'sacramento': { lat: 38.5816, lng: -121.4944, name: 'Sacramento' },
+  'fresno': { lat: 36.7378, lng: -119.7871, name: 'Fresno' },
+  'oakland': { lat: 37.8044, lng: -122.2712, name: 'Oakland' },
+  'long beach': { lat: 33.7701, lng: -118.1937, name: 'Long Beach' },
+  'bakersfield': { lat: 35.3733, lng: -119.0187, name: 'Bakersfield' },
+  
+  // Colorado
+  'denver': { lat: 39.7392, lng: -104.9903, name: 'Denver' },
+  'colorado springs': { lat: 38.8339, lng: -104.8214, name: 'Colorado Springs' },
+  'aurora': { lat: 39.7294, lng: -104.8319, name: 'Aurora' },
+  'fort collins': { lat: 40.5853, lng: -105.0844, name: 'Fort Collins' },
+  
+  // Connecticut
+  'bridgeport': { lat: 41.1865, lng: -73.1952, name: 'Bridgeport' },
+  'new haven': { lat: 41.3083, lng: -72.9279, name: 'New Haven' },
+  'hartford': { lat: 41.7658, lng: -72.6734, name: 'Hartford' },
+  'stamford': { lat: 41.0534, lng: -73.5387, name: 'Stamford' },
+  
+  // Delaware
+  'wilmington': { lat: 39.7391, lng: -75.5398, name: 'Wilmington' },
+  'dover': { lat: 39.1612, lng: -75.5264, name: 'Dover' },
+  'newark': { lat: 39.6837, lng: -75.7497, name: 'Newark' },
+  
+  // Florida
+  'miami': { lat: 25.7617, lng: -80.1918, name: 'Miami' },
+  'tampa': { lat: 27.9506, lng: -82.4572, name: 'Tampa' },
+  'orlando': { lat: 28.5383, lng: -81.3792, name: 'Orlando' },
+  'jacksonville': { lat: 30.3322, lng: -81.6557, name: 'Jacksonville' },
+  'st. petersburg': { lat: 27.7676, lng: -82.6403, name: 'St. Petersburg' },
+  'tallahassee': { lat: 30.4518, lng: -84.27277, name: 'Tallahassee' },
+  
+  // Georgia
+  'atlanta': { lat: 33.7490, lng: -84.3880, name: 'Atlanta' },
+  'augusta': { lat: 33.4735, lng: -82.0105, name: 'Augusta' },
+  'columbus': { lat: 32.4609, lng: -84.9877, name: 'Columbus' },
+  'savannah': { lat: 32.0835, lng: -81.0998, name: 'Savannah' },
+  
+  // Hawaii
+  'honolulu': { lat: 21.3099, lng: -157.8581, name: 'Honolulu' },
+  'pearl city': { lat: 21.3972, lng: -157.9758, name: 'Pearl City' },
+  'hilo': { lat: 19.7297, lng: -155.0900, name: 'Hilo' },
+  
+  // Idaho
+  'boise': { lat: 43.6150, lng: -116.2023, name: 'Boise' },
+  'meridian': { lat: 43.6121, lng: -116.3915, name: 'Meridian' },
+  'nampa': { lat: 43.5407, lng: -116.5635, name: 'Nampa' },
+  
+  // Illinois
+  'chicago': { lat: 41.8781, lng: -87.6298, name: 'Chicago' },
+  'aurora': { lat: 41.7606, lng: -88.3200, name: 'Aurora' },
+  'peoria': { lat: 40.6936, lng: -89.5890, name: 'Peoria' },
+  'rockford': { lat: 42.2711, lng: -89.0940, name: 'Rockford' },
+  'springfield': { lat: 39.7817, lng: -89.6501, name: 'Springfield' },
+  
+  // Indiana
+  'indianapolis': { lat: 39.7684, lng: -86.1581, name: 'Indianapolis' },
+  'fort wayne': { lat: 41.0793, lng: -85.1394, name: 'Fort Wayne' },
+  'evansville': { lat: 37.9716, lng: -87.5710, name: 'Evansville' },
+  'south bend': { lat: 41.6764, lng: -86.2520, name: 'South Bend' },
+  
+  // Iowa
+  'des moines': { lat: 41.5868, lng: -93.6250, name: 'Des Moines' },
+  'cedar rapids': { lat: 41.9779, lng: -91.6656, name: 'Cedar Rapids' },
+  'davenport': { lat: 41.5236, lng: -90.5776, name: 'Davenport' },
+  
+  // Kansas
+  'wichita': { lat: 37.6872, lng: -97.3301, name: 'Wichita' },
+  'overland park': { lat: 38.9822, lng: -94.6708, name: 'Overland Park' },
+  'kansas city': { lat: 39.1142, lng: -94.6275, name: 'Kansas City' },
+  'topeka': { lat: 39.0473, lng: -95.6890, name: 'Topeka' },
+  
+  // Kentucky
+  'louisville': { lat: 38.2527, lng: -85.7585, name: 'Louisville' },
+  'lexington': { lat: 38.0406, lng: -84.5037, name: 'Lexington' },
+  'bowling green': { lat: 36.9685, lng: -86.4808, name: 'Bowling Green' },
+  
+  // Louisiana
+  'new orleans': { lat: 29.9511, lng: -90.0715, name: 'New Orleans' },
+  'baton rouge': { lat: 30.4515, lng: -91.1871, name: 'Baton Rouge' },
+  'shreveport': { lat: 32.5252, lng: -93.7502, name: 'Shreveport' },
+  
+  // Maine
+  'portland': { lat: 43.6591, lng: -70.2568, name: 'Portland' },
+  'lewiston': { lat: 44.1004, lng: -70.2148, name: 'Lewiston' },
+  'bangor': { lat: 44.8016, lng: -68.7712, name: 'Bangor' },
+  
+  // Maryland
+  'baltimore': { lat: 39.2904, lng: -76.6122, name: 'Baltimore' },
+  'frederick': { lat: 39.4143, lng: -77.4105, name: 'Frederick' },
+  'rockville': { lat: 39.0840, lng: -77.1528, name: 'Rockville' },
+  'annapolis': { lat: 38.9784, lng: -76.4951, name: 'Annapolis' },
+  
+  // Massachusetts
+  'boston': { lat: 42.3601, lng: -71.0589, name: 'Boston' },
+  'worcester': { lat: 42.2626, lng: -71.8023, name: 'Worcester' },
+  'springfield': { lat: 42.1015, lng: -72.5898, name: 'Springfield' },
+  'cambridge': { lat: 42.3736, lng: -71.1097, name: 'Cambridge' },
+  
+  // Michigan
+  'detroit': { lat: 42.3314, lng: -83.0458, name: 'Detroit' },
+  'grand rapids': { lat: 42.9634, lng: -85.6681, name: 'Grand Rapids' },
+  'warren': { lat: 42.5144, lng: -83.0146, name: 'Warren' },
+  'lansing': { lat: 42.3540, lng: -84.5555, name: 'Lansing' },
+  'ann arbor': { lat: 42.2808, lng: -83.7430, name: 'Ann Arbor' },
+  
+  // Minnesota
+  'minneapolis': { lat: 44.9778, lng: -93.2650, name: 'Minneapolis' },
+  'saint paul': { lat: 44.9537, lng: -93.0900, name: 'Saint Paul' },
+  'rochester': { lat: 44.0121, lng: -92.4802, name: 'Rochester' },
+  'duluth': { lat: 46.7867, lng: -92.1005, name: 'Duluth' },
+  
+  // Mississippi
+  'jackson': { lat: 32.2988, lng: -90.1848, name: 'Jackson' },
+  'gulfport': { lat: 30.3674, lng: -89.0928, name: 'Gulfport' },
+  'biloxi': { lat: 30.3960, lng: -88.8853, name: 'Biloxi' },
+  
+  // Missouri
+  'kansas city': { lat: 39.0997, lng: -94.5786, name: 'Kansas City' },
+  'st. louis': { lat: 38.6270, lng: -90.1994, name: 'St. Louis' },
+  'springfield': { lat: 37.2090, lng: -93.2923, name: 'Springfield' },
+  'columbia': { lat: 38.9517, lng: -92.3341, name: 'Columbia' },
+  
+  // Montana
+  'billings': { lat: 45.7833, lng: -108.5007, name: 'Billings' },
+  'missoula': { lat: 46.8721, lng: -113.9940, name: 'Missoula' },
+  'great falls': { lat: 47.4941, lng: -111.2833, name: 'Great Falls' },
+  'bozeman': { lat: 45.6770, lng: -111.0429, name: 'Bozeman' },
+  
+  // Nebraska
+  'omaha': { lat: 41.2565, lng: -95.9345, name: 'Omaha' },
+  'lincoln': { lat: 40.8136, lng: -96.7026, name: 'Lincoln' },
+  'bellevue': { lat: 41.1370, lng: -95.8608, name: 'Bellevue' },
+  
+  // Nevada
+  'las vegas': { lat: 36.1699, lng: -115.1398, name: 'Las Vegas' },
+  'henderson': { lat: 36.0395, lng: -114.9817, name: 'Henderson' },
+  'reno': { lat: 39.5296, lng: -119.8138, name: 'Reno' },
+  'carson city': { lat: 39.1638, lng: -119.7674, name: 'Carson City' },
+  
+  // New Hampshire
+  'manchester': { lat: 42.9956, lng: -71.4548, name: 'Manchester' },
+  'nashua': { lat: 42.7654, lng: -71.4676, name: 'Nashua' },
+  'concord': { lat: 43.2081, lng: -71.5376, name: 'Concord' },
+  
+  // New Jersey
+  'newark': { lat: 40.7357, lng: -74.1724, name: 'Newark' },
+  'jersey city': { lat: 40.7178, lng: -74.0431, name: 'Jersey City' },
+  'paterson': { lat: 40.9168, lng: -74.1718, name: 'Paterson' },
+  'elizabeth': { lat: 40.6640, lng: -74.2107, name: 'Elizabeth' },
+  
+  // New Mexico
+  'albuquerque': { lat: 35.0844, lng: -106.6504, name: 'Albuquerque' },
+  'las cruces': { lat: 32.3199, lng: -106.7637, name: 'Las Cruces' },
+  'santa fe': { lat: 35.6870, lng: -105.9378, name: 'Santa Fe' },
+  
+  // New York
+  'new york city': { lat: 40.7128, lng: -74.0060, name: 'New York City' },
+  'buffalo': { lat: 42.8864, lng: -78.8784, name: 'Buffalo' },
+  'rochester': { lat: 43.1566, lng: -77.6088, name: 'Rochester' },
+  'syracuse': { lat: 43.0481, lng: -76.1474, name: 'Syracuse' },
+  'albany': { lat: 42.6526, lng: -73.7562, name: 'Albany' },
+  'yonkers': { lat: 40.9312, lng: -73.8988, name: 'Yonkers' },
+  
+  // North Carolina
+  'charlotte': { lat: 35.2271, lng: -80.8431, name: 'Charlotte' },
+  'raleigh': { lat: 35.7796, lng: -78.6382, name: 'Raleigh' },
+  'greensboro': { lat: 36.0726, lng: -79.7920, name: 'Greensboro' },
+  'durham': { lat: 35.9940, lng: -78.8986, name: 'Durham' },
+  'winston-salem': { lat: 36.0999, lng: -80.2442, name: 'Winston-Salem' },
+  
+  // North Dakota
+  'fargo': { lat: 46.8772, lng: -96.7898, name: 'Fargo' },
+  'bismarck': { lat: 46.8083, lng: -100.7837, name: 'Bismarck' },
+  'grand forks': { lat: 47.9253, lng: -97.0329, name: 'Grand Forks' },
+  
+  // Ohio
+  'columbus': { lat: 39.9612, lng: -82.9988, name: 'Columbus' },
+  'cleveland': { lat: 41.4993, lng: -81.6944, name: 'Cleveland' },
+  'cincinnati': { lat: 39.1031, lng: -84.5120, name: 'Cincinnati' },
+  'toledo': { lat: 41.6528, lng: -83.5379, name: 'Toledo' },
+  'akron': { lat: 41.0814, lng: -81.5190, name: 'Akron' },
+  'dayton': { lat: 39.7589, lng: -84.1916, name: 'Dayton' },
+  
+  // Oklahoma
+  'oklahoma city': { lat: 35.4676, lng: -97.5164, name: 'Oklahoma City' },
+  'tulsa': { lat: 36.1540, lng: -95.9928, name: 'Tulsa' },
+  'norman': { lat: 35.2226, lng: -97.4395, name: 'Norman' },
+  
+  // Oregon
+  'portland': { lat: 45.5152, lng: -122.6784, name: 'Portland' },
+  'eugene': { lat: 44.0521, lng: -123.0868, name: 'Eugene' },
+  'salem': { lat: 44.9429, lng: -123.0351, name: 'Salem' },
+  
+  // Pennsylvania
+  'philadelphia': { lat: 39.9526, lng: -75.1652, name: 'Philadelphia' },
+  'pittsburgh': { lat: 40.4406, lng: -79.9959, name: 'Pittsburgh' },
+  'allentown': { lat: 40.6023, lng: -75.4714, name: 'Allentown' },
+  'erie': { lat: 42.1292, lng: -80.0851, name: 'Erie' },
+  
+  // Rhode Island
+  'providence': { lat: 41.8240, lng: -71.4128, name: 'Providence' },
+  'warwick': { lat: 41.7001, lng: -71.4162, name: 'Warwick' },
+  'cranston': { lat: 41.7798, lng: -71.4373, name: 'Cranston' },
+  
+  // South Carolina
+  'charleston': { lat: 32.7765, lng: -79.9311, name: 'Charleston' },
+  'columbia': { lat: 34.0007, lng: -81.0348, name: 'Columbia' },
+  'greenville': { lat: 34.8526, lng: -82.3940, name: 'Greenville' },
+  
+  // South Dakota
+  'sioux falls': { lat: 43.5446, lng: -96.7311, name: 'Sioux Falls' },
+  'rapid city': { lat: 44.0805, lng: -103.2310, name: 'Rapid City' },
+  'aberdeen': { lat: 45.4647, lng: -98.4865, name: 'Aberdeen' },
+  
+  // Tennessee
+  'nashville': { lat: 36.1627, lng: -86.7816, name: 'Nashville' },
+  'memphis': { lat: 35.1495, lng: -90.0490, name: 'Memphis' },
+  'knoxville': { lat: 35.9606, lng: -83.9207, name: 'Knoxville' },
+  'chattanooga': { lat: 35.0456, lng: -85.3097, name: 'Chattanooga' },
+  
+  // Texas
+  'houston': { lat: 29.7604, lng: -95.3698, name: 'Houston' },
+  'san antonio': { lat: 29.4241, lng: -98.4936, name: 'San Antonio' },
+  'dallas': { lat: 32.7767, lng: -96.7970, name: 'Dallas' },
+  'austin': { lat: 30.2672, lng: -97.7431, name: 'Austin' },
+  'fort worth': { lat: 32.7555, lng: -97.3308, name: 'Fort Worth' },
+  'el paso': { lat: 31.7619, lng: -106.4850, name: 'El Paso' },
+  'arlington': { lat: 32.7357, lng: -97.1081, name: 'Arlington' },
+  'corpus christi': { lat: 27.8006, lng: -97.3964, name: 'Corpus Christi' },
+  
+  // Utah
+  'salt lake city': { lat: 40.7608, lng: -111.8910, name: 'Salt Lake City' },
+  'west valley city': { lat: 40.6916, lng: -112.0010, name: 'West Valley City' },
+  'provo': { lat: 40.2338, lng: -111.6585, name: 'Provo' },
+  
+  // Vermont
+  'burlington': { lat: 44.4759, lng: -73.2121, name: 'Burlington' },
+  'montpelier': { lat: 44.2601, lng: -72.5806, name: 'Montpelier' },
+  'rutland': { lat: 43.6106, lng: -72.9726, name: 'Rutland' },
+  
+  // Virginia
+  'virginia beach': { lat: 36.8529, lng: -75.9780, name: 'Virginia Beach' },
+  'norfolk': { lat: 36.8468, lng: -76.2852, name: 'Norfolk' },
+  'chesapeake': { lat: 36.7682, lng: -76.2875, name: 'Chesapeake' },
+  'richmond': { lat: 37.5407, lng: -77.4360, name: 'Richmond' },
+  'alexandria': { lat: 38.8048, lng: -77.0469, name: 'Alexandria' },
+  
+  // Washington
+  'seattle': { lat: 47.6062, lng: -122.3321, name: 'Seattle' },
+  'spokane': { lat: 47.6588, lng: -117.4260, name: 'Spokane' },
+  'tacoma': { lat: 47.2529, lng: -122.4443, name: 'Tacoma' },
+  'vancouver': { lat: 45.6387, lng: -122.6615, name: 'Vancouver' },
+  
+  // West Virginia
+  'charleston': { lat: 38.3498, lng: -81.6326, name: 'Charleston' },
+  'huntington': { lat: 38.4192, lng: -82.4452, name: 'Huntington' },
+  'morgantown': { lat: 39.6295, lng: -79.9553, name: 'Morgantown' },
+  
+  // Wisconsin
+  'milwaukee': { lat: 43.0389, lng: -87.9065, name: 'Milwaukee' },
+  'madison': { lat: 43.0731, lng: -89.4012, name: 'Madison' },
+  'green bay': { lat: 44.5133, lng: -88.0133, name: 'Green Bay' },
+  
+  // Wyoming
+  'cheyenne': { lat: 41.1400, lng: -104.8197, name: 'Cheyenne' },
+  'casper': { lat: 42.8668, lng: -106.3131, name: 'Casper' },
+  'laramie': { lat: 41.3114, lng: -105.5911, name: 'Laramie' }
+};
