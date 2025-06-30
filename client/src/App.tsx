@@ -43,7 +43,7 @@ function AuthenticatedRouter() {
           <Route path="/protest/:id" component={ProtestDetail} />
           <Route path="/filter" component={Filter} />
           <Route path="/theme-settings" component={ThemeSettings} />
-          
+          <Route path="/profile" component={Profile} />
 
           <Route path="/know-your-rights" component={KnowYourRights} />
           <Route path="/safety-tips" component={SafetyTips} />
