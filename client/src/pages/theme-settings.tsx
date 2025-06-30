@@ -6,7 +6,6 @@ import { ArrowLeft, Monitor, Sun, Moon, Check } from "lucide-react";
 import { useLocation } from "wouter";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 
 interface ThemeSettings {
   theme: 'system' | 'light' | 'dark';
@@ -115,117 +114,119 @@ export default function ThemeSettings() {
   ];
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation('/profile')}
-            className="p-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h2 className="text-xl font-semibold">App Theme</h2>
-        </div>
-      </div>
-
-      {/* Theme Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Theme</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {themeOptions.map((option) => {
-            const Icon = option.icon;
-            const isSelected = settings.theme === option.value;
-            
-            return (
-              <div
-                key={option.value}
-                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                }`}
-                onClick={() => handleThemeChange(option.value as 'system' | 'light' | 'dark')}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                  <div>
-                    <p className="font-medium">{option.label}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{option.description}</p>
-                  </div>
-                </div>
-                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* Background Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Background</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {backgroundOptions.map((option) => {
-            const isSelected = settings.background === option.value;
-            
-            return (
-              <div
-                key={option.value}
-                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                }`}
-                onClick={() => handleBackgroundChange(option.value as 'white' | 'pink' | 'green')}
-              >
-                <div className="flex items-center gap-3">
-                  <div 
-                    className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`}
-                    style={{ backgroundColor: option.color }}
-                  />
-                  <div>
-                    <p className="font-medium">{option.label}</p>
-                  </div>
-                </div>
-                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* Current Preview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <span>Current selection:</span>
-            <Badge variant="secondary">
-              {themeOptions.find(t => t.value === settings.theme)?.label}
-            </Badge>
-            <Badge variant="secondary">
-              {backgroundOptions.find(b => b.value === settings.background)?.label}
-            </Badge>
+    <div className="app-background">
+      <div className="w-full max-w-md mx-auto space-y-6 min-h-screen">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation('/profile')}
+              className="p-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h2 className="text-xl font-semibold">App Theme</h2>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Save Button */}
-      <Button 
-        onClick={handleSave} 
-        disabled={isLoading} 
-        className="w-full"
-      >
-        {isLoading ? 'Saving...' : 'Save Changes'}
-      </Button>
+        {/* Theme Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Theme</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {themeOptions.map((option) => {
+              const Icon = option.icon;
+              const isSelected = settings.theme === option.value;
+              
+              return (
+                <div
+                  key={option.value}
+                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
+                      : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
+                  }`}
+                  onClick={() => handleThemeChange(option.value as 'system' | 'light' | 'dark')}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <div>
+                      <p className="font-medium">{option.label}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{option.description}</p>
+                    </div>
+                  </div>
+                  {isSelected && <Check className="h-5 w-5 text-blue-500" />}
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Background Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Background</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {backgroundOptions.map((option) => {
+              const isSelected = settings.background === option.value;
+              
+              return (
+                <div
+                  key={option.value}
+                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
+                      : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
+                  }`}
+                  onClick={() => handleBackgroundChange(option.value as 'white' | 'pink' | 'green')}
+                >
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`}
+                      style={{ backgroundColor: option.color }}
+                    />
+                    <div>
+                      <p className="font-medium">{option.label}</p>
+                    </div>
+                  </div>
+                  {isSelected && <Check className="h-5 w-5 text-blue-500" />}
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Current Preview */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Preview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <span>Current selection:</span>
+              <Badge variant="secondary">
+                {themeOptions.find(t => t.value === settings.theme)?.label}
+              </Badge>
+              <Badge variant="secondary">
+                {backgroundOptions.find(b => b.value === settings.background)?.label}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Save Button */}
+        <Button 
+          onClick={handleSave} 
+          disabled={isLoading} 
+          className="w-full"
+        >
+          {isLoading ? 'Saving...' : 'Save Changes'}
+        </Button>
+      </div>
     </div>
   );
 }
