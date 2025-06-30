@@ -142,24 +142,7 @@ export default function Profile() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="p-4">
-          <div 
-            className="flex items-center space-x-4 cursor-pointer"
-            onClick={() => setLocation('/theme-settings')}
-          >
-            <Palette className="h-4 w-4" />
-            <div>
-              <h3 className="text-sm font-medium leading-none">
-                App theme
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Customize your app appearance and background color.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
 
       {/* Language Selection */}
       <Card>
