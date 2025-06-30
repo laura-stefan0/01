@@ -529,21 +529,7 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      {/* Country Selection */}
-      <Card data-country-selector>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3">Country</h3>
-          <Select value={selectedCountry} onValueChange={handleCountryChange}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent side="bottom" align="start">
-              <SelectItem value="it">Italy</SelectItem>
-              <SelectItem value="us">United States</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
+
 
       {/* Language Selection */}
       <Card>
