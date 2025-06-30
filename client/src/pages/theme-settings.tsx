@@ -43,7 +43,7 @@ export default function ThemeSettings() {
 
   const saveToDatabase = async (newSettings: ThemeSettings) => {
     if (!user) return;
-    
+
     try {
       const response = await fetch(`/api/user/${user.id}/theme`, {
         method: 'PATCH',
@@ -56,7 +56,7 @@ export default function ThemeSettings() {
       if (!response.ok) {
         throw new Error('Failed to save settings');
       }
-      
+
       toast({
         title: "Settings updated",
         description: "Your theme preferences have been saved."
@@ -107,7 +107,7 @@ export default function ThemeSettings() {
             {themeOptions.map((option) => {
               const Icon = option.icon;
               const isSelected = settings.theme === option.value;
-              
+
               return (
                 <div
                   key={option.value}
@@ -140,7 +140,7 @@ export default function ThemeSettings() {
           <CardContent className="space-y-3">
             {backgroundOptions.map((option) => {
               const isSelected = settings.background === option.value;
-              
+
               return (
                 <div
                   key={option.value}
