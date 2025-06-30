@@ -6,6 +6,7 @@ import { ArrowLeft, Monitor, Sun, Moon, Check } from "lucide-react";
 import { useLocation } from "wouter";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/context/theme-context";
 
 interface ThemeSettings {
   theme: 'system' | 'light' | 'dark';
@@ -16,57 +17,26 @@ export default function ThemeSettings() {
   const [, setLocation] = useLocation();
   const { data: user } = useUser();
   const { toast } = useToast();
+  const { theme, background, setTheme: setGlobalTheme, setBackground: setGlobalBackground } = useTheme();
   const [settings, setSettings] = useState<ThemeSettings>({
     theme: 'system',
     background: 'white'
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load current settings from user data
+  // Sync local settings with theme context
   useEffect(() => {
-    if (user) {
-      setSettings({
-        theme: (user.theme as 'system' | 'light' | 'dark') || 'system',
-        background: (user.background as 'white' | 'pink' | 'green') || 'white'
-      });
-    }
-  }, [user]);
+    setSettings({ theme, background });
+  }, [theme, background]);
 
-  // Apply theme and background to document
-  useEffect(() => {
-    const root = document.documentElement;
-    
-    // Apply theme
-    if (settings.theme === 'dark') {
-      root.classList.add('dark');
-    } else if (settings.theme === 'light') {
-      root.classList.remove('dark');
-    } else {
-      // System theme
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (prefersDark) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-    }
-
-    // Apply background
-    const backgroundColors = {
-      white: '#ffffff',
-      pink: '#fdf2f8',
-      green: '#f0fdf4'
-    };
-    
-    document.body.style.backgroundColor = backgroundColors[settings.background];
-  }, [settings]);
-
-  const handleThemeChange = (theme: 'system' | 'light' | 'dark') => {
-    setSettings(prev => ({ ...prev, theme }));
+  const handleThemeChange = (newTheme: 'system' | 'light' | 'dark') => {
+    setSettings(prev => ({ ...prev, theme: newTheme }));
+    setGlobalTheme(newTheme);
   };
 
-  const handleBackgroundChange = (background: 'white' | 'pink' | 'green') => {
-    setSettings(prev => ({ ...prev, background }));
+  const handleBackgroundChange = (newBackground: 'white' | 'pink' | 'green') => {
+    setSettings(prev => ({ ...prev, background: newBackground }));
+    setGlobalBackground(newBackground);
   };
 
   const handleSave = async () => {

@@ -15,6 +15,7 @@ import SafetyTips from "@/pages/safety-tips";
 import Transparency from "@/pages/transparency";
 import NotFound from "./pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
+import { ThemeProvider } from "@/context/theme-context";
 
 function AuthenticatedRouter() {
   const { isLoading } = useAuth();
@@ -74,10 +75,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <AppRouter />
-        </TooltipProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <AppRouter />
+          </TooltipProvider>
+        </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
