@@ -191,15 +191,31 @@ export default function Home() {
     }
   };
 
-  // Handle tab change and update URL
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    if (tab === "home") {
-      // Clear URL parameter for home tab
-      window.history.pushState({}, '', '/');
-    } else {
-      // Update URL with tab parameter
-      window.history.pushState({}, '', `/?tab=${tab}`);
+    switch (tab) {
+      case "home":
+        setActiveTab(tab);
+        setLocation("/");
+        break;
+      case "discover":
+        setActiveTab(tab);
+        setLocation("/discover");
+        break;
+      case "resources":
+        setActiveTab(tab);
+        setLocation("/resources");
+        break;
+      case "saved":
+        setActiveTab(tab);
+        setLocation("/saved");
+        break;
+      case "profile":
+        setLocation("/profile");
+        break;
+      default:
+        setActiveTab("home");
+        setLocation("/");
+        break;
     }
   };
 
@@ -281,7 +297,7 @@ export default function Home() {
               >
                 <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
               </Button>
-              
+
               {/* Notification bell */}
               <Button variant="ghost" size="sm">
                 <Bell className="w-5 h-5 text-gray-600" />
@@ -453,143 +469,11 @@ export default function Home() {
     </div>
   );
 
-  const renderProfileContent = () => (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
-      {/* Profile Info */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-gray-200">
-              <img 
-                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face" 
-                alt="Profile picture"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-dark-slate text-lg">
-                Jane
-              </h3>
-              <p className="text-gray-600 text-sm">
-                @janedoe
-              </p>
-              <Button variant="outline" size="sm" className="mt-3">
-                Edit profile
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Settings */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-dark-slate">Settings</h3>
-          </div>
-          <div className="divide-y divide-gray-100">
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <Bell className="w-5 h-5 mr-3 text-gray-400" />
-                <Label htmlFor="notifications">Notifications</Label>
-              </div>
-              <Switch id="notifications" defaultChecked />
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <MapPin className="w-5 h-5 mr-3 text-gray-400" />
-                <Label htmlFor="location">Location Services</Label>
-              </div>
-              <Switch id="location" defaultChecked />
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">📧</div>
-                <Label htmlFor="emails">Email Updates</Label>
-              </div>
-              <Switch id="emails" />
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">🌙</div>
-                <Label htmlFor="darkmode">Dark Mode</Label>
-              </div>
-              <Switch id="darkmode" />
-            </div>
-            <div 
-              className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
-              onClick={() => setLocation('/theme-settings')}
-            >
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">🎨</div>
-                <div>
-                  <Label htmlFor="apptheme">App theme</Label>
-                  <p className="text-xs text-muted-foreground">Customize appearance and background</p>
-                </div>
-              </div>
-              <div className="w-5 h-5 text-gray-400">›</div>
-            </div>
-            <div className="p-4">
-              <Button 
-                className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-                onClick={() => setLocation("/create-protest")}
-                disabled={!isAuthenticated}
-              >
-                {isAuthenticated ? "Create New Protest" : "Sign In to Create Protests"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-
-
-      {/* Language Selection */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3">Language</h3>
-          <Select defaultValue="en">
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent side="top" align="start">
-              <SelectItem value="en">English</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
-
-      {/* App Info */}
-      <Card>
-        <CardContent className="p-0 divide-y divide-gray-100">
-          <div className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50" onClick={() => setLocation("/transparency")}>
-            <span className="text-dark-slate">Transparency</span>
-            <div className="w-4 h-4 text-gray-400">→</div>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <span className="text-dark-slate">Privacy Policy</span>
-            <div className="w-4 h-4 text-gray-400">→</div>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <span className="text-dark-slate">Terms of Service</span>
-            <div className="w-4 h-4 text-gray-400">→</div>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <span className="text-dark-slate">About Corteo</span>
-            <span className="text-sm text-gray-500">v1.0.0</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Sign Out Button */}
-      <Button 
-        onClick={signOut}
-        className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
-      >
-        Sign Out
-      </Button>
-    </div>
-  );
+  const renderProfileContent = () => {
+    // Navigate to standalone Profile page
+    setLocation("/profile");
+    return null;
+  };
 
   const renderMapContent = () => {
 
