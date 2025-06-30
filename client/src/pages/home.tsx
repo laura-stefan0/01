@@ -238,10 +238,54 @@ export default function Home() {
     }
   };
 
-  const renderHomeContent = () => (
-    <div className="px-4 py-4 max-w-md mx-auto">
-      {/* News Section */}
-      <section className="mb-6">
+  const renderHomeContent = () => {
+    // Use manual location if available, otherwise use real user location, otherwise fallback
+    const displayLocation = manualLocation || userRealLocation || user?.user_location || getLocationName();
+    // Parse location to get city only (remove region/state)
+    const [city] = displayLocation.split(', ');
+
+    return (
+      <div className="px-4 py-4 max-w-md mx-auto">
+        {/* Location Section */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-gray-600" />
+                <span className="text-sm text-gray-600">Your location</span>
+              </div>
+              <LocationSelector
+                currentLocation={displayLocation}
+                selectedCountry={selectedCountry}
+                onLocationSelect={handleLocationSelect}
+                onCountryChange={handleCountryChange}
+              >
+                <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
+                  {isLoadingLocation ? (
+                    <span className="text-gray-500">Getting location...</span>
+                  ) : (
+                    <span>{city}</span>
+                  )}
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </LocationSelector>
+            </div>
+
+            {/* Refresh location button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={fetchUserRealLocation}
+              disabled={isLoadingLocation}
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
+        </section>
+
+        {/* News Section */}
+        <section className="mb-6">
         <h2 className="text-lg font-semibold text-dark-slate mb-3">What's new</h2>
         <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {whatsNewLoading ? (
@@ -389,7 +433,8 @@ export default function Home() {
         </Card>
       </section>
     </div>
-  );
+    );
+  };
 
   const renderCommunityContent = () => (
     <div className="px-4 py-4 max-w-md mx-auto">
@@ -704,51 +749,9 @@ export default function Home() {
   };
 
   const getHeaderContent = () => {
-    if (activeTab === "home") {
-      // Use manual location if available, otherwise use real user location, otherwise fallback
-      const displayLocation = manualLocation || userRealLocation || user?.user_location || getLocationName();
-      // Parse location to get city only (remove region/state)
-      const [city] = displayLocation.split(', ');
-
-      return (
-        <div className="flex items-center justify-between w-full">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-gray-600" />
-              <span className="text-sm text-gray-600">Your location</span>
-            </div>
-            <LocationSelector
-              currentLocation={displayLocation}
-              selectedCountry={selectedCountry}
-              onLocationSelect={handleLocationSelect}
-              onCountryChange={handleCountryChange}
-            >
-              <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
-                {isLoadingLocation ? (
-                  <span className="text-gray-500">Getting location...</span>
-                ) : (
-                  <span>{city}</span>
-                )}
-                <ChevronDown className="w-3 h-3" />
-              </button>
-            </LocationSelector>
-          </div>
-
-          {/* Refresh location button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="ml-2"
-            onClick={fetchUserRealLocation}
-            disabled={isLoadingLocation}
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
-          </Button>
-        </div>
-      );
-    }
-
     switch (activeTab) {
+      case "home":
+        return "Home";
       case "map":
         return "Search";
       case "resources":
@@ -767,22 +770,14 @@ export default function Home() {
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex-1">
-              {typeof getHeaderContent() === 'string' ? (
-                <h1 className="text-xl font-bold text-dark-slate">{getHeaderContent()}</h1>
-              ) : (
-                <div className="text-xl font-bold text-dark-slate">{getHeaderContent()}</div>
-              )}
-            </div>
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold text-dark-slate">{getHeaderContent()}</h1>
             {activeTab === "home" && (
               <Button variant="ghost" size="sm">
                 <Bell className="w-5 h-5 text-gray-600" />
               </Button>
             )}
           </div>
-
-
         </div>
       </header>
 
