@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, User } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, User, Globe, Palette, ChevronRight, Plus, FileText, LogOut, Mail } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -17,6 +17,7 @@ import { useWhatsNew } from "@/hooks/use-whats-new";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/context/auth-context";
 import { useLocation } from "wouter";
 import { LocationSelector } from "@/components/location-selector";
@@ -453,18 +454,155 @@ export default function Home() {
     </div>
   );
 
-  const renderProfileContent = () => (
-    <div className="px-4 py-4 max-w-md mx-auto">
-      <div className="text-center py-16">
-        <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-semibold text-dark-slate mb-2">Profile</h3>
-        <p className="text-gray-600 mb-4">Access your full profile and settings.</p>
-        <Button onClick={() => setLocation("/profile")}>
-          Go to Profile
+  const renderProfileContent = () => {
+    const { signOut } = useAuth();
+
+    const handleSignOut = () => {
+      signOut();
+      setLocation("/sign-in");
+    };
+
+    return (
+      <div className="px-4 py-6 space-y-6 max-w-md mx-auto">
+        {/* User Info */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <User className="w-10 h-10 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-dark-slate">
+                  {user?.name || "Jane Doe"}
+                </h2>
+                <p className="text-gray-500">@{user?.username || "janedoe"}</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <MapPin className="w-4 h-4" />
+                <span>{user?.user_location || "Milan, Italy"}</span>
+              </div>
+              <p className="text-sm text-gray-700 max-w-sm">
+                Passionate activist for social justice and environmental causes. 
+                Organizing for a better tomorrow.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Settings */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-dark-slate mb-4">Settings</h3>
+            
+            <div className="space-y-4">
+              {/* Notifications */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Bell className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Notifications</span>
+                </div>
+                <Switch checked={user?.notifications || false} />
+              </div>
+
+              <Separator />
+
+              {/* Location */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Location sharing</span>
+                </div>
+                <Switch checked={user?.location || false} />
+              </div>
+
+              <Separator />
+
+              {/* Email */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Email updates</span>
+                </div>
+                <Switch checked={user?.emails || false} />
+              </div>
+
+              <Separator />
+
+              {/* Language */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Globe className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Language</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">English</Badge>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* App Theme */}
+              <div 
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg -m-2"
+                onClick={() => setLocation("/theme-settings")}
+              >
+                <div className="flex items-center gap-3">
+                  <Palette className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">App theme</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-dark-slate mb-4">Actions</h3>
+            
+            <div className="space-y-4">
+              {/* Create New Protest */}
+              <div 
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg -m-2"
+                onClick={() => setLocation("/create-protest")}
+              >
+                <div className="flex items-center gap-3">
+                  <Plus className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Create New Protest</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </div>
+
+              <Separator />
+
+              {/* Transparency */}
+              <div 
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg -m-2"
+                onClick={() => setLocation("/transparency")}
+              >
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Transparency</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Sign Out */}
+        <Button
+          onClick={handleSignOut}
+          variant="destructive"
+          className="w-full"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
         </Button>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderMapContent = () => {
 
