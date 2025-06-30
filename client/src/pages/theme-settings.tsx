@@ -22,34 +22,35 @@ export default function ThemeSettings() {
     theme: 'system',
     background: 'white'
   });
-  const [isLoading, setIsLoading] = useState(false);
+
 
   // Sync local settings with theme context
   useEffect(() => {
     setSettings({ theme, background });
   }, [theme, background]);
 
-  const handleThemeChange = (newTheme: 'system' | 'light' | 'dark') => {
+  const handleThemeChange = async (newTheme: 'system' | 'light' | 'dark') => {
     setSettings(prev => ({ ...prev, theme: newTheme }));
     setGlobalTheme(newTheme);
+    await saveToDatabase({ theme: newTheme, background: settings.background });
   };
 
-  const handleBackgroundChange = (newBackground: 'white' | 'pink' | 'green') => {
+  const handleBackgroundChange = async (newBackground: 'white' | 'pink' | 'green') => {
     setSettings(prev => ({ ...prev, background: newBackground }));
     setGlobalBackground(newBackground);
+    await saveToDatabase({ theme: settings.theme, background: newBackground });
   };
 
-  const handleSave = async () => {
+  const saveToDatabase = async (newSettings: ThemeSettings) => {
     if (!user) return;
     
-    setIsLoading(true);
     try {
       const response = await fetch(`/api/user/${user.id}/theme`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(settings)
+        body: JSON.stringify(newSettings)
       });
 
       if (!response.ok) {
@@ -57,8 +58,8 @@ export default function ThemeSettings() {
       }
       
       toast({
-        title: "Settings saved",
-        description: "Your theme preferences have been updated."
+        title: "Settings updated",
+        description: "Your theme preferences have been saved."
       });
     } catch (error) {
       toast({
@@ -66,10 +67,10 @@ export default function ThemeSettings() {
         description: "Failed to save theme settings. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
     }
   };
+
+
 
   const themeOptions = [
     { value: 'system', label: 'System default', icon: Monitor, description: 'Follow your device settings' },
@@ -184,14 +185,6 @@ export default function ThemeSettings() {
           </CardContent>
         </Card>
 
-        {/* Save Button */}
-        <Button 
-          onClick={handleSave} 
-          disabled={isLoading} 
-          className="w-full"
-        >
-          {isLoading ? 'Saving...' : 'Save Changes'}
-        </Button>
       </main>
     </div>
   );
