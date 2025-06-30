@@ -17,6 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/auth-context";
 import { useLocation } from "wouter";
+import { LocationSelector } from "@/components/location-selector";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(() => {
@@ -32,6 +33,7 @@ export default function Home() {
     return localStorage.getItem('corteo_selected_country') || 'it';
   });
   const [userRealLocation, setUserRealLocation] = useState<string | null>(null);
+  const [manualLocation, setManualLocation] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [, setLocation] = useLocation();
 
@@ -69,6 +71,19 @@ export default function Home() {
       setIsLoadingLocation(false);
     }
   };
+
+  // Initialize country and manual location from localStorage
+  useEffect(() => {
+    const savedCountry = localStorage.getItem('corteo_selected_country');
+    if (savedCountry) {
+      setSelectedCountry(savedCountry);
+    }
+
+    const savedManualLocation = localStorage.getItem('corteo_manual_location');
+    if (savedManualLocation) {
+      setManualLocation(savedManualLocation);
+    }
+  }, []);
 
   // Fetch user's real location on component mount
   useEffect(() => {
@@ -599,11 +614,11 @@ export default function Home() {
 
   const getHeaderContent = () => {
     if (activeTab === "home") {
-      // Use real user location if available, otherwise fallback
-      const displayLocation = userRealLocation || user?.user_location || getLocationName();
+      // Use manual location if available, otherwise use real user location, otherwise fallback
+      const displayLocation = manualLocation || userRealLocation || user?.user_location || getLocationName();
       // Parse location to get city and region/state
       const [city, region] = displayLocation.split(', ');
-      
+
       return (
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col">
@@ -627,7 +642,7 @@ export default function Home() {
               <ChevronDown className="w-3 h-3" />
             </button>
           </div>
-          
+
           {/* Refresh location button */}
           <Button
             variant="ghost"
@@ -641,7 +656,7 @@ export default function Home() {
         </div>
       );
     }
-    
+
     switch (activeTab) {
       case "map":
         return "Search";
