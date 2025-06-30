@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown } from "lucide-react";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -51,6 +51,16 @@ export default function Home() {
   const handleCountryChange = (newCountry: string) => {
     setSelectedCountry(newCountry);
     localStorage.setItem('corteo_selected_country', newCountry);
+  };
+
+  // Get location name from selected country
+  const getLocationName = () => {
+    switch(selectedCountry) {
+      case 'it': return 'Italy';
+      case 'us': return 'United States';
+      case 'uk': return 'United Kingdom';
+      default: return selectedCountry.toUpperCase();
+    }
   };
 
   // Handle tab change and update URL
@@ -341,7 +351,7 @@ export default function Home() {
       </Card>
 
       {/* Country Selection */}
-      <Card>
+      <Card data-country-selector>
         <CardContent className="p-4">
           <h3 className="font-semibold text-dark-slate mb-3">Country</h3>
           <Select value={selectedCountry} onValueChange={handleCountryChange}>
@@ -565,10 +575,37 @@ export default function Home() {
     );
   };
 
-  const getHeaderTitle = () => {
+  const getHeaderContent = () => {
+    if (activeTab === "home") {
+      const username = isAuthenticated && user?.name ? user.name.split(' ')[0] : "Guest";
+      const locationName = getLocationName();
+      
+      return (
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1">
+            <span>Hi {username}</span>
+            <span>👋</span>
+          </div>
+          <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
+            <span>Here's what's happening near</span>
+            <MapPin className="w-3 h-3" />
+            <button 
+              className="flex items-center gap-1 hover:text-gray-800 transition-colors"
+              onClick={() => {
+                // Find country selector in Profile tab and focus it
+                document.querySelector('[data-country-selector]')?.scrollIntoView({ behavior: 'smooth' });
+                setActiveTab('profile');
+              }}
+            >
+              <span>{locationName}</span>
+              <ChevronDown className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      );
+    }
+    
     switch (activeTab) {
-      case "home":
-        return isAuthenticated && user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
       case "map":
         return "Search";
       case "resources":
@@ -578,7 +615,7 @@ export default function Home() {
       case "profile":
         return "Profile";
       default:
-        return isAuthenticated && user?.name ? `Hi, ${user.name.split(' ')[0]}!` : "Hi there!";
+        return "Home";
     }
   };
 
@@ -588,7 +625,13 @@ export default function Home() {
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-xl font-bold text-dark-slate">{getHeaderTitle()}</h1>
+            <div className="flex-1">
+              {typeof getHeaderContent() === 'string' ? (
+                <h1 className="text-xl font-bold text-dark-slate">{getHeaderContent()}</h1>
+              ) : (
+                <div className="text-xl font-bold text-dark-slate">{getHeaderContent()}</div>
+              )}
+            </div>
             {activeTab === "home" && (
               <Button variant="ghost" size="sm">
                 <Bell className="w-5 h-5 text-gray-600" />
