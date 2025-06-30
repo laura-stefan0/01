@@ -114,23 +114,19 @@ export default function ThemeSettings() {
   ];
 
   return (
-    <div className="app-background">
-      <div className="w-full max-w-md mx-auto space-y-6 min-h-screen">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLocation('/profile')}
-              className="p-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h2 className="text-xl font-semibold">App Theme</h2>
-          </div>
+    <div className="max-w-md mx-auto bg-white min-h-screen">
+      {/* Header */}
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
+        <div className="px-4 py-3 flex items-center">
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/profile")}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-dark-slate ml-3">App Theme</h1>
         </div>
+      </header>
 
+      {/* Content */}
+      <main className="px-4 py-6 space-y-6">
         {/* Theme Selection */}
         <Card>
           <CardHeader>
@@ -226,7 +222,7 @@ export default function ThemeSettings() {
         >
           {isLoading ? 'Saving...' : 'Save Changes'}
         </Button>
-      </div>
+      </main>
     </div>
   );
 }
