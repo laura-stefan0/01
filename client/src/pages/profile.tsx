@@ -1,266 +1,209 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, User, Settings, Bell, Shield, FileText, Globe, Palette } from "lucide-react";
+import { BottomNavigation } from "@/components/bottom-navigation";
+import { 
+  User, 
+  Bell, 
+  MapPin, 
+  Mail, 
+  Globe, 
+  Palette,
+  FileText,
+  LogOut,
+  ChevronRight,
+  Plus
+} from "lucide-react";
+import { useLocation } from "wouter";
 import { useAuth } from "@/context/auth-context";
 import { useUser } from "@/hooks/use-user";
-import { useLocation } from "wouter";
 
 export default function Profile() {
+  const [, setLocation] = useLocation();
   const { signOut } = useAuth();
   const { data: user } = useUser();
-  const [, setLocation] = useLocation();
-  const [backgroundTheme, setBackgroundTheme] = useState('default');
-
-  // Load saved background theme
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('corteo_background_theme');
-    if (savedTheme) {
-      setBackgroundTheme(savedTheme);
-    }
-  }, []);
-
-  // Apply background theme to root element
-  useEffect(() => {
-    const root = document.getElementById('root');
-    if (!root) return;
-
-    const themes = {
-      default: 'linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0)) fixed',
-      blue: 'linear-gradient(to bottom, oklch(95% 0.1 220), oklch(85% 0.15 220)) fixed',
-      green: 'linear-gradient(to bottom, oklch(95% 0.1 140), oklch(85% 0.15 140)) fixed',
-      purple: 'linear-gradient(to bottom, oklch(95% 0.1 280), oklch(85% 0.15 280)) fixed',
-      dots: 'linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0)) fixed, radial-gradient(circle, oklch(80% 0 0) 1px, transparent 1px)',
-      lines: 'linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0)) fixed, linear-gradient(90deg, oklch(85% 0 0) 1px, transparent 1px)'
-    };
-
-    const backgroundSizes = {
-      dots: '100%, 20px 20px',
-      lines: '100%, 30px 30px'
-    };
-
-    root.style.background = themes[backgroundTheme as keyof typeof themes] || themes.default;
-
-    if (backgroundTheme === 'dots' || backgroundTheme === 'lines') {
-      root.style.backgroundSize = backgroundSizes[backgroundTheme as keyof typeof backgroundSizes];
-    } else {
-      root.style.backgroundSize = '';
-    }
-
-    // Save to localStorage
-    localStorage.setItem('corteo_background_theme', backgroundTheme);
-  }, [backgroundTheme]);
+  const [activeTab, setActiveTab] = useState("profile");
 
   const handleSignOut = () => {
     signOut();
+    setLocation("/sign-in");
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    switch (tab) {
+      case "home":
+        setLocation("/");
+        break;
+      case "discover":
+        setLocation("/discover");
+        break;
+      case "resources":
+        setLocation("/resources");
+        break;
+      case "saved":
+        setLocation("/saved");
+        break;
+      case "profile":
+        // Already on profile page
+        break;
+    }
   };
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      <div className="flex items-center justify-between p-4">
-        <h2 className="text-xl font-semibold">Profile</h2>
-        <Badge variant="secondary">
-          <Globe className="mr-2 h-4 w-4" />
-          <span>Pro</span>
-        </Badge>
-      </div>
+    <div className="max-w-md mx-auto bg-white min-h-screen">
+      {/* Header */}
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
+        <div className="px-4 py-3">
+          <h1 className="text-xl font-bold text-dark-slate">Profile</h1>
+        </div>
+      </header>
 
-      <Card>
-        <CardContent className="flex aspect-square items-center justify-center p-4">
-          <User className="h-16 w-16" />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="space-y-2.5 p-4">
-          <div className="space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {user?.name || user?.username}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {user?.email}
-            </p>
-          </div>
-          <Button variant="outline" className="w-full">
-            <Settings className="mr-2 h-4 w-4" />
-            Update profile
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Separator />
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-4">
-            <Shield className="h-4 w-4" />
-            <div>
-              <h3 className="text-sm font-medium leading-none">
-                Privacy
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Manage your privacy settings and review your active sessions.
+      {/* Content */}
+      <main className="px-4 py-6 space-y-6 pb-24">
+        {/* User Info */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <User className="w-10 h-10 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-dark-slate">
+                  {user?.name || "Jane Doe"}
+                </h2>
+                <p className="text-gray-500">@{user?.username || "janedoe"}</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <MapPin className="w-4 h-4" />
+                <span>{user?.user_location || "Milan, Italy"}</span>
+              </div>
+              <p className="text-sm text-gray-700 max-w-sm">
+                Passionate activist for social justice and environmental causes. 
+                Organizing for a better tomorrow.
               </p>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-4">
-            <Bell className="h-4 w-4" />
-            <div>
-              <h3 className="text-sm font-medium leading-none">
-                Notifications
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Configure your notification preferences and choose when to be
-                notified.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Settings */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-dark-slate mb-4">Settings</h3>
+            
+            <div className="space-y-4">
+              {/* Notifications */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Bell className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Notifications</span>
+                </div>
+                <Switch checked={user?.notifications || false} />
+              </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-4">
-            <FileText className="h-4 w-4" />
-            <div>
-              <h3 className="text-sm font-medium leading-none">
-                Terms & conditions
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Read our terms and conditions and learn about our policies.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              <Separator />
 
+              {/* Location */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Location sharing</span>
+                </div>
+                <Switch checked={user?.location || false} />
+              </div>
 
+              <Separator />
 
-      {/* Language Selection */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3">Language</h3>
-          <Select defaultValue="en">
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent side="top" align="start">
-              <SelectItem value="en">English</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
+              {/* Email */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Email updates</span>
+                </div>
+                <Switch checked={user?.emails || false} />
+              </div>
 
-      {/* Background Theme Selection */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3">Background Theme</h3>
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              {/* Default Gradient */}
-              <div 
-                className="h-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-colors"
-                style={{
-                  background: 'linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0))'
-                }}
-                onClick={() => setBackgroundTheme('default')}
-              >
-                <div className="h-full flex items-end p-2">
-                  <span className="text-xs font-medium text-gray-700">Default</span>
+              <Separator />
+
+              {/* Language */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Globe className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Language</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">English</Badge>
                 </div>
               </div>
 
-              {/* Blue Gradient */}
-              <div 
-                className="h-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-colors"
-                style={{
-                  background: 'linear-gradient(to bottom, oklch(95% 0.1 220), oklch(85% 0.15 220))'
-                }}
-                onClick={() => setBackgroundTheme('blue')}
-              >
-                <div className="h-full flex items-end p-2">
-                  <span className="text-xs font-medium text-white">Blue</span>
-                </div>
-              </div>
+              <Separator />
 
-              {/* Green Gradient */}
+              {/* App Theme */}
               <div 
-                className="h-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-colors"
-                style={{
-                  background: 'linear-gradient(to bottom, oklch(95% 0.1 140), oklch(85% 0.15 140))'
-                }}
-                onClick={() => setBackgroundTheme('green')}
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg -m-2"
+                onClick={() => setLocation("/theme-settings")}
               >
-                <div className="h-full flex items-end p-2">
-                  <span className="text-xs font-medium text-white">Green</span>
+                <div className="flex items-center gap-3">
+                  <Palette className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">App theme</span>
                 </div>
-              </div>
-
-              {/* Purple Gradient */}
-              <div 
-                className="h-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-colors"
-                style={{
-                  background: 'linear-gradient(to bottom, oklch(95% 0.1 280), oklch(85% 0.15 280))'
-                }}
-                onClick={() => setBackgroundTheme('purple')}
-              >
-                <div className="h-full flex items-end p-2">
-                  <span className="text-xs font-medium text-white">Purple</span>
-                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            {/* Pattern Options */}
-            <div className="pt-2 border-t border-gray-100">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Patterns</h4>
-              <div className="grid grid-cols-2 gap-3">
-                {/* Dots Pattern */}
-                <div 
-                  className="h-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-colors relative overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0))',
-                    backgroundImage: 'radial-gradient(circle, oklch(80% 0 0) 1px, transparent 1px)',
-                    backgroundSize: '20px 20px'
-                  }}
-                  onClick={() => setBackgroundTheme('dots')}
-                >
-                  <div className="h-full flex items-end p-2">
-                    <span className="text-xs font-medium text-gray-700">Dots</span>
-                  </div>
+        {/* Actions */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-dark-slate mb-4">Actions</h3>
+            
+            <div className="space-y-4">
+              {/* Create New Protest */}
+              <div 
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg -m-2"
+                onClick={() => setLocation("/create-protest")}
+              >
+                <div className="flex items-center gap-3">
+                  <Plus className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Create New Protest</span>
                 </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </div>
 
-                {/* Lines Pattern */}
-                <div 
-                  className="h-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-colors relative overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0))',
-                    backgroundImage: 'linear-gradient(90deg, oklch(85% 0 0) 1px, transparent 1px)',
-                    backgroundSize: '30px 30px'
-                  }}
-                  onClick={() => setBackgroundTheme('lines')}
-                >
-                  <div className="h-full flex items-end p-2">
-                    <span className="text-xs font-medium text-gray-700">Lines</span>
-                  </div>
+              <Separator />
+
+              {/* Transparency */}
+              <div 
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg -m-2"
+                onClick={() => setLocation("/transparency")}
+              >
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium">Transparency</span>
                 </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <Button variant="destructive" className="w-full" onClick={handleSignOut}>
-        <LogOut className="mr-2 h-4 w-4" />
-        Sign out
-      </Button>
+        {/* Sign Out */}
+        <Button
+          onClick={handleSignOut}
+          variant="destructive"
+          className="w-full"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
+        </Button>
+      </main>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }

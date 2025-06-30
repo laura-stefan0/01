@@ -100,6 +100,9 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 30, 2025: Created dedicated Profile page as standalone route with proper navigation structure - Profile is now a separate page accessible via /profile route with Settings, Actions, and Sign Out functionality
+- June 30, 2025: Implemented complete theme system with global ThemeProvider context - background colors now apply across entire app with immediate saving to database when changed
+- June 30, 2025: Updated theme settings page layout to match normal app pages like Transparency, removed "Save changes" button for immediate auto-save functionality
 - June 30, 2025: Successfully migrated project from Replit Agent to standard Replit environment with full functionality maintained
 - June 30, 2025: Enhanced manual location selection system to support both Italy and USA with proper distance-based sorting
 - June 30, 2025: Added comprehensive US cities database with coordinates for accurate distance calculations  
