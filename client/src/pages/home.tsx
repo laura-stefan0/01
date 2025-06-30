@@ -272,9 +272,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Nearby Protests */}
+      {/* Nearby */}
       <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby Protests</h2>
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby</h2>
 
         {/* Vertical List of Protest Cards */}
         <div className="space-y-3">
@@ -285,7 +285,7 @@ export default function Home() {
               <Skeleton className="h-20 w-full" />
             </>
           ) : nearbyProtests.length > 0 ? (
-            nearbyProtests.map((protest, index) => (
+            nearbyProtests.slice(0, 10).map((protest, index) => (
               <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
             ))
           ) : (
