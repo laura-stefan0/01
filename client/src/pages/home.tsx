@@ -579,20 +579,24 @@ export default function Home() {
     if (activeTab === "home") {
       // Get user location from database or fallback based on country
       const userLocation = user?.user_location || getLocationName();
+      // Parse location to get city and region/state
+      const [city, region] = userLocation.split(', ');
       
       return (
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-gray-600" />
-          <span className="text-sm text-gray-600">Your location</span>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-gray-600" />
+            <span className="text-sm text-gray-600">Your location</span>
+          </div>
           <button 
-            className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium"
+            className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1"
             onClick={() => {
               // Navigate to Profile tab for location settings
               document.querySelector('[data-country-selector]')?.scrollIntoView({ behavior: 'smooth' });
               setActiveTab('profile');
             }}
           >
-            <span>{userLocation}</span>
+            <span>{city}, {region}</span>
             <ChevronDown className="w-3 h-3" />
           </button>
         </div>
