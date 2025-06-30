@@ -9,12 +9,11 @@ import CreateProtest from "@/pages/create-protest";
 import ProtestDetail from "@/pages/protest-detail";
 import Filter from "@/pages/filter";
 
-import KnowYourRights from "./pages/know-your-rights";
-import SafetyTips from "./pages/safety-tips";
-import Transparency from "./pages/transparency";
+import KnowYourRights from "@/pages/know-your-rights";
+import SafetyTips from "@/pages/safety-tips";
+import Transparency from "@/pages/transparency";
 import NotFound from "./pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
-import Profile from "./pages/profile";
 
 function AuthenticatedRouter() {
   const { isLoading } = useAuth();
@@ -45,7 +44,6 @@ function AuthenticatedRouter() {
           <Route path="/safety-tips" component={SafetyTips} />
           <Route path="/create-protest" component={CreateProtest} />
           <Route path="/transparency" component={Transparency} />
-          <Route path="/profile" component={Profile} />
           <Route component={NotFound} />
         </Switch>
       </div>
