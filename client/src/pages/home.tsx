@@ -195,6 +195,25 @@ export default function Home() {
     }
   };
 
+  // Helper function to calculate protest distance
+  const getProtestDistance = (protest: any) => {
+    if (!userCoordinates) return null;
+
+    const aLat = parseFloat(protest.latitude);
+    const aLng = parseFloat(protest.longitude);
+
+    if (isNaN(aLat) || isNaN(aLng)) return null;
+
+    const distance = calculateDistance(
+      userCoordinates.latitude,
+      userCoordinates.longitude,
+      aLat,
+      aLng
+    );
+
+    return distance;
+  };
+
   const renderHomeContent = () => (
     <div className="px-4 py-4 max-w-md mx-auto">
       {/* News Section */}
@@ -298,12 +317,14 @@ export default function Home() {
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
             </>
-          ) : (
+          ) : featuredProtests.length > 0 ? (
             featuredProtests.map((protest, index) => (
               <div key={`featured-${protest.id}-${index}`} className="w-5/6 flex-shrink-0">
-                <ProtestCard protest={protest} variant="featured" />
+                <ProtestCard protest={protest} variant="featured" distance={getProtestDistance(protest)} />
               </div>
             ))
+          ) : (
+            <Skeleton className="w-5/6 h-56 flex-shrink-0" />
           )}
         </div>
       </section>
@@ -322,7 +343,7 @@ export default function Home() {
             </>
           ) : nearbyProtests.length > 0 ? (
             sortProtestsByDistance(nearbyProtests).slice(0, 10).map((protest, index) => (
-              <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
+              <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} distance={getProtestDistance(protest)}/>
             ))
           ) : (
             <div className="text-center py-8">

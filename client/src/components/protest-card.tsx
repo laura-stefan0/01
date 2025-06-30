@@ -9,9 +9,10 @@ import { getCategoryColor, getImageUrl, createImageErrorHandler } from "@/lib/im
 interface ProtestCardProps {
   protest: Protest;
   variant?: "featured" | "compact";
+  distance?: string;
 }
 
-export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) {
+export function ProtestCard({ protest, variant = "compact", distance }: ProtestCardProps) {
   const [, setLocation] = useLocation();
 
   const handleClick = () => {
@@ -35,7 +36,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
               <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
                 {protest.category}
               </Badge>
-              <span className="text-sm text-gray-500">{protest.distance}</span>
+              {distance && <span className="text-sm text-gray-500">{distance}</span>}
             </div>
             <h3 className="font-semibold text-dark-slate mb-1 line-clamp-2">{protest.title}</h3>
             <p className="text-sm text-gray-600 mb-2 line-clamp-2">{protest.description}</p>
@@ -63,7 +64,10 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
             <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
               {protest.category}
             </Badge>
-            <span className="text-xs text-gray-500">{protest.attendees} going</span>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              {distance && <span>{distance}</span>}
+              <span>{protest.attendees} going</span>
+            </div>
           </div>
           <div className="flex-1">
             <h3 className="font-medium text-dark-slate text-sm mb-1 line-clamp-1">{protest.title}</h3>
