@@ -29,12 +29,21 @@ export function useFeaturedProtests(country?: string) {
   });
 }
 
-export function useNearbyProtests(country?: string) {
-  const countryParam = country ? `?country=${country.toUpperCase()}` : '';
+export function useNearbyProtests(country?: string, userLat?: number, userLng?: number) {
+  const params = new URLSearchParams();
+  if (country) params.append('country', country.toUpperCase());
+  if (userLat !== undefined && userLng !== undefined) {
+    params.append('lat', userLat.toString());
+    params.append('lng', userLng.toString());
+  }
+  
+  const queryString = params.toString();
+  const url = `/api/protests/nearby${queryString ? `?${queryString}` : ''}`;
+  
   return useQuery<Protest[]>({
-    queryKey: ["/api/protests/nearby", country],
+    queryKey: ["/api/protests/nearby", country, userLat, userLng],
     queryFn: async () => {
-      const response = await fetch(`/api/protests/nearby${countryParam}`);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to fetch nearby protests');
       }

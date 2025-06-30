@@ -41,8 +41,15 @@ export default function Home() {
   const [manualLocationCoordinates, setManualLocationCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [, setLocation] = useLocation();
 
+  // Determine which coordinates to use for distance calculation
+  const referenceCoordinates = manualLocationCoordinates || userCoordinates;
+  
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
-  const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(selectedCountry);
+  const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(
+    selectedCountry, 
+    referenceCoordinates?.latitude, 
+    referenceCoordinates?.longitude
+  );
   const { data: user } = useUser();
 
   // Map selected country to country code for What's new filtering
@@ -119,16 +126,18 @@ export default function Home() {
       setManualLocation(savedManualLocation);
     }
 
+    // Load manual location coordinates from localStorage
     const savedManualCoords = localStorage.getItem('corteo_manual_location_coords');
     if (savedManualCoords) {
       try {
         const coords = JSON.parse(savedManualCoords);
         setManualLocationCoordinates(coords);
       } catch (error) {
-        console.warn('Failed to parse saved manual location coordinates');
-        localStorage.removeItem('corteo_manual_location_coords');
+        console.error('Error parsing saved manual location coordinates:', error);
       }
     }
+
+
   }, []);
 
   // Fetch user's real location on component mount

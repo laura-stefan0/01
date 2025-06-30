@@ -58,28 +58,83 @@ router.get('/featured', async (req, res) => {
   }
 });
 
-// Get nearby protests filtered by user's country
+// Helper function to calculate distance between two points using Haversine formula
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Radius of the Earth in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = R * c; // Distance in kilometers
+  return distance;
+}
+
+// Get nearby protests filtered by user's country and sorted by distance
 router.get('/nearby', async (req, res) => {
   try {
     // Get country code from query params or default to IT
     const userCountryCode = (req.query.country as string) || 'IT';
+    const userLat = req.query.lat ? parseFloat(req.query.lat as string) : null;
+    const userLng = req.query.lng ? parseFloat(req.query.lng as string) : null;
 
     console.log('🔍 Fetching nearby protests from protests table for country:', userCountryCode);
+    if (userLat && userLng) {
+      console.log('📍 User coordinates:', { lat: userLat, lng: userLng });
+    }
 
     const { data: protests, error } = await supabase
       .from('protests')
       .select('*')
       .eq('country_code', userCountryCode)
-      .order('created_at', { ascending: false })
-      .limit(10);
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('❌ Error fetching nearby protests:', error);
       return res.status(500).json({ message: "Failed to fetch nearby protests" });
     }
 
-    console.log('✅ Successfully fetched nearby protests for', userCountryCode + ':', protests?.length || 0);
-    res.json(protests || []);
+    let processedProtests = protests || [];
+
+    // If user coordinates are provided, calculate distances and sort by proximity
+    if (userLat && userLng && processedProtests.length > 0) {
+      console.log('📊 Calculating distances for', processedProtests.length, 'protests');
+      
+      processedProtests = processedProtests
+        .map((protest) => {
+          if (protest.latitude && protest.longitude) {
+            const distance = calculateDistance(
+              userLat, 
+              userLng, 
+              parseFloat(protest.latitude), 
+              parseFloat(protest.longitude)
+            );
+            return {
+              ...protest,
+              calculatedDistance: distance,
+              distance: `${distance.toFixed(1)} km` // Update the display distance
+            };
+          }
+          return {
+            ...protest,
+            calculatedDistance: 999999 // Put protests without coordinates at the end
+          };
+        })
+        .sort((a, b) => (a.calculatedDistance || 999999) - (b.calculatedDistance || 999999))
+        .slice(0, 10); // Limit to 10 closest protests
+
+      console.log('✅ Sorted protests by distance. Closest:', 
+        processedProtests[0]?.calculatedDistance?.toFixed(1) + ' km');
+    } else {
+      // If no coordinates, just limit the results
+      processedProtests = processedProtests.slice(0, 10);
+      console.log('ℹ️ No user coordinates provided, returning recent protests');
+    }
+
+    console.log('✅ Successfully fetched nearby protests for', userCountryCode + ':', processedProtests.length);
+    res.json(processedProtests);
   } catch (error) {
     console.error("Failed to fetch nearby protests:", error);
     res.status(500).json({ message: "Failed to fetch nearby protests" });
