@@ -6,8 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
-import { calculateDistance, formatDistance } from "@/lib/distance-utils";
-import { findItalianCity } from "@/lib/geocoding";
+import { calculateDistance } from "@/lib/distance-utils";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -67,24 +66,9 @@ export default function Home() {
       // Reset to automatic location detection
       setManualLocation(null);
       localStorage.removeItem('corteo_manual_location');
-      // Restore original coordinates
-      fetchUserRealLocation();
     } else {
       setManualLocation(location);
       localStorage.setItem('corteo_manual_location', location);
-      
-      // Clear cached real location to prevent conflicts
-      localStorage.removeItem('corteo_user_location_cache');
-      
-      // Update coordinates based on manual location
-      const [city] = location.split(', ');
-      const cityData = findItalianCity(city.toLowerCase());
-      if (cityData) {
-        setUserCoordinates({
-          latitude: cityData.lat,
-          longitude: cityData.lng
-        });
-      }
     }
   };
 
@@ -114,25 +98,12 @@ export default function Home() {
     const savedManualLocation = localStorage.getItem('corteo_manual_location');
     if (savedManualLocation) {
       setManualLocation(savedManualLocation);
-      
-      // Set coordinates based on manual location
-      const [city] = savedManualLocation.split(', ');
-      const cityData = findItalianCity(city.toLowerCase());
-      if (cityData) {
-        setUserCoordinates({
-          latitude: cityData.lat,
-          longitude: cityData.lng
-        });
-      }
     }
   }, []);
 
-  // Fetch user's real location on component mount (only if no manual location is set)
+  // Fetch user's real location on component mount
   useEffect(() => {
-    const savedManualLocation = localStorage.getItem('corteo_manual_location');
-    if (!savedManualLocation) {
-      fetchUserRealLocation();
-    }
+    fetchUserRealLocation();
   }, []);
 
   // Sort protests by distance from user location
@@ -222,25 +193,6 @@ export default function Home() {
       const diffInDays = Math.floor(diffInHours / 24);
       return `${diffInDays} days ago`;
     }
-  };
-
-  // Helper function to calculate protest distance
-  const getProtestDistance = (protest: any) => {
-    if (!userCoordinates) return null;
-
-    const aLat = parseFloat(protest.latitude);
-    const aLng = parseFloat(protest.longitude);
-
-    if (isNaN(aLat) || isNaN(aLng)) return null;
-
-    const distance = calculateDistance(
-      userCoordinates.latitude,
-      userCoordinates.longitude,
-      aLat,
-      aLng
-    );
-
-    return formatDistance(distance);
   };
 
   const renderHomeContent = () => (
@@ -346,14 +298,12 @@ export default function Home() {
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
               <Skeleton className="w-5/6 h-56 flex-shrink-0" />
             </>
-          ) : featuredProtests.length > 0 ? (
+          ) : (
             featuredProtests.map((protest, index) => (
               <div key={`featured-${protest.id}-${index}`} className="w-5/6 flex-shrink-0">
-                <ProtestCard protest={protest} variant="featured" distance={getProtestDistance(protest)} />
+                <ProtestCard protest={protest} variant="featured" />
               </div>
             ))
-          ) : (
-            <Skeleton className="w-5/6 h-56 flex-shrink-0" />
           )}
         </div>
       </section>
@@ -372,7 +322,7 @@ export default function Home() {
             </>
           ) : nearbyProtests.length > 0 ? (
             sortProtestsByDistance(nearbyProtests).slice(0, 10).map((protest, index) => (
-              <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} distance={getProtestDistance(protest)}/>
+              <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
             ))
           ) : (
             <div className="text-center py-8">
