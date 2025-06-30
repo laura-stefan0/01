@@ -246,7 +246,7 @@ export default function Home() {
 
     return (
       <div className="px-4 py-4 max-w-md mx-auto">
-        {/* Location Section */}
+        {/* Location Section with Notification Bell */}
         <section className="mb-6">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
@@ -271,16 +271,22 @@ export default function Home() {
               </LocationSelector>
             </div>
 
-            {/* Refresh location button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="ml-2"
-              onClick={fetchUserRealLocation}
-              disabled={isLoadingLocation}
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
-            </Button>
+            <div className="flex items-center gap-2">
+              {/* Refresh location button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={fetchUserRealLocation}
+                disabled={isLoadingLocation}
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+              </Button>
+              
+              {/* Notification bell */}
+              <Button variant="ghost" size="sm">
+                <Bell className="w-5 h-5 text-gray-600" />
+              </Button>
+            </div>
           </div>
         </section>
 
@@ -767,19 +773,16 @@ export default function Home() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen content-transparent">
-      {/* Header */}
-      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-dark-slate">{getHeaderContent()}</h1>
-            {activeTab === "home" && (
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5 text-gray-600" />
-              </Button>
-            )}
+      {/* Header - only show for non-home tabs */}
+      {activeTab !== "home" && (
+        <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
+          <div className="px-4 py-3">
+            <div className="flex items-center justify-between">
+              <h1 className="text-xl font-bold text-dark-slate">{getHeaderContent()}</h1>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 pb-20">
