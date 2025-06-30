@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
-import { findItalianCity } from "@/lib/geocoding";
+import { findCityCoordinates } from "@/lib/geocoding";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -76,15 +76,15 @@ export default function Home() {
       
       // Get coordinates for the manually selected location
       const [city] = location.split(', ');
-      const cityData = findItalianCity(city);
+      const cityData = findCityCoordinates(city, selectedCountry);
       
       if (cityData) {
         const coords = { latitude: cityData.lat, longitude: cityData.lng };
         setManualLocationCoordinates(coords);
         localStorage.setItem('corteo_manual_location_coords', JSON.stringify(coords));
-        console.log(`📍 Manual location coordinates for ${city}:`, coords);
+        console.log(`📍 Manual location coordinates for ${city} (${selectedCountry.toUpperCase()}):`, coords);
       } else {
-        console.warn(`❌ No coordinates found for ${city}`);
+        console.warn(`❌ No coordinates found for ${city} in ${selectedCountry.toUpperCase()}`);
         setManualLocationCoordinates(null);
         localStorage.removeItem('corteo_manual_location_coords');
       }
