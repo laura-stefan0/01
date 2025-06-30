@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
+import { getCachedUserLocation } from "@/lib/geolocation";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -30,6 +31,8 @@ export default function Home() {
   const [selectedCountry, setSelectedCountry] = useState<string>(() => {
     return localStorage.getItem('corteo_selected_country') || 'it';
   });
+  const [userRealLocation, setUserRealLocation] = useState<string | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [, setLocation] = useLocation();
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
@@ -52,6 +55,25 @@ export default function Home() {
     setSelectedCountry(newCountry);
     localStorage.setItem('corteo_selected_country', newCountry);
   };
+
+  // Get user's real location using geolocation API
+  const fetchUserRealLocation = async () => {
+    setIsLoadingLocation(true);
+    try {
+      const locationResult = await getCachedUserLocation();
+      setUserRealLocation(locationResult.formatted);
+    } catch (error) {
+      console.error('Failed to get user location:', error);
+      setUserRealLocation(null);
+    } finally {
+      setIsLoadingLocation(false);
+    }
+  };
+
+  // Fetch user's real location on component mount
+  useEffect(() => {
+    fetchUserRealLocation();
+  }, []);
 
   // Get location name from selected country in city, state format
   const getLocationName = () => {
@@ -577,28 +599,45 @@ export default function Home() {
 
   const getHeaderContent = () => {
     if (activeTab === "home") {
-      // Get user location from database or fallback based on country
-      const userLocation = user?.user_location || getLocationName();
+      // Use real user location if available, otherwise fallback
+      const displayLocation = userRealLocation || user?.user_location || getLocationName();
       // Parse location to get city and region/state
-      const [city, region] = userLocation.split(', ');
+      const [city, region] = displayLocation.split(', ');
       
       return (
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-gray-600" />
-            <span className="text-sm text-gray-600">Your location</span>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-600">Your location</span>
+            </div>
+            <button 
+              className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1"
+              onClick={() => {
+                // Navigate to Profile tab for location settings
+                document.querySelector('[data-country-selector]')?.scrollIntoView({ behavior: 'smooth' });
+                setActiveTab('profile');
+              }}
+            >
+              {isLoadingLocation ? (
+                <span className="text-gray-500">Getting location...</span>
+              ) : (
+                <span>{city}, {region}</span>
+              )}
+              <ChevronDown className="w-3 h-3" />
+            </button>
           </div>
-          <button 
-            className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1"
-            onClick={() => {
-              // Navigate to Profile tab for location settings
-              document.querySelector('[data-country-selector]')?.scrollIntoView({ behavior: 'smooth' });
-              setActiveTab('profile');
-            }}
+          
+          {/* Refresh location button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-2"
+            onClick={fetchUserRealLocation}
+            disabled={isLoadingLocation}
           >
-            <span>{city}, {region}</span>
-            <ChevronDown className="w-3 h-3" />
-          </button>
+            <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
       );
     }

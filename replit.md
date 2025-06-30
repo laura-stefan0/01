@@ -100,6 +100,9 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- June 29, 2025: Implemented comprehensive geolocation system using browser API and OpenStreetMap Nominatim reverse geocoding
+- June 29, 2025: Created type-safe geolocation utility with caching, error handling, and automatic location detection
+- June 29, 2025: Added real-time location display in two-row format with refresh button and loading states
 - June 29, 2025: Updated "For you" page header to show only location selector in format "📍 Your location {location} ⌄" with clickable dropdown that navigates to profile settings
 - June 29, 2025: Added user_location field to user schema to store city/state format locations like "Milan, IT" or "Los Angeles, CA"
 - June 27, 2025: Successfully completed migration from Replit Agent to standard Replit environment - all dependencies installed, application running properly, database connected to Supabase
