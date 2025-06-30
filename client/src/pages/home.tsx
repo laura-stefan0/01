@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
+import { findItalianCity } from "@/lib/geocoding";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -37,6 +38,7 @@ export default function Home() {
   const [manualLocation, setManualLocation] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [userCoordinates, setUserCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
+  const [manualLocationCoordinates, setManualLocationCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [, setLocation] = useLocation();
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
@@ -65,10 +67,27 @@ export default function Home() {
     if (location === "") {
       // Reset to automatic location detection
       setManualLocation(null);
+      setManualLocationCoordinates(null);
       localStorage.removeItem('corteo_manual_location');
+      localStorage.removeItem('corteo_manual_location_coords');
     } else {
       setManualLocation(location);
       localStorage.setItem('corteo_manual_location', location);
+      
+      // Get coordinates for the manually selected location
+      const [city] = location.split(', ');
+      const cityData = findItalianCity(city);
+      
+      if (cityData) {
+        const coords = { latitude: cityData.lat, longitude: cityData.lng };
+        setManualLocationCoordinates(coords);
+        localStorage.setItem('corteo_manual_location_coords', JSON.stringify(coords));
+        console.log(`📍 Manual location coordinates for ${city}:`, coords);
+      } else {
+        console.warn(`❌ No coordinates found for ${city}`);
+        setManualLocationCoordinates(null);
+        localStorage.removeItem('corteo_manual_location_coords');
+      }
     }
   };
 
@@ -99,6 +118,17 @@ export default function Home() {
     if (savedManualLocation) {
       setManualLocation(savedManualLocation);
     }
+
+    const savedManualCoords = localStorage.getItem('corteo_manual_location_coords');
+    if (savedManualCoords) {
+      try {
+        const coords = JSON.parse(savedManualCoords);
+        setManualLocationCoordinates(coords);
+      } catch (error) {
+        console.warn('Failed to parse saved manual location coordinates');
+        localStorage.removeItem('corteo_manual_location_coords');
+      }
+    }
   }, []);
 
   // Fetch user's real location on component mount
@@ -108,8 +138,11 @@ export default function Home() {
 
   // Sort protests by distance from user location
   const sortProtestsByDistance = (protests: any[]) => {
-    // If manual location is selected, don't sort by distance since we don't have coordinates
-    if (manualLocation || !userCoordinates || !protests.length) return protests;
+    if (!protests.length) return protests;
+    
+    // Use manual location coordinates if available, otherwise use real user coordinates
+    const referenceCoords = manualLocationCoordinates || userCoordinates;
+    if (!referenceCoords) return protests;
 
     return [...protests].sort((a, b) => {
       // Check if protests have valid coordinates
@@ -122,15 +155,15 @@ export default function Home() {
       if (isNaN(bLat) || isNaN(bLng)) return -1;
 
       const distanceA = calculateDistance(
-        userCoordinates.latitude,
-        userCoordinates.longitude,
+        referenceCoords.latitude,
+        referenceCoords.longitude,
         aLat,
         aLng
       );
 
       const distanceB = calculateDistance(
-        userCoordinates.latitude,
-        userCoordinates.longitude,
+        referenceCoords.latitude,
+        referenceCoords.longitude,
         bLat,
         bLng
       );
