@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
-import { calculateDistance } from "@/lib/distance-utils";
+import { calculateDistance, formatDistance } from "@/lib/distance-utils";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -211,7 +211,7 @@ export default function Home() {
       aLng
     );
 
-    return distance;
+    return formatDistance(distance);
   };
 
   const renderHomeContent = () => (
