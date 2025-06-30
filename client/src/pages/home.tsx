@@ -721,6 +721,7 @@ export default function Home() {
               currentLocation={displayLocation}
               selectedCountry={selectedCountry}
               onLocationSelect={handleLocationSelect}
+              onCountryChange={handleCountryChange}
             >
               <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
                 {isLoadingLocation ? (

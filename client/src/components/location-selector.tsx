@@ -9,8 +9,15 @@ interface LocationSelectorProps {
   currentLocation: string;
   selectedCountry: string;
   onLocationSelect: (location: string) => void;
+  onCountryChange: (country: string) => void;
   children: React.ReactNode;
 }
+
+// Available countries
+const countryOptions = [
+  { code: 'it', name: 'Italy', flag: '🇮🇹' },
+  { code: 'us', name: 'United States', flag: '🇺🇸' }
+];
 
 // Regional data for different countries
 const locationData = {
@@ -54,20 +61,26 @@ const locationData = {
   }
 };
 
-export function LocationSelector({ currentLocation, selectedCountry, onLocationSelect, children }: LocationSelectorProps) {
+export function LocationSelector({ currentLocation, selectedCountry, onLocationSelect, onCountryChange, children }: LocationSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [tempSelectedCountry, setTempSelectedCountry] = useState(selectedCountry);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
-  const countryData = locationData[selectedCountry as keyof typeof locationData];
+  const countryData = locationData[tempSelectedCountry as keyof typeof locationData];
   const regions = countryData ? Object.keys(countryData.regions) : [];
-  const cities = selectedRegion && countryData ? countryData.regions[selectedRegion] || [] : [];
+  const cities = selectedRegion && countryData ? (countryData.regions as any)[selectedRegion] || [] : [];
 
   const handleSubmit = () => {
     if (selectedCity && selectedRegion) {
+      // Apply country change if different
+      if (tempSelectedCountry !== selectedCountry) {
+        onCountryChange(tempSelectedCountry);
+      }
+      
       let formattedLocation: string;
       
-      if (selectedCountry === 'it') {
+      if (tempSelectedCountry === 'it') {
         formattedLocation = `${selectedCity}, ${selectedRegion}`;
       } else {
         // For US, use state abbreviations
@@ -94,6 +107,12 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
     setSelectedCity("");
   };
 
+  const handleCountryChange = (country: string) => {
+    setTempSelectedCountry(country);
+    setSelectedRegion(""); // Reset region when country changes
+    setSelectedCity(""); // Reset city when country changes
+  };
+
   const handleRegionChange = (region: string) => {
     setSelectedRegion(region);
     setSelectedCity(""); // Reset city when region changes
@@ -117,9 +136,31 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
             Current: {currentLocation}
           </div>
           
+          {/* Country Selection */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Country</label>
+            <Select value={tempSelectedCountry} onValueChange={handleCountryChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a country" />
+              </SelectTrigger>
+              <SelectContent>
+                {countryOptions.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    <div className="flex items-center gap-2">
+                      <span>{country.flag}</span>
+                      <span>{country.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
           {/* Region Selection */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Region/State</label>
+            <label className="text-sm font-medium">
+              {tempSelectedCountry === 'it' ? 'Region' : 'State'}
+            </label>
             <Select value={selectedRegion} onValueChange={handleRegionChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a region" />
@@ -143,7 +184,7 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
                   <SelectValue placeholder="Select a city" />
                 </SelectTrigger>
                 <SelectContent>
-                  {cities.map((city) => (
+                  {cities.map((city: string) => (
                     <SelectItem key={city} value={city}>
                       {city}
                     </SelectItem>
