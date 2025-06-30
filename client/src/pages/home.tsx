@@ -43,7 +43,7 @@ export default function Home() {
 
   // Determine which coordinates to use for distance calculation
   const referenceCoordinates = manualLocationCoordinates || userCoordinates;
-  
+
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
   const { data: nearbyProtests = [], isLoading: nearbyLoading } = useNearbyProtests(
     selectedCountry, 
@@ -80,11 +80,11 @@ export default function Home() {
     } else {
       setManualLocation(location);
       localStorage.setItem('corteo_manual_location', location);
-      
+
       // Get coordinates for the manually selected location
       const [city] = location.split(', ');
       const cityData = findCityCoordinates(city, selectedCountry);
-      
+
       if (cityData) {
         const coords = { latitude: cityData.lat, longitude: cityData.lng };
         setManualLocationCoordinates(coords);
@@ -148,7 +148,7 @@ export default function Home() {
   // Sort protests by distance from user location
   const sortProtestsByDistance = (protests: any[]) => {
     if (!protests.length) return protests;
-    
+
     // Use manual location coordinates if available, otherwise use real user coordinates
     const referenceCoords = manualLocationCoordinates || userCoordinates;
     if (!referenceCoords) return protests;
@@ -763,9 +763,9 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen relative flex flex-col">
+    <div className="max-w-md mx-auto min-h-screen content-transparent">
       {/* Header */}
-      <header className="bg-white sticky top-0 z-40 border-b border-gray-100 flex-shrink-0">
+      <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <div className="flex-1">

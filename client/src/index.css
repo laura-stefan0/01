@@ -103,6 +103,11 @@
   }
 
   #root {
+    min-height: 100vh;
+  }
+
+  /* Background gradient container */
+  .app-background {
     background: linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0)) fixed;
     min-height: 100vh;
   }
@@ -155,13 +160,8 @@
     border: 1px solid hsl(220, 13%, 91%) !important;
   }
 
-  /* Ensure main containers don't override gradient */
-  .max-w-md {
-    background: transparent !important;
-  }
-
-  /* Remove white backgrounds that interfere */
-  .bg-white {
+  /* Make main content containers transparent */
+  .content-transparent {
     background: transparent !important;
   }
 

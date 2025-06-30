@@ -21,28 +21,32 @@ function AuthenticatedRouter() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center animate-in fade-in duration-300">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+      <div className="app-background">
+        <div className="min-h-screen flex items-center justify-center animate-in fade-in duration-300">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div key={location} className="animate-in fade-in duration-300">
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/protest/:id" component={ProtestDetail} />
-        <Route path="/filter" component={Filter} />
+    <div className="app-background">
+      <div key={location} className="animate-in fade-in duration-300">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/protest/:id" component={ProtestDetail} />
+          <Route path="/filter" component={Filter} />
 
-        <Route path="/know-your-rights" component={KnowYourRights} />
-        <Route path="/safety-tips" component={SafetyTips} />
-        <Route path="/create-protest" component={CreateProtest} />
-        <Route path="/transparency" component={Transparency} />
-        <Route component={NotFound} />
-      </Switch>
+          <Route path="/know-your-rights" component={KnowYourRights} />
+          <Route path="/safety-tips" component={SafetyTips} />
+          <Route path="/create-protest" component={CreateProtest} />
+          <Route path="/transparency" component={Transparency} />
+          <Route component={NotFound} />
+        </Switch>
+      </div>
     </div>
   );
 }
@@ -51,13 +55,15 @@ function AppRouter() {
   const [location] = useLocation();
 
   return (
-    <div key={location} className="animate-in fade-in duration-300">
-      <Switch>
-        <Route path="/sign-in" component={SignIn} />
-        <Route path="/*">
-          <AuthenticatedRouter />
-        </Route>
-      </Switch>
+    <div className="app-background">
+      <div key={location} className="animate-in fade-in duration-300">
+        <Switch>
+          <Route path="/sign-in" component={SignIn} />
+          <Route path="/*">
+            <AuthenticatedRouter />
+          </Route>
+        </Switch>
+      </div>
     </div>
   );
 }
