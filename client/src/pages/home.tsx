@@ -73,6 +73,9 @@ export default function Home() {
       setManualLocation(location);
       localStorage.setItem('corteo_manual_location', location);
       
+      // Clear cached real location to prevent conflicts
+      localStorage.removeItem('corteo_user_location_cache');
+      
       // Update coordinates based on manual location
       const [city] = location.split(', ');
       const cityData = findItalianCity(city.toLowerCase());
@@ -124,9 +127,12 @@ export default function Home() {
     }
   }, []);
 
-  // Fetch user's real location on component mount
+  // Fetch user's real location on component mount (only if no manual location is set)
   useEffect(() => {
-    fetchUserRealLocation();
+    const savedManualLocation = localStorage.getItem('corteo_manual_location');
+    if (!savedManualLocation) {
+      fetchUserRealLocation();
+    }
   }, []);
 
   // Sort protests by distance from user location
