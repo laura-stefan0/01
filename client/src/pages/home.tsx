@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
+import { calculateDistance } from "@/lib/distance-utils";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -35,6 +36,7 @@ export default function Home() {
   const [userRealLocation, setUserRealLocation] = useState<string | null>(null);
   const [manualLocation, setManualLocation] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [userCoordinates, setUserCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [, setLocation] = useLocation();
 
   const { data: featuredProtests = [], isLoading: featuredLoading } = useFeaturedProtests(selectedCountry);
@@ -76,9 +78,11 @@ export default function Home() {
     try {
       const locationResult = await getCachedUserLocation();
       setUserRealLocation(locationResult.formatted);
+      setUserCoordinates(locationResult.coordinates);
     } catch (error) {
       console.error('Failed to get user location:', error);
       setUserRealLocation(null);
+      setUserCoordinates(null);
     } finally {
       setIsLoadingLocation(false);
     }
@@ -101,6 +105,38 @@ export default function Home() {
   useEffect(() => {
     fetchUserRealLocation();
   }, []);
+
+  // Sort protests by distance from user location
+  const sortProtestsByDistance = (protests: any[]) => {
+    if (!userCoordinates || !protests.length) return protests;
+
+    return [...protests].sort((a, b) => {
+      // Check if protests have valid coordinates
+      const aLat = parseFloat(a.latitude);
+      const aLng = parseFloat(a.longitude);
+      const bLat = parseFloat(b.latitude);
+      const bLng = parseFloat(b.longitude);
+
+      if (isNaN(aLat) || isNaN(aLng)) return 1; // Move invalid coordinates to end
+      if (isNaN(bLat) || isNaN(bLng)) return -1;
+
+      const distanceA = calculateDistance(
+        userCoordinates.latitude,
+        userCoordinates.longitude,
+        aLat,
+        aLng
+      );
+
+      const distanceB = calculateDistance(
+        userCoordinates.latitude,
+        userCoordinates.longitude,
+        bLat,
+        bLng
+      );
+
+      return distanceA - distanceB; // Sort by distance, closest first
+    });
+  };
 
   // Get location name from selected country in city, state format
   const getLocationName = () => {
@@ -285,7 +321,7 @@ export default function Home() {
               <Skeleton className="h-20 w-full" />
             </>
           ) : nearbyProtests.length > 0 ? (
-            nearbyProtests.slice(0, 10).map((protest, index) => (
+            sortProtestsByDistance(nearbyProtests).slice(0, 10).map((protest, index) => (
               <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
             ))
           ) : (
