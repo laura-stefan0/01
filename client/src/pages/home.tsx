@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance, formatDistance } from "@/lib/distance-utils";
+import { findItalianCity } from "@/lib/geocoding";
 import { ProtestCard } from "@/components/protest-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { MapView } from "@/components/map-view";
@@ -66,9 +67,21 @@ export default function Home() {
       // Reset to automatic location detection
       setManualLocation(null);
       localStorage.removeItem('corteo_manual_location');
+      // Restore original coordinates
+      fetchUserRealLocation();
     } else {
       setManualLocation(location);
       localStorage.setItem('corteo_manual_location', location);
+      
+      // Update coordinates based on manual location
+      const [city] = location.split(', ');
+      const cityData = findItalianCity(city.toLowerCase());
+      if (cityData) {
+        setUserCoordinates({
+          latitude: cityData.lat,
+          longitude: cityData.lng
+        });
+      }
     }
   };
 
@@ -98,6 +111,16 @@ export default function Home() {
     const savedManualLocation = localStorage.getItem('corteo_manual_location');
     if (savedManualLocation) {
       setManualLocation(savedManualLocation);
+      
+      // Set coordinates based on manual location
+      const [city] = savedManualLocation.split(', ');
+      const cityData = findItalianCity(city.toLowerCase());
+      if (cityData) {
+        setUserCoordinates({
+          latitude: cityData.lat,
+          longitude: cityData.lng
+        });
+      }
     }
   }, []);
 
