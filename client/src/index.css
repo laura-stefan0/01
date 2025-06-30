@@ -98,14 +98,12 @@
   html, body {
     @apply font-sans antialiased text-foreground;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0)) fixed;
-    min-height: 100vh;
     margin: 0;
     padding: 0;
   }
 
   #root {
-    background: transparent;
+    background: linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0)) fixed;
     min-height: 100vh;
   }
 }
@@ -155,6 +153,16 @@
   .card {
     box-shadow: none !important;
     border: 1px solid hsl(220, 13%, 91%) !important;
+  }
+
+  /* Ensure main containers don't override gradient */
+  .max-w-md {
+    background: transparent !important;
+  }
+
+  /* Remove white backgrounds that interfere */
+  .bg-white {
+    background: transparent !important;
   }
 
   /* Line clamp utilities */
