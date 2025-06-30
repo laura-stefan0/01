@@ -108,7 +108,8 @@ export default function Home() {
 
   // Sort protests by distance from user location
   const sortProtestsByDistance = (protests: any[]) => {
-    if (!userCoordinates || !protests.length) return protests;
+    // If manual location is selected, don't sort by distance since we don't have coordinates
+    if (manualLocation || !userCoordinates || !protests.length) return protests;
 
     return [...protests].sort((a, b) => {
       // Check if protests have valid coordinates
