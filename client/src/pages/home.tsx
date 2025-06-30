@@ -53,13 +53,13 @@ export default function Home() {
     localStorage.setItem('corteo_selected_country', newCountry);
   };
 
-  // Get location name from selected country
+  // Get location name from selected country in city, state format
   const getLocationName = () => {
     switch(selectedCountry) {
-      case 'it': return 'Italy';
-      case 'us': return 'United States';
-      case 'uk': return 'United Kingdom';
-      default: return selectedCountry.toUpperCase();
+      case 'it': return 'Milan, IT';
+      case 'us': return 'Los Angeles, CA';
+      case 'uk': return 'London, UK';
+      default: return 'Unknown Location';
     }
   };
 
@@ -577,30 +577,24 @@ export default function Home() {
 
   const getHeaderContent = () => {
     if (activeTab === "home") {
-      const username = isAuthenticated && user?.name ? user.name.split(' ')[0] : "Guest";
-      const locationName = getLocationName();
+      // Get user location from database or fallback based on country
+      const userLocation = user?.user_location || getLocationName();
       
       return (
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1">
-            <span>Hi {username}</span>
-            <span>👋</span>
-          </div>
-          <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
-            <span>Here's what's happening near</span>
-            <MapPin className="w-3 h-3" />
-            <button 
-              className="flex items-center gap-1 hover:text-gray-800 transition-colors"
-              onClick={() => {
-                // Find country selector in Profile tab and focus it
-                document.querySelector('[data-country-selector]')?.scrollIntoView({ behavior: 'smooth' });
-                setActiveTab('profile');
-              }}
-            >
-              <span>{locationName}</span>
-              <ChevronDown className="w-3 h-3" />
-            </button>
-          </div>
+        <div className="flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-gray-600" />
+          <span className="text-sm text-gray-600">Your location</span>
+          <button 
+            className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium"
+            onClick={() => {
+              // Navigate to Profile tab for location settings
+              document.querySelector('[data-country-selector]')?.scrollIntoView({ behavior: 'smooth' });
+              setActiveTab('profile');
+            }}
+          >
+            <span>{userLocation}</span>
+            <ChevronDown className="w-3 h-3" />
+          </button>
         </div>
       );
     }

@@ -5,6 +5,7 @@ interface User {
   username: string;
   email: string;
   name: string;
+  user_location?: string;
   notifications: boolean;
   location: boolean;
   emails: boolean;
