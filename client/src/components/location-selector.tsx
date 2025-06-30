@@ -87,6 +87,13 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
     }
   };
 
+  const handleUseAutoLocation = () => {
+    onLocationSelect("");
+    setIsOpen(false);
+    setSelectedRegion("");
+    setSelectedCity("");
+  };
+
   const handleRegionChange = (region: string) => {
     setSelectedRegion(region);
     setSelectedCity(""); // Reset city when region changes
@@ -150,10 +157,7 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
           <div className="pt-2 border-t">
             <Button 
               variant="ghost" 
-              onClick={() => {
-                onLocationSelect("");
-                setIsOpen(false);
-              }}
+              onClick={handleUseAutoLocation}
               className="w-full text-sm text-gray-600"
             >
               Use automatic location detection

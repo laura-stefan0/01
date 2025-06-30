@@ -58,6 +58,18 @@ export default function Home() {
     localStorage.setItem('corteo_selected_country', newCountry);
   };
 
+  // Handle manual location selection
+  const handleLocationSelect = (location: string) => {
+    if (location === "") {
+      // Reset to automatic location detection
+      setManualLocation(null);
+      localStorage.removeItem('corteo_manual_location');
+    } else {
+      setManualLocation(location);
+      localStorage.setItem('corteo_manual_location', location);
+    }
+  };
+
   // Get user's real location using geolocation API
   const fetchUserRealLocation = async () => {
     setIsLoadingLocation(true);
@@ -626,21 +638,20 @@ export default function Home() {
               <MapPin className="w-4 h-4 text-gray-600" />
               <span className="text-sm text-gray-600">Your location</span>
             </div>
-            <button 
-              className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1"
-              onClick={() => {
-                // Navigate to Profile tab for location settings
-                document.querySelector('[data-country-selector]')?.scrollIntoView({ behavior: 'smooth' });
-                setActiveTab('profile');
-              }}
+            <LocationSelector
+              currentLocation={displayLocation}
+              selectedCountry={selectedCountry}
+              onLocationSelect={handleLocationSelect}
             >
-              {isLoadingLocation ? (
-                <span className="text-gray-500">Getting location...</span>
-              ) : (
-                <span>{city}</span>
-              )}
-              <ChevronDown className="w-3 h-3" />
-            </button>
+              <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
+                {isLoadingLocation ? (
+                  <span className="text-gray-500">Getting location...</span>
+                ) : (
+                  <span>{city}</span>
+                )}
+                <ChevronDown className="w-3 h-3" />
+              </button>
+            </LocationSelector>
           </div>
 
           {/* Refresh location button */}
