@@ -21,7 +21,7 @@ export function ThemeSettingsContent() {
   const { toast } = useToast();
   const { theme, background, setTheme: setGlobalTheme, setBackground: setGlobalBackground } = useTheme();
   const [settings, setSettings] = useState<ThemeSettings>({
-    theme: 'system',
+    theme: 'light',
     background: 'white'
   });
 

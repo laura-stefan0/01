@@ -12,13 +12,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { data: user } = useUser();
-  const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
+  const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('light');
   const [background, setBackground] = useState<string>('white');
 
   // Load theme preferences from user data
   useEffect(() => {
     if (user) {
-      const userTheme = (user.theme as 'system' | 'light' | 'dark') || 'system';
+      const userTheme = (user.theme as 'system' | 'light' | 'dark') || 'light';
       const userBackground = user.background || 'white';
       
       setTheme(userTheme);
