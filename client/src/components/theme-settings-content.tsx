@@ -8,7 +8,7 @@ import { useTheme } from "@/context/theme-context";
 
 interface ThemeSettings {
   theme: 'system' | 'light' | 'dark';
-  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract';
+  background: string;
 }
 
 /**
@@ -36,7 +36,7 @@ export function ThemeSettingsContent() {
     await saveToDatabase({ theme: newTheme, background: settings.background });
   };
 
-  const handleBackgroundChange = async (newBackground: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') => {
+  const handleBackgroundChange = async (newBackground: string) => {
     setSettings(prev => ({ ...prev, background: newBackground }));
     setGlobalBackground(newBackground);
     await saveToDatabase({ theme: settings.theme, background: newBackground });
@@ -93,11 +93,43 @@ export function ThemeSettingsContent() {
     { value: 'gradient-forest', label: 'Forest', preview: 'bg-gradient-to-r from-green-600 to-blue-600' }
   ];
 
-  const imageOptions = [
-    { value: 'image-cityscape', label: 'Cityscape', preview: 'bg-gray-300' },
-    { value: 'image-nature', label: 'Nature', preview: 'bg-green-300' },
-    { value: 'image-abstract', label: 'Abstract', preview: 'bg-gradient-to-r from-red-200 to-blue-200' }
-  ];
+  // State for local background images
+  const [localImages, setLocalImages] = useState<string[]>([]);
+
+  // Load local images from the backgrounds folder
+  useEffect(() => {
+    const loadLocalImages = async () => {
+      try {
+        // This will be populated when images are added to the public/backgrounds folder
+        // For now, we'll check for common image extensions
+        const commonImages = ['background1.jpg', 'background2.png', 'background3.jpeg'];
+        const availableImages: string[] = [];
+        
+        for (const imageName of commonImages) {
+          try {
+            const response = await fetch(`/backgrounds/${imageName}`, { method: 'HEAD' });
+            if (response.ok) {
+              availableImages.push(imageName);
+            }
+          } catch (error) {
+            // Image doesn't exist, skip
+          }
+        }
+        
+        setLocalImages(availableImages);
+      } catch (error) {
+        console.error('Error loading local images:', error);
+      }
+    };
+
+    loadLocalImages();
+  }, []);
+
+  const imageOptions = localImages.map(imageName => ({
+    value: `custom-image-${imageName}`,
+    label: imageName.replace(/\.[^/.]+$/, ""), // Remove file extension
+    preview: 'bg-gray-300'
+  }));
 
   const allBackgroundOptions = [...solidColorOptions, ...gradientOptions, ...imageOptions];
 
@@ -210,29 +242,43 @@ export function ThemeSettingsContent() {
           <CardTitle className="text-lg">Background Images</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {imageOptions.map((option) => {
-            const isSelected = settings.background === option.value;
+          {imageOptions.length > 0 ? (
+            imageOptions.map((option) => {
+              const isSelected = settings.background === option.value;
 
-            return (
-              <div
-                key={option.value}
-                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                }`}
-                onClick={() => handleBackgroundChange(option.value as any)}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`} />
-                  <div>
-                    <p className="font-medium">{option.label}</p>
+              return (
+                <div
+                  key={option.value}
+                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
+                      : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
+                  }`}
+                  onClick={() => handleBackgroundChange(option.value)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-6 h-6 rounded-full border-2 border-gray-300 bg-cover bg-center"
+                      style={{ 
+                        backgroundImage: `url('/backgrounds/${option.value.replace('custom-image-', '')}')` 
+                      }}
+                    />
+                    <div>
+                      <p className="font-medium">{option.label}</p>
+                    </div>
                   </div>
+                  {isSelected && <Check className="h-5 w-5 text-blue-500" />}
                 </div>
-                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <p>No background images available</p>
+              <p className="text-sm mt-2">
+                Add images to the <code className="bg-gray-100 px-2 py-1 rounded">client/public/backgrounds</code> folder
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

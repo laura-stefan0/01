@@ -3,9 +3,9 @@ import { useUser } from '@/hooks/use-user';
 
 interface ThemeContextType {
   theme: 'system' | 'light' | 'dark';
-  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract';
+  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | string;
   setTheme: (theme: 'system' | 'light' | 'dark') => void;
-  setBackground: (background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') => void;
+  setBackground: (background: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -50,10 +50,25 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const body = document.body;
     
     // Remove existing background classes
-    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-image-cityscape', 'bg-image-nature', 'bg-image-abstract');
+    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest');
     
-    // Add current background class
-    body.classList.add(`bg-${background}`);
+    // Remove any existing custom background styles
+    body.style.removeProperty('background-image');
+    body.style.removeProperty('background-size');
+    body.style.removeProperty('background-position');
+    body.style.removeProperty('background-attachment');
+    
+    // Handle custom image backgrounds
+    if (background.startsWith('custom-image-')) {
+      const imageName = background.replace('custom-image-', '');
+      body.style.backgroundImage = `url('/backgrounds/${imageName}')`;
+      body.style.backgroundSize = 'cover';
+      body.style.backgroundPosition = 'center';
+      body.style.backgroundAttachment = 'fixed';
+    } else {
+      // Add predefined background class
+      body.classList.add(`bg-${background}`);
+    }
   }, [background]);
 
   return (
