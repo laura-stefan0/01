@@ -845,5 +845,10 @@ async function main() {
   console.log(`⏭️ Events skipped (duplicates): ${totalEvents - savedEvents}`);
 }
 
-// Run the scraper
-main().catch(console.error);
+// Run the scraper if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch(console.error);
+}
+
+// Export for use as module
+export { main };

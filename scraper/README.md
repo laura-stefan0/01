@@ -96,13 +96,22 @@ Before running the scraper, ensure you have:
 
 ## Usage
 
-### Enhanced Scraper (Recommended)
+### Enhanced Scraper
 
-Run the enhanced scraper with all new features:
+Run the enhanced scraper with all features:
 
 ```bash
 cd scraper
 node enhanced-italian-scraper.js
+```
+
+### TypeScript Runner
+
+Run via the TypeScript runner:
+
+```bash
+cd scraper
+npx tsx run-scraper.ts
 ```
 
 ### Test Functionality
@@ -114,21 +123,12 @@ cd scraper
 node test-enhanced-scraper.js
 ```
 
-### Original Basic Scraper
-
-Run the basic scraper:
-
-```bash
-cd scraper
-node italian-protest-scraper.js
-```
-
 ### As a Module
 
 You can also import and use the scraper in other Node.js applications:
 
 ```javascript
-import { runScraper } from './italian-protest-scraper.js';
+import { main as runScraper } from './enhanced-italian-scraper.js';
 
 // Run the scraper
 await runScraper();
