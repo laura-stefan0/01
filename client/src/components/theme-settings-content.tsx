@@ -100,8 +100,9 @@ export function ThemeSettingsContent() {
   useEffect(() => {
     const loadLocalImages = async () => {
       try {
-        // Check for available background images (SVG format for better quality)
-        const commonImages = ['background1.svg', 'background3.svg'];
+        // This will be populated when images are added to the public/backgrounds folder
+        // For now, we'll check for common image extensions
+        const commonImages = ['background1.jpg', 'background2.png', 'background3.jpeg'];
         const availableImages: string[] = [];
         
         for (const imageName of commonImages) {
@@ -111,7 +112,7 @@ export function ThemeSettingsContent() {
               availableImages.push(imageName);
             }
           } catch (error) {
-            console.log(`Background image ${imageName} not available`);
+            // Image doesn't exist, skip
           }
         }
         
