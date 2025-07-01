@@ -1,0 +1,33 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import ThemeSettings from "@/pages/theme-settings";
+
+/**
+ * Profile Theme Settings Subpage - App theme and appearance customization
+ * This is a nested route under /profile/settings/theme that handles theme configuration
+ */
+export default function ProfileThemeSettingsPage() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
+      {/* Header with back button */}
+      <div className="flex items-center gap-3 mb-6">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate('/profile/settings')}
+          className="p-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+        <h1 className="text-xl font-semibold text-dark-slate">App Theme</h1>
+      </div>
+
+      {/* Use the existing ThemeSettings component */}
+      <ThemeSettings />
+    </div>
+  );
+}

@@ -14,6 +14,7 @@ import ProfilePage from "./pages/profile";
 // Profile nested page imports
 import ProfileSettingsPage from "./pages/profile/settings";
 import ProfileMorePage from "./pages/profile/more";
+import ProfileThemeSettingsPage from "./pages/profile/settings/theme";
 
 // Other pages
 import SignIn from "./pages/sign-in";
@@ -42,6 +43,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const hideNavbarRoutes = [
     '/sign-in',
     '/profile/settings',
+    '/profile/settings/theme',
     '/profile/more',
     '/theme-settings',
     '/create-protest',
@@ -102,6 +104,7 @@ function AuthenticatedRouter() {
         {/* Profile with nested routes */}
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/settings" element={<ProfileSettingsPage />} />
+        <Route path="/profile/settings/theme" element={<ProfileThemeSettingsPage />} />
         <Route path="/profile/more" element={<ProfileMorePage />} />
 
         {/* Other pages */}

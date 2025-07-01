@@ -65,7 +65,7 @@ export default function ProfileSettingsPage() {
             </div>
             <div 
               className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
-              onClick={() => navigate('/theme-settings')}
+              onClick={() => navigate('/profile/settings/theme')}
             >
               <div className="flex items-center">
                 <div className="w-5 h-5 mr-3 text-gray-400">🎨</div>
