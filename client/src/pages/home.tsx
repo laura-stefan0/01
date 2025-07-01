@@ -92,9 +92,14 @@ export default function HomePage() {
   };
 
   // Get user's real location using geolocation API
-  const fetchUserRealLocation = async () => {
+  const fetchUserRealLocation = async (forceRefresh = false) => {
     setIsLoadingLocation(true);
     try {
+      // Clear cache if force refresh is requested
+      if (forceRefresh) {
+        localStorage.removeItem('corteo_cached_location');
+        localStorage.removeItem('corteo_location_timestamp');
+      }
       const locationResult = await getCachedUserLocation();
       setUserRealLocation(locationResult.formatted);
       setUserCoordinates(locationResult.coordinates);
@@ -254,7 +259,10 @@ export default function HomePage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={fetchUserRealLocation}
+              onClick={(e) => {
+                e.preventDefault();
+                fetchUserRealLocation(true);
+              }}
               disabled={isLoadingLocation}
             >
               <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
@@ -264,7 +272,7 @@ export default function HomePage() {
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/notifications')}
             >
               <Bell className="w-5 h-5 text-gray-600" />
             </Button>

@@ -25,6 +25,7 @@ import ThemeSettings from "@/pages/theme-settings";
 import KnowYourRights from "@/pages/know-your-rights";
 import SafetyTips from "@/pages/safety-tips";
 import Transparency from "@/pages/transparency";
+import NotificationsPage from "@/pages/notifications";
 import NotFound from "./pages/not-found";
 
 // Context and components
@@ -50,7 +51,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     '/know-your-rights',
     '/safety-tips',
     '/transparency',
-    '/filter'
+    '/filter',
+    '/notifications'
   ];
 
   // Check if current route starts with any pattern that should hide navbar
@@ -115,6 +117,7 @@ function AuthenticatedRouter() {
         <Route path="/safety-tips" element={<SafetyTips />} />
         <Route path="/create-protest" element={<CreateProtest />} />
         <Route path="/transparency" element={<Transparency />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         
         {/* 404 fallback */}
         <Route path="*" element={<NotFound />} />
