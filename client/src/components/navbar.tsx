@@ -52,7 +52,7 @@ export function Navbar() {
                 `flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
                   isActive
                     ? "text-[#E11D48]" // Active color (#E11D48)
-                    : "text-[#94A3B8] hover:text-[#64748B]" // Inactive (#94A3B8) and hover (#64748B)
+                    : "text-[#94A3B8]" // Inactive (#94A3B8)
                 }`
               }
             >

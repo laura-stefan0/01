@@ -153,7 +153,7 @@ export function ThemeSettingsContent() {
                 className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
                   isSelected 
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
+                    : 'border-gray-200 dark:border-gray-700'
                 }`}
                 onClick={() => handleThemeChange(option.value as 'system' | 'light' | 'dark')}
               >

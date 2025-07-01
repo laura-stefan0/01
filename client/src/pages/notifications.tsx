@@ -123,7 +123,7 @@ export default function NotificationsPage() {
             const IconComponent = notification.icon;
             return (
               <div key={notification.id}>
-                <Card className={`${notification.read ? 'opacity-60' : ''} hover:bg-gray-50 transition-colors cursor-pointer`}>
+                <Card className={`${notification.read ? 'opacity-60' : ''} cursor-pointer`}>
                   <CardContent className="p-4">
                     <div className="flex gap-3">
                       <div className={`mt-1 ${notification.iconColor}`}>

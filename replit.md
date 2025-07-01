@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 1, 2025: Removed all hover effects throughout the application - eliminated hover colors from Resources page cards, Profile menus, navigation items, notifications, theme settings, and other interface elements for consistent clean appearance
 - July 1, 2025: Removed white hover effects from Profile page menu options - Settings, More, and App Theme menu items no longer show background color on hover
 - July 1, 2025: Set default theme to light mode instead of system - app now loads with light theme by default for new users and initial loading
 - July 1, 2025: Added new vertical "Warm" gradient background option (#f0edeb to #f7f6f5) to theme settings - users can now select from 4 gradient backgrounds (Sunset, Ocean, Forest, Warm)

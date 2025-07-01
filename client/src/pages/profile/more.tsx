@@ -29,7 +29,7 @@ export default function ProfileMorePage() {
       <Card>
         <CardContent className="p-0 divide-y divide-gray-100">
           <div 
-            className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50" 
+            className="p-4 flex items-center justify-between cursor-pointer" 
             onClick={() => navigate("/transparency")}
           >
             <span className="text-dark-slate">Transparency</span>

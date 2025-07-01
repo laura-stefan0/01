@@ -34,7 +34,7 @@ export default function ResourcesPage() {
         {protestResources.map((resource, index) => (
           <Card 
             key={index} 
-            className="cursor-pointer hover:bg-muted transition-colors"
+            className="cursor-pointer"
             onClick={() => {
               console.log('Navigating to:', resource.link);
               if (resource.link !== "#") {
