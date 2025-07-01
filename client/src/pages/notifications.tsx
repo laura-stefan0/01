@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 
 export default function NotificationsPage() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
 
   // Mock notification data - in real app this would come from API
   const notifications = [
