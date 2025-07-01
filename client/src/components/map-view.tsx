@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/co
 import { ProtestCard } from "@/components/protest-card";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import type { Protest } from "@shared/schema";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -98,7 +98,7 @@ export function MapView() {
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
 
   const filters = [
     { id: "all", label: "All" },
@@ -320,7 +320,7 @@ export function MapView() {
   return (
     <div className="relative h-full">
       {/* Map Container - Full Height */}
-      <div className="h-[calc(100vh-140px)] relative">
+      <div className="h-[calc(100vh-64px)] relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full bg-gray-50">
             <div className="text-center">
