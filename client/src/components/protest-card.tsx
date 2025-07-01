@@ -114,4 +114,3 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     </Card>
   );
 }
-```
