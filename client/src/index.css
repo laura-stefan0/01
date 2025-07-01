@@ -120,6 +120,32 @@ body[style*="background-image"] .app-background {
   background: inherit !important;
 }
 
+/* Dark theme background overrides */
+.dark body.bg-white,
+.dark body.bg-pink,
+.dark body.bg-green,
+.dark body.bg-blue,
+.dark body.bg-purple,
+.dark body.bg-orange,
+.dark body.bg-gradient-sunset,
+.dark body.bg-gradient-ocean,
+.dark body.bg-gradient-forest {
+  background-color: #121212 !important;
+  background-image: none !important;
+}
+
+.dark body.bg-white .app-background,
+.dark body.bg-pink .app-background,
+.dark body.bg-green .app-background,
+.dark body.bg-blue .app-background,
+.dark body.bg-purple .app-background,
+.dark body.bg-orange .app-background,
+.dark body.bg-gradient-sunset .app-background,
+.dark body.bg-gradient-ocean .app-background,
+.dark body.bg-gradient-forest .app-background {
+  background: #121212 !important;
+}
+
 /* App background utility */
 .app-background {
   background-color: inherit;
@@ -157,25 +183,26 @@ body[style*="background-image"] .app-background {
 }
 
 .dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
+  /* Custom Corteo Dark Theme */
+  --background: hsl(0, 0%, 7.1%); /* #121212 */
+  --foreground: hsl(0, 0%, 100%); /* #FFFFFF */
+  --muted: hsl(0, 0%, 12.2%); /* #1F1F1F */
+  --muted-foreground: hsl(0, 0%, 88.2%); /* #E1E1E1 */
+  --popover: hsl(0, 0%, 7.1%); /* #121212 */
+  --popover-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
+  --card: hsl(0, 0%, 12.2%); /* #1F1F1F */
+  --card-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
+  --border: hsl(0, 0%, 12.2%); /* #1F1F1F */
+  --input: hsl(0, 0%, 12.2%); /* #1F1F1F */
   --primary: hsl(217, 91%, 60%);
   --primary-foreground: hsl(210, 40%, 98%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(0, 0%, 12.2%); /* #1F1F1F */
+  --secondary-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
+  --accent: hsl(0, 0%, 12.2%); /* #1F1F1F */
+  --accent-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
+  --ring: hsl(0, 0%, 88.2%); /* #E1E1E1 */
   --radius: 0.5rem;
 }
 
@@ -247,6 +274,11 @@ body[style*="background-image"] .app-background {
   .card {
     box-shadow: none !important;
     border: 1px solid hsl(220, 13%, 91%) !important;
+  }
+
+  /* Dark mode card borders */
+  .dark .card {
+    border: 1px solid hsl(0, 0%, 12.2%) !important;
   }
 
   /* Make main content containers transparent */
