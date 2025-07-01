@@ -42,7 +42,7 @@ interface ScrapedProtest {
 async function scrapeProtests(): Promise<ScrapedProtest[]> {
   const protests: ScrapedProtest[] = [];
   
-  // Example sources - you can expand this list
+  // Updated sources with new additions
   const sources = [
     {
       url: 'https://www.manifestazioni.it',
@@ -51,6 +51,14 @@ async function scrapeProtests(): Promise<ScrapedProtest[]> {
     {
       url: 'https://www.eventi.it/eventi/manifestazioni',
       type: 'eventi'
+    },
+    {
+      url: 'https://ilrovescio.info/category/iniziative/',
+      type: 'initiatives'
+    },
+    {
+      url: 'https://rivoluzioneanarchica.it',
+      type: 'anarchist'
     }
     // Add more sources as needed
   ];

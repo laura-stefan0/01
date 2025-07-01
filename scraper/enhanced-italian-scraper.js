@@ -113,41 +113,6 @@ const SCRAPE_SOURCES = [
     type: 'news_major'
   },
   { 
-    url: 'https://www.ilfattoquotidiano.it/', 
-    name: 'ilfattoquotidiano.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.repubblica.it/cronaca/', 
-    name: 'repubblica.it/cronaca',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.repubblica.it/politica/', 
-    name: 'repubblica.it/politica',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.corriere.it/cronache/', 
-    name: 'corriere.it/cronache',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.corriere.it/politica/', 
-    name: 'corriere.it/politica',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.fanpage.it/attualita/', 
-    name: 'fanpage.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.ilsole24ore.com/', 
-    name: 'ilsole24ore.com',
-    type: 'news_major'
-  },
-  { 
     url: 'https://www.globalist.it/', 
     name: 'globalist.it',
     type: 'news_major'
@@ -161,6 +126,16 @@ const SCRAPE_SOURCES = [
     url: 'https://ilmanifesto.it/', 
     name: 'ilmanifesto.it',
     type: 'news_major'
+  },
+  { 
+    url: 'https://ilrovescio.info/category/iniziative/', 
+    name: 'ilrovescio.info',
+    type: 'initiatives'
+  },
+  { 
+    url: 'https://rivoluzioneanarchica.it/', 
+    name: 'rivoluzioneanarchica.it',
+    type: 'anarchist'
   }
 ];
 

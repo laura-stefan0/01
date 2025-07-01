@@ -41,20 +41,17 @@ A comprehensive web scraper designed to collect Italian protest and activism eve
 - adlcobas.it (Labor union activism)
 - notav.info (No TAV movement and territorial struggles)
 
-### Major Italian News Sources
+### Italian News Sources
 - it.euronews.com/tag/manifestazioni-in-italia (Euronews Italy - Protest coverage)
-- ilfattoquotidiano.it (Il Fatto Quotidiano)
-- repubblica.it/cronaca (La Repubblica - News section)
-- repubblica.it/politica (La Repubblica - Politics section)
-- corriere.it/cronache (Corriere della Sera - News section)
-- corriere.it/politica (Corriere della Sera - Politics section)
-- fanpage.it/attualita (Fanpage - Current affairs)
-- ilsole24ore.com (Il Sole 24 Ore - Business/Financial news)
 - globalist.it (Globalist)
 - open.online (Open - Digital newspaper)
 - ilmanifesto.it (Il Manifesto - Left-wing newspaper)
 
-**Total Sources: 24 websites**
+### New Specialized Sources
+- ilrovescio.info/category/iniziative/ (Il Rovescio - Initiatives and Events)
+- rivoluzioneanarchica.it (Rivoluzione Anarchica - Anarchist Movement)
+
+**Total Sources: 17 websites**
 
 ## Event Categories
 
@@ -201,11 +198,11 @@ Example output:
 
 ## Recent Updates
 
-### July 1, 2025
-- **Major Source Expansion**: Added 11 major Italian news sources including Euronews, Il Fatto Quotidiano, Repubblica, Corriere della Sera, Fanpage, Il Sole 24 Ore, Globalist, Open, and Il Manifesto
-- **Total Sources**: Now scraping 17 sources covering both activism websites and mainstream media  
-- **Labor & Environmental**: Added adlcobas.it (labor union activism) and notav.info (No TAV movement)
-- **Enhanced Coverage**: Comprehensive protest event coverage from major Italian news outlets
+### January 2025 (Latest Update)
+- **Source Optimization**: Removed large mainstream news sites that were too resource-intensive to scrape (Il Fatto Quotidiano, La Repubblica, Corriere della Sera, Fanpage, Il Sole 24 Ore)
+- **New Specialized Sources**: Added ilrovescio.info (initiatives and events) and rivoluzioneanarchica.it (anarchist movement)
+- **Total Sources**: Now scraping 17 focused sources optimized for protest and activism content
+- **Enhanced Performance**: Faster scraping with more targeted content extraction
 
 ### Previous Updates
 - Enhanced title cleaning: Removes dates, locations, and quotes from event titles
