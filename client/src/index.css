@@ -485,43 +485,17 @@ body[style*="background-image"] .app-background {
     border-color: #2A2A2A !important;
   }
 
-  /* Remove all button hover effects */
-  button:hover,
-  .dark button:hover,
-  [role="button"]:hover,
-  .dark [role="button"]:hover,
-  .btn:hover,
-  .dark .btn:hover,
-  button[aria-label*="back"]:hover,
-  button[aria-label*="Back"]:hover,
-  .back-button:hover,
+  /* Remove hover effects from back buttons */
   .dark button[aria-label*="back"]:hover,
   .dark button[aria-label*="Back"]:hover,
-  .dark .back-button:hover {
+  .dark .back-button:hover,
+  button[aria-label*="back"]:hover,
+  button[aria-label*="Back"]:hover,
+  .back-button:hover {
     background-color: inherit !important;
     color: inherit !important;
     transform: none !important;
     opacity: 1 !important;
-    box-shadow: none !important;
-    border-color: inherit !important;
-  }
-
-  /* Remove hover effects from UI component buttons */
-  .hover\\:bg-primary\\/90:hover,
-  .hover\\:bg-destructive\\/90:hover,
-  .hover\\:bg-secondary\\/80:hover,
-  .hover\\:bg-accent:hover,
-  .hover\\:text-accent-foreground:hover,
-  .hover\\:underline:hover,
-  .dark .hover\\:bg-primary\\/90:hover,
-  .dark .hover\\:bg-destructive\\/90:hover,
-  .dark .hover\\:bg-secondary\\/80:hover,
-  .dark .hover\\:bg-accent:hover,
-  .dark .hover\\:text-accent-foreground:hover,
-  .dark .hover\\:underline:hover {
-    background-color: inherit !important;
-    color: inherit !important;
-    text-decoration: none !important;
   }
 
   /* Remove focus rings from buttons and interactive elements */
