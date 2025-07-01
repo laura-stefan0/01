@@ -104,6 +104,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - July 1, 2025: Fixed map filter menu functionality - updated filter logic to work with YYYY-MM-DD date format, made filter overlay always visible, and replaced outdated filters with "Upcoming", "Popular", and "Featured" filters
 - July 1, 2025: Ran comprehensive scraper to refresh database with 19 authentic Italian protest events across 9 categories (LGBTQ+, Environment, Labor, Civil & Human Rights, Racial & Social Justice, Women's Rights, Healthcare & Education, Peace & Anti-War, Transparency & Anti-Corruption)
 - July 1, 2025: Created new Italian protest scraper from scratch with advanced features - multi-source scraping from 11+ Italian activism websites, smart keyword filtering, duplicate detection, automatic geocoding, category classification, and comprehensive database integration
+- July 1, 2025: Enhanced scraper title cleaning to remove dates/locations from titles and clean quote formatting - "15/07 Venezia - Assemblea" becomes "Assemblea", proper quote handling throughout
 - July 1, 2025: Created notifications page with settings and mock notifications - bell icon now opens dedicated notifications page instead of profile
 - July 1, 2025: Enhanced refresh location button to force clear location cache and get fresh GPS coordinates
 - July 1, 2025: Removed preview section from App theme settings page for cleaner interface
