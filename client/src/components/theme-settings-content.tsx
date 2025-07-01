@@ -175,9 +175,8 @@ export function ThemeSettingsContent() {
           <CardTitle className="text-lg">Colors & Gradients</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <div className="flex gap-4 pb-2" style={{ minWidth: 'max-content' }}>
-              {[...solidColorOptions, ...gradientOptions].map((option) => {
+          <div className="flex flex-wrap gap-4">
+            {[...solidColorOptions, ...gradientOptions].map((option) => {
                 const isSelected = settings.background === option.value;
 
                 return (
@@ -190,12 +189,11 @@ export function ThemeSettingsContent() {
                       className={`w-16 h-16 rounded-full border-2 ${
                         isSelected ? 'border-[#EF4444]' : 'border-gray-300'
                       } ${option.preview}`}
-                      style={option.color ? { backgroundColor: option.color } : {}}
+                      style={('color' in option) ? { backgroundColor: option.color as string } : {}}
                     />
                   </div>
                 );
               })}
-            </div>
           </div>
         </CardContent>
       </Card>
