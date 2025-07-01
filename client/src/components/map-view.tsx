@@ -147,7 +147,7 @@ export function MapView() {
       if (locationResult.coordinates) {
         setUserLocation([locationResult.coordinates.latitude, locationResult.coordinates.longitude]);
         console.log("🗺️ Fresh location obtained and synced with Home page:", locationResult.coordinates);
-        
+
         // Clear any manual location override since user requested fresh GPS location
         localStorage.removeItem('corteo_manual_location');
         localStorage.removeItem('corteo_manual_location_coords');
@@ -541,23 +541,24 @@ export function MapView() {
             {(searchQuery || activeFilter !== "all") && (
               <div className="absolute top-20 left-4 right-4 z-[1000]">
                 <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
-                  {searchQuery && (
-                    <div className="text-sm text-gray-600 mb-2">
-                      {searchLocation ? (
-                        <>
-                          📍 Showing location: <strong>{searchLocationName}</strong>
-                          {filteredProtests.length > 0 && (
-                            <> · {filteredProtests.length} protest{filteredProtests.length !== 1 ? 's' : ''} found</>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
-                          {searchQuery && ` for "${searchQuery}"`}
-                        </>
+                  {(searchQuery || activeFilter !== "all") && (
+                <div className="text-sm text-gray-600 mb-2">
+                  {searchLocation ? (
+                    <>
+                      📍 Showing location: <strong>{searchLocationName}</strong>
+                      {filteredProtests.length > 0 && (
+                        <> · {filteredProtests.length} protest{filteredProtests.length !== 1 ? 's' : ''} found</>
                       )}
-                    </div>
+                    </>
+                  ) : (
+                    <>
+                      {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
+                      {searchQuery && ` for "${searchQuery}"`}
+                      {activeFilter !== "all" && !searchQuery && ` for ${filters.find(f => f.id === activeFilter)?.label}`}
+                    </>
                   )}
+                </div>
+              )}
                   <div className="flex space-x-2 overflow-x-auto pb-1">
                     {filters.map((filter) => (
                       <Badge
