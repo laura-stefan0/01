@@ -92,21 +92,33 @@ async function saveEventToDatabase(event) {
   try {
     console.log(`💾 Saving: "${event.title}"`);
     
+    // Add missing required fields based on database schema
+    const eventData = {
+      ...event,
+      source_name: 'simple-scraper',
+      source_url: 'manual-entry',
+      scraped_at: new Date().toISOString()
+    };
+    
+    console.log(`📋 Event data:`, eventData);
+    
     const { data, error } = await supabase
       .from('protests')
-      .insert([event])
+      .insert([eventData])
       .select();
     
     if (error) {
       console.error('❌ Error inserting event:', error);
+      console.error('❌ Full error details:', JSON.stringify(error, null, 2));
       return false;
     }
     
-    console.log(`✅ Saved: "${event.title}" (ID: ${data[0].id})`);
+    console.log(`✅ Saved: "${eventData.title}" (ID: ${data[0].id})`);
     return true;
     
   } catch (error) {
     console.error('❌ Error in saveEventToDatabase:', error);
+    console.error('❌ Stack trace:', error.stack);
     return false;
   }
 }
