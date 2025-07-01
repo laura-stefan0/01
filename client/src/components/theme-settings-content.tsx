@@ -206,23 +206,7 @@ export function ThemeSettingsContent() {
         </CardContent>
       </Card>
 
-      {/* Current Preview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <span>Current selection:</span>
-            <Badge variant="secondary">
-              {themeOptions.find(t => t.value === settings.theme)?.label}
-            </Badge>
-            <Badge variant="secondary">
-              {allBackgroundOptions.find(b => b.value === settings.background)?.label}
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
+
     </div>
   );
 }
