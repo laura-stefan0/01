@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 1, 2025: Fixed background images in theme settings - updated component to correctly detect and display the three background images (background1.png, background2.png, background3.png) in /public/backgrounds folder
 - July 1, 2025: Removed all hover effects from back buttons in both light and dark themes - back buttons now have transparent backgrounds with no pink/grey highlight effects when hovered over
 - July 1, 2025: Successfully completed migration from Replit Agent to standard Replit environment - all packages installed, application running properly with full functionality
 - July 1, 2025: Updated light theme to new specifications - #F8F8F6 background, #FFFFFF cards, #1E293B primary text, #64748B secondary text, #E2E8F0 borders, #E11D48 accent/primary buttons, #DC2626 destructive, #94A3B8 inactive icons, #FECDD3/#E11D48 category labels
