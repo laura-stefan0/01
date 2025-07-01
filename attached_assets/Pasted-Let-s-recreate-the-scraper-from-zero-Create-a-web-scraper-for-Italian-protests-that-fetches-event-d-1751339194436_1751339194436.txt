@@ -1,0 +1,55 @@
+Let's recreate the scraper from zero. Create a web scraper for Italian protests that fetches event data and collects it into my Supabase table "protests". It has to only fetch data for these Italian keywords: manifestazione, protesta, sciopero, presidio, corteo, occupazione, sit-in, mobilitazione, marcia, picchetto, concentramento, assemblea pubblica, iniziativa politica, blocco stradale, pride. It should ignore events with these keywords, if no protest-related keywords appear: concerto, spettacolo, festival, mostra, fiera, mercatino, messa, celebrazione, evento gastronomico, laboratorio, evento sportivo, corsa, maratona, dj set, sagra, reading, workshop, meditazione, presentazione.
+
+Scrape data from these websites:
+- https://www.globalproject.info/it/tags/news/menu
+- https://www.dinamopress.it
+- https://milanoinmovimento.com
+- https://www.romatoday.it/eventi
+- https://umanitanova.org
+- https://fridaysforfutureitalia.it
+- https://nonunadimeno.wordpress.com
+- https://www.eventbrite.it/d/italia--italy/manifestazione/
+- https://www.meetup.com/it-IT/find/events/
+- https://extinctionrebellion.it/eventi/futuri/
+- https://fridaysforfutureitalia.it/
+- https://www.usb.it
+- https://sicobas.org
+
+Scrape this Facebook page (Facebook scraping may require headless browser automation (e.g., Playwright or Puppeteer), as event data may be hidden behind login or dynamic rendering.):
+- https://www.facebook.com/fffitalia
+
+Scrape x.com (may require API access or headless browser (Playwright)) for hashtags like #sciopero, #corteo, #presidio, #noTav, #nonunadimeno, #fridaysforfuture.
+
+Follow this process:
+- the scraper should fetch data from all cities, not only the major ones
+- if the month is unclear, the scraper should try to extract the month from Italian date formats ('gennaio': '01', 'febbraio': '02', 'marzo': '03', 'aprile': '04', 'maggio': '05', 'giugno': '06', 'luglio': '07', 'agosto': '08', 'settembre': '09', 'ottobre': '10', 'novembre': '11', 'dicembre': '12') and convert date data into YYYY/MM/DD
+- the scraper should fetch from every event: title, description (full), exact address, city, date, time
+- for each address, the scraper should find the exact latitude and longitude
+- if an image is present, the scraper should fetch the image url
+- the scraper should assign each protest a category between these: environment, lgbt+, women's rights, labor, racial & social justice, civil & human rights, healthcare & education, peace & anti-war, transparency & anti-corruption. If none of these are applicable, the scraper should apply the category "other"
+- if no image cannot be fetched, the scraper should apply a category-specific fallback images from unsplash
+- the scraper should collect the data found in my Supabase table called "protests" within these fields: title, description, category, address, city, date, time, image_url
+- the scraper should convert the protest address into latitude and longitude, and log those in the "protests" table in the "latitude" and "longitude" fields
+- for all fetched protests, the scraper should assign "IT" in the protests table database, in the "country_code" field
+- the scraper should always apply "FALSE" in the "featured" field
+- the scraper should always apply "0" to "attendees"
+- the scraper should not add any sample or false events
+- the scraper should also fill in these fields: source_name (e.g., "globalproject.info"), scraped_at timestamp (UTC), source_url (original link to the protest/event)
+
+Important rule to avoid duplicates: add logic to avoid inserting duplicate events into the Supabase protests table. Here’s how:
+1) Before inserting a new event, check if an existing event already exists in the protests table with the same title, date, and city.
+2) Matching should be case-insensitive and should ignore extra whitespace.
+3) If a match is found, skip the insertion and print:
+
+print("Duplicate event skipped:", title)
+
+Otherwise, insert the event as normal.
+
+4) Use Supabase's API or client library (e.g., supabase-py) to query the table before inserting.
+The logic for scraping and collecting event data stays the same — only add this duplicate check before writing to the database.
+
+5) When comparing strings for duplicates (title, city), normalize accented characters using Unicode normalization (e.g., unicodedata.normalize("NFKD")).
+
+Also make sure title, date, and city are always cleaned with .lower().strip() before comparing.
+
+Finally, create a readme file in the same folder as the scraper with instructions on how to use it.
