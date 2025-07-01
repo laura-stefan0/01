@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Share2, MapPin, Calendar, Users, ExternalLink } from "lucide-react";
+import { ArrowLeft, Share2, MapPin, Calendar, Users, ExternalLink, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,10 +8,12 @@ import type { Protest } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { formatDate, formatTime } from "@/lib/date-utils";
+import { useSavedProtests } from "@/context/saved-protests-context";
 
 export default function ProtestDetail() {
   const params = useParams();
   const navigate = useNavigate();
+  const { isProtestSaved, saveProtest, unsaveProtest } = useSavedProtests();
 
   const protestId = params.id;
 
@@ -116,8 +118,16 @@ export default function ProtestDetail() {
 
     if (isProtestSaved(protest.id)) {
       unsaveProtest(protest.id);
+      toast({
+        title: "Removed from saved",
+        description: "Protest removed from your saved list.",
+      });
     } else {
       saveProtest(protest);
+      toast({
+        title: "Saved!",
+        description: "Protest added to your saved list.",
+      });
     }
   };
 
@@ -190,9 +200,16 @@ export default function ProtestDetail() {
           <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleShare}>
-            <Share2 className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={handleSaveClick}>
+              <Heart 
+                className={`h-4 w-4 ${protest && isProtestSaved(protest.id) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
+              />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleShare}>
+              <Share2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Hero Image */}
