@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ThemeSettings from "@/pages/theme-settings";
+import { ThemeSettingsContent } from "@/components/theme-settings-content";
 
 /**
  * Profile Theme Settings Subpage - App theme and appearance customization
@@ -26,8 +25,8 @@ export default function ProfileThemeSettingsPage() {
         <h1 className="text-xl font-semibold text-dark-slate">App Theme</h1>
       </div>
 
-      {/* Use the existing ThemeSettings component */}
-      <ThemeSettings />
+      {/* Use the theme settings content component without header */}
+      <ThemeSettingsContent />
     </div>
   );
 }
