@@ -1,4 +1,8 @@
-
 {
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.2",
+    "axios": "^1.10.0",
+    "cheerio": "^1.1.0"
+  }
 }
