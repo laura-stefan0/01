@@ -75,22 +75,13 @@ const ITALIAN_CITIES = {
   'trieste': { lat: 45.6495, lng: 13.7768 }
 };
 
-// High-quality news sources for Italian protests
+// Comprehensive Italian news and activism sources
 const SCRAPE_SOURCES = [
+  // Activism and Social Movement Sites
   { 
     url: 'https://www.globalproject.info/it/tags/news/menu', 
     name: 'globalproject.info',
     type: 'activism'
-  },
-  { 
-    url: 'https://fridaysforfutureitalia.it/eventi/', 
-    name: 'fridaysforfutureitalia.it',
-    type: 'environment'
-  },
-  { 
-    url: 'https://extinctionrebellion.it/eventi/futuri/', 
-    name: 'extinctionrebellion.it',
-    type: 'environment'
   },
   { 
     url: 'https://www.dinamopress.it/categoria/eventi', 
@@ -101,6 +92,80 @@ const SCRAPE_SOURCES = [
     url: 'https://adlcobas.it/', 
     name: 'adlcobas.it',
     type: 'labor'
+  },
+  { 
+    url: 'https://www.notav.info/', 
+    name: 'notav.info',
+    type: 'movement'
+  },
+  { 
+    url: 'https://ilrovescio.info/category/iniziative/', 
+    name: 'ilrovescio.info',
+    type: 'initiatives'
+  },
+  
+  // Environmental Activism
+  { 
+    url: 'https://fridaysforfutureitalia.it/eventi/', 
+    name: 'fridaysforfutureitalia.it',
+    type: 'environment'
+  },
+  { 
+    url: 'https://extinctionrebellion.it/eventi/futuri/', 
+    name: 'extinctionrebellion.it',
+    type: 'environment'
+  },
+  
+  // Major Italian News Sources
+  { 
+    url: 'https://it.euronews.com/tag/manifestazioni-in-italia', 
+    name: 'euronews.com',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.ilfattoquotidiano.it/', 
+    name: 'ilfattoquotidiano.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.repubblica.it/', 
+    name: 'repubblica.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.corriere.it/', 
+    name: 'corriere.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.fanpage.it/', 
+    name: 'fanpage.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.ilsole24ore.com/', 
+    name: 'ilsole24ore.com',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.globalist.it/', 
+    name: 'globalist.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.open.online/', 
+    name: 'open.online',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://ilmanifesto.it/', 
+    name: 'ilmanifesto.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://rivoluzioneanarchica.it/', 
+    name: 'rivoluzioneanarchica.it',
+    type: 'anarchist'
   }
 ];
 

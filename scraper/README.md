@@ -5,7 +5,7 @@ A streamlined web scraper designed to collect Italian protest and activism event
 ## Features
 
 ### 🚀 Core Functionality
-- **Multi-source scraping**: Collects data from 5 curated Italian activism websites
+- **Multi-source scraping**: Collects data from 17 Italian activism websites and major news sources
 - **Smart filtering**: Uses Italian keywords to identify protest events while excluding non-protest events
 - **Duplicate detection**: Prevents duplicate events using normalized text matching
 - **Automatic geocoding**: Converts Italian city names to coordinates
@@ -30,13 +30,30 @@ A streamlined web scraper designed to collect Italian protest and activism event
 
 ## Scraped Sources
 
-The scraper collects data from these high-quality Italian activism sources:
+The scraper collects data from these comprehensive Italian sources:
 
+### Activism and Social Movement Sites
 1. **globalproject.info** - Independent activism and social movements
-2. **fridaysforfutureitalia.it** - Climate activism and environmental events
-3. **extinctionrebellion.it** - Climate emergency and environmental events  
-4. **dinamopress.it** - Alternative journalism and activism events
-5. **adlcobas.it** - Labor union activism and worker rights
+2. **dinamopress.it** - Alternative journalism and activism events
+3. **adlcobas.it** - Labor union activism and worker rights
+4. **notav.info** - No TAV movement and territorial struggles
+5. **ilrovescio.info** - Social initiatives and community events
+
+### Environmental Activism
+6. **fridaysforfutureitalia.it** - Climate activism and environmental events
+7. **extinctionrebellion.it** - Climate emergency and environmental events
+
+### Major Italian News Sources
+8. **euronews.com** - European news with Italian protest coverage
+9. **ilfattoquotidiano.it** - Independent Italian news
+10. **repubblica.it** - Major Italian national newspaper
+11. **corriere.it** - Corriere della Sera national newspaper
+12. **fanpage.it** - Digital news platform
+13. **ilsole24ore.com** - Business and financial news
+14. **globalist.it** - International and political news
+15. **open.online** - Digital journalism platform
+16. **ilmanifesto.it** - Left-wing daily newspaper
+17. **rivoluzioneanarchica.it** - Anarchist movement news
 
 ## Event Categories
 
@@ -99,9 +116,9 @@ node enhanced-italian-scraper.mjs
 
 ```
 🚀 Starting Enhanced Italian Protest Scraper...
-📊 Configuration: 60 days, 5 sources
+📊 Configuration: 60 days, 17 sources
 
-🌐 Processing source 1/5: globalproject.info
+🌐 Processing source 1/17: globalproject.info
 🔍 Scraping globalproject.info...
 📋 Event found: "Manifestazione per il clima..." | environment | Milano | 2025-07-15
 ✅ Saved event: "Manifestazione per il clima" (ID: abc123...)
