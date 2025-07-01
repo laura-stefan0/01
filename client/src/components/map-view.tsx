@@ -24,15 +24,15 @@ L.Icon.Default.mergeOptions({
 });
 
 // Component to handle map centering
-function MapCenterUpdater({ center }: { center: [number, number] | null }) {
+function MapCenterUpdater({ center, zoom }: { center: [number, number] | null; zoom?: number }) {
   const map = useMap();
 
   useEffect(() => {
     if (center) {
-      console.log("Centering map on:", center);
-      map.setView(center, 15);
+      console.log("Updating map center to:", center, "with zoom:", zoom || 15);
+      map.setView(center, zoom || 15);
     }
-  }, [center, map]);
+  }, [center, map, zoom]);
 
   return null;
 }
@@ -278,33 +278,25 @@ export function MapView() {
       return true;
     });
 
-  // Calculate map center - prioritize user location, then search location, then filtered protests, then Milan default
+  // Calculate map center - prioritize user location, then search location, then Milan default
   let mapCenter: [number, number];
   let mapZoom: number;
 
   if (userLocation) {
     // If user location is available, center on it
     mapCenter = userLocation;
-    mapZoom = 12;
-    console.log(`🗺️ Centering map on user location`);
+    mapZoom = 15;
+    console.log(`🗺️ Centering map on user location: ${userLocation}`);
   } else if (searchLocation) {
     // If we found a location via geocoding, center on it
     mapCenter = searchLocation;
     mapZoom = 12;
     console.log(`🗺️ Centering map on searched location: ${searchLocationName}`);
   } else {
-    // Otherwise, use protest-based centering or default to Milan
-    const protestsForCenter = searchQuery && searchQuery.trim().length > 0 ? filteredProtests : protests;
-    const validProtests = protestsForCenter.filter(p => p.latitude && p.longitude && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude)));
-
-    mapCenter = validProtests.length > 0 
-      ? [
-          validProtests.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validProtests.length,
-          validProtests.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validProtests.length
-        ]
-      : [45.4642, 9.1900]; // Default to Milan, Italy
-
-    mapZoom = searchQuery && filteredProtests.length > 0 ? 12 : validProtests.length > 0 ? 10 : 6;
+    // Default to Milan, Italy - prioritize this over protest clustering
+    mapCenter = [45.4642, 9.1900];
+    mapZoom = 11;
+    console.log(`🗺️ Centering map on default location: Milan`);
   }
 
   // Debug logging for search results
@@ -341,9 +333,9 @@ export function MapView() {
               className="h-full w-full"
               style={{ height: '100%', width: '100%' }}
               zoomControl={false}
-              key={searchLocation ? `search-${searchLocation[0]}-${searchLocation[1]}` : 'default'}
+              key={userLocation ? `user-${userLocation[0]}-${userLocation[1]}` : searchLocation ? `search-${searchLocation[0]}-${searchLocation[1]}` : 'milan-default'}
             >
-              <MapCenterUpdater center={userLocation} />
+              <MapCenterUpdater center={userLocation} zoom={15} />
               <MapBoundsUpdater onBoundsChange={setMapBounds} />
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -378,7 +370,7 @@ export function MapView() {
                         <Button 
                           size="sm" 
                           className="w-full mt-2 bg-activist-blue hover:bg-activist-blue/90"
-                          onClick={() => setLocation(`/protest/${protest.id}`)}
+                          onClick={() => navigate(`/protest/${protest.id}`)}
                         >
                           View Details
                         </Button>
@@ -471,7 +463,7 @@ export function MapView() {
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => setLocation("/filter")}
+                    onClick={() => navigate("/filter")}
                     className="px-3 py-2 hover:bg-gray-50 rounded-full"
                   >
                     <Filter className="w-4 h-4 text-gray-600 mr-2" />
@@ -505,7 +497,7 @@ export function MapView() {
                         <div 
                           key={protest.id}
                           className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                          onClick={() => setLocation(`/protest/${protest.id}`)}
+                          onClick={() => navigate(`/protest/${protest.id}`)}
                         >
                           <div className="flex items-start space-x-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
