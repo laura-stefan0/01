@@ -278,17 +278,22 @@ export function MapView() {
       return true;
     });
 
-  // Calculate map center - prioritize search location, then filtered protests, then all protests
+  // Calculate map center - prioritize user location, then search location, then filtered protests, then Milan default
   let mapCenter: [number, number];
   let mapZoom: number;
   
-  if (searchLocation) {
+  if (userLocation) {
+    // If user location is available, center on it
+    mapCenter = userLocation;
+    mapZoom = 12;
+    console.log(`🗺️ Centering map on user location`);
+  } else if (searchLocation) {
     // If we found a location via geocoding, center on it
     mapCenter = searchLocation;
     mapZoom = 12;
     console.log(`🗺️ Centering map on searched location: ${searchLocationName}`);
   } else {
-    // Otherwise, use protest-based centering
+    // Otherwise, use protest-based centering or default to Milan
     const protestsForCenter = searchQuery && searchQuery.trim().length > 0 ? filteredProtests : protests;
     const validProtests = protestsForCenter.filter(p => p.latitude && p.longitude && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude)));
     
@@ -297,9 +302,9 @@ export function MapView() {
           validProtests.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validProtests.length,
           validProtests.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validProtests.length
         ]
-      : [41.9028, 12.4964]; // Default to Rome, Italy
+      : [45.4642, 9.1900]; // Default to Milan, Italy
     
-    mapZoom = searchQuery && filteredProtests.length > 0 ? 12 : filteredProtests.length > 0 ? 10 : 6;
+    mapZoom = searchQuery && filteredProtests.length > 0 ? 12 : validProtests.length > 0 ? 10 : 6;
   }
   
   // Debug logging for search results
