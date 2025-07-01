@@ -278,7 +278,58 @@ body[style*="background-image"] .app-background {
 
   /* Dark mode card borders */
   .dark .card {
-    border: 1px solid hsl(0, 0%, 12.2%) !important;
+    border: 1px solid #121212 !important;
+  }
+
+  /* Dark mode navigation bar */
+  .dark nav {
+    background-color: #121212 !important;
+    border-color: #121212 !important;
+  }
+
+  /* Dark mode map search controls overlay */
+  .dark .bg-white.rounded-full.shadow-lg {
+    background-color: #1F1F1F !important;
+    border-color: #121212 !important;
+  }
+
+  /* Dark mode filter overlay */
+  .dark .bg-white.rounded-lg.shadow-lg {
+    background-color: #1F1F1F !important;
+    border-color: #121212 !important;
+  }
+
+  /* Dark mode input fields in map */
+  .dark input[type="text"] {
+    background-color: #1F1F1F !important;
+    border-color: #121212 !important;
+    color: #FFFFFF !important;
+  }
+
+  .dark input[type="text"]::placeholder {
+    color: #E1E1E1 !important;
+  }
+
+  /* Dark mode filter badges */
+  .dark .bg-gray-100 {
+    background-color: #1F1F1F !important;
+    color: #E1E1E1 !important;
+  }
+
+  .dark .bg-gray-100:hover {
+    background-color: #2A2A2A !important;
+  }
+
+  /* Dark mode search results dropdown */
+  .dark .hover\\:bg-gray-50:hover {
+    background-color: #2A2A2A !important;
+  }
+
+  /* Dark mode GPS button */
+  .dark .bg-white.border-gray-200 {
+    background-color: #1F1F1F !important;
+    border-color: #121212 !important;
+    color: #FFFFFF !important;
   }
 
   /* Make main content containers transparent */
