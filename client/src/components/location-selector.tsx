@@ -321,7 +321,7 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
             <Button 
               onClick={handleSubmit}
               disabled={!selectedCity || !selectedRegion}
-              className="flex-1 bg-activist-blue hover:bg-activist-blue/90"
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               Set Location
             </Button>

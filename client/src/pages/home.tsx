@@ -422,7 +422,7 @@ export default function HomePage() {
           <CardContent className="p-4">
             <h3 className="font-semibold mb-2 text-white">Make a Difference</h3>
             <p className="text-sm mb-3 text-white">Your donation helps support activists and organizations fighting for change.</p>
-            <Button className="w-full bg-white text-activist-blue hover:bg-gray-100">
+            <Button className="w-full bg-white text-activist-blue hover:bg-clean-white">
               Donate Now
             </Button>
           </CardContent>

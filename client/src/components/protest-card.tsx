@@ -27,7 +27,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   const handleSaveClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isProtestSaved(protest.id)) {
       unsaveProtest(protest.id);
     } else {
@@ -88,7 +88,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
         <CardContent className="p-3 flex-1 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">
             <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
-              {protest.category}
+              {protest.category.toUpperCase()}
             </Badge>
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500">{protest.attendees} going</span>
@@ -114,3 +114,4 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
     </Card>
   );
 }
+```

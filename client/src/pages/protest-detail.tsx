@@ -278,7 +278,7 @@ export default function ProtestDetail() {
           {/* Action Buttons */}
           <div className="space-y-3">
             <Button 
-              className="w-full bg-activist-blue hover:bg-activist-blue/90"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
               size="lg"
             >
               <Users className="h-4 w-4 mr-2" />

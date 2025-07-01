@@ -500,7 +500,7 @@ export function MapView() {
                               <p className="text-sm text-gray-600 truncate">{protest.location}</p>
                               <div className="flex items-center space-x-2 mt-1">
                                 <Badge className="text-xs bg-[#FECDD3] text-[#E11D48]">
-                                  {protest.category}
+                                  {protest.category.toUpperCase()}
                                 </Badge>
                                 <span className="text-xs text-gray-500">{protest.date} • {protest.time}</span>
                               </div>

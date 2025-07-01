@@ -382,6 +382,29 @@ body[style*="background-image"] .app-background {
     color: #FFFFFF !important;
   }
 
+  /* Remove dropdown borders */
+  [data-radix-popper-content-wrapper] {
+    border: none !important;
+  }
+
+  .select-content,
+  [role="listbox"],
+  [data-radix-select-content] {
+    border: none !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* Navigation bar consistent height */
+  nav {
+    min-height: 56px;
+    height: 56px;
+  }
+
+  .dark nav {
+    min-height: 56px;
+    height: 56px;
+  }
+
   /* Dark mode hover states */
   .dark .hover\\:bg-gray-50:hover,
   .dark .hover\\:bg-gray-100:hover {

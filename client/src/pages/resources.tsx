@@ -34,7 +34,7 @@ export default function ResourcesPage() {
         {protestResources.map((resource, index) => (
           <Card 
             key={index} 
-            className="border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+            className="cursor-pointer hover:bg-muted transition-colors"
             onClick={() => {
               console.log('Navigating to:', resource.link);
               if (resource.link !== "#") {
@@ -46,7 +46,7 @@ export default function ResourcesPage() {
               <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
                 <resource.icon className="w-6 h-6 text-activist-blue" />
               </div>
-              <h3 className="font-medium text-dark-slate text-sm">{resource.title}</h3>
+              <h3 className="font-medium text-foreground text-sm">{resource.title}</h3>
             </CardContent>
           </Card>
         ))}
