@@ -127,7 +127,7 @@ body.bg-green {
 
   /* Background gradient container */
   .app-background {
-    background: linear-gradient(to bottom, oklch(97% 0 0), oklch(87% 0 0)) fixed;
+    background: #ffffff;
     min-height: 100vh;
   }
 }
