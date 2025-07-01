@@ -197,18 +197,21 @@ body[style*="background-image"] .app-background {
   --popover-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
   --card: hsl(0, 0%, 12.2%); /* #1F1F1F */
   --card-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
-  --border: hsl(0, 0%, 12.2%); /* #1F1F1F */
-  --input: hsl(0, 0%, 12.2%); /* #1F1F1F */
-  --primary: hsl(217, 91%, 60%);
-  --primary-foreground: hsl(210, 40%, 98%);
+  --border: hsl(0, 0%, 16.5%); /* #2A2A2A */
+  --input: hsl(0, 0%, 16.5%); /* #2A2A2A */
+  --primary: hsl(347, 77%, 50%); /* #E11D48 - Keep brand color consistent */
+  --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(0, 0%, 12.2%); /* #1F1F1F */
-  --secondary-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
+  --secondary-foreground: hsl(0, 0%, 88.2%); /* #E1E1E1 */
   --accent: hsl(0, 0%, 12.2%); /* #1F1F1F */
   --accent-foreground: hsl(0, 0%, 100%); /* #FFFFFF */
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(0, 0%, 88.2%); /* #E1E1E1 */
+  --ring: hsl(343, 81%, 62%); /* #F43F5E - Focus ring */
   --radius: 0.5rem;
+  
+  /* Inactive icons */
+  --inactive-icon: hsl(217, 10%, 64%); /* #9CA3AF */
 }
 
 @layer base {
@@ -295,27 +298,27 @@ body[style*="background-image"] .app-background {
   .dark .border-t-gray-200,
   .dark .border-b-gray-200,
   .dark [class*="border-"] {
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
   }
   
   .dark .card {
-    border: 1px solid #121212 !important;
+    border: 1px solid #2A2A2A !important;
   }
 
   /* Dark mode dividers */
   .dark .divide-y > * + * {
-    border-top-color: #121212 !important;
+    border-top-color: #2A2A2A !important;
   }
 
   .dark .divide-gray-100 > * + *,
   .dark .divide-gray-200 > * + * {
-    border-top-color: #121212 !important;
+    border-top-color: #2A2A2A !important;
   }
 
   /* Dark mode navigation bar */
   .dark nav {
     background-color: #121212 !important;
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
   }
 
   /* Dark mode all white backgrounds */
@@ -327,19 +330,19 @@ body[style*="background-image"] .app-background {
   /* Dark mode map search controls overlay */
   .dark .bg-white.rounded-full.shadow-lg {
     background-color: #1F1F1F !important;
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
   }
 
   /* Dark mode filter overlay */
   .dark .bg-white.rounded-lg.shadow-lg {
     background-color: #1F1F1F !important;
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
   }
 
   /* Dark mode input fields in map */
   .dark input[type="text"] {
     background-color: #1F1F1F !important;
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
     color: #FFFFFF !important;
   }
 
@@ -365,19 +368,19 @@ body[style*="background-image"] .app-background {
   /* Dark mode GPS button */
   .dark .bg-white.border-gray-200 {
     background-color: #1F1F1F !important;
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
     color: #FFFFFF !important;
   }
 
   /* Dark mode buttons and inputs */
   .dark button {
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
   }
 
   .dark input,
   .dark textarea,
   .dark select {
-    border-color: #121212 !important;
+    border-color: #2A2A2A !important;
     background-color: #1F1F1F !important;
     color: #FFFFFF !important;
   }
