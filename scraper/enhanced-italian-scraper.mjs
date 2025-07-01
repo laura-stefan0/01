@@ -596,24 +596,31 @@ async function geocodeAddress(address, city) {
 async function checkDuplicate(title, date, city) {
   try {
     const normalizedTitle = normalizeText(title);
-    const normalizedCity = normalizeText(city);
+    
+    // Only check for duplicates if we have both title and date
+    if (!title || !date) {
+      console.log(`⚠️ Skipping duplicate check - missing title or date`);
+      return false;
+    }
     
     const { data, error } = await supabase
       .from('protests')
-      .select('id, title, date, city')
-      .eq('date', date);
+      .select('id, title, date')
+      .eq('date', date)
+      .limit(10);
     
     if (error) {
       console.error('Error checking duplicates:', error);
-      return false;
+      return false; // Don't block saving if duplicate check fails
     }
     
     if (data && data.length > 0) {
       for (const existing of data) {
         const existingTitle = normalizeText(existing.title);
-        const existingCity = normalizeText(existing.city || '');
         
-        if (existingTitle === normalizedTitle && existingCity.includes(normalizedCity)) {
+        // More lenient duplicate checking - only exact title matches
+        if (existingTitle === normalizedTitle) {
+          console.log(`🔄 Duplicate found: "${title}"`);
           return true;
         }
       }
@@ -622,7 +629,7 @@ async function checkDuplicate(title, date, city) {
     return false;
   } catch (error) {
     console.error('Error in checkDuplicate:', error);
-    return false;
+    return false; // Don't block saving if duplicate check fails
   }
 }
 
@@ -884,7 +891,15 @@ async function extractEventsFromPageWithDateCheck($, pageUrl, sourceName, stats)
  */
 async function saveEventToDatabase(event) {
   try {
-    // Check for duplicates
+    console.log(`💾 Attempting to save: "${event.title}"`);
+    
+    // Validate required fields
+    if (!event.title || event.title.length < 3) {
+      console.log(`⚠️ Skipping event with invalid title: "${event.title}"`);
+      return false;
+    }
+    
+    // Check for duplicates only if we have a date
     if (event.date) {
       const isDuplicate = await checkDuplicate(event.title, event.date, event.city);
       if (isDuplicate) {
@@ -893,29 +908,42 @@ async function saveEventToDatabase(event) {
       }
     }
     
-    // Geocode address
-    const coordinates = await geocodeAddress(event.address, event.city);
+    // Geocode address with fallback
+    let coordinates;
+    try {
+      coordinates = await geocodeAddress(event.address, event.city);
+    } catch (error) {
+      console.log(`⚠️ Geocoding failed, using default coordinates: ${error.message}`);
+      coordinates = { lat: 45.4642, lng: 9.1900 }; // Milano fallback
+    }
     
-    // Prepare event data for database
+    // Prepare event data for database with fallbacks
     const eventData = {
-      title: cleanTitle(event.title),
-      description: event.description,
-      category: event.category,
-      city: event.city,
-      address: event.address,
+      title: cleanTitle(event.title) || event.title,
+      description: event.description || '',
+      category: event.category || 'other',
+      location: event.city || 'Milano',  // Use 'location' field name from schema
+      address: event.address || event.city || 'Milano, Italy',
       latitude: coordinates.lat.toString(),
       longitude: coordinates.lng.toString(),
-      date: event.date,
-      time: event.time,
-      image_url: event.image_url || CATEGORY_IMAGES[event.category],
-      event_url: event.event_url,
+      date: event.date || null,
+      time: event.time || null,
+      image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES['other'],
+      event_url: event.event_url || null,
       country_code: 'IT',
       featured: false,
       attendees: 0,
-      source_name: event.source_name,
-      source_url: event.source_url,
+      source_name: event.source_name || 'unknown',
+      source_url: event.source_url || null,
       scraped_at: new Date().toISOString()
     };
+    
+    console.log(`📋 Event data prepared:`, {
+      title: eventData.title,
+      date: eventData.date,
+      city: eventData.city,
+      category: eventData.category
+    });
     
     // Insert into database
     const { data, error } = await supabase
@@ -925,14 +953,16 @@ async function saveEventToDatabase(event) {
     
     if (error) {
       console.error('❌ Error inserting event:', error);
+      console.error('📋 Event data that failed:', eventData);
       return false;
     }
     
-    console.log(`✅ Saved: "${event.title}" in ${event.city}`);
+    console.log(`✅ Saved: "${eventData.title}" in ${eventData.city} (ID: ${data[0].id})`);
     return true;
     
   } catch (error) {
     console.error('❌ Error in saveEventToDatabase:', error);
+    console.error('📋 Event data:', event);
     return false;
   }
 }
