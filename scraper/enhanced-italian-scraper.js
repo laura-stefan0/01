@@ -1,6 +1,4 @@
 
-#!/usr/bin/env node
-
 import { createClient } from '@supabase/supabase-js';
 import axios from 'axios';
 import { load } from 'cheerio';
