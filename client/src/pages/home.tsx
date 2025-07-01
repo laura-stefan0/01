@@ -261,7 +261,11 @@ export default function HomePage() {
             </Button>
             
             {/* Notification bell */}
-            <Button variant="ghost" size="sm">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/profile')}
+            >
               <Bell className="w-5 h-5 text-gray-600" />
             </Button>
           </div>

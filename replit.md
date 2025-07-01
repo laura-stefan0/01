@@ -101,6 +101,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 
 ## Recent Changes  
 - July 1, 2025: Successfully migrated project from Replit Agent to standard Replit environment - all dependencies installed and working properly
+- July 1, 2025: Made top-right icons functional on Home page - notification bell now navigates to Profile page, refresh location button already functional
+- July 1, 2025: Removed preview section from App theme settings page for cleaner interface
 - July 1, 2025: Updated App theme settings design - changed color selection from circles to rounded rectangles, combined colors/gradients/images into single scrollable row with hidden scrollbar using scrollbar-hide CSS class
 - June 30, 2025: Created dedicated Profile page as standalone route with proper navigation structure - Profile is now a separate page accessible via /profile route with Settings, Actions, and Sign Out functionality
 - June 30, 2025: Implemented complete theme system with global ThemeProvider context - background colors now apply across entire app with immediate saving to database when changed
