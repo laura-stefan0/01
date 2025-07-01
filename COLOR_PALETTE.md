@@ -11,7 +11,7 @@ This document provides a comprehensive guide to all colors used in the Corteo pr
 ```css
 :root {
   /* Backgrounds */
-  --background: hsl(210, 40%, 98%);           /* #F8FAFC - Main background */
+  --background: hsl(60, 9%, 97%);             /* #F8F8F6 - Main background */
   --card: hsl(0, 0%, 100%);                   /* #FFFFFF - Card backgrounds */
   --popover: hsl(0, 0%, 100%);                /* #FFFFFF - Popup backgrounds */
   
@@ -20,18 +20,23 @@ This document provides a comprehensive guide to all colors used in the Corteo pr
   --muted-foreground: hsl(215, 16%, 47%);     /* #64748B - Secondary text */
   
   /* Borders & Inputs */
-  --border: hsl(220, 13%, 91%);               /* #E2E8F0 - Border color */
-  --input: hsl(220, 13%, 91%);                /* #E2E8F0 - Input borders */
+  --border: hsl(214, 32%, 91%);               /* #E2E8F0 - Border color */
+  --input: hsl(214, 32%, 91%);                /* #E2E8F0 - Input borders */
   
   /* UI Elements */
-  --muted: hsl(210, 40%, 96%);                /* #F1F5F9 - Muted backgrounds */
-  --accent: hsl(210, 40%, 96%);               /* #F1F5F9 - Accent backgrounds */
-  --secondary: hsl(210, 40%, 96%);            /* #F1F5F9 - Secondary backgrounds */
+  --muted: hsl(60, 9%, 97%);                  /* #F8F8F6 - Muted backgrounds */
+  --accent: hsl(347, 77%, 50%);               /* #E11D48 - Accent color */
+  --secondary: hsl(60, 9%, 97%);              /* #F8F8F6 - Secondary backgrounds */
   
   /* Interactive Elements */
-  --primary: hsl(217, 91%, 60%);              /* #2563EB - Primary buttons */
-  --destructive: hsl(0, 84%, 60%);            /* #DC2626 - Destructive actions */
-  --ring: hsl(215, 25%, 27%);                 /* #1E293B - Focus rings */
+  --primary: hsl(347, 77%, 50%);              /* #E11D48 - Active icons, buttons */
+  --destructive: hsl(0, 74%, 42%);            /* #DC2626 - Destructive actions */
+  --ring: hsl(347, 77%, 50%);                 /* #E11D48 - Focus rings */
+  
+  /* New specific colors */
+  --inactive-icon: hsl(218, 11%, 65%);        /* #94A3B8 - Inactive nav icons */
+  --category-label-bg: hsl(347, 77%, 92%);    /* #FECDD3 - Category label background */
+  --category-label-text: hsl(347, 77%, 50%);  /* #E11D48 - Category label text */
 }
 ```
 

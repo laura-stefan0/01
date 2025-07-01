@@ -137,7 +137,7 @@ export default function Filter() {
         <div className="max-w-md mx-auto">
           <Button 
             onClick={handleApplyFilters}
-            className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+            className="w-full bg-[#E11D48] hover:bg-[#E11D48]/90 text-white"
           >
             Apply Filters
           </Button>

@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 1, 2025: Updated light theme to new specifications - #F8F8F6 background, #FFFFFF cards, #1E293B primary text, #64748B secondary text, #E2E8F0 borders, #E11D48 accent/primary buttons, #DC2626 destructive, #94A3B8 inactive icons, #FECDD3/#E11D48 category labels
 - July 1, 2025: Fixed filter page navigation hierarchy - back button and "Apply Filters" now correctly return to map page (/discover) instead of home page (/)
 - July 1, 2025: Enhanced dark theme with comprehensive styling - fixed card borders (#121212), navigation bar background (#121212), map interface elements (#1F1F1F), and filter controls to match specified color scheme
 - July 1, 2025: Removed 9 mainstream news sources from scraper configuration, keeping focused 8-source setup: 5 activism sites + 2 environmental + 1 alternative movement source

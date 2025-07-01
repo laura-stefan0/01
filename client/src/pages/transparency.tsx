@@ -76,15 +76,15 @@ export default function Transparency() {
             <h2 className="text-lg font-semibold text-dark-slate mb-4">What makes us different</h2>
             <div className="space-y-3 text-gray-700">
               <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
+                <div className="w-2 h-2 rounded-full bg-[#E11D48] mt-2 flex-shrink-0"></div>
                 <p className="text-sm">No ads. No data selling.</p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
+                <div className="w-2 h-2 rounded-full bg-[#E11D48] mt-2 flex-shrink-0"></div>
                 <p className="text-sm">Funded openly, run with care.</p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 rounded-full bg-activist-blue mt-2 flex-shrink-0"></div>
+                <div className="w-2 h-2 rounded-full bg-[#E11D48] mt-2 flex-shrink-0"></div>
                 <p className="text-sm">Community-driven development with input from real organizers.</p>
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function Transparency() {
             <p className="text-gray-700 text-sm mb-4">
               We're here to listen. Reach out if you have feedback, concerns, or suggestions.
             </p>
-            <Button className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
+            <Button className="w-full bg-[#E11D48] hover:bg-[#E11D48]/90 text-white">
               Contact the Corteo team
             </Button>
           </CardContent>

@@ -340,21 +340,14 @@ export function MapView() {
                         <p className="text-xs text-gray-600 mb-2">{protest.location}</p>
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-gray-500">{protest.date} • {protest.time}</span>
-                          <Badge className={`text-xs px-2 py-1 ${
-                            protest.category === 'Climate' || protest.category === 'Environment' ? 'bg-green-100 text-green-800' :
-                            protest.category === 'Pride' || protest.category === 'LGBTQ+' ? 'bg-pink-100 text-pink-800' :
-                            protest.category === 'Workers' ? 'bg-amber-100 text-amber-800' :
-                            protest.category === 'Justice' ? 'bg-red-100 text-red-800' :
-                            protest.category === 'Education' ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
+                          <Badge className="text-xs px-2 py-1 bg-[#FECDD3] text-[#E11D48]">
                             {protest.category}
                           </Badge>
                         </div>
                         <p className="text-xs text-gray-700 mt-2 line-clamp-2">{protest.description}</p>
                         <Button 
                           size="sm" 
-                          className="w-full mt-2 bg-activist-blue hover:bg-activist-blue/90"
+                          className="w-full mt-2 bg-[#E11D48] hover:bg-[#E11D48]/90"
                           onClick={() => navigate(`/protest/${protest.id}`)}
                         >
                           View Details
@@ -506,14 +499,7 @@ export function MapView() {
                               <p className="font-medium text-gray-900 truncate">{protest.title}</p>
                               <p className="text-sm text-gray-600 truncate">{protest.location}</p>
                               <div className="flex items-center space-x-2 mt-1">
-                                <Badge className={`text-xs ${
-                                  protest.category === 'Climate' || protest.category === 'Environment' ? 'bg-green-100 text-green-800' :
-                                  protest.category === 'Pride' || protest.category === 'LGBTQ+' ? 'bg-pink-100 text-pink-800' :
-                                  protest.category === 'Workers' ? 'bg-amber-100 text-amber-800' :
-                                  protest.category === 'Justice' ? 'bg-red-100 text-red-800' :
-                                  protest.category === 'Education' ? 'bg-blue-100 text-blue-800' :
-                                  'bg-gray-100 text-gray-800'
-                                }`}>
+                                <Badge className="text-xs bg-[#FECDD3] text-[#E11D48]">
                                   {protest.category}
                                 </Badge>
                                 <span className="text-xs text-gray-500">{protest.date} • {protest.time}</span>
@@ -569,8 +555,8 @@ export function MapView() {
                       variant={activeFilter === filter.id ? "default" : "secondary"}
                       className={`cursor-pointer whitespace-nowrap transition-colors ${
                         activeFilter === filter.id
-                          ? "bg-activist-blue text-white hover:bg-activist-blue/90"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          ? "bg-[#E11D48] text-white hover:bg-[#E11D48]/90"
+                          : "bg-[#F8F8F6] text-[#64748B] hover:bg-[#E2E8F0]"
                       }`}
                       onClick={() => setActiveFilter(filter.id)}
                     >

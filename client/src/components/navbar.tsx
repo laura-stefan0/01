@@ -51,8 +51,8 @@ export function Navbar() {
               className={({ isActive }) =>
                 `flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
                   isActive
-                    ? "text-[#e40000]" // Active color (brand red)
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "text-[#E11D48]" // Active color (#E11D48)
+                    : "text-[#94A3B8] hover:text-[#64748B]" // Inactive (#94A3B8) and hover (#64748B)
                 }`
               }
             >

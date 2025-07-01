@@ -40,27 +40,27 @@
 /* Background theme classes */
 /* Solid Colors */
 body.bg-white {
-  background-color: #ffffff !important;
+  background-color: #F8F8F6 !important;
 }
 
 body.bg-pink {
-  background-color: #fdf2f8 !important;
+  background-color: #F8F8F6 !important;
 }
 
 body.bg-green {
-  background-color: #f0fdf4 !important;
+  background-color: #F8F8F6 !important;
 }
 
 body.bg-blue {
-  background-color: #eff6ff !important;
+  background-color: #F8F8F6 !important;
 }
 
 body.bg-purple {
-  background-color: #faf5ff !important;
+  background-color: #F8F8F6 !important;
 }
 
 body.bg-orange {
-  background-color: #fff7ed !important;
+  background-color: #F8F8F6 !important;
 }
 
 /* Gradient Backgrounds */
@@ -80,27 +80,27 @@ body.bg-gradient-forest {
 
 /* Ensure app background inherits from body */
 body.bg-white .app-background {
-  background: #ffffff !important;
+  background: #F8F8F6 !important;
 }
 
 body.bg-pink .app-background {
-  background: #fdf2f8 !important;
+  background: #F8F8F6 !important;
 }
 
 body.bg-green .app-background {
-  background: #f0fdf4 !important;
+  background: #F8F8F6 !important;
 }
 
 body.bg-blue .app-background {
-  background: #eff6ff !important;
+  background: #F8F8F6 !important;
 }
 
 body.bg-purple .app-background {
-  background: #faf5ff !important;
+  background: #F8F8F6 !important;
 }
 
 body.bg-orange .app-background {
-  background: #fff7ed !important;
+  background: #F8F8F6 !important;
 }
 
 body.bg-gradient-sunset .app-background {
@@ -153,25 +153,25 @@ body[style*="background-image"] .app-background {
 }
 
 :root {
-  --background: hsl(210, 40%, 98%);
-  --foreground: hsl(215, 25%, 27%);
-  --muted: hsl(210, 40%, 96%);
-  --muted-foreground: hsl(215, 16%, 47%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(215, 25%, 27%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(215, 25%, 27%);
-  --border: hsl(220, 13%, 91%);
-  --input: hsl(220, 13%, 91%);
-  --primary: hsl(217, 91%, 60%); /* #2563EB activist blue */
-  --primary-foreground: hsl(210, 40%, 98%);
-  --secondary: hsl(210, 40%, 96%);
-  --secondary-foreground: hsl(222, 84%, 5%);
-  --accent: hsl(210, 40%, 96%);
-  --accent-foreground: hsl(222, 84%, 5%);
-  --destructive: hsl(0, 84%, 60%); /* #DC2626 rally red */
-  --destructive-foreground: hsl(210, 40%, 98%);
-  --ring: hsl(215, 25%, 27%);
+  --background: hsl(60, 9%, 97%);           /* #F8F8F6 - Main background */
+  --foreground: hsl(215, 25%, 27%);         /* #1E293B - Primary text */
+  --muted: hsl(60, 9%, 97%);                /* #F8F8F6 - Muted backgrounds */
+  --muted-foreground: hsl(215, 16%, 47%);   /* #64748B - Secondary text */
+  --popover: hsl(0, 0%, 100%);              /* #FFFFFF - Card background */
+  --popover-foreground: hsl(215, 25%, 27%); /* #1E293B - Primary text */
+  --card: hsl(0, 0%, 100%);                 /* #FFFFFF - Card background */
+  --card-foreground: hsl(215, 25%, 27%);    /* #1E293B - Primary text */
+  --border: hsl(214, 32%, 91%);             /* #E2E8F0 - Border color */
+  --input: hsl(214, 32%, 91%);              /* #E2E8F0 - Input borders */
+  --primary: hsl(347, 77%, 50%);            /* #E11D48 - Active icons, buttons */
+  --primary-foreground: hsl(0, 0%, 100%);   /* #FFFFFF - White text */
+  --secondary: hsl(60, 9%, 97%);            /* #F8F8F6 - Muted backgrounds */
+  --secondary-foreground: hsl(215, 16%, 47%); /* #64748B - Secondary text */
+  --accent: hsl(347, 77%, 50%);             /* #E11D48 - Accent color */
+  --accent-foreground: hsl(0, 0%, 100%);    /* #FFFFFF - White text */
+  --destructive: hsl(0, 74%, 42%);          /* #DC2626 - Destructive buttons */
+  --destructive-foreground: hsl(0, 0%, 100%); /* #FFFFFF - White text */
+  --ring: hsl(347, 77%, 50%);               /* #E11D48 - Focus ring */
   --radius: 0.5rem;
 
   /* Custom Corteo colors */
@@ -180,6 +180,11 @@ body[style*="background-image"] .app-background {
   --movement-green: hsl(158, 89%, 40%); /* #059669 */
   --clean-white: hsl(210, 40%, 98%); /* #F8FAFC */
   --dark-slate: hsl(215, 25%, 27%); /* #1E293B */
+  
+  /* New light theme specific colors */
+  --inactive-icon: hsl(218, 11%, 65%); /* #94A3B8 - Inactive nav icons */
+  --category-label-bg: hsl(347, 77%, 92%); /* #FECDD3 - Category label background */
+  --category-label-text: hsl(347, 77%, 50%); /* #E11D48 - Category label text */
 }
 
 .dark {
