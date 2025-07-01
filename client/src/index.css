@@ -485,6 +485,19 @@ body[style*="background-image"] .app-background {
     border-color: #2A2A2A !important;
   }
 
+  /* Remove hover effects from back buttons */
+  .dark button[aria-label*="back"]:hover,
+  .dark button[aria-label*="Back"]:hover,
+  .dark .back-button:hover,
+  button[aria-label*="back"]:hover,
+  button[aria-label*="Back"]:hover,
+  .back-button:hover {
+    background-color: inherit !important;
+    color: inherit !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
   /* Remove focus rings from buttons and interactive elements */
   .dark button:focus,
   .dark button:focus-visible,
