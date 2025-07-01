@@ -22,7 +22,7 @@ A streamlined web scraper designed to collect Italian protest and activism event
 - **Comprehensive logging**: Detailed statistics and success rates
 
 ### ✨ Data Quality Features
-- **Title cleaning**: Removes dates, locations, and quotes from event titles
+- **Title cleaning**: Preserves original titles, only removes quotes and normalizes spacing
 - **Enhanced address extraction**: Extracts Italian cities and coordinates
 - **Time parsing**: Extracts event times or defaults to 18:00
 - **Category detection**: Smart categorization based on content analysis
@@ -159,6 +159,7 @@ The scraper implements several data quality measures:
 
 ## Recent Updates
 
+- **July 1, 2025**: Reverted title cleaning to preserve original titles with dates and cities
 - **July 1, 2025**: Fixed database constraint issues with null time values
 - **July 1, 2025**: Streamlined to 5 high-quality sources for better performance
 - **July 1, 2025**: Simplified architecture and improved error handling

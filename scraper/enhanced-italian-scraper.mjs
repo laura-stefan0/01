@@ -122,29 +122,18 @@ function cleanTitle(title) {
   
   let cleanedTitle = title.trim();
   
-  // Remove date patterns at the beginning
-  cleanedTitle = cleanedTitle.replace(/^\d{1,2}[\/\-\.]\d{1,2}(\/{1,2}\d{2,4})?\s*[\-–]?\s*/, '');
-  
-  // Remove city patterns at the beginning
-  const italianCities = ['roma', 'milano', 'napoli', 'torino', 'palermo', 'genova', 'bologna', 'firenze', 'bari', 'catania', 'venezia', 'verona'];
-  const cityPattern = new RegExp(`^(${italianCities.join('|')})\\s*[\\-–]?\\s*`, 'i');
-  cleanedTitle = cleanedTitle.replace(cityPattern, '');
-  
-  // Remove location patterns
-  cleanedTitle = cleanedTitle.replace(/^(piazza|via|corso|viale|largo|ponte)\s+[^-–]+[\-–]\s*/i, '');
-  
-  // Remove quotes
+  // Only remove quotes at the beginning and end
   cleanedTitle = cleanedTitle.replace(/^["""]/, '').replace(/["""]$/, '');
   
-  // Clean up spaces and dashes
-  cleanedTitle = cleanedTitle.replace(/^[\s\-–]+/, '');
+  // Clean up extra spaces
+  cleanedTitle = cleanedTitle.replace(/\s+/g, ' ').trim();
   
-  // Capitalize first letter
+  // Capitalize first letter if needed
   if (cleanedTitle.length > 0) {
     cleanedTitle = cleanedTitle.charAt(0).toUpperCase() + cleanedTitle.slice(1);
   }
   
-  return cleanedTitle.trim();
+  return cleanedTitle;
 }
 
 function containsProtestKeywords(text) {
