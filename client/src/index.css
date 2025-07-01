@@ -453,7 +453,7 @@ body[style*="background-image"] .app-background {
     color: #FFFFFF !important;
   }
 
-  .dark .hover\\:bg-\\[\\#E11D48\\]\\/90:hover {
+  .dark .hover\\:bg-\\[\\#E11D48\\]:hover {
     background-color: #BE1B42 !important;
   }
 
