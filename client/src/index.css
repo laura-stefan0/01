@@ -76,6 +76,10 @@ body.bg-gradient-forest {
   background: linear-gradient(135deg, #134e5e 0%, #71b280 100%) !important;
 }
 
+body.bg-gradient-warm {
+  background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%) !important;
+}
+
 /* Custom image backgrounds are now handled via JavaScript in theme-context.tsx */
 
 /* Ensure app background inherits from body */
@@ -113,6 +117,15 @@ body.bg-gradient-ocean .app-background {
 
 body.bg-gradient-forest .app-background {
   background: linear-gradient(135deg, #134e5e 0%, #71b280 100%) !important;
+}
+
+body.bg-gradient-warm .app-background {
+  background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%) !important;
+}
+
+/* Preview class for theme selector */
+.gradient-warm-preview {
+  background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%);
 }
 
 /* Custom image backgrounds inherit from body */

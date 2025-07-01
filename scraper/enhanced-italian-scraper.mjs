@@ -27,10 +27,7 @@ const PROTEST_KEYWORDS = [
 ];
 
 const EXCLUDE_KEYWORDS = [
-  'concerto', 'spettacolo', 'festival', 'mostra', 'fiera', 'mercatino',
-  'messa', 'celebrazione', 'evento gastronomico', 'laboratorio',
-  'evento sportivo', 'corsa', 'maratona', 'dj set', 'sagra', 'reading',
-  'workshop', 'meditazione', 'presentazione', 'cena', 'aperitivo'
+  'concerto', 'spettacolo', 'festival', 'mostra', 'fiera', 'mercatino', 'messa', 'celebrazione', 'evento gastronomico', 'evento sportivo', 'corsa', 'maratona', 'dj set', 'sagra', 'reading', 'meditazione', 'presentazione', 'cena', 'aperitivo'
 ];
 
 // Italian month names to numbers
@@ -78,47 +75,47 @@ const ITALIAN_CITIES = {
 // Comprehensive Italian news and activism sources
 const SCRAPE_SOURCES = [
   // Activism and Social Movement Sites
-  { 
-    url: 'https://www.globalproject.info/it/tags/news/menu', 
+  {
+    url: 'https://www.globalproject.info/it/tags/news/menu',
     name: 'globalproject.info',
     type: 'activism'
   },
-  { 
-    url: 'https://www.dinamopress.it/categoria/eventi', 
+  {
+    url: 'https://www.dinamopress.it/categoria/eventi',
     name: 'dinamopress.it',
     type: 'activism'
   },
-  { 
-    url: 'https://adlcobas.it/', 
+  {
+    url: 'https://adlcobas.it/',
     name: 'adlcobas.it',
     type: 'labor'
   },
-  { 
-    url: 'https://www.notav.info/', 
+  {
+    url: 'https://www.notav.info/',
     name: 'notav.info',
     type: 'movement'
   },
-  { 
-    url: 'https://ilrovescio.info/category/iniziative/', 
+  {
+    url: 'https://ilrovescio.info/category/iniziative/',
     name: 'ilrovescio.info',
     type: 'initiatives'
   },
-  
+
   // Environmental Activism
-  { 
-    url: 'https://fridaysforfutureitalia.it/eventi/', 
+  {
+    url: 'https://fridaysforfutureitalia.it/eventi/',
     name: 'fridaysforfutureitalia.it',
     type: 'environment'
   },
-  { 
-    url: 'https://extinctionrebellion.it/eventi/futuri/', 
+  {
+    url: 'https://extinctionrebellion.it/eventi/futuri/',
     name: 'extinctionrebellion.it',
     type: 'environment'
   },
-  
+
   // Alternative Movement Sources
-  { 
-    url: 'https://rivoluzioneanarchica.it/', 
+  {
+    url: 'https://rivoluzioneanarchica.it/',
     name: 'rivoluzioneanarchica.it',
     type: 'anarchist'
   }
@@ -139,20 +136,20 @@ function cleanText(text) {
 
 function cleanTitle(title) {
   if (!title) return '';
-  
+
   let cleanedTitle = title.trim();
-  
+
   // Only remove quotes at the beginning and end
   cleanedTitle = cleanedTitle.replace(/^["""]/, '').replace(/["""]$/, '');
-  
+
   // Clean up extra spaces
   cleanedTitle = cleanedTitle.replace(/\s+/g, ' ').trim();
-  
+
   // Capitalize first letter if needed
   if (cleanedTitle.length > 0) {
     cleanedTitle = cleanedTitle.charAt(0).toUpperCase() + cleanedTitle.slice(1);
   }
-  
+
   return cleanedTitle;
 }
 
@@ -174,7 +171,7 @@ function getDateCutoff() {
 
 function isDateWithinCutoff(eventDate) {
   if (!eventDate) return true;
-  
+
   try {
     const eventDateObj = new Date(eventDate);
     const cutoffDate = getDateCutoff();
@@ -191,12 +188,12 @@ function parseItalianDateTime(dateTimeString) {
   if (!dateTimeString || dateTimeString.trim().length === 0) {
     return { date: null, time: null };
   }
-  
+
   const cleanDateTimeString = cleanText(dateTimeString).toLowerCase();
-  
+
   let date = null;
   let time = null;
-  
+
   // Extract time (HH:MM format)
   const timeMatch = cleanDateTimeString.match(/(\d{1,2})[:\.](\d{2})/);
   if (timeMatch) {
@@ -204,7 +201,7 @@ function parseItalianDateTime(dateTimeString) {
     const minutes = timeMatch[2];
     time = `${hours}:${minutes}`;
   }
-  
+
   // Extract date - DD/MM/YYYY format
   let dateMatch = cleanDateTimeString.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{4})/);
   if (dateMatch) {
@@ -214,7 +211,7 @@ function parseItalianDateTime(dateTimeString) {
     date = `${year}-${month}-${day}`;
     return { date, time };
   }
-  
+
   // Extract date - DD/MM format (assume current year)
   dateMatch = cleanDateTimeString.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})/);
   if (dateMatch) {
@@ -224,19 +221,19 @@ function parseItalianDateTime(dateTimeString) {
     date = `${year}-${month}-${day}`;
     return { date, time };
   }
-  
+
   // Try month names
   let month = null;
   let day = null;
   let year = new Date().getFullYear();
-  
+
   for (const [monthName, monthNum] of Object.entries(ITALIAN_MONTHS)) {
     if (cleanDateTimeString.includes(monthName)) {
       month = monthNum;
       break;
     }
   }
-  
+
   if (month) {
     const dayMatch = cleanDateTimeString.match(/(\d{1,2})/);
     if (dayMatch) {
@@ -244,7 +241,7 @@ function parseItalianDateTime(dateTimeString) {
       date = `${year}-${month}-${day}`;
     }
   }
-  
+
   return { date, time };
 }
 
@@ -253,7 +250,7 @@ function parseItalianDateTime(dateTimeString) {
  */
 function extractCityFromText(text) {
   const normalizedText = normalizeText(text);
-  
+
   for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
     if (normalizedText.includes(cityName)) {
       return {
@@ -262,7 +259,7 @@ function extractCityFromText(text) {
       };
     }
   }
-  
+
   return {
     city: 'Milano',  // Default fallback
     coordinates: ITALIAN_CITIES.milano
@@ -274,17 +271,17 @@ function extractCityFromText(text) {
  */
 function categorizeEvent(title, description) {
   const text = normalizeText(`${title} ${description}`);
-  
+
   if (text.includes('pride') || text.includes('lgbtq')) return 'lgbtq+';
-  if (text.includes('clima') || text.includes('ambiente') || text.includes('climate')) return 'environment';
+  if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento')) return 'environment';
   if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato')) return 'labor';
-  if (text.includes('guerra') || text.includes('pace') || text.includes('war') || text.includes('bezos')) return 'peace & anti-war';
-  if (text.includes('diritti') || text.includes('giustizia')) return 'civil & human rights';
-  if (text.includes('donna') || text.includes('women')) return 'women\'s rights';
-  if (text.includes('razzismo') || text.includes('racial')) return 'racial & social justice';
+  if (text.includes('guerra') || text.includes('pace') || text.includes('war') return 'peace & anti-war';
+  if (text.includes('diritti') || text.includes('giustizia') || text.includes('bezos')) return 'civil & human rights';
+  if (text.includes('donna') || text.includes('donne') || text.includes('femminicidi')) return 'women\'s rights';
+  if (text.includes('razzismo') || text.includes('discriminazione')) return 'racial & social justice';
   if (text.includes('sanita') || text.includes('scuola') || text.includes('health')) return 'healthcare & education';
   if (text.includes('corruzione') || text.includes('trasparenza')) return 'transparency & anti-corruption';
-  
+
   return 'other';
 }
 
@@ -294,7 +291,7 @@ function categorizeEvent(title, description) {
 async function makeRequest(url) {
   try {
     console.log(`🔗 Fetching: ${url}`);
-    
+
     const response = await axios.get(url, {
       timeout: PERFORMANCE_CONFIG.REQUEST_TIMEOUT,
       headers: {
@@ -303,7 +300,7 @@ async function makeRequest(url) {
         'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3'
       }
     });
-    
+
     console.log(`✅ Request successful: ${response.status}`);
     return response;
   } catch (error) {
@@ -318,26 +315,26 @@ async function makeRequest(url) {
 async function checkDuplicate(title, date, city) {
   try {
     const cleanTitleForDupe = cleanTitle(title).toLowerCase();
-    
+
     const { data, error } = await supabase
       .from('protests')
       .select('id, title')
       .eq('city', city)
       .limit(10);
-    
+
     if (error) {
       console.log('⚠️ Error checking duplicates:', error.message);
       return false;
     }
-    
+
     // Check for similar titles
     const isDuplicate = data.some(event => {
       const existingTitle = cleanTitle(event.title).toLowerCase();
-      return existingTitle === cleanTitleForDupe || 
-             existingTitle.includes(cleanTitleForDupe) ||
-             cleanTitleForDupe.includes(existingTitle);
+      return existingTitle === cleanTitleForDupe ||
+        existingTitle.includes(cleanTitleForDupe) ||
+        cleanTitleForDupe.includes(existingTitle);
     });
-    
+
     return isDuplicate;
   } catch (error) {
     console.log('⚠️ Exception checking duplicates:', error.message);
@@ -351,14 +348,14 @@ async function checkDuplicate(title, date, city) {
 async function saveEventToDatabase(event) {
   try {
     console.log(`💾 Saving event: "${event.title}"`);
-    
+
     // Check for duplicate
     const isDuplicate = await checkDuplicate(event.title, event.date, event.city);
     if (isDuplicate) {
       console.log(`⏭️ Skipping duplicate: "${event.title}"`);
       return false;
     }
-    
+
     // Prepare event data
     const eventData = {
       title: cleanTitle(event.title) || 'Untitled Event',
@@ -379,20 +376,20 @@ async function saveEventToDatabase(event) {
       source_url: event.source_url || '',
       scraped_at: new Date().toISOString()
     };
-    
+
     const { data, error } = await supabase
       .from('protests')
       .insert([eventData])
       .select();
-    
+
     if (error) {
       console.error(`❌ Error saving event "${event.title}":`, error.message);
       return false;
     }
-    
+
     console.log(`✅ Saved event: "${event.title}" (ID: ${data[0].id})`);
     return true;
-    
+
   } catch (error) {
     console.error(`❌ Exception saving event "${event.title}":`, error.message);
     return false;
@@ -404,7 +401,7 @@ async function saveEventToDatabase(event) {
  */
 async function scrapeWebsite(source) {
   console.log(`\n🔍 Scraping ${source.name}...`);
-  
+
   const events = [];
   const stats = {
     pagesScraped: 0,
@@ -412,21 +409,21 @@ async function scrapeWebsite(source) {
     eventsSkippedByDate: 0,
     eventsSkippedByKeywords: 0
   };
-  
+
   try {
     const response = await makeRequest(source.url);
     const $ = load(response.data);
-    
+
     stats.pagesScraped = 1;
-    
+
     console.log(`📄 Processing ${source.name}...`);
-    
+
     // Generic selectors for finding events/articles
     const eventSelectors = [
       'article', '.post', '.event', '.news-item', '.item', '.entry',
       '.news', '.evento', '.manifestazione', '.iniziativa'
     ];
-    
+
     let eventElements = $();
     for (const selector of eventSelectors) {
       const elements = $(selector);
@@ -436,19 +433,19 @@ async function scrapeWebsite(source) {
         break;
       }
     }
-    
+
     // Process each potential event
     eventElements.slice(0, 20).each((index, element) => {
       try {
         const $el = $(element);
-        
+
         // Extract basic information
         const title = cleanText($el.find('h1, h2, h3, .title, .headline').first().text()) ||
-                     cleanText($el.text()).slice(0, 100) + '...';
-        
+          cleanText($el.text()).slice(0, 100) + '...';
+
         const description = cleanText($el.find('p, .description, .excerpt, .content').first().text()) ||
-                           cleanText($el.text()).slice(0, 500);
-        
+          cleanText($el.text()).slice(0, 500);
+
         const link = $el.find('a').first().attr('href');
         let eventUrl = '';
         if (link && !link.startsWith('http')) {
@@ -460,7 +457,7 @@ async function scrapeWebsite(source) {
         } else {
           eventUrl = link || source.url;
         }
-        
+
         // Check if this looks like a protest/event
         const fullText = `${title} ${description}`.toLowerCase();
         if (!containsProtestKeywords(fullText)) {
@@ -468,28 +465,28 @@ async function scrapeWebsite(source) {
           stats.eventsSkippedByKeywords++;
           return;
         }
-        
+
         // Check for excluded content
         if (containsExcludeKeywords(fullText)) {
           console.log(`⚠️ Skipping excluded content: "${title.slice(0, 50)}..."`);
           stats.eventsSkippedByKeywords++;
           return;
         }
-        
+
         // Extract date/time
         const dateText = cleanText($el.find('.date, time, .when, .data').text()) || description;
         const { date, time } = parseItalianDateTime(dateText);
-        
+
         // Check date cutoff
         if (date && !isDateWithinCutoff(date)) {
           console.log(`⏰ Skipping old event: "${title.slice(0, 50)}..." (${date})`);
           stats.eventsSkippedByDate++;
           return;
         }
-        
+
         // Extract location
         const locationInfo = extractCityFromText(`${title} ${description}`);
-        
+
         // Create event object
         const event = {
           title: cleanTitle(title),
@@ -506,21 +503,21 @@ async function scrapeWebsite(source) {
           source_name: source.name,
           source_url: source.url
         };
-        
+
         events.push(event);
         stats.eventsFound++;
-        
+
         console.log(`📋 Event found: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city} | ${event.date || 'No date'}`);
-        
+
       } catch (error) {
         console.log(`⚠️ Error processing event element:`, error.message);
       }
     });
-    
+
   } catch (error) {
     console.error(`❌ Error scraping ${source.name}:`, error.message);
   }
-  
+
   console.log(`📊 ${source.name} Stats: ${events.length} events found`);
   return { events, stats };
 }
@@ -531,7 +528,7 @@ async function scrapeWebsite(source) {
 async function main() {
   console.log('🚀 Starting Enhanced Italian Protest Scraper...');
   console.log(`📊 Configuration: ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days, ${SCRAPE_SOURCES.length} sources\n`);
-  
+
   const globalStats = {
     totalEventsFound: 0,
     totalEventsSkippedByDate: 0,
@@ -540,21 +537,21 @@ async function main() {
     totalDuplicatesSkipped: 0,
     sourcesProcessed: 0
   };
-  
+
   const startTime = Date.now();
-  
+
   for (const source of SCRAPE_SOURCES) {
     console.log(`\n🌐 Processing source ${globalStats.sourcesProcessed + 1}/${SCRAPE_SOURCES.length}: ${source.name}`);
-    
+
     try {
       const { events, stats } = await scrapeWebsite(source);
-      
+
       // Update global statistics
       globalStats.totalEventsFound += stats.eventsFound;
       globalStats.totalEventsSkippedByDate += stats.eventsSkippedByDate;
       globalStats.totalEventsSkippedByKeywords += stats.eventsSkippedByKeywords;
       globalStats.sourcesProcessed++;
-      
+
       // Save events to database
       for (const event of events) {
         const success = await saveEventToDatabase(event);
@@ -563,25 +560,25 @@ async function main() {
         } else {
           globalStats.totalDuplicatesSkipped++;
         }
-        
+
         // Small delay between saves
         await new Promise(resolve => setTimeout(resolve, 200));
       }
-      
+
       // Delay before next source
       if (globalStats.sourcesProcessed < SCRAPE_SOURCES.length) {
         console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES}ms...`);
         await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES));
       }
-      
+
     } catch (error) {
       console.error(`❌ Error processing ${source.name}:`, error.message);
     }
   }
-  
+
   const endTime = Date.now();
   const duration = Math.round((endTime - startTime) / 1000);
-  
+
   console.log('\n🎉 Scraping completed!');
   console.log('\n📊 FINAL STATISTICS:');
   console.log(`   ⏱️ Duration: ${duration} seconds`);
@@ -592,7 +589,7 @@ async function main() {
   console.log(`   🔍 Skipped by keywords: ${globalStats.totalEventsSkippedByKeywords}`);
   console.log(`   ⏭️ Duplicates skipped: ${globalStats.totalDuplicatesSkipped}`);
   console.log(`   📈 Success rate: ${Math.round((globalStats.totalEventsSaved / Math.max(globalStats.totalEventsFound, 1)) * 100)}%`);
-  
+
   return globalStats;
 }
 

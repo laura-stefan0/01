@@ -90,7 +90,8 @@ export function ThemeSettingsContent() {
   const gradientOptions = [
     { value: 'gradient-sunset', label: 'Sunset', preview: 'bg-gradient-to-r from-pink-300 to-purple-300' },
     { value: 'gradient-ocean', label: 'Ocean', preview: 'bg-gradient-to-r from-blue-400 to-purple-500' },
-    { value: 'gradient-forest', label: 'Forest', preview: 'bg-gradient-to-r from-green-600 to-blue-600' }
+    { value: 'gradient-forest', label: 'Forest', preview: 'bg-gradient-to-r from-green-600 to-blue-600' },
+    { value: 'gradient-warm', label: 'Warm', preview: 'gradient-warm-preview' }
   ];
 
   // State for local background images
