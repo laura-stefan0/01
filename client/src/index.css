@@ -50,6 +50,19 @@ body.bg-green {
   background-color: #f0fdf4 !important;
 }
 
+/* Ensure app background inherits from body */
+body.bg-white .app-background {
+  background: #ffffff !important;
+}
+
+body.bg-pink .app-background {
+  background: #fdf2f8 !important;
+}
+
+body.bg-green .app-background {
+  background: #f0fdf4 !important;
+}
+
 /* App background utility */
 .app-background {
   background-color: inherit;
@@ -127,7 +140,7 @@ body.bg-green {
 
   /* Background gradient container */
   .app-background {
-    background: #ffffff;
+    background: inherit;
     min-height: 100vh;
   }
 }
