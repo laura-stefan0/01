@@ -14,7 +14,10 @@ interface ProtestCardProps {
 export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) {
   const [, setLocation] = useLocation();
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Protest card clicked, navigating to:', `/protest/${protest.id}`);
     setLocation(`/protest/${protest.id}`);
   };
 
