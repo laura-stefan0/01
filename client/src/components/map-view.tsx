@@ -26,40 +26,40 @@ L.Icon.Default.mergeOptions({
 // Component to handle map centering
 function MapCenterUpdater({ center }: { center: [number, number] | null }) {
   const map = useMap();
-  
+
   useEffect(() => {
     if (center) {
       console.log("Centering map on:", center);
       map.setView(center, 15);
     }
   }, [center, map]);
-  
+
   return null;
 }
 
 // Component to track map bounds for filtering protests
 function MapBoundsUpdater({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBounds) => void }) {
   const map = useMap();
-  
+
   useEffect(() => {
     const updateBounds = () => {
       const bounds = map.getBounds();
       onBoundsChange(bounds);
     };
-    
+
     // Update bounds initially
     updateBounds();
-    
+
     // Update bounds when map moves
     map.on('moveend', updateBounds);
     map.on('zoomend', updateBounds);
-    
+
     return () => {
       map.off('moveend', updateBounds);
       map.off('zoomend', updateBounds);
     };
   }, [map, onBoundsChange]);
-  
+
   return null;
 }
 
@@ -77,9 +77,9 @@ const createCategoryIcon = (category: string) => {
     'Transparency & Anti-Corruption': '#4b5563',
     'Other': '#4f46e5'
   };
-  
+
   const color = colors[category as keyof typeof colors] || '#4f46e5';
-  
+
   return L.divIcon({
     html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
     className: 'custom-marker',
@@ -112,7 +112,7 @@ export function MapView() {
   const getUserLocation = () => {
     setIsLocating(true);
     console.log("GPS button clicked - starting fresh location request");
-    
+
     if (!navigator.geolocation) {
       console.error("Geolocation is not supported by this browser");
       setIsLocating(false);
@@ -134,7 +134,7 @@ export function MapView() {
           timestamp: locationDate.toLocaleString(),
           age: (Date.now() - position.timestamp) / 1000 + " seconds old"
         });
-        
+
         // Check if location seems reasonable (not clearly cached/wrong)
         if (accuracy > 1000) {
           console.warn("Location accuracy is very low:", accuracy, "meters");
@@ -143,17 +143,17 @@ export function MapView() {
           alert(message);
           return;
         }
-        
+
         setUserLocation([latitude, longitude]);
         setIsLocating(false);
-        
+
         // Show success message with accuracy
         console.log("Map centered on your location with", Math.round(accuracy), "meter accuracy");
       },
       (error) => {
         console.error("Geolocation error:", error);
         setIsLocating(false);
-        
+
         let errorMessage = "Unable to get your location. ";
         switch(error.code) {
           case error.PERMISSION_DENIED:
@@ -182,14 +182,14 @@ export function MapView() {
   // Handle search input with geocoding
   const handleSearchChange = async (value: string) => {
     setSearchQuery(value);
-    
+
     // Reset search location when query is cleared
     if (!value.trim()) {
       setSearchLocation(null);
       setSearchLocationName("");
       return;
     }
-    
+
     // If query looks like a city/address search (no protest matches found)
     const query = value.toLowerCase().trim();
     const hasProtestMatches = protests.some(protest => {
@@ -202,11 +202,11 @@ export function MapView() {
       ];
       return searchFields.some(field => field.includes(query));
     });
-    
+
     // If no protest matches and query looks like a location, try geocoding
     if (!hasProtestMatches && query.length >= 3) {
       setIsGeocoding(true);
-      
+
       try {
         // First try Italian cities lookup for faster response
         const italianCity = findItalianCity(query);
@@ -217,7 +217,7 @@ export function MapView() {
           setIsGeocoding(false);
           return;
         }
-        
+
         // If not found in Italian cities, try full geocoding
         const geocodeResult = await geocodeLocation(query);
         if (geocodeResult) {
@@ -245,9 +245,9 @@ export function MapView() {
       if (searchQuery) {
         const query = searchQuery.toLowerCase().trim();
         if (query.length === 0) return true;
-        
+
         console.log(`🔍 Searching for: "${query}"`);
-        
+
         const searchFields = [
           protest.title?.toLowerCase() || '',
           protest.description?.toLowerCase() || '',
@@ -255,13 +255,13 @@ export function MapView() {
           protest.location?.toLowerCase() || '',
           protest.address?.toLowerCase() || ''
         ];
-        
+
         const matches = searchFields.some(field => field.includes(query));
-        
+
         if (matches) {
           console.log(`✅ Match found: ${protest.title} in ${protest.location}`);
         }
-        
+
         return matches;
       }
       return true;
@@ -281,7 +281,7 @@ export function MapView() {
   // Calculate map center - prioritize user location, then search location, then filtered protests, then Milan default
   let mapCenter: [number, number];
   let mapZoom: number;
-  
+
   if (userLocation) {
     // If user location is available, center on it
     mapCenter = userLocation;
@@ -296,17 +296,17 @@ export function MapView() {
     // Otherwise, use protest-based centering or default to Milan
     const protestsForCenter = searchQuery && searchQuery.trim().length > 0 ? filteredProtests : protests;
     const validProtests = protestsForCenter.filter(p => p.latitude && p.longitude && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude)));
-    
+
     mapCenter = validProtests.length > 0 
       ? [
           validProtests.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validProtests.length,
           validProtests.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validProtests.length
         ]
       : [45.4642, 9.1900]; // Default to Milan, Italy
-    
+
     mapZoom = searchQuery && filteredProtests.length > 0 ? 12 : validProtests.length > 0 ? 10 : 6;
   }
-  
+
   // Debug logging for search results
   if (searchQuery && searchQuery.trim().length > 0) {
     console.log(`🔍 Search results: ${filteredProtests.length} protests found for "${searchQuery}"`);
@@ -386,7 +386,7 @@ export function MapView() {
                     </Popup>
                   </Marker>
                 ))}
-              
+
               {/* User Location Marker */}
               {userLocation && (
                 <Marker
@@ -409,7 +409,7 @@ export function MapView() {
                   </Popup>
                 </Marker>
               )}
-              
+
               {/* Search Location Marker */}
               {searchLocation && (
                 <Marker
@@ -479,7 +479,7 @@ export function MapView() {
                   </Button>
                 </div>
               </div>
-              
+
               {/* Search Results Dropdown */}
               {searchQuery && searchQuery.trim().length > 0 && (
                 <div className="mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
@@ -497,7 +497,7 @@ export function MapView() {
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Protest Results */}
                   {filteredProtests.length > 0 ? (
                     <div className="divide-y divide-gray-100">
@@ -704,14 +704,14 @@ export function MapView() {
             </Button>
           </div>
         </SheetTrigger>
-        
+
         <SheetContent side="bottom" className="h-[70vh] rounded-t-lg">
           <SheetHeader className="pb-4">
             <SheetTitle className="text-left">
               Protests in this area ({protestsInView.length})
             </SheetTitle>
           </SheetHeader>
-          
+
           <div className="h-full overflow-y-auto pb-6">
             {isLoading ? (
               <div className="space-y-3">
