@@ -8,7 +8,7 @@ import { useTheme } from "@/context/theme-context";
 
 interface ThemeSettings {
   theme: 'system' | 'light' | 'dark';
-  background: 'white' | 'pink' | 'green';
+  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract';
 }
 
 /**
@@ -36,7 +36,7 @@ export function ThemeSettingsContent() {
     await saveToDatabase({ theme: newTheme, background: settings.background });
   };
 
-  const handleBackgroundChange = async (newBackground: 'white' | 'pink' | 'green') => {
+  const handleBackgroundChange = async (newBackground: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') => {
     setSettings(prev => ({ ...prev, background: newBackground }));
     setGlobalBackground(newBackground);
     await saveToDatabase({ theme: settings.theme, background: newBackground });
@@ -78,11 +78,28 @@ export function ThemeSettingsContent() {
     { value: 'dark', label: 'Dark', icon: Moon, description: 'Dark theme' }
   ];
 
-  const backgroundOptions = [
+  const solidColorOptions = [
     { value: 'white', label: 'White', color: '#ffffff', preview: 'bg-white' },
     { value: 'pink', label: 'Pink', color: '#fdf2f8', preview: 'bg-pink-50' },
-    { value: 'green', label: 'Green', color: '#f0fdf4', preview: 'bg-green-50' }
+    { value: 'green', label: 'Green', color: '#f0fdf4', preview: 'bg-green-50' },
+    { value: 'blue', label: 'Blue', color: '#eff6ff', preview: 'bg-blue-50' },
+    { value: 'purple', label: 'Purple', color: '#faf5ff', preview: 'bg-purple-50' },
+    { value: 'orange', label: 'Orange', color: '#fff7ed', preview: 'bg-orange-50' }
   ];
+
+  const gradientOptions = [
+    { value: 'gradient-sunset', label: 'Sunset', preview: 'bg-gradient-to-r from-pink-300 to-purple-300' },
+    { value: 'gradient-ocean', label: 'Ocean', preview: 'bg-gradient-to-r from-blue-400 to-purple-500' },
+    { value: 'gradient-forest', label: 'Forest', preview: 'bg-gradient-to-r from-green-600 to-blue-600' }
+  ];
+
+  const imageOptions = [
+    { value: 'image-cityscape', label: 'Cityscape', preview: 'bg-gray-300' },
+    { value: 'image-nature', label: 'Nature', preview: 'bg-green-300' },
+    { value: 'image-abstract', label: 'Abstract', preview: 'bg-gradient-to-r from-red-200 to-blue-200' }
+  ];
+
+  const allBackgroundOptions = [...solidColorOptions, ...gradientOptions, ...imageOptions];
 
   return (
     <div className="space-y-6">
@@ -120,13 +137,13 @@ export function ThemeSettingsContent() {
         </CardContent>
       </Card>
 
-      {/* Background Selection */}
+      {/* Solid Colors */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Background</CardTitle>
+          <CardTitle className="text-lg">Solid Colors</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {backgroundOptions.map((option) => {
+          {solidColorOptions.map((option) => {
             const isSelected = settings.background === option.value;
 
             return (
@@ -137,13 +154,77 @@ export function ThemeSettingsContent() {
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
                     : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
                 }`}
-                onClick={() => handleBackgroundChange(option.value as 'white' | 'pink' | 'green')}
+                onClick={() => handleBackgroundChange(option.value as any)}
               >
                 <div className="flex items-center gap-3">
                   <div 
                     className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`}
                     style={{ backgroundColor: option.color }}
                   />
+                  <div>
+                    <p className="font-medium">{option.label}</p>
+                  </div>
+                </div>
+                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* Gradients */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Gradients</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {gradientOptions.map((option) => {
+            const isSelected = settings.background === option.value;
+
+            return (
+              <div
+                key={option.value}
+                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                  isSelected 
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
+                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
+                }`}
+                onClick={() => handleBackgroundChange(option.value as any)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`} />
+                  <div>
+                    <p className="font-medium">{option.label}</p>
+                  </div>
+                </div>
+                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      {/* Background Images */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Background Images</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {imageOptions.map((option) => {
+            const isSelected = settings.background === option.value;
+
+            return (
+              <div
+                key={option.value}
+                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                  isSelected 
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
+                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
+                }`}
+                onClick={() => handleBackgroundChange(option.value as any)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`} />
                   <div>
                     <p className="font-medium">{option.label}</p>
                   </div>
@@ -167,7 +248,7 @@ export function ThemeSettingsContent() {
               {themeOptions.find(t => t.value === settings.theme)?.label}
             </Badge>
             <Badge variant="secondary">
-              {backgroundOptions.find(b => b.value === settings.background)?.label}
+              {allBackgroundOptions.find(b => b.value === settings.background)?.label}
             </Badge>
           </div>
         </CardContent>

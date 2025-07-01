@@ -3,9 +3,9 @@ import { useUser } from '@/hooks/use-user';
 
 interface ThemeContextType {
   theme: 'system' | 'light' | 'dark';
-  background: 'white' | 'pink' | 'green';
+  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract';
   setTheme: (theme: 'system' | 'light' | 'dark') => void;
-  setBackground: (background: 'white' | 'pink' | 'green') => void;
+  setBackground: (background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -13,13 +13,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { data: user } = useUser();
   const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
-  const [background, setBackground] = useState<'white' | 'pink' | 'green'>('white');
+  const [background, setBackground] = useState<'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract'>('white');
 
   // Load theme preferences from user data
   useEffect(() => {
     if (user) {
       const userTheme = (user.theme as 'system' | 'light' | 'dark') || 'system';
-      const userBackground = (user.background as 'white' | 'pink' | 'green') || 'white';
+      const userBackground = (user.background as 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') || 'white';
       
       setTheme(userTheme);
       setBackground(userBackground);
@@ -50,7 +50,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const body = document.body;
     
     // Remove existing background classes
-    body.classList.remove('bg-white', 'bg-pink', 'bg-green');
+    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-image-cityscape', 'bg-image-nature', 'bg-image-abstract');
     
     // Add current background class
     body.classList.add(`bg-${background}`);
