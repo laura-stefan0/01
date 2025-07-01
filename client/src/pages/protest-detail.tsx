@@ -12,7 +12,7 @@ import { formatDate, formatTime } from "@/lib/date-utils";
 export default function ProtestDetail() {
   const params = useParams();
   const navigate = useNavigate();
-  
+
   const protestId = params.id;
 
   const { data: protest, isLoading, error } = useQuery<Protest>({
@@ -84,7 +84,7 @@ export default function ProtestDetail() {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
     const fallbackUrl = getCategoryFallbackImage(protest?.category || 'other');
-    
+
     if (target.src !== fallbackUrl) {
       console.log(`Image failed for ${protest?.title}, using fallback for ${protest?.category}`);
       target.src = fallbackUrl;
@@ -98,22 +98,26 @@ export default function ProtestDetail() {
     return getCategoryFallbackImage(protest?.category || 'other');
   };
 
-  const handleShare = async () => {
-    const shareData = {
-      title: protest?.title,
-      text: `Join the ${protest?.title} protest on ${protest?.date}`,
-      url: window.location.href,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (error) {
-        // User cancelled sharing or error occurred
-        copyToClipboard();
-      }
+  const handleShare = () => {
+    if (navigator.share && protest) {
+      navigator.share({
+        title: protest.title,
+        text: protest.description,
+        url: window.location.href,
+      });
     } else {
-      copyToClipboard();
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
+  const handleSaveClick = () => {
+    if (!protest) return;
+
+    if (isProtestSaved(protest.id)) {
+      unsaveProtest(protest.id);
+    } else {
+      saveProtest(protest);
     }
   };
 
@@ -144,10 +148,10 @@ export default function ProtestDetail() {
             </Button>
             <Skeleton className="h-8 w-8 rounded" />
           </div>
-          
+
           {/* Image skeleton */}
           <Skeleton className="w-full h-64" />
-          
+
           {/* Content skeleton */}
           <div className="p-4 space-y-4">
             <Skeleton className="h-6 w-20" />
@@ -243,7 +247,7 @@ export default function ProtestDetail() {
                   <p className="text-sm text-gray-600">{formatTime(protest.time)}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                 <div className="flex-1">
@@ -263,7 +267,7 @@ export default function ProtestDetail() {
               <Users className="h-4 w-4 mr-2" />
               I'm Going
             </Button>
-            
+
             <Button 
               variant="outline" 
               className="w-full"

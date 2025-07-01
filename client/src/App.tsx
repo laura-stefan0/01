@@ -32,6 +32,7 @@ import NotFound from "./pages/not-found";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import { ThemeProvider } from "@/context/theme-context";
 import { Navbar } from "@/components/navbar";
+import { SavedProtestsProvider } from "@/context/saved-protests-context";
 
 /**
  * Layout component that conditionally shows navbar
@@ -102,7 +103,7 @@ function AuthenticatedRouter() {
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/saved" element={<SavedPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
-        
+
         {/* Profile with nested routes */}
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/settings" element={<ProfileSettingsPage />} />
@@ -118,7 +119,7 @@ function AuthenticatedRouter() {
         <Route path="/create-protest" element={<CreateProtest />} />
         <Route path="/transparency" element={<Transparency />} />
         <Route path="/notifications" element={<NotificationsPage />} />
-        
+
         {/* 404 fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -156,10 +157,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ThemeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <AppRouter />
-          </TooltipProvider>
+          <SavedProtestsProvider>
+            <TooltipProvider>
+              <Toaster />
+              <AppRouter />
+            </TooltipProvider>
+          </SavedProtestsProvider>
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
