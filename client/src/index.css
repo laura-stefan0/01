@@ -502,7 +502,7 @@ body[style*="background-image"] .app-background {
   button:has(svg[class*="ChevronLeft"]):hover,
   .dark header button:hover,
   header button:hover {
-    background-color: inherit !important;
+    background-color: transparent !important;
     color: inherit !important;
     transform: none !important;
     opacity: 1 !important;
@@ -510,16 +510,36 @@ body[style*="background-image"] .app-background {
     border-color: inherit !important;
   }
   
-  /* Remove hover effects from ghost variant buttons specifically */
+  /* Remove hover effects from ghost variant buttons specifically - override Tailwind classes */
   .dark .btn-ghost:hover,
   .dark button[class*="ghost"]:hover,
+  .dark button[class*="hover:bg-accent"]:hover,
+  .dark button[class*="hover:text-accent-foreground"]:hover,
   .btn-ghost:hover,
-  button[class*="ghost"]:hover {
+  button[class*="ghost"]:hover,
+  button[class*="hover:bg-accent"]:hover,
+  button[class*="hover:text-accent-foreground"]:hover {
     background-color: transparent !important;
     color: inherit !important;
     transform: none !important;
     opacity: 1 !important;
     box-shadow: none !important;
+  }
+  
+  /* Specifically target header buttons with ArrowLeft icons - override all hover states */
+  .dark header button svg[class*="lucide-arrow-left"]:hover,
+  .dark header button:has(svg[class*="lucide-arrow-left"]):hover,
+  header button svg[class*="lucide-arrow-left"]:hover,
+  header button:has(svg[class*="lucide-arrow-left"]):hover {
+    background-color: transparent !important;
+    color: inherit !important;
+  }
+  
+  /* Override any remaining accent hover effects on buttons */
+  .dark button:hover[class*="ghost"],
+  button:hover[class*="ghost"] {
+    background: transparent !important;
+    color: inherit !important;
   }
 
   /* Remove focus rings from buttons and interactive elements */
