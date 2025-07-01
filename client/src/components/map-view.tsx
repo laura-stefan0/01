@@ -130,9 +130,9 @@ export function MapView() {
 
   const filters = [
     { id: "all", label: "All" },
-    { id: "today", label: "Today" },
-    { id: "week", label: "This Week" },
+    { id: "upcoming", label: "Upcoming" },
     { id: "popular", label: "Popular" },
+    { id: "featured", label: "Featured" },
   ];
   const [activeFilter, setActiveFilter] = useState("all");
 
@@ -248,13 +248,17 @@ export function MapView() {
       return true;
     })
     .filter((protest) => {
-      // Filter by date/time filters
-      if (activeFilter === "today") {
-        return protest.date === "Today";
-      } else if (activeFilter === "week") {
-        return ["Today", "Tomorrow"].includes(protest.date) || protest.date.startsWith("Next");
+      // Filter by category/type filters
+      if (activeFilter === "upcoming") {
+        // Check if event date is in the future
+        const eventDate = new Date(protest.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return eventDate >= today;
       } else if (activeFilter === "popular") {
-        return protest.attendees > 500;
+        return protest.attendees > 200;
+      } else if (activeFilter === "featured") {
+        return protest.featured === true;
       }
       return true;
     });
@@ -537,47 +541,45 @@ export function MapView() {
               )}
             </div>
 
-            {/* Filter Tags Overlay */}
-            {(searchQuery || activeFilter !== "all") && (
-              <div className="absolute top-20 left-4 right-4 z-[1000]">
-                <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
-                  {(searchQuery || activeFilter !== "all") && (
-                <div className="text-sm text-gray-600 mb-2">
-                  {searchLocation ? (
-                    <>
-                      📍 Showing location: <strong>{searchLocationName}</strong>
-                      {filteredProtests.length > 0 && (
-                        <> · {filteredProtests.length} protest{filteredProtests.length !== 1 ? 's' : ''} found</>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
-                      {searchQuery && ` for "${searchQuery}"`}
-                      {activeFilter !== "all" && !searchQuery && ` for ${filters.find(f => f.id === activeFilter)?.label}`}
-                    </>
-                  )}
-                </div>
-              )}
-                  <div className="flex space-x-2 overflow-x-auto pb-1">
-                    {filters.map((filter) => (
-                      <Badge
-                        key={filter.id}
-                        variant={activeFilter === filter.id ? "default" : "secondary"}
-                        className={`cursor-pointer whitespace-nowrap transition-colors ${
-                          activeFilter === filter.id
-                            ? "bg-activist-blue text-white hover:bg-activist-blue/90"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                        onClick={() => setActiveFilter(filter.id)}
-                      >
-                        {filter.label}
-                      </Badge>
-                    ))}
+            {/* Filter Tags Overlay - Always Visible */}
+            <div className="absolute top-20 left-4 right-4 z-[1000]">
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+                {(searchQuery || activeFilter !== "all" || searchLocation) && (
+                  <div className="text-sm text-gray-600 mb-2">
+                    {searchLocation ? (
+                      <>
+                        📍 Showing location: <strong>{searchLocationName}</strong>
+                        {filteredProtests.length > 0 && (
+                          <> · {filteredProtests.length} protest{filteredProtests.length !== 1 ? 's' : ''} found</>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
+                        {searchQuery && ` for "${searchQuery}"`}
+                        {activeFilter !== "all" && !searchQuery && ` for ${filters.find(f => f.id === activeFilter)?.label}`}
+                      </>
+                    )}
                   </div>
+                )}
+                <div className="flex space-x-2 overflow-x-auto pb-1">
+                  {filters.map((filter) => (
+                    <Badge
+                      key={filter.id}
+                      variant={activeFilter === filter.id ? "default" : "secondary"}
+                      className={`cursor-pointer whitespace-nowrap transition-colors ${
+                        activeFilter === filter.id
+                          ? "bg-activist-blue text-white hover:bg-activist-blue/90"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                      onClick={() => setActiveFilter(filter.id)}
+                    >
+                      {filter.label}
+                    </Badge>
+                  ))}
                 </div>
               </div>
-            )}
+            </div>
 
             {/* GPS Location Button */}
             <div className="absolute bottom-4 right-4 z-[1000]">

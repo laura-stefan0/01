@@ -100,7 +100,9 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
-- July 1, 2025: Successfully migrated project from Replit Agent to standard Replit environment - all dependencies installed and working properly
+- July 1, 2025: Successfully completed migration from Replit Agent to standard Replit environment - all dependencies installed, working properly with full security implementation
+- July 1, 2025: Fixed map filter menu functionality - updated filter logic to work with YYYY-MM-DD date format, made filter overlay always visible, and replaced outdated filters with "Upcoming", "Popular", and "Featured" filters
+- July 1, 2025: Ran comprehensive scraper to refresh database with 19 authentic Italian protest events across 9 categories (LGBTQ+, Environment, Labor, Civil & Human Rights, Racial & Social Justice, Women's Rights, Healthcare & Education, Peace & Anti-War, Transparency & Anti-Corruption)
 - July 1, 2025: Created notifications page with settings and mock notifications - bell icon now opens dedicated notifications page instead of profile
 - July 1, 2025: Enhanced refresh location button to force clear location cache and get fresh GPS coordinates
 - July 1, 2025: Removed preview section from App theme settings page for cleaner interface
