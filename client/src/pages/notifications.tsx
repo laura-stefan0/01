@@ -8,6 +8,15 @@ import { useLocation } from "wouter";
 
 export default function NotificationsPage() {
   const [location, setLocation] = useLocation();
+  
+  const handleBackClick = () => {
+    // Use browser history back or navigate to home
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      setLocation("/");
+    }
+  };
 
   // Mock notification data - in real app this would come from API
   const notifications = [
@@ -60,7 +69,7 @@ export default function NotificationsPage() {
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+          <Button variant="ghost" size="sm" onClick={handleBackClick}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-dark-slate ml-3">Notifications</h1>
