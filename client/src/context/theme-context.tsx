@@ -1,63 +1,63 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useUser } from '@/hooks/use-user';
 
+export type BackgroundOption = 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'custom-image';
+
 interface ThemeContextType {
   theme: 'system' | 'light' | 'dark';
-  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract';
+  background: BackgroundOption;
+  customImageUrl?: string;
   setTheme: (theme: 'system' | 'light' | 'dark') => void;
-  setBackground: (background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') => void;
+  setBackground: (background: BackgroundOption, customImageUrl?: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { data: user } = useUser();
-  const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
-  const [background, setBackground] = useState<'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract'>('white');
+  const [theme, setThemeState] = useState<'system' | 'light' | 'dark'>('system');
+  const [background, setBackgroundState] = useState<BackgroundOption>('white');
+  const [customImageUrl, setCustomImageUrl] = useState<string>();
 
-  // Load theme preferences from user data
-  useEffect(() => {
-    if (user) {
-      const userTheme = (user.theme as 'system' | 'light' | 'dark') || 'system';
-      const userBackground = (user.background as 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') || 'white';
-      
-      setTheme(userTheme);
-      setBackground(userBackground);
-    }
-  }, [user]);
+  const setTheme = useCallback((newTheme: 'system' | 'light' | 'dark') => {
+    setThemeState(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  }, []);
 
-  // Apply theme to document
-  useEffect(() => {
-    const root = document.documentElement;
-    
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else if (theme === 'light') {
-      root.classList.remove('dark');
+  const setBackground = useCallback((newBackground: BackgroundOption, newCustomImageUrl?: string) => {
+    setBackgroundState(newBackground);
+    setCustomImageUrl(newCustomImageUrl);
+
+    // Remove all background classes
+    document.body.className = document.body.className
+      .split(' ')
+      .filter(cls => !cls.startsWith('bg-'))
+      .join(' ');
+
+    // Add new background class
+    document.body.classList.add(`bg-${newBackground}`);
+
+    // Apply custom image if provided
+    if (newBackground === 'custom-image' && newCustomImageUrl) {
+      document.body.style.backgroundImage = `url(${newCustomImageUrl})`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundAttachment = 'fixed';
     } else {
-      // System theme
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (prefersDark) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.backgroundPosition = '';
+      document.body.style.backgroundAttachment = '';
     }
-  }, [theme]);
-
-  // Apply background to body
-  useEffect(() => {
-    const body = document.body;
-    
-    // Remove existing background classes
-    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-image-cityscape', 'bg-image-nature', 'bg-image-abstract');
-    
-    // Add current background class
-    body.classList.add(`bg-${background}`);
-  }, [background]);
+  }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, background, setTheme, setBackground }}>
+    <ThemeContext.Provider value={{
+      theme,
+      background,
+      customImageUrl,
+      setTheme,
+      setBackground,
+    }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -152,6 +152,55 @@ router.post('/image', upload.single('image'), async (req: RequestWithFile, res: 
   }
 });
 
+// Background image upload endpoint
+router.post('/background', upload.single('image'), async (req: RequestWithFile, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file provided' });
+    }
+
+    // Generate unique filename with background prefix
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const fileExtension = req.file.originalname.split('.').pop();
+    const uniqueFileName = `background-${Date.now()}-${Math.round(Math.random() * 1E9)}.${fileExtension}`;
+    
+    // Upload to Supabase user-backgrounds bucket
+    const { data, error } = await supabaseAdmin.storage
+      .from('user-backgrounds')
+      .upload(uniqueFileName, fileBuffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Supabase storage error:', error);
+      fs.unlinkSync(req.file.path);
+      return res.status(500).json({ message: 'Failed to upload background to storage' });
+    }
+
+    // Get public URL for the uploaded background
+    const { data: urlData } = supabaseAdmin.storage
+      .from('user-backgrounds')
+      .getPublicUrl(uniqueFileName);
+
+    // Clean up local temporary file
+    fs.unlinkSync(req.file.path);
+    
+    console.log('Background uploaded to Supabase storage:', uniqueFileName);
+    res.json({ 
+      message: 'Background uploaded successfully',
+      image_url: urlData.publicUrl,
+      filename: uniqueFileName
+    });
+  } catch (error) {
+    console.error('Background upload error:', error);
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ message: 'Failed to upload background' });
+  }
+});
+
 // What's New image upload endpoint - Supports SVG and PNG
 router.post('/whats-new', upload.single('image'), async (req: RequestWithFile, res: Response) => {
   try {

@@ -8,7 +8,8 @@ import { useTheme } from "@/context/theme-context";
 
 interface ThemeSettings {
   theme: 'system' | 'light' | 'dark';
-  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract';
+  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'custom-image';
+  customImageUrl?: string;
 }
 
 /**
@@ -36,10 +37,10 @@ export function ThemeSettingsContent() {
     await saveToDatabase({ theme: newTheme, background: settings.background });
   };
 
-  const handleBackgroundChange = async (newBackground: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'image-cityscape' | 'image-nature' | 'image-abstract') => {
-    setSettings(prev => ({ ...prev, background: newBackground }));
+  const handleBackgroundChange = async (newBackground: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'custom-image', customImageUrl?: string) => {
+    setSettings(prev => ({ ...prev, background: newBackground, customImageUrl }));
     setGlobalBackground(newBackground);
-    await saveToDatabase({ theme: settings.theme, background: newBackground });
+    await saveToDatabase({ theme: settings.theme, background: newBackground, customImageUrl });
   };
 
   const saveToDatabase = async (newSettings: ThemeSettings) => {
@@ -93,13 +94,61 @@ export function ThemeSettingsContent() {
     { value: 'gradient-forest', label: 'Forest', preview: 'bg-gradient-to-r from-green-600 to-blue-600' }
   ];
 
-  const imageOptions = [
-    { value: 'image-cityscape', label: 'Cityscape', preview: 'bg-gray-300' },
-    { value: 'image-nature', label: 'Nature', preview: 'bg-green-300' },
-    { value: 'image-abstract', label: 'Abstract', preview: 'bg-gradient-to-r from-red-200 to-blue-200' }
-  ];
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  const allBackgroundOptions = [...solidColorOptions, ...gradientOptions, ...imageOptions];
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/upload/background', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload background image');
+      }
+
+      const result = await response.json();
+      await handleBackgroundChange('custom-image', result.image_url);
+      
+      toast({
+        title: "Background uploaded",
+        description: "Your custom background has been set successfully.",
+      });
+    } catch (error) {
+      console.error('Error uploading background:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload background image. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const allBackgroundOptions = [...solidColorOptions, ...gradientOptions];
 
   return (
     <div className="space-y-6">
@@ -204,35 +253,40 @@ export function ThemeSettingsContent() {
         </CardContent>
       </Card>
 
-      {/* Background Images */}
+      {/* Custom Background Images */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Background Images</CardTitle>
+          <CardTitle className="text-lg">Custom Background Image</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {imageOptions.map((option) => {
-            const isSelected = settings.background === option.value;
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="background-upload" className="text-sm font-medium">
+              Upload Background Image
+            </label>
+            <input
+              id="background-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            <p className="text-xs text-gray-500">
+              Supported formats: JPG, PNG, GIF, WebP. Max size: 5MB
+            </p>
+          </div>
 
-            return (
-              <div
-                key={option.value}
-                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                }`}
-                onClick={() => handleBackgroundChange(option.value as any)}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`} />
-                  <div>
-                    <p className="font-medium">{option.label}</p>
-                  </div>
-                </div>
-                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
+          {settings.background === 'custom-image' && settings.customImageUrl && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Current Background:</p>
+              <div className="w-full h-20 rounded-lg border-2 border-gray-300 bg-cover bg-center" 
+                   style={{ backgroundImage: `url(${settings.customImageUrl})` }}>
               </div>
-            );
-          })}
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-500" />
+                <span className="text-sm text-green-600">Custom background active</span>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
