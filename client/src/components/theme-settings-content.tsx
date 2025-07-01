@@ -169,70 +169,37 @@ export function ThemeSettingsContent() {
         </CardContent>
       </Card>
 
-      {/* Solid Colors */}
+      {/* Colors & Gradients */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Solid Colors</CardTitle>
+          <CardTitle className="text-lg">Colors & Gradients</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {solidColorOptions.map((option) => {
-            const isSelected = settings.background === option.value;
+        <CardContent>
+          <div className="grid grid-cols-3 gap-4">
+            {[...solidColorOptions, ...gradientOptions].map((option) => {
+              const isSelected = settings.background === option.value;
 
-            return (
-              <div
-                key={option.value}
-                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                }`}
-                onClick={() => handleBackgroundChange(option.value as any)}
-              >
-                <div className="flex items-center gap-3">
+              return (
+                <div
+                  key={option.value}
+                  className={`relative cursor-pointer transition-transform hover:scale-105 ${
+                    isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                  }`}
+                  onClick={() => handleBackgroundChange(option.value as any)}
+                >
                   <div 
-                    className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`}
-                    style={{ backgroundColor: option.color }}
+                    className={`w-16 h-16 rounded-full border-2 border-gray-300 ${option.preview}`}
+                    style={option.color ? { backgroundColor: option.color } : {}}
                   />
-                  <div>
-                    <p className="font-medium">{option.label}</p>
-                  </div>
+                  {isSelected && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Check className="h-6 w-6 text-white drop-shadow-lg" />
+                    </div>
+                  )}
                 </div>
-                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* Gradients */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Gradients</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {gradientOptions.map((option) => {
-            const isSelected = settings.background === option.value;
-
-            return (
-              <div
-                key={option.value}
-                className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                }`}
-                onClick={() => handleBackgroundChange(option.value as any)}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-6 h-6 rounded-full border-2 border-gray-300 ${option.preview}`} />
-                  <div>
-                    <p className="font-medium">{option.label}</p>
-                  </div>
-                </div>
-                {isSelected && <Check className="h-5 w-5 text-blue-500" />}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </CardContent>
       </Card>
 
