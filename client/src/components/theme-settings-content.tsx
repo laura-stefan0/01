@@ -187,7 +187,7 @@ export function ThemeSettingsContent() {
                     onClick={() => handleBackgroundChange(option.value as any)}
                   >
                     <div 
-                      className={`w-16 h-24 rounded-lg border-2 ${
+                      className={`w-16 h-16 rounded-full border-2 ${
                         isSelected ? 'border-[#EF4444]' : 'border-gray-300'
                       } ${option.preview} bg-gray-200 bg-cover bg-center`}
                       style={
