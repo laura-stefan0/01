@@ -187,10 +187,16 @@ export function ThemeSettingsContent() {
                     onClick={() => handleBackgroundChange(option.value as any)}
                   >
                     <div 
-                      className={`w-16 h-16 rounded-lg border-2 ${
+                      className={`w-16 h-24 rounded-lg border-2 ${
                         isSelected ? 'border-[#EF4444]' : 'border-gray-300'
-                      } ${option.preview} bg-gray-200`}
-                      style={('color' in option) ? { backgroundColor: option.color as string } : {}}
+                      } ${option.preview} bg-gray-200 bg-cover bg-center`}
+                      style={
+                        ('color' in option) 
+                          ? { backgroundColor: option.color as string }
+                          : option.value.startsWith('custom-image-')
+                          ? { backgroundImage: `url('/backgrounds/${option.value.replace('custom-image-', '')}')` }
+                          : {}
+                      }
                     />
                   </div>
                 );
