@@ -349,7 +349,7 @@ async function saveEventToDatabase(event) {
       latitude: String(event.latitude || ITALIAN_CITIES.milano.lat),
       longitude: String(event.longitude || ITALIAN_CITIES.milano.lng),
       date: event.date || null,
-      time: event.time || '18:00',  // Default time if none provided
+      time: event.time || 'N/A',  // N/A if no time found
       image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.other,
       event_url: event.event_url || null,
       country_code: 'IT',

@@ -24,7 +24,7 @@ A streamlined web scraper designed to collect Italian protest and activism event
 ### ✨ Data Quality Features
 - **Title cleaning**: Preserves original titles, only removes quotes and normalizes spacing
 - **Enhanced address extraction**: Extracts Italian cities and coordinates
-- **Time parsing**: Extracts event times or defaults to 18:00
+- **Time parsing**: Extracts event times or defaults to 'N/A' if not found
 - **Category detection**: Smart categorization based on content analysis
 - **Duplicate prevention**: Checks existing events before saving
 
@@ -72,7 +72,7 @@ The scraper expects a `protests` table with these fields:
 - latitude (text)
 - longitude (text)
 - date (date)
-- time (text) - required field, defaults to '18:00' if not found
+- time (text) - required field, defaults to 'N/A' if not found
 - image_url (text)
 - event_url (text)
 - country_code (text) - set to 'IT'
@@ -140,7 +140,7 @@ The scraper implements several data quality measures:
 - **Date validation**: Ensures dates are within the specified range
 - **Duplicate detection**: Compares titles and cities to prevent duplicates
 - **Data cleaning**: Normalizes titles, descriptions, and addresses
-- **Default values**: Provides fallbacks for missing data (city defaults to Milano, time to 18:00)
+- **Default values**: Provides fallbacks for missing data (city defaults to Milano, time to 'N/A')
 
 ## Troubleshooting
 
@@ -159,6 +159,7 @@ The scraper implements several data quality measures:
 
 ## Recent Updates
 
+- **July 1, 2025**: Changed default time value from '18:00' to 'N/A' when no time is found
 - **July 1, 2025**: Reverted title cleaning to preserve original titles with dates and cities
 - **July 1, 2025**: Fixed database constraint issues with null time values
 - **July 1, 2025**: Streamlined to 5 high-quality sources for better performance
