@@ -4,6 +4,7 @@ A comprehensive web scraper designed to collect Italian protest and activism eve
 
 ## Features
 
+### 🚀 Core Functionality
 - **Multi-source scraping**: Collects data from 11+ Italian activism websites
 - **Smart filtering**: Uses Italian keywords to identify protest events while excluding non-protest events
 - **Duplicate detection**: Prevents duplicate events using normalized text matching
@@ -11,6 +12,17 @@ A comprehensive web scraper designed to collect Italian protest and activism eve
 - **Category classification**: Automatically categorizes events into 9 different categories
 - **Image handling**: Extracts event images or applies category-specific fallbacks
 - **Rate limiting**: Respectful scraping with built-in delays
+
+### ✨ Enhanced Features (July 2025)
+- **Title Cleaning**: Removes dates, locations, and quotes from event titles
+  - Example: "15/07 Venezia - Assemblea" → "Assemblea"
+  - Example: ""Fermiamo la guerra!"" → "Fermiamo la guerra!"
+- **Pagination Support**: Automatically follows multiple pages and "load more" buttons
+- **Enhanced Address Extraction**: Gets full street addresses, venues, and postal codes
+- **Improved Time Parsing**: Extracts actual event times (HH:MM) or null if not available
+- **Event URL Extraction**: Links to detailed event pages when available
+- **Deep Content Analysis**: Fetches additional details from event detail pages
+- **Comprehensive Logging**: Detailed progress tracking and event-by-event information
 
 ## Scraped Sources
 
@@ -69,9 +81,27 @@ Before running the scraper, ensure you have:
 
 ## Usage
 
-### Basic Usage
+### Enhanced Scraper (Recommended)
 
-Run the scraper from the command line:
+Run the enhanced scraper with all new features:
+
+```bash
+cd scraper
+node enhanced-italian-scraper.js
+```
+
+### Test Functionality
+
+Test the enhanced features:
+
+```bash
+cd scraper
+node test-enhanced-scraper.js
+```
+
+### Original Basic Scraper
+
+Run the basic scraper:
 
 ```bash
 cd scraper
