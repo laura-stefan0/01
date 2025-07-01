@@ -182,20 +182,15 @@ export function ThemeSettingsContent() {
               return (
                 <div
                   key={option.value}
-                  className={`relative cursor-pointer transition-transform hover:scale-105 ${
-                    isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''
-                  }`}
+                  className="flex justify-center cursor-pointer"
                   onClick={() => handleBackgroundChange(option.value as any)}
                 >
                   <div 
-                    className={`w-16 h-16 rounded-full border-2 border-gray-300 ${option.preview}`}
+                    className={`w-16 h-16 rounded-full border-2 ${
+                      isSelected ? 'border-[#EF4444]' : 'border-gray-300'
+                    } ${option.preview}`}
                     style={option.color ? { backgroundColor: option.color } : {}}
                   />
-                  {isSelected && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Check className="h-6 w-6 text-white drop-shadow-lg" />
-                    </div>
-                  )}
                 </div>
               );
             })}
