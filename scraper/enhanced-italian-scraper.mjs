@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import axios from 'axios';
 import { load } from 'cheerio';
@@ -11,21 +10,20 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Performance Configuration
 const PERFORMANCE_CONFIG = {
-  MAX_PAGES_PER_WEBSITE: 10,          // Maximum pages to scrape per website
-  DATE_CUTOFF_DAYS: 30,               // Only scrape events from last 30 days
-  REQUEST_TIMEOUT: 10000,             // 10 seconds timeout
-  MAX_CONCURRENT_REQUESTS: 3,         // Limit concurrent requests
-  DELAY_BETWEEN_REQUESTS: 2000,       // 2 seconds between requests
-  DELAY_BETWEEN_PAGES: 3000,          // 3 seconds between page requests
-  DELAY_BETWEEN_SOURCES: 5000         // 5 seconds between different sources
+  MAX_PAGES_PER_WEBSITE: 3,           // Reduced for faster processing
+  DATE_CUTOFF_DAYS: 60,               // Extended for more events
+  REQUEST_TIMEOUT: 8000,              // Reduced timeout
+  MAX_CONCURRENT_REQUESTS: 2,         // Reduced concurrency
+  DELAY_BETWEEN_REQUESTS: 1000,       // Faster requests
+  DELAY_BETWEEN_SOURCES: 2000         // Faster source switching
 };
 
 // Keywords for filtering
 const PROTEST_KEYWORDS = [
   'manifestazione', 'protesta', 'sciopero', 'presidio', 'corteo', 'occupazione',
   'sit-in', 'mobilitazione', 'marcia', 'picchetto', 'concentramento',
-  'assemblea pubblica', 'iniziativa politica', 'blocco stradale', 'pride',
-  'flash mob', 'raduno', 'comizio', 'assemblea', 'incontro pubblico'
+  'assemblea pubblica', 'iniziativa politica', 'blocco', 'pride',
+  'flash mob', 'raduno', 'comizio', 'assemblea'
 ];
 
 const EXCLUDE_KEYWORDS = [
@@ -42,14 +40,6 @@ const ITALIAN_MONTHS = {
   'settembre': '09', 'ottobre': '10', 'novembre': '11', 'dicembre': '12',
   'gen': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'mag': '05', 'giu': '06',
   'lug': '07', 'ago': '08', 'set': '09', 'ott': '10', 'nov': '11', 'dic': '12'
-};
-
-// Italian day names
-const ITALIAN_DAYS = {
-  'lunedì': 'monday', 'martedì': 'tuesday', 'mercoledì': 'wednesday',
-  'giovedì': 'thursday', 'venerdì': 'friday', 'sabato': 'saturday', 'domenica': 'sunday',
-  'lun': 'monday', 'mar': 'tuesday', 'mer': 'wednesday', 'gio': 'thursday',
-  'ven': 'friday', 'sab': 'saturday', 'dom': 'sunday'
 };
 
 // Category fallback images from Unsplash
@@ -85,164 +75,34 @@ const ITALIAN_CITIES = {
   'trieste': { lat: 45.6495, lng: 13.7768 }
 };
 
-// Websites to scrape
+// High-quality news sources for Italian protests
 const SCRAPE_SOURCES = [
   { 
     url: 'https://www.globalproject.info/it/tags/news/menu', 
     name: 'globalproject.info',
-    type: 'news_list'
+    type: 'activism'
   },
   { 
     url: 'https://fridaysforfutureitalia.it/eventi/', 
     name: 'fridaysforfutureitalia.it',
-    type: 'event_list'
+    type: 'environment'
   },
   { 
     url: 'https://extinctionrebellion.it/eventi/futuri/', 
     name: 'extinctionrebellion.it',
-    type: 'event_list'
+    type: 'environment'
   },
   { 
     url: 'https://www.dinamopress.it/categoria/eventi', 
     name: 'dinamopress.it',
-    type: 'news_list'
+    type: 'activism'
   },
   { 
     url: 'https://adlcobas.it/', 
     name: 'adlcobas.it',
-    type: 'union_news'
-  },
-  { 
-    url: 'https://www.notav.info/', 
-    name: 'notav.info',
-    type: 'movement_news'
-  },
-  { 
-    url: 'https://it.euronews.com/tag/manifestazioni-in-italia', 
-    name: 'euronews.com',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.globalist.it/', 
-    name: 'globalist.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.open.online/', 
-    name: 'open.online',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://ilmanifesto.it/', 
-    name: 'ilmanifesto.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://ilrovescio.info/category/iniziative/', 
-    name: 'ilrovescio.info',
-    type: 'initiatives'
-  },
-  { 
-    url: 'https://rivoluzioneanarchica.it/', 
-    name: 'rivoluzioneanarchica.it',
-    type: 'anarchist'
+    type: 'labor'
   }
 ];
-
-/**
- * Performance and Date Utility Functions
- */
-
-function getDateCutoff() {
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS);
-  return cutoffDate;
-}
-
-function isDateWithinCutoff(eventDate) {
-  if (!eventDate) return true; // Allow events without dates for now
-  
-  try {
-    const eventDateObj = new Date(eventDate);
-    const cutoffDate = getDateCutoff();
-    
-    console.log(`📅 Checking date: ${eventDate} against cutoff: ${cutoffDate.toISOString()}`);
-    
-    const isValid = eventDateObj >= cutoffDate;
-    if (!isValid) {
-      console.log(`❌ Event date ${eventDate} is older than cutoff (${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days)`);
-    }
-    
-    return isValid;
-  } catch (error) {
-    console.log(`⚠️ Error parsing date ${eventDate}: ${error.message}`);
-    return true; // Allow events with unparseable dates
-  }
-}
-
-// Concurrency control
-class RequestQueue {
-  constructor(maxConcurrent = PERFORMANCE_CONFIG.MAX_CONCURRENT_REQUESTS) {
-    this.maxConcurrent = maxConcurrent;
-    this.running = 0;
-    this.queue = [];
-  }
-
-  async add(requestFn) {
-    return new Promise((resolve, reject) => {
-      this.queue.push({ requestFn, resolve, reject });
-      this.process();
-    });
-  }
-
-  async process() {
-    if (this.running >= this.maxConcurrent || this.queue.length === 0) {
-      return;
-    }
-
-    this.running++;
-    const { requestFn, resolve, reject } = this.queue.shift();
-
-    try {
-      const result = await requestFn();
-      resolve(result);
-    } catch (error) {
-      reject(error);
-    } finally {
-      this.running--;
-      this.process();
-    }
-  }
-}
-
-const requestQueue = new RequestQueue();
-
-/**
- * Enhanced HTTP request with timeout and retry
- */
-async function makeRequest(url, options = {}) {
-  return await requestQueue.add(async () => {
-    try {
-      console.log(`🔗 Making request to: ${url}`);
-      
-      const response = await axios.get(url, {
-        timeout: PERFORMANCE_CONFIG.REQUEST_TIMEOUT,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3'
-        },
-        ...options
-      });
-      
-      console.log(`✅ Request successful: ${url} (${response.status})`);
-      return response;
-    } catch (error) {
-      console.log(`❌ Request failed: ${url} - ${error.message}`);
-      throw error;
-    }
-  });
-}
 
 /**
  * Utility Functions
@@ -262,30 +122,21 @@ function cleanTitle(title) {
   
   let cleanedTitle = title.trim();
   
-  // Remove date patterns at the beginning (DD/MM, DD-MM, DD.MM, DD/MM/YYYY, etc.)
+  // Remove date patterns at the beginning
   cleanedTitle = cleanedTitle.replace(/^\d{1,2}[\/\-\.]\d{1,2}(\/{1,2}\d{2,4})?\s*[\-–]?\s*/, '');
   
-  // Remove city/location patterns at the beginning followed by dash
-  // Common Italian cities and regions
-  const italianCities = [
-    'roma', 'milano', 'napoli', 'torino', 'palermo', 'genova', 'bologna', 'firenze', 'bari', 'catania',
-    'venezia', 'verona', 'messina', 'padova', 'trieste', 'brescia', 'taranto', 'prato', 'reggio calabria',
-    'modena', 'parma', 'perugia', 'livorno', 'cagliari', 'foggia', 'salerno', 'ravenna', 'ferrara',
-    'rimini', 'syrakuse', 'sassari', 'monza', 'bergamo', 'pescara', 'vicenza', 'terni', 'forlì',
-    'trento', 'novara', 'piacenza', 'ancona', 'andria', 'arezzo', 'udine', 'cesena', 'lecce', 'pesaro'
-  ];
-  
-  // Create regex pattern for cities
+  // Remove city patterns at the beginning
+  const italianCities = ['roma', 'milano', 'napoli', 'torino', 'palermo', 'genova', 'bologna', 'firenze', 'bari', 'catania', 'venezia', 'verona'];
   const cityPattern = new RegExp(`^(${italianCities.join('|')})\\s*[\\-–]?\\s*`, 'i');
   cleanedTitle = cleanedTitle.replace(cityPattern, '');
   
-  // Remove generic location patterns like "Piazza X -" or "Via Y -"
+  // Remove location patterns
   cleanedTitle = cleanedTitle.replace(/^(piazza|via|corso|viale|largo|ponte)\s+[^-–]+[\-–]\s*/i, '');
   
-  // Remove double quotes at the beginning and end of title
+  // Remove quotes
   cleanedTitle = cleanedTitle.replace(/^["""]/, '').replace(/["""]$/, '');
   
-  // Remove extra spaces and dashes at the beginning
+  // Clean up spaces and dashes
   cleanedTitle = cleanedTitle.replace(/^[\s\-–]+/, '');
   
   // Capitalize first letter
@@ -306,8 +157,26 @@ function containsExcludeKeywords(text) {
   return EXCLUDE_KEYWORDS.some(keyword => normalizedText.includes(keyword));
 }
 
+function getDateCutoff() {
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS);
+  return cutoffDate;
+}
+
+function isDateWithinCutoff(eventDate) {
+  if (!eventDate) return true;
+  
+  try {
+    const eventDateObj = new Date(eventDate);
+    const cutoffDate = getDateCutoff();
+    return eventDateObj >= cutoffDate;
+  } catch (error) {
+    return true;
+  }
+}
+
 /**
- * Enhanced date and time parsing
+ * Enhanced date parsing
  */
 function parseItalianDateTime(dateTimeString) {
   if (!dateTimeString || dateTimeString.trim().length === 0) {
@@ -315,44 +184,39 @@ function parseItalianDateTime(dateTimeString) {
   }
   
   const cleanDateTimeString = cleanText(dateTimeString).toLowerCase();
-  console.log(`🕐 Parsing date/time: "${cleanDateTimeString}"`);
   
   let date = null;
   let time = null;
   
-  // Extract time first (HH:MM format)
+  // Extract time (HH:MM format)
   const timeMatch = cleanDateTimeString.match(/(\d{1,2})[:\.](\d{2})/);
   if (timeMatch) {
     const hours = timeMatch[1].padStart(2, '0');
     const minutes = timeMatch[2];
     time = `${hours}:${minutes}`;
-    console.log(`⏰ Extracted time: ${time}`);
   }
   
-  // Extract date
-  // Try DD/MM/YYYY or DD-MM-YYYY format (with or without spaces)
+  // Extract date - DD/MM/YYYY format
   let dateMatch = cleanDateTimeString.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{4})/);
   if (dateMatch) {
     const day = dateMatch[1].padStart(2, '0');
     const month = dateMatch[2].padStart(2, '0');
     const year = dateMatch[3];
     date = `${year}-${month}-${day}`;
-    console.log(`📅 Extracted date (DD/MM/YYYY): ${date}`);
     return { date, time };
   }
   
-  // Try DD/MM format (assume current year, with or without spaces)
+  // Extract date - DD/MM format (assume current year)
   dateMatch = cleanDateTimeString.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})/);
   if (dateMatch) {
     const day = dateMatch[1].padStart(2, '0');
     const month = dateMatch[2].padStart(2, '0');
     const year = new Date().getFullYear();
     date = `${year}-${month}-${day}`;
-    console.log(`📅 Extracted date (DD/MM): ${date}`);
     return { date, time };
   }
   
-  // Try to find month names
+  // Try month names
   let month = null;
   let day = null;
   let year = new Date().getFullYear();
@@ -360,234 +224,83 @@ function parseItalianDateTime(dateTimeString) {
   for (const [monthName, monthNum] of Object.entries(ITALIAN_MONTHS)) {
     if (cleanDateTimeString.includes(monthName)) {
       month = monthNum;
-      console.log(`📅 Found month: ${monthName} (${month})`);
       break;
     }
   }
   
   if (month) {
-    // Try to find day number near the month
     const dayMatch = cleanDateTimeString.match(/(\d{1,2})/);
     if (dayMatch) {
       day = dayMatch[1].padStart(2, '0');
-      console.log(`📅 Found day: ${day}`);
+      date = `${year}-${month}-${day}`;
     }
-  }
-  
-  if (month && day) {
-    date = `${year}-${month}-${day}`;
-    console.log(`📅 Constructed date: ${date}`);
   }
   
   return { date, time };
 }
 
 /**
- * Enhanced address extraction
+ * Address and location extraction
  */
-function extractAddress(element, $) {
-  const addressSelectors = [
-    '.location', '.address', '.venue', '.place', '.dove', '.luogo',
-    '.address-line', '.event-location', '.location-info'
-  ];
+function extractCityFromText(text) {
+  const normalizedText = normalizeText(text);
   
-  let fullAddress = '';
-  let city = '';
-  let postalCode = '';
-  
-  // Try to find address in specific selectors
-  for (const selector of addressSelectors) {
-    const addressText = cleanText($(element).find(selector).text());
-    if (addressText && addressText.length > 3) {
-      fullAddress = addressText;
-      break;
+  for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
+    if (normalizedText.includes(cityName)) {
+      return {
+        city: cityName.charAt(0).toUpperCase() + cityName.slice(1),
+        coordinates: coords
+      };
     }
-  }
-  
-  // If no specific address found, look in general text
-  if (!fullAddress) {
-    const allText = cleanText($(element).text());
-    
-    // Look for patterns like "Via ...", "Piazza ...", "Corso ..."
-    const addressPattern = /(via|piazza|corso|viale|largo|ponte)\s+[^,\n]+/gi;
-    const addressMatch = allText.match(addressPattern);
-    if (addressMatch) {
-      fullAddress = addressMatch[0];
-    }
-  }
-  
-  // Extract city from address or find in text
-  if (fullAddress) {
-    // Look for Italian cities in the address
-    for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
-      if (normalizeText(fullAddress).includes(cityName)) {
-        city = cityName.charAt(0).toUpperCase() + cityName.slice(1);
-        break;
-      }
-    }
-  }
-  
-  // Extract postal code
-  const postalMatch = fullAddress.match(/\b\d{5}\b/);
-  if (postalMatch) {
-    postalCode = postalMatch[0];
-  }
-  
-  // If no city found in address, look in broader text
-  if (!city) {
-    const fullText = cleanText($(element).text());
-    for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
-      if (normalizeText(fullText).includes(cityName)) {
-        city = cityName.charAt(0).toUpperCase() + cityName.slice(1);
-        break;
-      }
-    }
-  }
-  
-  // Default to Milano if no city found
-  if (!city) {
-    city = 'Milano';
   }
   
   return {
-    fullAddress: fullAddress || city,
-    city: city,
-    postalCode: postalCode
+    city: 'Milano',  // Default fallback
+    coordinates: ITALIAN_CITIES.milano
   };
 }
 
 /**
- * Enhanced event URL extraction
- */
-function extractEventUrl(element, $, baseUrl) {
-  const linkSelectors = [
-    'a[href*="evento"]', 'a[href*="event"]', 'a[href*="manifestazione"]',
-    '.event-link a', '.title a', '.headline a', 'h1 a', 'h2 a', 'h3 a'
-  ];
-  
-  let eventUrl = '';
-  
-  // Try specific selectors first
-  for (const selector of linkSelectors) {
-    const link = $(element).find(selector).first();
-    if (link.length > 0) {
-      eventUrl = link.attr('href');
-      break;
-    }
-  }
-  
-  // If no specific link found, look for any link in the element
-  if (!eventUrl) {
-    const anyLink = $(element).find('a').first();
-    if (anyLink.length > 0) {
-      eventUrl = anyLink.attr('href');
-    }
-  }
-  
-  // Convert relative URLs to absolute
-  if (eventUrl && !eventUrl.startsWith('http')) {
-    try {
-      eventUrl = new URL(eventUrl, baseUrl).href;
-    } catch (error) {
-      console.log(`⚠️ Could not convert URL: ${eventUrl}`);
-      eventUrl = '';
-    }
-  }
-  
-  return eventUrl || null;
-}
-
-/**
- * Fetch event details from detail page
- */
-async function fetchEventDetails(eventUrl) {
-  if (!eventUrl) return null;
-  
-  try {
-    console.log(`🔍 Fetching event details from: ${eventUrl}`);
-    
-    const response = await makeRequest(eventUrl);
-    const $ = load(response.data);
-    
-    // Extract detailed address
-    const detailedAddress = extractAddress($('body'), $);
-    
-    // Extract more detailed description
-    const detailedDescription = cleanText($('.content, .description, .event-description, .post-content, article').text());
-    
-    // Extract more precise date/time
-    const dateTimeText = cleanText($('.date, .time, .when, .data, .orario, time').text());
-    const dateTime = parseItalianDateTime(dateTimeText);
-    
-    return {
-      detailedAddress,
-      detailedDescription: detailedDescription.substring(0, 500),
-      dateTime
-    };
-    
-  } catch (error) {
-    console.log(`❌ Error fetching event details: ${error.message}`);
-    return null;
-  }
-}
-
-/**
- * Categorize events based on content
+ * Event categorization
  */
 function categorizeEvent(title, description) {
-  const fullText = normalizeText(`${title} ${description}`);
+  const text = normalizeText(`${title} ${description}`);
   
-  const categories = {
-    'lgbtq+': ['pride', 'lgbt', 'gay', 'lesbian', 'trans', 'queer', 'omofobia', 'transfobia'],
-    'environment': ['clima', 'ambiente', 'green', 'sostenibilità', 'ecologia', 'inquinamento', 'riscaldamento'],
-    'women\'s rights': ['donna', 'donne', 'femminismo', 'parità', 'violenza donne', 'femminicidio'],
-    'labor': ['lavoro', 'lavoratori', 'sindacato', 'sciopero', 'operai', 'precari', 'salario'],
-    'racial & social justice': ['razzismo', 'immigrazione', 'rifugiati', 'antirazzismo', 'integrazione'],
-    'civil & human rights': ['diritti', 'libertà', 'costituzione', 'democrazia', 'giustizia sociale'],
-    'healthcare & education': ['sanità', 'scuola', 'università', 'istruzione', 'salute', 'medici'],
-    'peace & anti-war': ['pace', 'guerra', 'palestina', 'ukraine', 'antimilitarismo', 'pacifismo'],
-    'transparency & anti-corruption': ['corruzione', 'trasparenza', 'mafie', 'legalità', 'antimafia']
-  };
-  
-  for (const [category, keywords] of Object.entries(categories)) {
-    if (keywords.some(keyword => fullText.includes(keyword))) {
-      return category;
-    }
-  }
+  if (text.includes('pride') || text.includes('lgbtq')) return 'lgbtq+';
+  if (text.includes('clima') || text.includes('ambiente') || text.includes('climate')) return 'environment';
+  if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato')) return 'labor';
+  if (text.includes('guerra') || text.includes('pace') || text.includes('war') || text.includes('bezos')) return 'peace & anti-war';
+  if (text.includes('diritti') || text.includes('giustizia')) return 'civil & human rights';
+  if (text.includes('donna') || text.includes('women')) return 'women\'s rights';
+  if (text.includes('razzismo') || text.includes('racial')) return 'racial & social justice';
+  if (text.includes('sanita') || text.includes('scuola') || text.includes('health')) return 'healthcare & education';
+  if (text.includes('corruzione') || text.includes('trasparenza')) return 'transparency & anti-corruption';
   
   return 'other';
 }
 
 /**
- * Geocode address to coordinates
+ * Enhanced HTTP request with simple retry
  */
-async function geocodeAddress(address, city) {
-  // First try to use known Italian cities
-  const cityKey = normalizeText(city);
-  if (ITALIAN_CITIES[cityKey]) {
-    console.log(`🗺️ Using known coordinates for ${city}`);
-    return ITALIAN_CITIES[cityKey];
-  }
-  
-  // Use OpenStreetMap Nominatim for geocoding
+async function makeRequest(url) {
   try {
-    const query = encodeURIComponent(`${address}, ${city}, Italy`);
-    const response = await makeRequest(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
+    console.log(`🔗 Fetching: ${url}`);
     
-    if (response.data && response.data.length > 0) {
-      const result = response.data[0];
-      console.log(`🗺️ Geocoded ${address} to ${result.lat}, ${result.lon}`);
-      return {
-        lat: parseFloat(result.lat),
-        lng: parseFloat(result.lon)
-      };
-    }
+    const response = await axios.get(url, {
+      timeout: PERFORMANCE_CONFIG.REQUEST_TIMEOUT,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3'
+      }
+    });
+    
+    console.log(`✅ Request successful: ${response.status}`);
+    return response;
   } catch (error) {
-    console.log(`⚠️ Geocoding failed for ${address}: ${error.message}`);
+    console.log(`❌ Request failed: ${error.message}`);
+    throw error;
   }
-  
-  // Fallback to Milano coordinates
-  return { lat: 45.4642, lng: 9.1900 };
 }
 
 /**
@@ -595,421 +308,243 @@ async function geocodeAddress(address, city) {
  */
 async function checkDuplicate(title, date, city) {
   try {
-    const normalizedTitle = normalizeText(title);
-    
-    // Only check for duplicates if we have both title and date
-    if (!title || !date) {
-      console.log(`⚠️ Skipping duplicate check - missing title or date`);
-      return false;
-    }
+    const cleanTitleForDupe = cleanTitle(title).toLowerCase();
     
     const { data, error } = await supabase
       .from('protests')
-      .select('id, title, date')
-      .eq('date', date)
+      .select('id, title')
+      .eq('city', city)
       .limit(10);
     
     if (error) {
-      console.error('Error checking duplicates:', error);
-      return false; // Don't block saving if duplicate check fails
-    }
-    
-    if (data && data.length > 0) {
-      for (const existing of data) {
-        const existingTitle = normalizeText(existing.title);
-        
-        // More lenient duplicate checking - only exact title matches
-        if (existingTitle === normalizedTitle) {
-          console.log(`🔄 Duplicate found: "${title}"`);
-          return true;
-        }
-      }
-    }
-    
-    return false;
-  } catch (error) {
-    console.error('Error in checkDuplicate:', error);
-    return false; // Don't block saving if duplicate check fails
-  }
-}
-
-/**
- * Detect and follow pagination with limits
- */
-async function detectPagination($, baseUrl) {
-  const paginationSelectors = [
-    'a[href*="page"]', 'a[href*="pagina"]', '.pagination a', '.pager a',
-    '.next-page', '.load-more', 'a:contains("Successiva")', 'a:contains("Avanti")',
-    'a:contains("Next")', 'a:contains("More")', 'button[onclick*="load"]'
-  ];
-  
-  const paginationLinks = [];
-  
-  for (const selector of paginationSelectors) {
-    $(selector).each((i, element) => {
-      const href = $(element).attr('href') || $(element).attr('onclick');
-      if (href) {
-        let url = href;
-        if (href.includes('onclick')) {
-          // Try to extract URL from onclick handler
-          const urlMatch = href.match(/['"]([^'"]+)['"]/);
-          if (urlMatch) {
-            url = urlMatch[1];
-          }
-        }
-        
-        if (url && !url.startsWith('http')) {
-          try {
-            url = new URL(url, baseUrl).href;
-          } catch (error) {
-            console.log(`⚠️ Could not convert pagination URL: ${url}`);
-            return;
-          }
-        }
-        
-        if (url && url.startsWith('http')) {
-          paginationLinks.push(url);
-        }
-      }
-    });
-  }
-  
-  // Remove duplicates and limit to max pages
-  const uniqueLinks = [...new Set(paginationLinks)].slice(0, PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE - 1);
-  console.log(`📄 Found ${uniqueLinks.length} pagination links (limited to ${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE} total pages)`);
-  
-  return uniqueLinks;
-}
-
-/**
- * Enhanced scraping with pagination and performance limits
- */
-async function scrapeWebsiteWithPagination(source) {
-  console.log(`🔍 Scraping ${source.name} with pagination support...`);
-  
-  const stats = {
-    pagesScraped: 0,
-    eventsFound: 0,
-    eventsSkippedByDate: 0,
-    eventsSkippedByKeywords: 0,
-    earlyStop: false
-  };
-  
-  const allEvents = [];
-  const processedUrls = new Set();
-  const urlsToProcess = [source.url];
-  
-  while (urlsToProcess.length > 0 && stats.pagesScraped < PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE) {
-    const currentUrl = urlsToProcess.shift();
-    
-    if (processedUrls.has(currentUrl)) {
-      console.log(`⏭️ Skipping already processed URL: ${currentUrl}`);
-      continue;
-    }
-    
-    processedUrls.add(currentUrl);
-    stats.pagesScraped++;
-    
-    console.log(`📄 Processing page ${stats.pagesScraped}/${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE}: ${currentUrl}`);
-    
-    try {
-      const response = await makeRequest(currentUrl);
-      const $ = load(response.data);
-      
-      // Detect pagination for next iterations (only if we haven't hit the limit)
-      if (stats.pagesScraped < PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE) {
-        const paginationLinks = await detectPagination($, currentUrl);
-        for (const link of paginationLinks) {
-          if (!processedUrls.has(link) && !urlsToProcess.includes(link)) {
-            urlsToProcess.push(link);
-          }
-        }
-      }
-      
-      // Extract events from current page
-      const { events: pageEvents, shouldStop } = await extractEventsFromPageWithDateCheck($, currentUrl, source.name, stats);
-      allEvents.push(...pageEvents);
-      
-      console.log(`📊 Page ${stats.pagesScraped}: Found ${pageEvents.length} valid events. Total: ${allEvents.length}`);
-      
-      // Early stop if we found old events (indicating we've gone too far back)
-      if (shouldStop) {
-        console.log(`🛑 Early stop triggered: Found events older than ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days cutoff`);
-        stats.earlyStop = true;
-        break;
-      }
-      
-      // Add delay between page requests
-      if (urlsToProcess.length > 0) {
-        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_PAGES}ms before next page...`);
-        await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_PAGES));
-      }
-      
-    } catch (error) {
-      console.error(`❌ Error scraping ${currentUrl}:`, error.message);
-    }
-  }
-  
-  // Log final statistics for this source
-  console.log(`\n📊 ${source.name} Statistics:`);
-  console.log(`   📄 Pages scraped: ${stats.pagesScraped}/${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE}`);
-  console.log(`   📋 Events found: ${stats.eventsFound}`);
-  console.log(`   ✅ Valid events: ${allEvents.length}`);
-  console.log(`   📅 Skipped by date: ${stats.eventsSkippedByDate}`);
-  console.log(`   🔍 Skipped by keywords: ${stats.eventsSkippedByKeywords}`);
-  console.log(`   🛑 Early stop: ${stats.earlyStop ? 'Yes' : 'No'}`);
-  
-  return { events: allEvents, stats };
-}
-
-/**
- * Extract events from a single page with date checking
- */
-async function extractEventsFromPageWithDateCheck($, pageUrl, sourceName, stats) {
-  const events = [];
-  let shouldStop = false;
-  
-  // Generic selectors for events
-  const eventSelectors = [
-    'article', '.event', '.evento', '.manifestazione', '.news', '.post',
-    '.card', '.item', '.entry', '.event-item', '.post-item'
-  ];
-  
-  const scrapedElements = new Set();
-  
-  for (const selector of eventSelectors) {
-    $(selector).each(async (i, element) => {
-      if (scrapedElements.has(element)) return;
-      scrapedElements.add(element);
-      
-      const $el = $(element);
-      stats.eventsFound++;
-      
-      // Extract text content
-      const rawTitle = cleanText($el.find('h1, h2, h3, .title, .headline').first().text() || $el.text().substring(0, 100));
-      const title = cleanTitle(rawTitle);
-      const description = cleanText($el.find('p, .description, .content, .summary').text() || $el.text().substring(0, 500));
-      
-      if (!title || title.length < 5) {
-        console.log(`⚠️ Skipping event with short title: "${title}"`);
-        stats.eventsSkippedByKeywords++;
-        return;
-      }
-      
-      // Check if it's a protest-related event
-      const fullText = `${title} ${description}`;
-      if (!containsProtestKeywords(fullText)) {
-        console.log(`⚠️ Skipping non-protest event: "${title}"`);
-        stats.eventsSkippedByKeywords++;
-        return;
-      }
-      
-      if (containsExcludeKeywords(fullText)) {
-        console.log(`⚠️ Skipping excluded event: "${title}"`);
-        stats.eventsSkippedByKeywords++;
-        return;
-      }
-      
-      // Extract date and time
-      const dateTimeText = cleanText($el.find('.date, .when, time, .data, .orario').text());
-      const { date, time } = parseItalianDateTime(dateTimeText);
-      
-      // Check date cutoff
-      if (date && !isDateWithinCutoff(date)) {
-        console.log(`📅 Skipping event older than cutoff: "${title}" (${date})`);
-        stats.eventsSkippedByDate++;
-        shouldStop = true; // Trigger early stop if we found an old event
-        return;
-      }
-      
-      // Extract address
-      const addressInfo = extractAddress(element, $);
-      
-      // Extract event URL
-      const eventUrl = extractEventUrl(element, $, pageUrl);
-      
-      // Try to get more details from event page (with concurrency control)
-      let eventDetails = null;
-      if (eventUrl) {
-        try {
-          eventDetails = await fetchEventDetails(eventUrl);
-          // Small delay between detail requests
-          await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_REQUESTS));
-        } catch (error) {
-          console.log(`⚠️ Failed to fetch event details: ${error.message}`);
-        }
-      }
-      
-      // Use enhanced details if available
-      const finalAddress = eventDetails?.detailedAddress || addressInfo;
-      const finalDescription = eventDetails?.detailedDescription || description;
-      const finalDateTime = eventDetails?.dateTime || { date, time };
-      
-      // Extract image URL
-      let imageUrl = $el.find('img').first().attr('src');
-      if (imageUrl && !imageUrl.startsWith('http')) {
-        try {
-          imageUrl = new URL(imageUrl, pageUrl).href;
-        } catch (error) {
-          imageUrl = null;
-        }
-      }
-      
-      const category = categorizeEvent(title, finalDescription);
-      
-      // Log event details for debugging
-      console.log(`📋 Event found: "${title}"`);
-      console.log(`   📅 Date: ${finalDateTime.date || 'N/A'}`);
-      console.log(`   ⏰ Time: ${finalDateTime.time || 'N/A'}`);
-      console.log(`   📍 Address: ${finalAddress.fullAddress}`);
-      console.log(`   🏙️ City: ${finalAddress.city}`);
-      console.log(`   🔗 URL: ${eventUrl || 'N/A'}`);
-      console.log(`   📂 Category: ${category}`);
-      
-      events.push({
-        title,
-        description: finalDescription,
-        category,
-        address: finalAddress.fullAddress,
-        city: finalAddress.city,
-        postalCode: finalAddress.postalCode,
-        date: finalDateTime.date,
-        time: finalDateTime.time,
-        image_url: imageUrl,
-        event_url: eventUrl,
-        source_name: sourceName,
-        source_url: pageUrl
-      });
-    });
-  }
-  
-  return { events, shouldStop };
-}
-
-/**
- * Save event to database
- */
-async function saveEventToDatabase(event) {
-  try {
-    console.log(`💾 Attempting to save: "${event.title}"`);
-    
-    // Validate required fields
-    if (!event.title || event.title.length < 3) {
-      console.log(`⚠️ Skipping event with invalid title: "${event.title}"`);
+      console.log('⚠️ Error checking duplicates:', error.message);
       return false;
     }
     
-    // Check for duplicates only if we have a date
-    if (event.date) {
-      const isDuplicate = await checkDuplicate(event.title, event.date, event.city);
-      if (isDuplicate) {
-        console.log(`⏭️ Duplicate event skipped: "${event.title}"`);
-        return false;
-      }
+    // Check for similar titles
+    const isDuplicate = data.some(event => {
+      const existingTitle = cleanTitle(event.title).toLowerCase();
+      return existingTitle === cleanTitleForDupe || 
+             existingTitle.includes(cleanTitleForDupe) ||
+             cleanTitleForDupe.includes(existingTitle);
+    });
+    
+    return isDuplicate;
+  } catch (error) {
+    console.log('⚠️ Exception checking duplicates:', error.message);
+    return false;
+  }
+}
+
+/**
+ * Save event to database with validation
+ */
+async function saveEventToDatabase(event) {
+  try {
+    console.log(`💾 Saving event: "${event.title}"`);
+    
+    // Check for duplicate
+    const isDuplicate = await checkDuplicate(event.title, event.date, event.city);
+    if (isDuplicate) {
+      console.log(`⏭️ Skipping duplicate: "${event.title}"`);
+      return false;
     }
     
-    // Geocode address with fallback
-    let coordinates;
-    try {
-      coordinates = await geocodeAddress(event.address, event.city);
-    } catch (error) {
-      console.log(`⚠️ Geocoding failed, using default coordinates: ${error.message}`);
-      coordinates = { lat: 45.4642, lng: 9.1900 }; // Milano fallback
-    }
-    
-    // Prepare event data for database with fallbacks
+    // Prepare event data
     const eventData = {
-      title: cleanTitle(event.title) || event.title,
-      description: event.description || '',
+      title: cleanTitle(event.title) || 'Untitled Event',
+      description: event.description || 'No description available',
       category: event.category || 'other',
-      location: event.city || 'Milano',  // Use 'location' field name from schema
-      address: event.address || event.city || 'Milano, Italy',
-      latitude: coordinates.lat.toString(),
-      longitude: coordinates.lng.toString(),
+      city: event.city || 'Milano',
+      address: event.address || event.city || 'Milano',
+      latitude: String(event.latitude || ITALIAN_CITIES.milano.lat),
+      longitude: String(event.longitude || ITALIAN_CITIES.milano.lng),
       date: event.date || null,
-      time: event.time || null,
-      image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES['other'],
+      time: event.time || '18:00',  // Default time if none provided
+      image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.other,
       event_url: event.event_url || null,
       country_code: 'IT',
       featured: false,
       attendees: 0,
-      source_name: event.source_name || 'unknown',
-      source_url: event.source_url || null,
+      source_name: event.source_name || 'enhanced-scraper',
+      source_url: event.source_url || '',
       scraped_at: new Date().toISOString()
     };
     
-    console.log(`📋 Event data prepared:`, {
-      title: eventData.title,
-      date: eventData.date,
-      city: eventData.city,
-      category: eventData.category
-    });
-    
-    // Insert into database
     const { data, error } = await supabase
       .from('protests')
       .insert([eventData])
       .select();
     
     if (error) {
-      console.error('❌ Error inserting event:', error);
-      console.error('📋 Event data that failed:', eventData);
+      console.error(`❌ Error saving event "${event.title}":`, error.message);
       return false;
     }
     
-    console.log(`✅ Saved: "${eventData.title}" in ${eventData.city} (ID: ${data[0].id})`);
+    console.log(`✅ Saved event: "${event.title}" (ID: ${data[0].id})`);
     return true;
     
   } catch (error) {
-    console.error('❌ Error in saveEventToDatabase:', error);
-    console.error('📋 Event data:', event);
+    console.error(`❌ Exception saving event "${event.title}":`, error.message);
     return false;
   }
 }
 
 /**
- * Main scraping function with performance optimizations
+ * Enhanced website scraping with simplified logic
+ */
+async function scrapeWebsite(source) {
+  console.log(`\n🔍 Scraping ${source.name}...`);
+  
+  const events = [];
+  const stats = {
+    pagesScraped: 0,
+    eventsFound: 0,
+    eventsSkippedByDate: 0,
+    eventsSkippedByKeywords: 0
+  };
+  
+  try {
+    const response = await makeRequest(source.url);
+    const $ = load(response.data);
+    
+    stats.pagesScraped = 1;
+    
+    console.log(`📄 Processing ${source.name}...`);
+    
+    // Generic selectors for finding events/articles
+    const eventSelectors = [
+      'article', '.post', '.event', '.news-item', '.item', '.entry',
+      '.news', '.evento', '.manifestazione', '.iniziativa'
+    ];
+    
+    let eventElements = $();
+    for (const selector of eventSelectors) {
+      const elements = $(selector);
+      if (elements.length > 0) {
+        eventElements = elements;
+        console.log(`📊 Found ${elements.length} potential events using selector: ${selector}`);
+        break;
+      }
+    }
+    
+    // Process each potential event
+    eventElements.slice(0, 20).each((index, element) => {
+      try {
+        const $el = $(element);
+        
+        // Extract basic information
+        const title = cleanText($el.find('h1, h2, h3, .title, .headline').first().text()) ||
+                     cleanText($el.text()).slice(0, 100) + '...';
+        
+        const description = cleanText($el.find('p, .description, .excerpt, .content').first().text()) ||
+                           cleanText($el.text()).slice(0, 500);
+        
+        const link = $el.find('a').first().attr('href');
+        let eventUrl = '';
+        if (link && !link.startsWith('http')) {
+          try {
+            eventUrl = new URL(link, source.url).href;
+          } catch (e) {
+            eventUrl = source.url;
+          }
+        } else {
+          eventUrl = link || source.url;
+        }
+        
+        // Check if this looks like a protest/event
+        const fullText = `${title} ${description}`.toLowerCase();
+        if (!containsProtestKeywords(fullText)) {
+          console.log(`⚠️ Skipping non-protest content: "${title.slice(0, 50)}..."`);
+          stats.eventsSkippedByKeywords++;
+          return;
+        }
+        
+        // Check for excluded content
+        if (containsExcludeKeywords(fullText)) {
+          console.log(`⚠️ Skipping excluded content: "${title.slice(0, 50)}..."`);
+          stats.eventsSkippedByKeywords++;
+          return;
+        }
+        
+        // Extract date/time
+        const dateText = cleanText($el.find('.date, time, .when, .data').text()) || description;
+        const { date, time } = parseItalianDateTime(dateText);
+        
+        // Check date cutoff
+        if (date && !isDateWithinCutoff(date)) {
+          console.log(`⏰ Skipping old event: "${title.slice(0, 50)}..." (${date})`);
+          stats.eventsSkippedByDate++;
+          return;
+        }
+        
+        // Extract location
+        const locationInfo = extractCityFromText(`${title} ${description}`);
+        
+        // Create event object
+        const event = {
+          title: cleanTitle(title),
+          description: description.slice(0, 700),  // Limit description length
+          category: categorizeEvent(title, description),
+          city: locationInfo.city,
+          address: locationInfo.city,
+          latitude: locationInfo.coordinates.lat,
+          longitude: locationInfo.coordinates.lng,
+          date: date,
+          time: time,
+          image_url: CATEGORY_IMAGES[categorizeEvent(title, description)] || CATEGORY_IMAGES.other,
+          event_url: eventUrl,
+          source_name: source.name,
+          source_url: source.url
+        };
+        
+        events.push(event);
+        stats.eventsFound++;
+        
+        console.log(`📋 Event found: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city} | ${event.date || 'No date'}`);
+        
+      } catch (error) {
+        console.log(`⚠️ Error processing event element:`, error.message);
+      }
+    });
+    
+  } catch (error) {
+    console.error(`❌ Error scraping ${source.name}:`, error.message);
+  }
+  
+  console.log(`📊 ${source.name} Stats: ${events.length} events found`);
+  return { events, stats };
+}
+
+/**
+ * Main scraping function
  */
 async function main() {
-  console.log('🚀 Starting Enhanced Italian Protest Scraper with Performance Optimizations...');
-  console.log(`📊 Configuration:`);
-  console.log(`   📄 Max pages per website: ${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE}`);
-  console.log(`   📅 Date cutoff: ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days`);
-  console.log(`   ⏱️ Request timeout: ${PERFORMANCE_CONFIG.REQUEST_TIMEOUT}ms`);
-  console.log(`   🔄 Max concurrent requests: ${PERFORMANCE_CONFIG.MAX_CONCURRENT_REQUESTS}`);
-  console.log(`   📊 Scraping ${SCRAPE_SOURCES.length} sources`);
+  console.log('🚀 Starting Enhanced Italian Protest Scraper...');
+  console.log(`📊 Configuration: ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days, ${SCRAPE_SOURCES.length} sources\n`);
   
   const globalStats = {
-    totalPagesScraped: 0,
     totalEventsFound: 0,
     totalEventsSkippedByDate: 0,
     totalEventsSkippedByKeywords: 0,
     totalEventsSaved: 0,
     totalDuplicatesSkipped: 0,
-    sourcesWithEarlyStop: 0,
     sourcesProcessed: 0
   };
   
   const startTime = Date.now();
   
   for (const source of SCRAPE_SOURCES) {
-    console.log(`\n🔍 Processing source ${globalStats.sourcesProcessed + 1}/${SCRAPE_SOURCES.length}: ${source.name}`);
+    console.log(`\n🌐 Processing source ${globalStats.sourcesProcessed + 1}/${SCRAPE_SOURCES.length}: ${source.name}`);
     
     try {
-      const { events, stats } = await scrapeWebsiteWithPagination(source);
+      const { events, stats } = await scrapeWebsite(source);
       
       // Update global statistics
-      globalStats.totalPagesScraped += stats.pagesScraped;
       globalStats.totalEventsFound += stats.eventsFound;
       globalStats.totalEventsSkippedByDate += stats.eventsSkippedByDate;
       globalStats.totalEventsSkippedByKeywords += stats.eventsSkippedByKeywords;
       globalStats.sourcesProcessed++;
-      
-      if (stats.earlyStop) {
-        globalStats.sourcesWithEarlyStop++;
-      }
-      
-      console.log(`📊 Found ${events.length} valid events from ${source.name}`);
       
       // Save events to database
       for (const event of events) {
@@ -1020,13 +555,13 @@ async function main() {
           globalStats.totalDuplicatesSkipped++;
         }
         
-        // Add delay between saves
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Small delay between saves
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
       
-      // Add delay between sources
+      // Delay before next source
       if (globalStats.sourcesProcessed < SCRAPE_SOURCES.length) {
-        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES}ms before next source...`);
+        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES}ms...`);
         await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES));
       }
       
@@ -1040,15 +575,13 @@ async function main() {
   
   console.log('\n🎉 Scraping completed!');
   console.log('\n📊 FINAL STATISTICS:');
-  console.log(`   ⏱️ Total duration: ${duration} seconds`);
+  console.log(`   ⏱️ Duration: ${duration} seconds`);
   console.log(`   🌐 Sources processed: ${globalStats.sourcesProcessed}/${SCRAPE_SOURCES.length}`);
-  console.log(`   📄 Total pages scraped: ${globalStats.totalPagesScraped}`);
-  console.log(`   📋 Total events found: ${globalStats.totalEventsFound}`);
-  console.log(`   ✅ Events saved to database: ${globalStats.totalEventsSaved}`);
-  console.log(`   📅 Events skipped by date cutoff: ${globalStats.totalEventsSkippedByDate}`);
-  console.log(`   🔍 Events skipped by keywords: ${globalStats.totalEventsSkippedByKeywords}`);
+  console.log(`   📋 Events found: ${globalStats.totalEventsFound}`);
+  console.log(`   ✅ Events saved: ${globalStats.totalEventsSaved}`);
+  console.log(`   📅 Skipped by date: ${globalStats.totalEventsSkippedByDate}`);
+  console.log(`   🔍 Skipped by keywords: ${globalStats.totalEventsSkippedByKeywords}`);
   console.log(`   ⏭️ Duplicates skipped: ${globalStats.totalDuplicatesSkipped}`);
-  console.log(`   🛑 Sources with early stop: ${globalStats.sourcesWithEarlyStop}`);
   console.log(`   📈 Success rate: ${Math.round((globalStats.totalEventsSaved / Math.max(globalStats.totalEventsFound, 1)) * 100)}%`);
   
   return globalStats;

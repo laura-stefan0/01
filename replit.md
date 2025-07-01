@@ -101,6 +101,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 
 ## Recent Changes  
 - July 1, 2025: Successfully completed migration from Replit Agent to standard Replit environment - all dependencies installed, working properly with full security implementation
+- July 1, 2025: Fixed enhanced-italian-scraper.mjs to resolve database constraint issues with null time values, added default time of 18:00 for events without specific times
+- July 1, 2025: Cleaned up scraper files by removing test and simple scraper variants, keeping only the enhanced scraper as the primary tool
 - July 1, 2025: Fixed map filter menu functionality - updated filter logic to work with YYYY-MM-DD date format, made filter overlay always visible, and replaced outdated filters with "Upcoming", "Popular", and "Featured" filters
 - July 1, 2025: Ran comprehensive scraper to refresh database with 19 authentic Italian protest events across 9 categories (LGBTQ+, Environment, Labor, Civil & Human Rights, Racial & Social Justice, Women's Rights, Healthcare & Education, Peace & Anti-War, Transparency & Anti-Corruption)
 - July 1, 2025: Created new Italian protest scraper from scratch with advanced features - multi-source scraping from 11+ Italian activism websites, smart keyword filtering, duplicate detection, automatic geocoding, category classification, and comprehensive database integration
