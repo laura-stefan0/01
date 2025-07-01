@@ -116,52 +116,7 @@ const SCRAPE_SOURCES = [
     type: 'environment'
   },
   
-  // Major Italian News Sources
-  { 
-    url: 'https://it.euronews.com/tag/manifestazioni-in-italia', 
-    name: 'euronews.com',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.ilfattoquotidiano.it/', 
-    name: 'ilfattoquotidiano.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.repubblica.it/', 
-    name: 'repubblica.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.corriere.it/', 
-    name: 'corriere.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.fanpage.it/', 
-    name: 'fanpage.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.ilsole24ore.com/', 
-    name: 'ilsole24ore.com',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.globalist.it/', 
-    name: 'globalist.it',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://www.open.online/', 
-    name: 'open.online',
-    type: 'news_major'
-  },
-  { 
-    url: 'https://ilmanifesto.it/', 
-    name: 'ilmanifesto.it',
-    type: 'news_major'
-  },
+  // Alternative Movement Sources
   { 
     url: 'https://rivoluzioneanarchica.it/', 
     name: 'rivoluzioneanarchica.it',
