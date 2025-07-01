@@ -57,7 +57,7 @@ export default function ProfileSettingsPage() {
               <Switch id="emails" />
             </div>
             <div 
-              className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
+              className="p-4 flex items-center justify-between cursor-pointer"
               onClick={() => navigate('/profile/settings/theme')}
             >
               <div className="flex items-center">

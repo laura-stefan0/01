@@ -66,14 +66,14 @@ export default function ProfilePage() {
       <Card>
         <CardContent className="p-0 divide-y divide-gray-100">
           <div 
-            className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-[#2A2A2A]"
+            className="p-4 flex items-center justify-between cursor-pointer"
             onClick={() => navigate('/profile/settings')}
           >
             <span className="text-dark-slate">Settings</span>
             <div className="w-4 h-4 text-gray-400">→</div>
           </div>
           <div 
-            className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-[#2A2A2A]"
+            className="p-4 flex items-center justify-between cursor-pointer"
             onClick={() => navigate('/profile/more')}
           >
             <span className="text-dark-slate">More</span>
