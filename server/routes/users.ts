@@ -107,7 +107,7 @@ router.post('/', async (req, res) => {
         details: insertError.details,
         code: insertError.code
       });
-      
+
       // Provide specific guidance based on error type
       if (insertError.code === '42501') {
         console.error('🚨 PERMISSION DENIED: This usually means the service role key is missing or incorrect');
@@ -115,7 +115,7 @@ router.post('/', async (req, res) => {
       } else if (insertError.code === '23505') {
         console.error('🚨 DUPLICATE KEY: User with this username or email already exists');
       }
-      
+
       return res.status(500).json({ 
         message: "Failed to create user", 
         error: insertError.message,
@@ -124,14 +124,14 @@ router.post('/', async (req, res) => {
     }
 
     console.log('✅ User created successfully in Supabase:', newUser.id);
-    
+
     // Verify the user was actually inserted
     const { data: verifyUser, error: verifyError } = await supabase
       .from('users')
       .select('id, username, email')
       .eq('id', newUser.id)
       .single();
-    
+
     if (verifyError) {
       console.error('⚠️  Could not verify user creation:', verifyError.message);
     } else {
@@ -179,51 +179,41 @@ router.get('/:username', async (req, res) => {
   }
 });
 
-// Update user theme preferences
-router.patch('/:id/theme', async (req, res) => {
+// Update user theme settings
+router.patch('/:id/theme', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { theme, background } = req.body;
+    const { theme, background, custom_background_url } = req.body;
 
-    if (!theme || !background) {
-      return res.status(400).json({ message: "Theme and background are required" });
+    console.log(`🎨 Updating theme for user ${id}:`, { theme, background, custom_background_url });
+
+    const updateData: any = {
+      theme: theme || 'system',
+      background: background || 'white'
+    };
+
+    // Only update custom_background_url if it's provided
+    if (custom_background_url !== undefined) {
+      updateData.custom_background_url = custom_background_url;
     }
 
-    // Validate theme values
-    const validThemes = ['system', 'light', 'dark'];
-    const validBackgrounds = ['white', 'pink', 'green'];
-
-    if (!validThemes.includes(theme) || !validBackgrounds.includes(background)) {
-      return res.status(400).json({ message: "Invalid theme or background value" });
-    }
-
-    console.log(`🎨 Updating theme preferences for user ${id}:`, { theme, background });
-
-    // Update theme preferences in Supabase
-    const { data: updatedUser, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from('users')
-      .update({ theme, background })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
 
     if (error) {
-      console.error("❌ Failed to update user theme:", error);
-      return res.status(500).json({ message: "Failed to update theme preferences" });
+      console.error('❌ Supabase error updating theme:', error);
+      return res.status(500).json({ message: 'Failed to update theme settings' });
     }
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    console.log("✅ Successfully updated user theme preferences");
-
-    // Don't return password hash
-    const { password_hash, ...userResponse } = updatedUser;
-    res.json(userResponse);
+    console.log('✅ Theme updated successfully:', data);
+    res.json(data);
   } catch (error) {
-    console.error("Failed to update theme preferences:", error);
-    res.status(500).json({ message: "Failed to update theme preferences" });
+    console.error('❌ Error updating theme:', error);
+    res.status(500).json({ message: 'Failed to update theme settings' });
   }
 });
 
