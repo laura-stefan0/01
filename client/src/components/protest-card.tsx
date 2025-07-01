@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Protest } from "@shared/schema";
 import { MapPin } from "lucide-react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { formatDateTime } from "@/lib/date-utils";
 import { getCategoryColor, getImageUrl, createImageErrorHandler } from "@/lib/image-utils";
 
@@ -12,13 +12,13 @@ interface ProtestCardProps {
 }
 
 export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     console.log('Protest card clicked, navigating to:', `/protest/${protest.id}`);
-    setLocation(`/protest/${protest.id}`);
+    navigate(`/protest/${protest.id}`);
   };
 
 

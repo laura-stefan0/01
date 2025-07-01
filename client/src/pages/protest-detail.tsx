@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "wouter";
+import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Share2, MapPin, Calendar, Users, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { formatDate, formatTime } from "@/lib/date-utils";
 
 export default function ProtestDetail() {
   const params = useParams();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   
   const protestId = params.id;
 
@@ -139,7 +139,7 @@ export default function ProtestDetail() {
         <div className="max-w-md mx-auto bg-white min-h-screen">
           {/* Header skeleton */}
           <div className="sticky top-0 bg-white border-b z-10 p-4 flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <Skeleton className="h-8 w-8 rounded" />
@@ -165,7 +165,7 @@ export default function ProtestDetail() {
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-md mx-auto bg-white min-h-screen">
           <div className="sticky top-0 bg-white border-b z-10 p-4 flex items-center">
-            <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </div>
@@ -183,7 +183,7 @@ export default function ProtestDetail() {
       <div className="max-w-md mx-auto bg-white min-h-screen">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b z-10 p-4 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={handleShare}>
