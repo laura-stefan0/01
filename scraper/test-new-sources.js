@@ -3,10 +3,16 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 
-// Test the new sources
+// Test the major news sources
 const NEW_SOURCES = [
-  { url: 'https://adlcobas.it/', name: 'adlcobas.it' },
-  { url: 'https://www.notav.info/', name: 'notav.info' }
+  { url: 'https://it.euronews.com/tag/manifestazioni-in-italia', name: 'euronews.com' },
+  { url: 'https://www.ilfattoquotidiano.it/', name: 'ilfattoquotidiano.it' },
+  { url: 'https://www.repubblica.it/cronaca/', name: 'repubblica.it/cronaca' },
+  { url: 'https://www.corriere.it/cronache/', name: 'corriere.it/cronache' },
+  { url: 'https://www.fanpage.it/attualita/', name: 'fanpage.it' },
+  { url: 'https://www.globalist.it/', name: 'globalist.it' },
+  { url: 'https://www.open.online/', name: 'open.online' },
+  { url: 'https://ilmanifesto.it/', name: 'ilmanifesto.it' }
 ];
 
 async function testNewSources() {

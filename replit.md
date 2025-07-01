@@ -107,6 +107,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - July 1, 2025: Enhanced scraper title cleaning to remove dates/locations from titles and clean quote formatting - "15/07 Venezia - Assemblea" becomes "Assemblea", proper quote handling throughout
 - July 1, 2025: Created comprehensive enhanced Italian protest scraper with pagination support, enhanced address extraction, proper time parsing without defaults, event URL extraction, deep content analysis from detail pages, and comprehensive logging system
 - July 1, 2025: Added two new sources to web scraper - adlcobas.it (labor union activism) and notav.info (No TAV movement and territorial struggles) bringing total to 6 active sources
+- July 1, 2025: Expanded web scraper with 11 major Italian news sources including Euronews, Il Fatto Quotidiano, Repubblica, Corriere della Sera, Fanpage, Il Sole 24 Ore, Globalist, Open, and Il Manifesto - bringing total to 17 active sources covering both activism websites and mainstream media
 - July 1, 2025: Created notifications page with settings and mock notifications - bell icon now opens dedicated notifications page instead of profile
 - July 1, 2025: Enhanced refresh location button to force clear location cache and get fresh GPS coordinates
 - July 1, 2025: Removed preview section from App theme settings page for cleaner interface

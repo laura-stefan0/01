@@ -26,6 +26,7 @@ A comprehensive web scraper designed to collect Italian protest and activism eve
 
 ## Scraped Sources
 
+### Activism & Movement Websites
 - globalproject.info
 - dinamopress.it
 - milanoinmovimento.com
@@ -37,8 +38,23 @@ A comprehensive web scraper designed to collect Italian protest and activism eve
 - extinctionrebellion.it
 - usb.it
 - sicobas.org
-- adlcobas.it (NEW - Labor union activism)
-- notav.info (NEW - No TAV movement and territorial struggles)
+- adlcobas.it (Labor union activism)
+- notav.info (No TAV movement and territorial struggles)
+
+### Major Italian News Sources
+- it.euronews.com/tag/manifestazioni-in-italia (Euronews Italy - Protest coverage)
+- ilfattoquotidiano.it (Il Fatto Quotidiano)
+- repubblica.it/cronaca (La Repubblica - News section)
+- repubblica.it/politica (La Repubblica - Politics section)
+- corriere.it/cronache (Corriere della Sera - News section)
+- corriere.it/politica (Corriere della Sera - Politics section)
+- fanpage.it/attualita (Fanpage - Current affairs)
+- ilsole24ore.com (Il Sole 24 Ore - Business/Financial news)
+- globalist.it (Globalist)
+- open.online (Open - Digital newspaper)
+- ilmanifesto.it (Il Manifesto - Left-wing newspaper)
+
+**Total Sources: 24 websites**
 
 ## Event Categories
 
@@ -182,6 +198,20 @@ The scraper provides detailed console output including:
 - Final statistics and category breakdown
 
 Example output:
+
+## Recent Updates
+
+### July 1, 2025
+- **Major Source Expansion**: Added 11 major Italian news sources including Euronews, Il Fatto Quotidiano, Repubblica, Corriere della Sera, Fanpage, Il Sole 24 Ore, Globalist, Open, and Il Manifesto
+- **Total Sources**: Now scraping 17 sources covering both activism websites and mainstream media  
+- **Labor & Environmental**: Added adlcobas.it (labor union activism) and notav.info (No TAV movement)
+- **Enhanced Coverage**: Comprehensive protest event coverage from major Italian news outlets
+
+### Previous Updates
+- Enhanced title cleaning: Removes dates, locations, and quotes from event titles
+- Added comprehensive logging system with event-by-event tracking
+- Improved duplicate detection and data validation
+- Enhanced address extraction and geocoding accuracy
 ```
 🚀 Starting Italian Protest Scraper...
 📊 Scraping 11 sources for protest events

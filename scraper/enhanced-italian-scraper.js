@@ -106,6 +106,61 @@ const SCRAPE_SOURCES = [
     url: 'https://www.notav.info/', 
     name: 'notav.info',
     type: 'movement_news'
+  },
+  { 
+    url: 'https://it.euronews.com/tag/manifestazioni-in-italia', 
+    name: 'euronews.com',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.ilfattoquotidiano.it/', 
+    name: 'ilfattoquotidiano.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.repubblica.it/cronaca/', 
+    name: 'repubblica.it/cronaca',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.repubblica.it/politica/', 
+    name: 'repubblica.it/politica',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.corriere.it/cronache/', 
+    name: 'corriere.it/cronache',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.corriere.it/politica/', 
+    name: 'corriere.it/politica',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.fanpage.it/attualita/', 
+    name: 'fanpage.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.ilsole24ore.com/', 
+    name: 'ilsole24ore.com',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.globalist.it/', 
+    name: 'globalist.it',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://www.open.online/', 
+    name: 'open.online',
+    type: 'news_major'
+  },
+  { 
+    url: 'https://ilmanifesto.it/', 
+    name: 'ilmanifesto.it',
+    type: 'news_major'
   }
 ];
 
@@ -776,7 +831,7 @@ async function saveEventToDatabase(event) {
  */
 async function main() {
   console.log('🚀 Starting Enhanced Italian Protest Scraper...');
-  console.log(`📊 Scraping ${SCRAPE_SOURCES.length} sources with pagination support`);
+  console.log(`📊 Scraping ${SCRAPE_SOURCES.length} sources including major Italian news outlets`);
   
   let totalEvents = 0;
   let savedEvents = 0;
