@@ -11,7 +11,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Performance Configuration
 const PERFORMANCE_CONFIG = {
-  MAX_PAGES_PER_WEBSITE: 20,          // Maximum pages to scrape per website
+  MAX_PAGES_PER_WEBSITE: 10,          // Maximum pages to scrape per website
   DATE_CUTOFF_DAYS: 30,               // Only scrape events from last 30 days
   REQUEST_TIMEOUT: 10000,             // 10 seconds timeout
   MAX_CONCURRENT_REQUESTS: 3,         // Limit concurrent requests

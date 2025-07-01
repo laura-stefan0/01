@@ -15,7 +15,7 @@ A comprehensive web scraper designed to collect Italian protest and activism eve
 - **Rate limiting**: Respectful scraping with built-in delays
 
 ### ⚡ Performance Optimizations (Latest Update)
-- **Pagination Limits**: Maximum 20 pages per website to prevent excessive scraping
+- **Pagination Limits**: Maximum 10 pages per website to prevent excessive scraping
 - **Date Cutoff**: Only scrapes events from the last 30 days (configurable)
 - **Early Pagination Stop**: Stops paginating when encountering events older than cutoff
 - **Request Timeouts**: 10-second timeout for HTTP requests to prevent hanging
@@ -38,7 +38,7 @@ The scraper includes configurable performance settings:
 
 ```javascript
 const PERFORMANCE_CONFIG = {
-  MAX_PAGES_PER_WEBSITE: 20,          // Maximum pages to scrape per website
+  MAX_PAGES_PER_WEBSITE: 10,          // Maximum pages to scrape per website
   DATE_CUTOFF_DAYS: 30,               // Only scrape events from last 30 days
   REQUEST_TIMEOUT: 10000,             // 10 seconds timeout
   MAX_CONCURRENT_REQUESTS: 3,         // Limit concurrent requests
@@ -166,7 +166,7 @@ console.log('Scraping completed:', stats);
 
 You can modify the performance configuration at the top of the scraper file:
 
-- **MAX_PAGES_PER_WEBSITE**: Limit pages scraped per source (default: 20)
+- **MAX_PAGES_PER_WEBSITE**: Limit pages scraped per source (default: 10)
 - **DATE_CUTOFF_DAYS**: Only scrape events from last N days (default: 30)
 - **REQUEST_TIMEOUT**: HTTP request timeout in milliseconds (default: 10000)
 - **MAX_CONCURRENT_REQUESTS**: Concurrent request limit (default: 3)
@@ -262,19 +262,19 @@ The scraper provides comprehensive logging and statistics:
 ```
 🚀 Starting Enhanced Italian Protest Scraper with Performance Optimizations...
 📊 Configuration:
-   📄 Max pages per website: 20
+   📄 Max pages per website: 10
    📅 Date cutoff: 30 days
    ⏱️ Request timeout: 10000ms
    🔄 Max concurrent requests: 3
    📊 Scraping 12 sources
 
 🔍 Processing source 1/12: globalproject.info
-📄 Processing page 1/20: https://www.globalproject.info/...
+📄 Processing page 1/10: https://www.globalproject.info/...
 📊 Page 1: Found 5 valid events. Total: 5
 🛑 Early stop triggered: Found events older than 30 days cutoff
 
 📊 globalproject.info Statistics:
-   📄 Pages scraped: 3/20
+   📄 Pages scraped: 3/10
    📋 Events found: 15
    ✅ Valid events: 5
    📅 Skipped by date: 8
@@ -332,7 +332,7 @@ Enable more verbose logging by modifying console.log statements or adjusting the
 ## Recent Updates
 
 ### January 2025 (Performance Optimization Update)
-- **Pagination Limits**: Added maximum 20 pages per website to prevent excessive scraping
+- **Pagination Limits**: Added maximum 10 pages per website to prevent excessive scraping
 - **Date Cutoff**: Implemented 30-day cutoff to only scrape recent events
 - **Early Stopping**: Added logic to stop pagination when encountering old events
 - **Request Management**: Implemented 10-second timeouts and concurrency control (max 3 requests)
