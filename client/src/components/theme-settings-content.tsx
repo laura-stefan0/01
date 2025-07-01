@@ -175,25 +175,27 @@ export function ThemeSettingsContent() {
           <CardTitle className="text-lg">Colors & Gradients</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            {[...solidColorOptions, ...gradientOptions].map((option) => {
-              const isSelected = settings.background === option.value;
+          <div className="overflow-x-auto">
+            <div className="flex gap-4 pb-2" style={{ minWidth: 'max-content' }}>
+              {[...solidColorOptions, ...gradientOptions].map((option) => {
+                const isSelected = settings.background === option.value;
 
-              return (
-                <div
-                  key={option.value}
-                  className="flex justify-center cursor-pointer"
-                  onClick={() => handleBackgroundChange(option.value as any)}
-                >
-                  <div 
-                    className={`w-16 h-16 rounded-full border-2 ${
-                      isSelected ? 'border-[#EF4444]' : 'border-gray-300'
-                    } ${option.preview}`}
-                    style={option.color ? { backgroundColor: option.color } : {}}
-                  />
-                </div>
-              );
-            })}
+                return (
+                  <div
+                    key={option.value}
+                    className="flex-shrink-0 cursor-pointer"
+                    onClick={() => handleBackgroundChange(option.value as any)}
+                  >
+                    <div 
+                      className={`w-16 h-16 rounded-full border-2 ${
+                        isSelected ? 'border-[#EF4444]' : 'border-gray-300'
+                      } ${option.preview}`}
+                      style={option.color ? { backgroundColor: option.color } : {}}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </CardContent>
       </Card>
