@@ -175,8 +175,9 @@ export function ThemeSettingsContent() {
           <CardTitle className="text-lg">Colors & Gradients</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4">
-            {[...solidColorOptions, ...gradientOptions].map((option) => {
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="flex gap-4 pb-2" style={{ minWidth: 'max-content' }}>
+              {[...solidColorOptions, ...gradientOptions].map((option) => {
                 const isSelected = settings.background === option.value;
 
                 return (
@@ -194,6 +195,7 @@ export function ThemeSettingsContent() {
                   </div>
                 );
               })}
+            </div>
           </div>
         </CardContent>
       </Card>
