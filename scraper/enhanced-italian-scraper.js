@@ -1,3 +1,4 @@
+
 #!/usr/bin/env node
 
 import { createClient } from '@supabase/supabase-js';
@@ -9,6 +10,17 @@ const SUPABASE_URL = 'https://mfzlajgnahbhwswpqzkj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1memxhamduYWhiaHdzd3BxemtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDU5NjYsImV4cCI6MjA2NjQyMTk2Nn0.o2OKrJrTDW7ivxZUl8lYS73M35zf7JYO_WoAmg-Djbo';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Performance Configuration
+const PERFORMANCE_CONFIG = {
+  MAX_PAGES_PER_WEBSITE: 20,          // Maximum pages to scrape per website
+  DATE_CUTOFF_DAYS: 30,               // Only scrape events from last 30 days
+  REQUEST_TIMEOUT: 10000,             // 10 seconds timeout
+  MAX_CONCURRENT_REQUESTS: 3,         // Limit concurrent requests
+  DELAY_BETWEEN_REQUESTS: 2000,       // 2 seconds between requests
+  DELAY_BETWEEN_PAGES: 3000,          // 3 seconds between page requests
+  DELAY_BETWEEN_SOURCES: 5000         // 5 seconds between different sources
+};
 
 // Keywords for filtering
 const PROTEST_KEYWORDS = [
@@ -138,6 +150,101 @@ const SCRAPE_SOURCES = [
     type: 'anarchist'
   }
 ];
+
+/**
+ * Performance and Date Utility Functions
+ */
+
+function getDateCutoff() {
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS);
+  return cutoffDate;
+}
+
+function isDateWithinCutoff(eventDate) {
+  if (!eventDate) return true; // Allow events without dates for now
+  
+  try {
+    const eventDateObj = new Date(eventDate);
+    const cutoffDate = getDateCutoff();
+    
+    console.log(`📅 Checking date: ${eventDate} against cutoff: ${cutoffDate.toISOString()}`);
+    
+    const isValid = eventDateObj >= cutoffDate;
+    if (!isValid) {
+      console.log(`❌ Event date ${eventDate} is older than cutoff (${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days)`);
+    }
+    
+    return isValid;
+  } catch (error) {
+    console.log(`⚠️ Error parsing date ${eventDate}: ${error.message}`);
+    return true; // Allow events with unparseable dates
+  }
+}
+
+// Concurrency control
+class RequestQueue {
+  constructor(maxConcurrent = PERFORMANCE_CONFIG.MAX_CONCURRENT_REQUESTS) {
+    this.maxConcurrent = maxConcurrent;
+    this.running = 0;
+    this.queue = [];
+  }
+
+  async add(requestFn) {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ requestFn, resolve, reject });
+      this.process();
+    });
+  }
+
+  async process() {
+    if (this.running >= this.maxConcurrent || this.queue.length === 0) {
+      return;
+    }
+
+    this.running++;
+    const { requestFn, resolve, reject } = this.queue.shift();
+
+    try {
+      const result = await requestFn();
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    } finally {
+      this.running--;
+      this.process();
+    }
+  }
+}
+
+const requestQueue = new RequestQueue();
+
+/**
+ * Enhanced HTTP request with timeout and retry
+ */
+async function makeRequest(url, options = {}) {
+  return await requestQueue.add(async () => {
+    try {
+      console.log(`🔗 Making request to: ${url}`);
+      
+      const response = await axios.get(url, {
+        timeout: PERFORMANCE_CONFIG.REQUEST_TIMEOUT,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3'
+        },
+        ...options
+      });
+      
+      console.log(`✅ Request successful: ${url} (${response.status})`);
+      return response;
+    } catch (error) {
+      console.log(`❌ Request failed: ${url} - ${error.message}`);
+      throw error;
+    }
+  });
+}
 
 /**
  * Utility Functions
@@ -401,13 +508,7 @@ async function fetchEventDetails(eventUrl) {
   try {
     console.log(`🔍 Fetching event details from: ${eventUrl}`);
     
-    const response = await axios.get(eventUrl, {
-      timeout: 10000,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
-    });
-    
+    const response = await makeRequest(eventUrl);
     const $ = load(response.data);
     
     // Extract detailed address
@@ -473,12 +574,7 @@ async function geocodeAddress(address, city) {
   // Use OpenStreetMap Nominatim for geocoding
   try {
     const query = encodeURIComponent(`${address}, ${city}, Italy`);
-    const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`, {
-      timeout: 5000,
-      headers: {
-        'User-Agent': 'Corteo-Scraper/1.0'
-      }
-    });
+    const response = await makeRequest(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
     
     if (response.data && response.data.length > 0) {
       const result = response.data[0];
@@ -533,7 +629,7 @@ async function checkDuplicate(title, date, city) {
 }
 
 /**
- * Detect and follow pagination
+ * Detect and follow pagination with limits
  */
 async function detectPagination($, baseUrl) {
   const paginationSelectors = [
@@ -573,23 +669,32 @@ async function detectPagination($, baseUrl) {
     });
   }
   
-  // Remove duplicates and limit to 5 pages max
-  const uniqueLinks = [...new Set(paginationLinks)].slice(0, 5);
-  console.log(`📄 Found ${uniqueLinks.length} pagination links`);
+  // Remove duplicates and limit to max pages
+  const uniqueLinks = [...new Set(paginationLinks)].slice(0, PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE - 1);
+  console.log(`📄 Found ${uniqueLinks.length} pagination links (limited to ${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE} total pages)`);
   
   return uniqueLinks;
 }
 
 /**
- * Enhanced scraping with pagination
+ * Enhanced scraping with pagination and performance limits
  */
 async function scrapeWebsiteWithPagination(source) {
   console.log(`🔍 Scraping ${source.name} with pagination support...`);
+  
+  const stats = {
+    pagesScraped: 0,
+    eventsFound: 0,
+    eventsSkippedByDate: 0,
+    eventsSkippedByKeywords: 0,
+    earlyStop: false
+  };
+  
   const allEvents = [];
   const processedUrls = new Set();
   const urlsToProcess = [source.url];
   
-  while (urlsToProcess.length > 0 && allEvents.length < 50) {
+  while (urlsToProcess.length > 0 && stats.pagesScraped < PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE) {
     const currentUrl = urlsToProcess.shift();
     
     if (processedUrls.has(currentUrl)) {
@@ -598,49 +703,66 @@ async function scrapeWebsiteWithPagination(source) {
     }
     
     processedUrls.add(currentUrl);
-    console.log(`📄 Processing page: ${currentUrl}`);
+    stats.pagesScraped++;
+    
+    console.log(`📄 Processing page ${stats.pagesScraped}/${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE}: ${currentUrl}`);
     
     try {
-      const response = await axios.get(currentUrl, {
-        timeout: 15000,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-      });
-      
+      const response = await makeRequest(currentUrl);
       const $ = load(response.data);
       
-      // Detect pagination for next iterations
-      const paginationLinks = await detectPagination($, currentUrl);
-      for (const link of paginationLinks) {
-        if (!processedUrls.has(link) && !urlsToProcess.includes(link)) {
-          urlsToProcess.push(link);
+      // Detect pagination for next iterations (only if we haven't hit the limit)
+      if (stats.pagesScraped < PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE) {
+        const paginationLinks = await detectPagination($, currentUrl);
+        for (const link of paginationLinks) {
+          if (!processedUrls.has(link) && !urlsToProcess.includes(link)) {
+            urlsToProcess.push(link);
+          }
         }
       }
       
       // Extract events from current page
-      const pageEvents = await extractEventsFromPage($, currentUrl, source.name);
+      const { events: pageEvents, shouldStop } = await extractEventsFromPageWithDateCheck($, currentUrl, source.name, stats);
       allEvents.push(...pageEvents);
       
-      console.log(`📊 Found ${pageEvents.length} events on this page. Total: ${allEvents.length}`);
+      console.log(`📊 Page ${stats.pagesScraped}: Found ${pageEvents.length} valid events. Total: ${allEvents.length}`);
       
-      // Add delay between requests
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Early stop if we found old events (indicating we've gone too far back)
+      if (shouldStop) {
+        console.log(`🛑 Early stop triggered: Found events older than ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days cutoff`);
+        stats.earlyStop = true;
+        break;
+      }
+      
+      // Add delay between page requests
+      if (urlsToProcess.length > 0) {
+        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_PAGES}ms before next page...`);
+        await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_PAGES));
+      }
       
     } catch (error) {
       console.error(`❌ Error scraping ${currentUrl}:`, error.message);
     }
   }
   
-  console.log(`✅ Completed scraping ${source.name}. Total events: ${allEvents.length}`);
-  return allEvents;
+  // Log final statistics for this source
+  console.log(`\n📊 ${source.name} Statistics:`);
+  console.log(`   📄 Pages scraped: ${stats.pagesScraped}/${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE}`);
+  console.log(`   📋 Events found: ${stats.eventsFound}`);
+  console.log(`   ✅ Valid events: ${allEvents.length}`);
+  console.log(`   📅 Skipped by date: ${stats.eventsSkippedByDate}`);
+  console.log(`   🔍 Skipped by keywords: ${stats.eventsSkippedByKeywords}`);
+  console.log(`   🛑 Early stop: ${stats.earlyStop ? 'Yes' : 'No'}`);
+  
+  return { events: allEvents, stats };
 }
 
 /**
- * Extract events from a single page
+ * Extract events from a single page with date checking
  */
-async function extractEventsFromPage($, pageUrl, sourceName) {
+async function extractEventsFromPageWithDateCheck($, pageUrl, sourceName, stats) {
   const events = [];
+  let shouldStop = false;
   
   // Generic selectors for events
   const eventSelectors = [
@@ -656,6 +778,7 @@ async function extractEventsFromPage($, pageUrl, sourceName) {
       scrapedElements.add(element);
       
       const $el = $(element);
+      stats.eventsFound++;
       
       // Extract text content
       const rawTitle = cleanText($el.find('h1, h2, h3, .title, .headline').first().text() || $el.text().substring(0, 100));
@@ -664,6 +787,7 @@ async function extractEventsFromPage($, pageUrl, sourceName) {
       
       if (!title || title.length < 5) {
         console.log(`⚠️ Skipping event with short title: "${title}"`);
+        stats.eventsSkippedByKeywords++;
         return;
       }
       
@@ -671,11 +795,13 @@ async function extractEventsFromPage($, pageUrl, sourceName) {
       const fullText = `${title} ${description}`;
       if (!containsProtestKeywords(fullText)) {
         console.log(`⚠️ Skipping non-protest event: "${title}"`);
+        stats.eventsSkippedByKeywords++;
         return;
       }
       
       if (containsExcludeKeywords(fullText)) {
         console.log(`⚠️ Skipping excluded event: "${title}"`);
+        stats.eventsSkippedByKeywords++;
         return;
       }
       
@@ -683,18 +809,30 @@ async function extractEventsFromPage($, pageUrl, sourceName) {
       const dateTimeText = cleanText($el.find('.date, .when, time, .data, .orario').text());
       const { date, time } = parseItalianDateTime(dateTimeText);
       
+      // Check date cutoff
+      if (date && !isDateWithinCutoff(date)) {
+        console.log(`📅 Skipping event older than cutoff: "${title}" (${date})`);
+        stats.eventsSkippedByDate++;
+        shouldStop = true; // Trigger early stop if we found an old event
+        return;
+      }
+      
       // Extract address
       const addressInfo = extractAddress(element, $);
       
       // Extract event URL
       const eventUrl = extractEventUrl(element, $, pageUrl);
       
-      // Try to get more details from event page
+      // Try to get more details from event page (with concurrency control)
       let eventDetails = null;
       if (eventUrl) {
-        eventDetails = await fetchEventDetails(eventUrl);
-        // Add small delay to avoid overwhelming the server
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+          eventDetails = await fetchEventDetails(eventUrl);
+          // Small delay between detail requests
+          await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_REQUESTS));
+        } catch (error) {
+          console.log(`⚠️ Failed to fetch event details: ${error.message}`);
+        }
       }
       
       // Use enhanced details if available
@@ -740,7 +878,7 @@ async function extractEventsFromPage($, pageUrl, sourceName) {
     });
   }
   
-  return events;
+  return { events, shouldStop };
 }
 
 /**
@@ -802,29 +940,56 @@ async function saveEventToDatabase(event) {
 }
 
 /**
- * Main scraping function
+ * Main scraping function with performance optimizations
  */
 async function main() {
-  console.log('🚀 Starting Enhanced Italian Protest Scraper...');
-  console.log(`📊 Scraping ${SCRAPE_SOURCES.length} sources including major Italian news outlets`);
+  console.log('🚀 Starting Enhanced Italian Protest Scraper with Performance Optimizations...');
+  console.log(`📊 Configuration:`);
+  console.log(`   📄 Max pages per website: ${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE}`);
+  console.log(`   📅 Date cutoff: ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days`);
+  console.log(`   ⏱️ Request timeout: ${PERFORMANCE_CONFIG.REQUEST_TIMEOUT}ms`);
+  console.log(`   🔄 Max concurrent requests: ${PERFORMANCE_CONFIG.MAX_CONCURRENT_REQUESTS}`);
+  console.log(`   📊 Scraping ${SCRAPE_SOURCES.length} sources`);
   
-  let totalEvents = 0;
-  let savedEvents = 0;
+  const globalStats = {
+    totalPagesScraped: 0,
+    totalEventsFound: 0,
+    totalEventsSkippedByDate: 0,
+    totalEventsSkippedByKeywords: 0,
+    totalEventsSaved: 0,
+    totalDuplicatesSkipped: 0,
+    sourcesWithEarlyStop: 0,
+    sourcesProcessed: 0
+  };
+  
+  const startTime = Date.now();
   
   for (const source of SCRAPE_SOURCES) {
-    console.log(`\n🔍 Processing source: ${source.name}`);
+    console.log(`\n🔍 Processing source ${globalStats.sourcesProcessed + 1}/${SCRAPE_SOURCES.length}: ${source.name}`);
     
     try {
-      const events = await scrapeWebsiteWithPagination(source);
-      totalEvents += events.length;
+      const { events, stats } = await scrapeWebsiteWithPagination(source);
       
-      console.log(`📊 Found ${events.length} potential events from ${source.name}`);
+      // Update global statistics
+      globalStats.totalPagesScraped += stats.pagesScraped;
+      globalStats.totalEventsFound += stats.eventsFound;
+      globalStats.totalEventsSkippedByDate += stats.eventsSkippedByDate;
+      globalStats.totalEventsSkippedByKeywords += stats.eventsSkippedByKeywords;
+      globalStats.sourcesProcessed++;
+      
+      if (stats.earlyStop) {
+        globalStats.sourcesWithEarlyStop++;
+      }
+      
+      console.log(`📊 Found ${events.length} valid events from ${source.name}`);
       
       // Save events to database
       for (const event of events) {
         const success = await saveEventToDatabase(event);
         if (success) {
-          savedEvents++;
+          globalStats.totalEventsSaved++;
+        } else {
+          globalStats.totalDuplicatesSkipped++;
         }
         
         // Add delay between saves
@@ -832,17 +997,33 @@ async function main() {
       }
       
       // Add delay between sources
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      if (globalStats.sourcesProcessed < SCRAPE_SOURCES.length) {
+        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES}ms before next source...`);
+        await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES));
+      }
       
     } catch (error) {
       console.error(`❌ Error processing ${source.name}:`, error.message);
     }
   }
   
+  const endTime = Date.now();
+  const duration = Math.round((endTime - startTime) / 1000);
+  
   console.log('\n🎉 Scraping completed!');
-  console.log(`📊 Total events found: ${totalEvents}`);
-  console.log(`💾 Events saved to database: ${savedEvents}`);
-  console.log(`⏭️ Events skipped (duplicates): ${totalEvents - savedEvents}`);
+  console.log('\n📊 FINAL STATISTICS:');
+  console.log(`   ⏱️ Total duration: ${duration} seconds`);
+  console.log(`   🌐 Sources processed: ${globalStats.sourcesProcessed}/${SCRAPE_SOURCES.length}`);
+  console.log(`   📄 Total pages scraped: ${globalStats.totalPagesScraped}`);
+  console.log(`   📋 Total events found: ${globalStats.totalEventsFound}`);
+  console.log(`   ✅ Events saved to database: ${globalStats.totalEventsSaved}`);
+  console.log(`   📅 Events skipped by date cutoff: ${globalStats.totalEventsSkippedByDate}`);
+  console.log(`   🔍 Events skipped by keywords: ${globalStats.totalEventsSkippedByKeywords}`);
+  console.log(`   ⏭️ Duplicates skipped: ${globalStats.totalDuplicatesSkipped}`);
+  console.log(`   🛑 Sources with early stop: ${globalStats.sourcesWithEarlyStop}`);
+  console.log(`   📈 Success rate: ${Math.round((globalStats.totalEventsSaved / Math.max(globalStats.totalEventsFound, 1)) * 100)}%`);
+  
+  return globalStats;
 }
 
 // Run the scraper if this file is executed directly
@@ -851,4 +1032,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 // Export for use as module
-export { main };
+export { main, PERFORMANCE_CONFIG };
