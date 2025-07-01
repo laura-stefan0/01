@@ -9,8 +9,6 @@ import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
 import { ProtestCard } from "@/components/protest-card";
-import { BottomNavigation } from "@/components/bottom-navigation";
-import { MapView } from "@/components/map-view";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { useUser } from "@/hooks/use-user";
 import { useWhatsNew } from "@/hooks/use-whats-new";
@@ -18,15 +16,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/auth-context";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { LocationSelector } from "@/components/location-selector";
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState(() => {
-    // Check URL parameters for tab
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('tab') || "home";
-  });
+export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [isLoadingProtests, setIsLoadingProtests] = useState(true);
@@ -39,7 +32,7 @@ export default function Home() {
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [userCoordinates, setUserCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [manualLocationCoordinates, setManualLocationCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
 
   // Determine which coordinates to use for distance calculation
   const referenceCoordinates = manualLocationCoordinates || userCoordinates;
@@ -136,8 +129,6 @@ export default function Home() {
         console.error('Error parsing saved manual location coordinates:', error);
       }
     }
-
-
   }, []);
 
   // Fetch user's real location on component mount
@@ -191,18 +182,6 @@ export default function Home() {
     }
   };
 
-  // Handle tab change and update URL
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    if (tab === "home") {
-      // Clear URL parameter for home tab
-      window.history.pushState({}, '', '/');
-    } else {
-      // Update URL with tab parameter
-      window.history.pushState({}, '', `/?tab=${tab}`);
-    }
-  };
-
   // Combine protests data for map view
   useEffect(() => {
     if (featuredProtests.length > 0 || nearbyProtests.length > 0) {
@@ -238,60 +217,59 @@ export default function Home() {
     }
   };
 
-  const renderHomeContent = () => {
-    // Use manual location if available, otherwise use real user location, otherwise fallback
-    const displayLocation = manualLocation || userRealLocation || user?.user_location || getLocationName();
-    // Parse location to get city only (remove region/state)
-    const [city] = displayLocation.split(', ');
+  // Use manual location if available, otherwise use real user location, otherwise fallback
+  const displayLocation = manualLocation || userRealLocation || user?.user_location || getLocationName();
+  // Parse location to get city only (remove region/state)
+  const [city] = displayLocation.split(', ');
 
-    return (
-      <div className="px-4 py-4 max-w-md mx-auto">
-        {/* Location Section with Notification Bell */}
-        <section className="mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-gray-600" />
-                <span className="text-sm text-gray-600">Your location</span>
-              </div>
-              <LocationSelector
-                currentLocation={displayLocation}
-                selectedCountry={selectedCountry}
-                onLocationSelect={handleLocationSelect}
-                onCountryChange={handleCountryChange}
-              >
-                <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
-                  {isLoadingLocation ? (
-                    <span className="text-gray-500">Getting location...</span>
-                  ) : (
-                    <span>{city}</span>
-                  )}
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-              </LocationSelector>
-            </div>
-
+  return (
+    <div className="px-4 py-4 max-w-md mx-auto">
+      {/* Location Section with Notification Bell */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              {/* Refresh location button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={fetchUserRealLocation}
-                disabled={isLoadingLocation}
-              >
-                <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
-              </Button>
-              
-              {/* Notification bell */}
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5 text-gray-600" />
-              </Button>
+              <MapPin className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-600">Your location</span>
             </div>
+            <LocationSelector
+              currentLocation={displayLocation}
+              selectedCountry={selectedCountry}
+              onLocationSelect={handleLocationSelect}
+              onCountryChange={handleCountryChange}
+            >
+              <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
+                {isLoadingLocation ? (
+                  <span className="text-gray-500">Getting location...</span>
+                ) : (
+                  <span>{city}</span>
+                )}
+                <ChevronDown className="w-3 h-3" />
+              </button>
+            </LocationSelector>
           </div>
-        </section>
 
-        {/* News Section */}
-        <section className="mb-6">
+          <div className="flex items-center gap-2">
+            {/* Refresh location button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={fetchUserRealLocation}
+              disabled={isLoadingLocation}
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+            </Button>
+            
+            {/* Notification bell */}
+            <Button variant="ghost" size="sm">
+              <Bell className="w-5 h-5 text-gray-600" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* News Section */}
+      <section className="mb-6">
         <h2 className="text-lg font-semibold text-dark-slate mb-3">What's new</h2>
         <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {whatsNewLoading ? (
@@ -314,10 +292,10 @@ export default function Home() {
                       window.open(news.cta_url, '_blank');
                     } else if (news.cta_url.startsWith('/')) {
                       // Internal route - navigate within app
-                      setLocation(news.cta_url);
+                      navigate(news.cta_url);
                     } else {
                       // Relative URL - treat as internal route
-                      setLocation(`/${news.cta_url}`);
+                      navigate(`/${news.cta_url}`);
                     }
                   }
                 };
@@ -438,358 +416,6 @@ export default function Home() {
           </CardContent>
         </Card>
       </section>
-    </div>
-    );
-  };
-
-  const renderCommunityContent = () => (
-    <div className="px-4 py-4 max-w-md mx-auto">
-      <div className="text-center py-16">
-        <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-semibold text-dark-slate mb-2">Community Features</h3>
-        <p className="text-gray-600 mb-4">Connect with like-minded activists and organizers in your area.</p>
-        <p className="text-sm text-gray-500">Coming Soon</p>
-      </div>
-    </div>
-  );
-
-  const renderProfileContent = () => (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
-      {/* Profile Info */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-gray-200">
-              <img 
-                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face" 
-                alt="Profile picture"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-dark-slate text-lg">
-                Jane
-              </h3>
-              <p className="text-gray-600 text-sm">
-                @janedoe
-              </p>
-              <Button variant="outline" size="sm" className="mt-3">
-                Edit profile
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Settings */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-dark-slate">Settings</h3>
-          </div>
-          <div className="divide-y divide-gray-100">
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <Bell className="w-5 h-5 mr-3 text-gray-400" />
-                <Label htmlFor="notifications">Notifications</Label>
-              </div>
-              <Switch id="notifications" defaultChecked />
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <MapPin className="w-5 h-5 mr-3 text-gray-400" />
-                <Label htmlFor="location">Location Services</Label>
-              </div>
-              <Switch id="location" defaultChecked />
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">📧</div>
-                <Label htmlFor="emails">Email Updates</Label>
-              </div>
-              <Switch id="emails" />
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">🌙</div>
-                <Label htmlFor="darkmode">Dark Mode</Label>
-              </div>
-              <Switch id="darkmode" />
-            </div>
-            <div 
-              className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
-              onClick={() => setLocation('/theme-settings')}
-            >
-              <div className="flex items-center">
-                <div className="w-5 h-5 mr-3 text-gray-400">🎨</div>
-                <div>
-                  <Label htmlFor="apptheme">App theme</Label>
-                  <p className="text-xs text-muted-foreground">Customize appearance and background</p>
-                </div>
-              </div>
-              <div className="w-5 h-5 text-gray-400">›</div>
-            </div>
-            <div className="p-4">
-              <Button 
-                className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-                onClick={() => setLocation("/create-protest")}
-                disabled={!isAuthenticated}
-              >
-                {isAuthenticated ? "Create New Protest" : "Sign In to Create Protests"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-
-
-      {/* Language Selection */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-dark-slate mb-3">Language</h3>
-          <Select defaultValue="en">
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent side="top" align="start">
-              <SelectItem value="en">English</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
-
-      {/* App Info */}
-      <Card>
-        <CardContent className="p-0 divide-y divide-gray-100">
-          <div className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50" onClick={() => setLocation("/transparency")}>
-            <span className="text-dark-slate">Transparency</span>
-            <div className="w-4 h-4 text-gray-400">→</div>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <span className="text-dark-slate">Privacy Policy</span>
-            <div className="w-4 h-4 text-gray-400">→</div>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <span className="text-dark-slate">Terms of Service</span>
-            <div className="w-4 h-4 text-gray-400">→</div>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <span className="text-dark-slate">About Corteo</span>
-            <span className="text-sm text-gray-500">v1.0.0</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Sign Out Button */}
-      <Button 
-        onClick={signOut}
-        className="w-full bg-rally-red hover:bg-rally-red/90 text-white"
-      >
-        Sign Out
-      </Button>
-    </div>
-  );
-
-  const renderMapContent = () => {
-
-    return (
-      <div className="px-4 py-4 max-w-md mx-auto">
-        <section className="mb-6">
-          <h2 className="text-lg font-semibold text-dark-slate mb-3">All Protests</h2>
-
-          <div className="space-y-3">
-            {isLoadingProtests ? (
-              <>
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-              </>
-            ) : allProtests.length > 0 ? (
-              allProtests
-                .filter((protest) => {
-                  if (searchQuery) {
-                    const query = searchQuery.toLowerCase();
-                    return (
-                      protest.title.toLowerCase().includes(query) ||
-                      protest.description.toLowerCase().includes(query) ||
-                      protest.category.toLowerCase().includes(query) ||
-                      protest.location.toLowerCase().includes(query)
-                    );
-                  }
-                  return true;
-                })
-                .filter((protest) => {
-                  if (activeFilter === "today") {
-                    return protest.date === "Today";
-                  } else if (activeFilter === "week") {
-                    return ["Today", "Tomorrow"].includes(protest.date) || protest.date.startsWith("Next");
-                  } else if (activeFilter === "popular") {
-                    return protest.attendees > 500;
-                  }
-                  return true;
-                })
-                .map((protest, index) => (
-                  <ProtestCard key={`map-${protest.id}-${index}`} protest={protest} />
-                ))
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No protests found</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* View on Map Button */}
-        <div className="mt-6 mb-4">
-          <Button
-            className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-            size="lg"
-            onClick={() => {
-              setActiveTab("map");
-              // Add a small delay to ensure the tab change happens first
-              setTimeout(() => {
-                // Trigger map view in the MapView component
-                const event = new CustomEvent('showMapView');
-                window.dispatchEvent(event);
-              }, 100);
-            }}
-          >
-            <MapPin className="w-5 h-5 mr-2" />
-            View on Map
-          </Button>
-        </div>
-      </div>
-    );
-  };
-
-
-
-  const renderResourcesContent = () => {
-    const protestResources = [
-      {
-        title: "Know Your Rights",
-        icon: Shield,
-        link: "/know-your-rights"
-      },
-      {
-        title: "Safety Tips",
-        icon: Phone,
-        link: "/safety-tips"
-      },
-      {
-        title: "Emergency Contacts",
-        icon: Phone,
-        link: "#"
-      }
-    ];
-
-    return (
-      <div className="px-4 py-4">
-        <div className="grid grid-cols-3 gap-3">
-          {protestResources.map((resource, index) => (
-            <Card 
-              key={index} 
-              className="border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => {
-                console.log('Navigating to:', resource.link);
-                if (resource.link !== "#") {
-                  setLocation(resource.link);
-                }
-              }}
-            >
-              <CardContent className="p-4 flex flex-col items-center text-center">
-                <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
-                  <resource.icon className="w-6 h-6 text-activist-blue" />
-                </div>
-                <h3 className="font-medium text-dark-slate text-sm">{resource.title}</h3>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const SavedProtestsSection = () => {
-    // TODO: Implement saved protests functionality
-    // This will store user's saved protests and display them here
-
-    return (
-      <div className="space-y-4">
-        <div className="text-center py-8">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-8 h-8 text-gray-400" />
-          </div>
-          <h3 className="font-medium text-dark-slate mb-2">No Saved Protests Yet</h3>
-          <p className="text-sm text-gray-500 mb-4">
-            Save protests you're interested in to view them here later.
-          </p>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => handleTabChange("home")}
-          >
-            Browse Protests
-          </Button>
-        </div>
-      </div>
-    );
-  };
-
-  const renderContent = () => {
-    return (
-      <div key={activeTab} className="animate-in fade-in duration-300">
-        {activeTab === "home" && renderHomeContent()}
-        {activeTab === "map" && <MapView />}
-        {activeTab === "resources" && renderResourcesContent()}
-        {activeTab === "saved" && <SavedProtestsSection />}
-        {activeTab === "profile" && renderProfileContent()}
-        {!["home", "map", "resources", "saved", "profile"].includes(activeTab) && renderHomeContent()}
-      </div>
-    );
-  };
-
-  const getHeaderContent = () => {
-    switch (activeTab) {
-      case "home":
-        return "Home";
-      case "map":
-        return "Search";
-      case "resources":
-        return "Resources";
-      case "saved":
-        return "Saved";
-      case "profile":
-        return "Profile";
-      default:
-        return "Home";
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto min-h-screen content-transparent">
-      {/* Header - only show for non-home tabs */}
-      {activeTab !== "home" && (
-        <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
-          <div className="px-4 py-3">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-bold text-dark-slate">{getHeaderContent()}</h1>
-            </div>
-          </div>
-        </header>
-      )}
-
-      {/* Main Content */}
-      <main className="flex-1 pb-20">
-        {renderContent()}
-      </main>
-
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }

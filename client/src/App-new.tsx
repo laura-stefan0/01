@@ -5,11 +5,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Main page imports
-import HomePage from "./pages/home";
+import HomePage from "./pages/home-new";
 import DiscoverPage from "./pages/discover";
 import SavedPage from "./pages/saved";
-import ResourcesPage from "./pages/resources";
-import ProfilePage from "./pages/profile";
+import ResourcesPage from "./pages/resources-new";
+import ProfilePage from "./pages/profile-new";
 
 // Profile nested page imports
 import ProfileSettingsPage from "./pages/profile/settings";
