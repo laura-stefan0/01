@@ -276,14 +276,46 @@ body[style*="background-image"] .app-background {
     border: 1px solid hsl(220, 13%, 91%) !important;
   }
 
-  /* Dark mode card borders */
+  /* Dark mode borders - comprehensive */
+  .dark .card,
+  .dark .border,
+  .dark .border-gray-200,
+  .dark .border-gray-300,
+  .dark .border-gray-100,
+  .dark .border-t,
+  .dark .border-b,
+  .dark .border-l,
+  .dark .border-r,
+  .dark .divide-y > *,
+  .dark .border-t-gray-200,
+  .dark .border-b-gray-200,
+  .dark [class*="border-"] {
+    border-color: #121212 !important;
+  }
+  
   .dark .card {
     border: 1px solid #121212 !important;
+  }
+
+  /* Dark mode dividers */
+  .dark .divide-y > * + * {
+    border-top-color: #121212 !important;
+  }
+
+  .dark .divide-gray-100 > * + *,
+  .dark .divide-gray-200 > * + * {
+    border-top-color: #121212 !important;
   }
 
   /* Dark mode navigation bar */
   .dark nav {
     background-color: #121212 !important;
+    border-color: #121212 !important;
+  }
+
+  /* Dark mode all white backgrounds */
+  .dark .bg-white {
+    background-color: #1F1F1F !important;
     border-color: #121212 !important;
   }
 
@@ -330,6 +362,36 @@ body[style*="background-image"] .app-background {
     background-color: #1F1F1F !important;
     border-color: #121212 !important;
     color: #FFFFFF !important;
+  }
+
+  /* Dark mode buttons and inputs */
+  .dark button {
+    border-color: #121212 !important;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select {
+    border-color: #121212 !important;
+    background-color: #1F1F1F !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Dark mode hover states */
+  .dark .hover\\:bg-gray-50:hover,
+  .dark .hover\\:bg-gray-100:hover {
+    background-color: #2A2A2A !important;
+  }
+
+  /* Dark mode text colors */
+  .dark .text-gray-600,
+  .dark .text-gray-700,
+  .dark .text-gray-800 {
+    color: #E1E1E1 !important;
+  }
+
+  .dark .text-gray-500 {
+    color: #A3A3A3 !important;
   }
 
   /* Make main content containers transparent */
