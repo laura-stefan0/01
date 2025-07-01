@@ -169,15 +169,15 @@ export function ThemeSettingsContent() {
         </CardContent>
       </Card>
 
-      {/* Colors & Gradients */}
+      {/* Backgrounds */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Colors & Gradients</CardTitle>
+          <CardTitle className="text-lg">Backgrounds</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto scrollbar-hide">
             <div className="flex gap-4 pb-2" style={{ minWidth: 'max-content' }}>
-              {[...solidColorOptions, ...gradientOptions].map((option) => {
+              {[...solidColorOptions, ...gradientOptions, ...imageOptions].map((option) => {
                 const isSelected = settings.background === option.value;
 
                 return (
@@ -187,9 +187,9 @@ export function ThemeSettingsContent() {
                     onClick={() => handleBackgroundChange(option.value as any)}
                   >
                     <div 
-                      className={`w-16 h-16 rounded-full border-2 ${
+                      className={`w-16 h-16 rounded-lg border-2 ${
                         isSelected ? 'border-[#EF4444]' : 'border-gray-300'
-                      } ${option.preview}`}
+                      } ${option.preview} bg-gray-200`}
                       style={('color' in option) ? { backgroundColor: option.color as string } : {}}
                     />
                   </div>
@@ -197,52 +197,6 @@ export function ThemeSettingsContent() {
               })}
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Background Images */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Background Images</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {imageOptions.length > 0 ? (
-            imageOptions.map((option) => {
-              const isSelected = settings.background === option.value;
-
-              return (
-                <div
-                  key={option.value}
-                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                    isSelected 
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                      : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                  }`}
-                  onClick={() => handleBackgroundChange(option.value)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="w-6 h-6 rounded-full border-2 border-gray-300 bg-cover bg-center"
-                      style={{ 
-                        backgroundImage: `url('/backgrounds/${option.value.replace('custom-image-', '')}')` 
-                      }}
-                    />
-                    <div>
-                      <p className="font-medium">{option.label}</p>
-                    </div>
-                  </div>
-                  {isSelected && <Check className="h-5 w-5 text-blue-500" />}
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No background images available</p>
-              <p className="text-sm mt-2">
-                Add images to the <code className="bg-gray-100 px-2 py-1 rounded">client/public/backgrounds</code> folder
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
 
