@@ -100,6 +100,9 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 1, 2025: Fixed filter page navigation hierarchy - back button and "Apply Filters" now correctly return to map page (/discover) instead of home page (/)
+- July 1, 2025: Enhanced dark theme with comprehensive styling - fixed card borders (#121212), navigation bar background (#121212), map interface elements (#1F1F1F), and filter controls to match specified color scheme
+- July 1, 2025: Removed 9 mainstream news sources from scraper configuration, keeping focused 8-source setup: 5 activism sites + 2 environmental + 1 alternative movement source
 - July 1, 2025: Successfully completed migration from Replit Agent to standard Replit environment - all dependencies installed, working properly with full security implementation
 - July 1, 2025: Fixed enhanced-italian-scraper.mjs to resolve database constraint issues with null time values, added default time of 18:00 for events without specific times
 - July 1, 2025: Cleaned up scraper files by removing test and simple scraper variants, keeping only the enhanced scraper as the primary tool

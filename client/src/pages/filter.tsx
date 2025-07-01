@@ -35,8 +35,8 @@ export default function Filter() {
   };
 
   const handleApplyFilters = () => {
-    // Navigate back to search with filters applied
-    setLocation("/");
+    // Navigate back to map with filters applied
+    setLocation("/discover");
   };
 
   const handleClearFilters = () => {
@@ -54,7 +54,7 @@ export default function Filter() {
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={() => setLocation("/")}
+              onClick={() => setLocation("/discover")}
               className="text-gray-600"
             >
               <ArrowLeft className="w-5 h-5" />
