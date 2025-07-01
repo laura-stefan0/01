@@ -14,6 +14,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { geocodeLocation, findItalianCity, type GeocodeResult } from "@/lib/geocoding";
+import { getCachedUserLocation } from "@/lib/geolocation";
 
 // Fix for default marker icons in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -100,6 +101,33 @@ export function MapView() {
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const navigate = useNavigate();
 
+  // Load cached user location from Home page on mount
+  useEffect(() => {
+    const loadCachedLocation = async () => {
+      try {
+        // Check if we have manual location coordinates from localStorage (set in Home page)
+        const savedManualCoords = localStorage.getItem('corteo_manual_location_coords');
+        if (savedManualCoords) {
+          const coords = JSON.parse(savedManualCoords);
+          setUserLocation([coords.latitude, coords.longitude]);
+          console.log("🗺️ Using manual location from Home page:", coords);
+          return;
+        }
+
+        // Otherwise, try to get cached user location
+        const locationResult = await getCachedUserLocation();
+        if (locationResult.coordinates) {
+          setUserLocation([locationResult.coordinates.latitude, locationResult.coordinates.longitude]);
+          console.log("🗺️ Using cached user location from Home page:", locationResult.coordinates);
+        }
+      } catch (error) {
+        console.log("ℹ️ No cached location available, will use Milan default");
+      }
+    };
+
+    loadCachedLocation();
+  }, []);
+
   const filters = [
     { id: "all", label: "All" },
     { id: "today", label: "Today" },
@@ -108,75 +136,28 @@ export function MapView() {
   ];
   const [activeFilter, setActiveFilter] = useState("all");
 
-  // GPS location function
-  const getUserLocation = () => {
+  // GPS location function - now syncs with Home page location storage
+  const getUserLocation = async () => {
     setIsLocating(true);
-    console.log("GPS button clicked - starting fresh location request");
+    console.log("GPS button clicked - getting fresh location and syncing with Home page");
 
-    if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser");
-      setIsLocating(false);
-      alert("Location services are not supported by your browser");
-      return;
-    }
-
-    // Clear any previous user location first
-    setUserLocation(null);
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude, accuracy } = position.coords;
-        const locationDate = new Date(position.timestamp);
-        console.log("Fresh location found:", {
-          latitude, 
-          longitude, 
-          accuracy: accuracy + " meters",
-          timestamp: locationDate.toLocaleString(),
-          age: (Date.now() - position.timestamp) / 1000 + " seconds old"
-        });
-
-        // Check if location seems reasonable (not clearly cached/wrong)
-        if (accuracy > 1000) {
-          console.warn("Location accuracy is very low:", accuracy, "meters");
-          setIsLocating(false);
-          const message = `Location accuracy is very low (${Math.round(accuracy/1000)}km). This might be cached data.\n\nOptions:\n- Check your device's location services\n- Try again in a few seconds\n- Make sure you're not using a VPN`;
-          alert(message);
-          return;
-        }
-
-        setUserLocation([latitude, longitude]);
-        setIsLocating(false);
-
-        // Show success message with accuracy
-        console.log("Map centered on your location with", Math.round(accuracy), "meter accuracy");
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        setIsLocating(false);
-
-        let errorMessage = "Unable to get your location. ";
-        switch(error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage += "Please allow location access in your browser settings.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage += "Location information is unavailable. Please check your device's location services.";
-            break;
-          case error.TIMEOUT:
-            errorMessage += "Location request timed out. Please try again.";
-            break;
-          default:
-            errorMessage += "An unknown error occurred.";
-            break;
-        }
-        alert(errorMessage);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0 // Force fresh location, no cache
+    try {
+      // Use the same function as Home page for consistency
+      const locationResult = await getCachedUserLocation();
+      if (locationResult.coordinates) {
+        setUserLocation([locationResult.coordinates.latitude, locationResult.coordinates.longitude]);
+        console.log("🗺️ Fresh location obtained and synced with Home page:", locationResult.coordinates);
+        
+        // Clear any manual location override since user requested fresh GPS location
+        localStorage.removeItem('corteo_manual_location');
+        localStorage.removeItem('corteo_manual_location_coords');
       }
-    );
+    } catch (error) {
+      console.error("❌ Failed to get user location:", error);
+      alert("Unable to get your location. Please check your browser's location settings.");
+    } finally {
+      setIsLocating(false);
+    }
   };
 
   // Handle search input with geocoding
@@ -278,12 +259,12 @@ export function MapView() {
       return true;
     });
 
-  // Calculate map center - prioritize user location, then search location, then Milan default
+  // Calculate map center - prioritize user location (from Home page cache), then search location, then Milan default
   let mapCenter: [number, number];
   let mapZoom: number;
 
   if (userLocation) {
-    // If user location is available, center on it
+    // If user location is available (from Home page cache or fresh GPS), center on it
     mapCenter = userLocation;
     mapZoom = 15;
     console.log(`🗺️ Centering map on user location: ${userLocation}`);
@@ -293,7 +274,7 @@ export function MapView() {
     mapZoom = 12;
     console.log(`🗺️ Centering map on searched location: ${searchLocationName}`);
   } else {
-    // Default to Milan, Italy - prioritize this over protest clustering
+    // Default to Milan, Italy
     mapCenter = [45.4642, 9.1900];
     mapZoom = 11;
     console.log(`🗺️ Centering map on default location: Milan`);
