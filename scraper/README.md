@@ -37,6 +37,8 @@ A comprehensive web scraper designed to collect Italian protest and activism eve
 - extinctionrebellion.it
 - usb.it
 - sicobas.org
+- adlcobas.it (NEW - Labor union activism)
+- notav.info (NEW - No TAV movement and territorial struggles)
 
 ## Event Categories
 

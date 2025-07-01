@@ -50,11 +50,13 @@ const CATEGORY_IMAGES = {
   'other': 'https://images.unsplash.com/photo-1573152958734-1922c188fba3?w=500&h=300&fit=crop&auto=format'
 };
 
-// Websites to scrape (start with a subset for testing)
+// Websites to scrape
 const SCRAPE_SOURCES = [
   { url: 'https://www.globalproject.info/it/tags/news/menu', name: 'globalproject.info' },
   { url: 'https://fridaysforfutureitalia.it', name: 'fridaysforfutureitalia.it' },
-  { url: 'https://extinctionrebellion.it/eventi/futuri/', name: 'extinctionrebellion.it' }
+  { url: 'https://extinctionrebellion.it/eventi/futuri/', name: 'extinctionrebellion.it' },
+  { url: 'https://adlcobas.it/', name: 'adlcobas.it' },
+  { url: 'https://www.notav.info/', name: 'notav.info' }
 ];
 
 // Helper functions

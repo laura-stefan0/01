@@ -75,12 +75,37 @@ const ITALIAN_CITIES = {
   'trieste': { lat: 45.6495, lng: 13.7768 }
 };
 
-// Websites to scrape (limited for testing)
+// Websites to scrape
 const SCRAPE_SOURCES = [
   { 
     url: 'https://www.globalproject.info/it/tags/news/menu', 
     name: 'globalproject.info',
     type: 'news_list'
+  },
+  { 
+    url: 'https://fridaysforfutureitalia.it/eventi/', 
+    name: 'fridaysforfutureitalia.it',
+    type: 'event_list'
+  },
+  { 
+    url: 'https://extinctionrebellion.it/eventi/futuri/', 
+    name: 'extinctionrebellion.it',
+    type: 'event_list'
+  },
+  { 
+    url: 'https://www.dinamopress.it/categoria/eventi', 
+    name: 'dinamopress.it',
+    type: 'news_list'
+  },
+  { 
+    url: 'https://adlcobas.it/', 
+    name: 'adlcobas.it',
+    type: 'union_news'
+  },
+  { 
+    url: 'https://www.notav.info/', 
+    name: 'notav.info',
+    type: 'movement_news'
   }
 ];
 
