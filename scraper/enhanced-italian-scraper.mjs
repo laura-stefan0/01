@@ -397,6 +397,13 @@ async function extractAddressAndCity(text) {
   const normalizedText = normalizeText(text);
   const originalText = text.toLowerCase();
 
+  // Social media platforms to exclude when preceded by "via"
+  const socialMediaPlatforms = [
+    'facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin',
+    'telegram', 'whatsapp', 'snapchat', 'pinterest', 'tumblr', 'reddit',
+    'flickr', 'vimeo', 'twitch', 'discord', 'clubhouse', 'mastodon'
+  ];
+
   // Comprehensive Italian address patterns
   const addressPatterns = [
     /\b(via\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
@@ -443,12 +450,27 @@ async function extractAddressAndCity(text) {
   for (const pattern of addressPatterns) {
     const matches = originalText.match(pattern);
     if (matches && matches.length > 0) {
-      detectedAddress = matches[0]
+      let potentialAddress = matches[0]
         .trim()
         .replace(/\s+/g, ' ')
         .split(/[,;]|presso|c\/o/)[0]
         .trim();
-      detectedAddress = detectedAddress
+
+      // Check if this is a social media attribution (e.g., "via Facebook", "via Instagram")
+      const addressWords = potentialAddress.toLowerCase().split(' ');
+      if (addressWords.length >= 2 && addressWords[0] === 'via') {
+        const secondWord = addressWords[1];
+        const isSocialMedia = socialMediaPlatforms.some(platform => 
+          secondWord.includes(platform) || platform.includes(secondWord)
+        );
+        
+        if (isSocialMedia) {
+          console.log(`🚫 Skipping social media attribution: "${potentialAddress}"`);
+          continue; // Skip this match and try the next one
+        }
+      }
+
+      detectedAddress = potentialAddress
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
