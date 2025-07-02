@@ -529,7 +529,6 @@ async function extractAddressAndCity(text) {
 
   let detectedAddress = null;
   let detectedCity = null;
-  let coordinates = null;
 
   // First, try to find a specific street address
   for (const pattern of addressPatterns) {
@@ -594,34 +593,36 @@ async function extractAddressAndCity(text) {
   }
 
   // Try geocoding with different strategies
+  let geocodedCoordinates = null;
+  
   if (detectedAddress && detectedCity) {
     // Strategy 1: Try full address + city
     console.log(`🔍 Geocoding strategy 1: "${detectedAddress}, ${detectedCity}"`);
-    coordinates = await geocodeAddress(detectedAddress, detectedCity);
+    geocodedCoordinates = await geocodeAddress(detectedAddress, detectedCity);
 
-    if (!coordinates) {
+    if (!geocodedCoordinates) {
       // Strategy 2: Try just the venue/address name with "Italy"
       console.log(`🔍 Geocoding strategy 2: "${detectedAddress}, Italy"`);
-      coordinates = await geocodeAddress(detectedAddress, 'Italy');
+      geocodedCoordinates = await geocodeAddress(detectedAddress, 'Italy');
     }
   } else if (detectedAddress && !detectedCity) {
     // Strategy 3: Address without specific city - search broadly in Italy
     console.log(`🔍 Geocoding strategy 3: "${detectedAddress}, Italy"`);
-    coordinates = await geocodeAddress(detectedAddress, 'Italy');
+    geocodedCoordinates = await geocodeAddress(detectedAddress, 'Italy');
 
     // If successful, try to extract city from the geocoding result
-    if (coordinates) {
+    if (geocodedCoordinates) {
       // The geocoding function might help us identify the city
       console.log(`🎯 Successfully geocoded venue without city context`);
     }
   } else if (detectedCity) {
     // Strategy 4: City only
     console.log(`🔍 Geocoding strategy 4: City only - "${detectedCity}"`);
-    coordinates = await geocodeAddress(null, detectedCity);
+    geocodedCoordinates = await geocodeAddress(null, detectedCity);
   }
 
   // Log results
-  if (coordinates) {
+  if (geocodedCoordinates) {
     console.log(`🎯 Using geocoded coordinates for "${detectedAddress || detectedCity}"`);
   } else if (detectedAddress || detectedCity) {
     console.log(`📍 No geocoding results for "${detectedAddress || detectedCity}"`);
@@ -633,7 +634,7 @@ async function extractAddressAndCity(text) {
   return {
     address: detectedAddress || detectedCity || null,
     city: detectedCity || null,
-    coordinates: coordinates
+    coordinates: geocodedCoordinates
   };
 }
 
