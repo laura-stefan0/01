@@ -121,7 +121,7 @@ const CATEGORY_IMAGES = {
 
 // Comprehensive Italian news and activism sources
 const SCRAPE_SOURCES = [
-  // Activism and Social Movement Sites
+  // Activism and Social Movement Sites (5 sources)
   {
     url: 'https://www.globalproject.info/it/',
     name: 'globalproject.info',
@@ -132,6 +132,23 @@ const SCRAPE_SOURCES = [
     name: 'dinamopress.it',
     type: 'activism'
   },
+  {
+    url: 'https://ilrovescio.info/',
+    name: 'ilrovescio.info',
+    type: 'activism'
+  },
+  {
+    url: 'https://www.inventati.org/',
+    name: 'inventati.org',
+    type: 'tech-activism'
+  },
+  {
+    url: 'https://notav.info/',
+    name: 'notav.info',
+    type: 'territorial-activism'
+  },
+  
+  // Environmental and Climate Sources (3 sources)
   {
     url: 'https://fridaysforfutureitalia.it/',
     name: 'fridaysforfutureitalia.it',
@@ -147,18 +164,37 @@ const SCRAPE_SOURCES = [
     name: 'greenpeace.org/italy',
     type: 'environment'
   },
-  // Keep the working sources but simplify URLs
+  
+  // Labor and Union Sources (2 sources)
   {
     url: 'https://adlcobas.it/',
     name: 'adlcobas.it',
     type: 'labor'
   },
   {
-    url: 'https://www.inventati.org/',
-    name: 'inventati.org',
-    type: 'tech-activism'
+    url: 'https://www.usb.it/',
+    name: 'usb.it',
+    type: 'labor'
+  },
+  
+  // LGBTQ+ and Rights Sources (2 sources)
+  {
+    url: 'https://www.arcigay.it/',
+    name: 'arcigay.it',
+    type: 'lgbtq'
+  },
+  {
+    url: 'https://www.gaynet.it/',
+    name: 'gaynet.it',
+    type: 'lgbtq'
+  },
+  
+  // Alternative News and Movement Media (1 source)
+  {
+    url: 'https://www.radiopopolare.it/',
+    name: 'radiopopolare.it',
+    type: 'alternative-media'
   }
-  // Remove ilrovescio.info temporarily due to timeouts
 ];
 
 /**
