@@ -703,7 +703,7 @@ async function checkDuplicate(title, date, city) {
 
     const { data, error } = await supabase
       .from('protests')
-      .select('id, title')
+      .select('id, title, location')
       .eq('location', city)
       .limit(10);
 
@@ -747,7 +747,7 @@ async function saveEventToDatabase(event) {
       description: event.description || 'No description available',
       category: event.category || 'OTHER',
       location: event.city === 'N/A' ? 'N/A' : (event.city || 'Milano'),
-      address: event.address === 'N/A' ? 'N/A' : (event.address || event.city || 'Milano'),
+      address: event.address === 'N/A' ? 'N/A' : (event.address || 'N/A'),
       latitude: String(event.latitude || 45.4642),  // Milan fallback for coordinates
       longitude: String(event.longitude || 9.1900), // Milan fallback for coordinates
       date: event.date === 'N/A' ? null : event.date,  // Store null for N/A dates in database
