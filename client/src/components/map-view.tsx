@@ -336,7 +336,7 @@ export function MapView() {
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-gray-500">{protest.date} • {protest.time}</span>
                           <Badge className="text-xs px-2 py-1 bg-[#FECDD3] text-[#E11D48]">
-                            {protest.category}
+                            {protest.category?.toUpperCase()}
                           </Badge>
                         </div>
                         <p className="text-xs text-gray-700 mt-2 line-clamp-2">{protest.description}</p>
@@ -495,7 +495,7 @@ export function MapView() {
                               <p className="text-sm text-gray-600 truncate">{protest.location}</p>
                               <div className="flex items-center space-x-2 mt-1">
                                 <Badge className="text-xs bg-[#FECDD3] text-[#E11D48]">
-                                  {protest.category.toUpperCase()}
+                                  {protest.category?.toUpperCase()}
                                 </Badge>
                                 <span className="text-xs text-gray-500">{protest.date} • {protest.time}</span>
                               </div>
@@ -603,16 +603,16 @@ export function MapView() {
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">Protest Categories</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { category: 'Environment', color: '#059669' },
+                        { category: 'ENVIRONMENT', color: '#059669' },
                         { category: 'LGBTQ+', color: '#f43f5e' },
-                        { category: 'Women\'s Rights', color: '#be185d' },
-                        { category: 'Labor', color: '#d97706' },
-                        { category: 'Racial & Social Justice', color: '#7c3aed' },
-                        { category: 'Civil & Human Rights', color: '#2563eb' },
-                        { category: 'Healthcare & Education', color: '#0891b2' },
-                        { category: 'Peace & Anti-War', color: '#0ea5e9' },
-                        { category: 'Transparency & Anti-Corruption', color: '#4b5563' },
-                        { category: 'Other', color: '#4f46e5' }
+                        { category: 'WOMEN\'S RIGHTS', color: '#be185d' },
+                        { category: 'LABOR', color: '#d97706' },
+                        { category: 'RACIAL & SOCIAL JUSTICE', color: '#7c3aed' },
+                        { category: 'CIVIL & HUMAN RIGHTS', color: '#2563eb' },
+                        { category: 'HEALTHCARE & EDUCATION', color: '#0891b2' },
+                        { category: 'PEACE & ANTI-WAR', color: '#0ea5e9' },
+                        { category: 'TRANSPARENCY & ANTI-CORRUPTION', color: '#4b5563' },
+                        { category: 'OTHER', color: '#4f46e5' }
                       ].map(({ category, color }) => (
                         <div key={category} className="flex items-center space-x-2">
                           <div 
