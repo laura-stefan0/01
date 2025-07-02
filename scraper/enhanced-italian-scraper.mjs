@@ -288,14 +288,18 @@ function parseItalianDateTime(fullArticleText) {
     /(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/g
   ];
 
-  // Event time patterns
+  // Event time patterns - improved for better precision
   const eventTimePatterns = [
-    // "alle ore 18:30", "dalle 19.00"
-    /(?:alle? ore?|dalle?|a partire dalle?|inizio)\s+(\d{1,2})[:\.](\d{2})/gi,
-    // "ore 15", "h 16:30"
-    /(?:ore?\s+|h\s+)(\d{1,2})(?:[:\.](\d{2}))?/gi,
-    // Time in event context
-    /(?:^|\s)(\d{1,2})[:\.](\d{2})(?=\s|$)/g
+    // "alle ore 18:30", "dalle 19.00", "alle 14:30"
+    /(?:alle?\s+ore?\s+|dalle?\s+ore?\s+|alle?\s+|dalle?\s+|a partire dalle?\s+|inizio\s+alle?\s+|inizio\s+ore?\s+)(\d{1,2})[:\.](\d{2})/gi,
+    // "ore 15:30", "h 16:30", "ore 15.30"
+    /(?:ore?\s+|h\s+)(\d{1,2})[:\.](\d{2})/gi,
+    // Standalone time patterns like "14:30" or "14.30"
+    /(?:^|\s|,|\(|\[)(\d{1,2})[:\.](\d{2})(?=\s|$|,|\)|\]|\.)/g,
+    // Time with context words "orario 14:30", "inizio 15:00"
+    /(?:orario\s+|inizio\s+|start\s+|dalle\s+)(\d{1,2})[:\.](\d{2})/gi,
+    // "alle 14" followed by minutes elsewhere
+    /alle?\s+(\d{1,2})(?:\s+e\s+(\d{2})|[:\.](\d{2}))?/gi
   ];
 
   // Keywords that indicate event scheduling (not publication)
@@ -368,18 +372,29 @@ function parseItalianDateTime(fullArticleText) {
     if (date) break;
   }
 
-  // Look for times in the same prioritized way
+  // Look for times in the same prioritized way - improved precision
   for (const sentence of prioritizedSentences) {
     for (const pattern of eventTimePatterns) {
       const matches = [...sentence.matchAll(pattern)];
 
       for (const match of matches) {
         const hours = parseInt(match[1]);
-        if (hours >= 6 && hours <= 23) { // Reasonable event hours
-          const minutes = (match[2] || '00').padStart(2, '0');
-          time = `${hours.toString().padStart(2, '0')}:${minutes}`;
-          console.log(`🕐 Found event time: "${sentence.slice(0, 80)}..." → ${time}`);
-          break;
+        if (hours >= 0 && hours <= 23) { // Valid hours (expanded range)
+          // Handle different minute capture groups
+          let minutes = '00';
+          if (match[2] && !isNaN(parseInt(match[2]))) {
+            minutes = match[2].padStart(2, '0');
+          } else if (match[3] && !isNaN(parseInt(match[3]))) {
+            minutes = match[3].padStart(2, '0');
+          }
+          
+          // Validate minutes
+          const minutesNum = parseInt(minutes);
+          if (minutesNum >= 0 && minutesNum <= 59) {
+            time = `${hours.toString().padStart(2, '0')}:${minutes}`;
+            console.log(`🕐 Found event time: "${sentence.slice(0, 80)}..." → ${time}`);
+            break;
+          }
         }
       }
       if (time) break;
@@ -409,13 +424,27 @@ function parseItalianDateTime(fullArticleText) {
   }
 
   if (!time) {
-    const basicTimeMatch = text.match(/(?:ore?\s+|alle?\s+|h\s+)?(\d{1,2})[:\.](\d{2})/);
-    if (basicTimeMatch) {
-      const hours = parseInt(basicTimeMatch[1]);
-      if (hours >= 8 && hours <= 23) {
-        time = `${hours.toString().padStart(2, '0')}:${basicTimeMatch[2]}`;
-        console.log(`🕐 Found fallback time: ${time}`);
+    // More comprehensive fallback time extraction
+    const fallbackPatterns = [
+      // Match exact time formats like "14:30" or "14.30"
+      /(?:^|\s|,|\()(\d{1,2})[:\.](\d{2})(?=\s|$|,|\)|\.|\s+[a-zA-Z])/g,
+      // Match times with Italian context
+      /(?:ore?\s+|alle?\s+|h\s+)(\d{1,2})[:\.](\d{2})/g
+    ];
+    
+    for (const pattern of fallbackPatterns) {
+      const matches = [...text.matchAll(pattern)];
+      for (const match of matches) {
+        const hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        
+        if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+          time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+          console.log(`🕐 Found fallback time: ${time}`);
+          break;
+        }
       }
+      if (time) break;
     }
   }
 
