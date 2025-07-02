@@ -100,7 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
-- July 2, 2025: Enhanced Italian scraper with 13 comprehensive sources - 5 activism sites (globalproject.info, dinamopress.it, ilrovescio.info, inventati.org, notav.info), 3 environmental sites, 2 labor union sites, 2 LGBTQ+ rights sites, and 1 alternative media source for complete Italian protest coverage
+- July 2, 2025: Restored complete 13-source Italian scraper configuration - Globalproject.info, Dinamopress.it, ADL Cobas, Notav.info, Fridays for Future Italia, Extinction Rebellion Italia, Ilrovescio.info, XR Bologna, XR Verona, Ultima Generazione, Greenpeace Italy, Arcigay, and Inventati.org for comprehensive Italian activism coverage
 - July 2, 2025: Fixed enhanced-italian-scraper.mjs to properly use database schema fields - corrected location field mapping to use city for location and address for specific street address instead of non-existent field references
 - July 2, 2025: Cleaned up scraper files by removing test scrapers, keeping only enhanced-italian-scraper.mjs as the primary scraper tool
 - July 2, 2025: Successfully completed migration from Replit Agent to standard Replit environment - application running properly with Supabase database connected and all functionality working

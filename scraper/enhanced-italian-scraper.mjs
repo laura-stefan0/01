@@ -121,39 +121,54 @@ const CATEGORY_IMAGES = {
 
 // Comprehensive Italian news and activism sources
 const SCRAPE_SOURCES = [
-  // Activism and Social Movement Sites (5 sources)
+  // Core Activism and Social Movement Sites
   {
-    url: 'https://www.globalproject.info/it/',
-    name: 'globalproject.info',
+    url: 'http://globalproject.info/',
+    name: 'Globalproject.info',
     type: 'activism'
   },
   {
-    url: 'https://www.dinamopress.it/',
-    name: 'dinamopress.it',
+    url: 'http://dinamopress.it/',
+    name: 'Dinamopress.it',
     type: 'activism'
   },
   {
-    url: 'https://ilrovescio.info/',
-    name: 'ilrovescio.info',
-    type: 'activism'
+    url: 'https://adlcobas.it/',
+    name: 'ADL Cobas',
+    type: 'labor'
   },
   {
-    url: 'https://www.inventati.org/',
-    name: 'inventati.org',
-    type: 'tech-activism'
-  },
-  {
-    url: 'https://notav.info/',
-    name: 'notav.info',
+    url: 'http://notav.info/',
+    name: 'Notav.info',
     type: 'territorial-activism'
   },
-  
-  // Environmental and Climate Sources (3 sources)
   {
     url: 'https://fridaysforfutureitalia.it/',
-    name: 'fridaysforfutureitalia.it',
+    name: 'Fridays for Future Italia',
     type: 'environment'
   },
+  {
+    url: 'https://extinctionrebellion.it/',
+    name: 'Extinction Rebellion Italia',
+    type: 'environment'
+  },
+  {
+    url: 'http://ilrovescio.info/',
+    name: 'Ilrovescio.info',
+    type: 'activism'
+  },
+  {
+    url: 'https://rebellion.global/groups/it-bologna/#events',
+    name: 'XR Bologna',
+    type: 'environment'
+  },
+  {
+    url: 'https://rebellion.global/groups/it-verona/#events',
+    name: 'XR Verona',
+    type: 'environment'
+  },
+  
+  // Additional Environmental and Climate Sources
   {
     url: 'https://www.ultimagenerazione.com/',
     name: 'ultimagenerazione.com',
@@ -165,35 +180,18 @@ const SCRAPE_SOURCES = [
     type: 'environment'
   },
   
-  // Labor and Union Sources (2 sources)
-  {
-    url: 'https://adlcobas.it/',
-    name: 'adlcobas.it',
-    type: 'labor'
-  },
-  {
-    url: 'https://www.usb.it/',
-    name: 'usb.it',
-    type: 'labor'
-  },
-  
-  // LGBTQ+ and Rights Sources (2 sources)
+  // LGBTQ+ and Rights Sources
   {
     url: 'https://www.arcigay.it/',
     name: 'arcigay.it',
     type: 'lgbtq'
   },
-  {
-    url: 'https://www.gaynet.it/',
-    name: 'gaynet.it',
-    type: 'lgbtq'
-  },
   
-  // Alternative News and Movement Media (1 source)
+  // Tech Activism
   {
-    url: 'https://www.radiopopolare.it/',
-    name: 'radiopopolare.it',
-    type: 'alternative-media'
+    url: 'https://www.inventati.org/',
+    name: 'inventati.org',
+    type: 'tech-activism'
   }
 ];
 
