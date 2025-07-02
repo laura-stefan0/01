@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 2, 2025: Fixed scraper functionality issues - removed test event fallback, enhanced selectors for Italian activism sites, improved keyword filtering to be less restrictive, fixed duplicate detection accuracy, and added comprehensive debugging to identify scraping issues
 - July 2, 2025: Updated scraper to use exact 13 sources specified - 4 activism sites (globalproject.info, dinamopress.it, ilrovescio.info, notav.info), 5 environmental sites (fridaysforfutureitalia.it, ultima-generazione.com/eventi/, greenpeace.org/italy, XR Bologna, XR Verona), 2 labor sites (adlcobas.it, usb.it), and 2 LGBTQ+ sites (arcigay.it/en/eventi/, gaynet.it)
 - July 2, 2025: Fixed enhanced-italian-scraper.mjs to properly use database schema fields - corrected location field mapping to use city for location and address for specific street address instead of non-existent field references
 - July 2, 2025: Cleaned up scraper files by removing test scrapers, keeping only enhanced-italian-scraper.mjs as the primary scraper tool

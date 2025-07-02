@@ -12,10 +12,10 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const PERFORMANCE_CONFIG = {
   MAX_PAGES_PER_WEBSITE: 5,           // More pages for better results
   DATE_CUTOFF_DAYS: 90,               // Even more extended for more events
-  REQUEST_TIMEOUT: 15000,             // Longer timeout for slow sites
+  REQUEST_TIMEOUT: 10000,             // Reduced timeout
   MAX_CONCURRENT_REQUESTS: 1,         // Sequential for reliability
-  DELAY_BETWEEN_REQUESTS: 2000,       // Longer delays
-  DELAY_BETWEEN_SOURCES: 3000         // Longer source switching
+  DELAY_BETWEEN_REQUESTS: 500,        // Faster processing
+  DELAY_BETWEEN_SOURCES: 1000         // Faster source switching
 };
 
 // Keywords for filtering - expanded to include activism-related events
@@ -735,23 +735,34 @@ async function checkDuplicate(title, date, city) {
   try {
     const cleanTitleForDupe = cleanTitle(title).toLowerCase();
 
+    // Query existing events to check for duplicates
     const { data, error } = await supabase
       .from('protests')
-      .select('id, title, location')
-      .eq('location', city)
-      .limit(10);
+      .select('id, title, city')
+      .eq('city', city)
+      .limit(20);
 
     if (error) {
       console.log('⚠️ Error checking duplicates:', error.message);
       return false;
     }
 
-    // Check for similar titles
+    // Check for similar titles (more strict to avoid false positives)
     const isDuplicate = data.some(event => {
       const existingTitle = cleanTitle(event.title).toLowerCase();
-      return existingTitle === cleanTitleForDupe ||
-        existingTitle.includes(cleanTitleForDupe) ||
-        cleanTitleForDupe.includes(existingTitle);
+      // Only consider exact matches or very close matches (80%+ similarity)
+      if (existingTitle === cleanTitleForDupe) return true;
+      
+      // Check if titles are very similar (length difference < 20% and one contains the other)
+      const lengthDiff = Math.abs(existingTitle.length - cleanTitleForDupe.length);
+      const maxLength = Math.max(existingTitle.length, cleanTitleForDupe.length);
+      
+      if (lengthDiff / maxLength < 0.2 && 
+          (existingTitle.includes(cleanTitleForDupe) || cleanTitleForDupe.includes(existingTitle))) {
+        return true;
+      }
+      
+      return false;
     });
 
     return isDuplicate;
@@ -780,7 +791,7 @@ async function saveEventToDatabase(event) {
       title: cleanTitle(event.title) || 'Untitled Event',
       description: event.description || 'No description available',
       category: event.category || 'OTHER',
-      location: event.city === 'N/A' ? 'N/A' : (event.city || 'Milano'),
+      city: event.city === 'N/A' ? 'Milano' : (event.city || 'Milano'),
       address: event.address === 'N/A' ? 'N/A' : (event.address || 'N/A'),
       latitude: String(event.latitude || 45.4642),  // Milan fallback for coordinates
       longitude: String(event.longitude || 9.1900), // Milan fallback for coordinates
@@ -937,28 +948,46 @@ async function scrapeWebsite(source) {
     }
 
     // Enhanced selectors for better event detection
+    let eventElements = [];
     let eventSelectors = [
+      // WordPress standard selectors (most Italian activism sites use WordPress)
+      'article', '.post', '.hentry', '.entry',
+      
       // Standard content selectors
-      'article', '.post', '.event', '.news-item', '.item', '.entry',
-      '.news', '.evento', '.manifestazione', '.iniziativa',
+      '.event', '.news-item', '.item', '.news',
+      '.evento', '.manifestazione', '.iniziativa', '.comunicato',
       
       // WordPress and CMS selectors
       '.wp-block-post', '.post-item', '.entry-content',
+      '.post-content', '.content-area',
       
       // News and blog selectors
       '.news-article', '.blog-post', '.content-item',
+      '.article-item', '.blog-item',
       
       // Event-specific selectors
       '.event-item', '.calendar-event', '.upcoming-event',
+      '.tribe-events-list-event-row', '.event-listing',
       
-      // Generic content containers
-      '.content', '.main-content', 'main article',
+      // Generic content containers with links
+      '.content a', '.main-content a', 'main a',
+      '.primary a', '.site-content a',
       
       // List items that might contain events
-      'li', '.list-item', '.grid-item',
+      'li:has(a)', '.list-item', '.grid-item',
       
-      // Headers that might be clickable event titles
-      'h1 a', 'h2 a', 'h3 a', '.title a'
+      // Article and post links (most common for activism sites)
+      'h1 a', 'h2 a', 'h3 a', 'h4 a',
+      '.title a', '.headline a', '.post-title a',
+      '.entry-title a', '.article-title a',
+      
+      // Date-based article links (catches recent content)
+      'a[href*="/2025/"]', 'a[href*="/2024/"]',
+      
+      // Italian activism-specific terms in URLs
+      'a[href*="evento"]', 'a[href*="manifestazione"]',
+      'a[href*="corteo"]', 'a[href*="assemblea"]',
+      'a[href*="protesta"]', 'a[href*="sciopero"]'
     ];
 
     for (const selector of eventSelectors) {
@@ -968,6 +997,26 @@ async function scrapeWebsite(source) {
         console.log(`📊 Found ${elements.length} potential events using selector: ${selector}`);
         break;
       }
+    }
+    
+    // If no elements found, try a broader search and log what we do find
+    if (eventElements.length === 0) {
+      console.log(`⚠️ No elements found with standard selectors for ${source.name}`);
+      console.log(`🔍 Trying broader search...`);
+      
+      // Try to find any links at all
+      const allLinks = $('a[href]');
+      console.log(`📊 Found ${allLinks.length} total links on the page`);
+      
+      // Try to find any elements with text content
+      const textElements = $('*').filter((i, el) => {
+        return $(el).text().trim().length > 50; // Elements with substantial text
+      });
+      console.log(`📊 Found ${textElements.length} elements with substantial text`);
+      
+      // Use any articles or posts we can find
+      eventElements = $('article, .post, .entry, h2, h3').slice(0, 10);
+      console.log(`📊 Using ${eventElements.length} fallback elements`);
     }
 
     // Special handling for ilrovescio.info - also check slider links
@@ -984,8 +1033,8 @@ async function scrapeWebsite(source) {
       }
     }
 
-    // Process each potential event
-    for (let i = 0; i < Math.min(20, eventElements.length); i++) {
+    // Process each potential event (limit to 5 per source for faster testing)
+    for (let i = 0; i < Math.min(5, eventElements.length); i++) {
       try {
         const $el = $(eventElements[i]);
 
@@ -1068,11 +1117,19 @@ async function scrapeWebsite(source) {
           }
         }
 
-        // Check if this looks like activism-related content
+        // Check if this looks like activism-related content (be more lenient)
         if (!hasProtestKeywords) {
-          console.log(`⚠️ Skipping non-activism content: "${title.slice(0, 50)}..."`);
-          stats.eventsSkippedByKeywords++;
-          continue;
+          // Secondary check: look for any social/political indicators
+          const socialKeywords = ['sociale', 'politico', 'diritti', 'giustizia', 'comunità', 'cittadini', 'pubblico', 'partecipazione', 'cambiamento', 'azione', 'lotta', 'movimento', 'attivismo', 'solidarietà', 'resistenza', 'rivoluzione', 'critica', 'denuncia', 'protesta', 'scontro', 'conflitto', 'repressione'];
+          const hasSocialKeywords = socialKeywords.some(keyword => fullText.includes(keyword));
+          
+          if (!hasSocialKeywords) {
+            console.log(`⚠️ Skipping non-activism content: "${title.slice(0, 50)}..."`);
+            stats.eventsSkippedByKeywords++;
+            continue;
+          } else {
+            console.log(`✅ Including social/political content: "${title.slice(0, 50)}..."`);
+          }
         }
 
         // Check for excluded content (but be more lenient for educational/organizing events)
@@ -1109,8 +1166,8 @@ async function scrapeWebsite(source) {
 
         const locationInfo = await extractAddressAndCity(fullTextForLocation);
 
-        // Longer delay to respect geocoding API rate limits
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Shorter delay for geocoding
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         // Create event object - use N/A for missing data
         const event = {
@@ -1143,46 +1200,9 @@ async function scrapeWebsite(source) {
     console.error(`❌ Error scraping ${source.name}:`, error.message);
   }
 
-  // If no events found, create some sample events to test the system
-  if (events.length === 0 && source.name === 'globalproject.info') {
-    console.log('🔧 No events found, creating sample test events...');
-    
-    const testEvents = [
-      {
-        title: 'Manifestazione per il Clima - Milano',
-        description: 'Manifestazione per sensibilizzare sui cambiamenti climatici e spingere per politiche ambientali più efficaci.',
-        category: 'ENVIRONMENT',
-        city: 'Milano',
-        address: 'Piazza del Duomo, Milano',
-        latitude: 45.4642,
-        longitude: 9.1900,
-        date: '2025-07-15',
-        time: '15:00',
-        image_url: CATEGORY_IMAGES.ENVIRONMENT,
-        event_url: source.url,
-        source_name: source.name,
-        source_url: source.url
-      },
-      {
-        title: 'Corteo per i Diritti Civili - Roma',
-        description: 'Corteo per rivendicare i diritti civili e protestare contro le discriminazioni.',
-        category: 'CIVIL & HUMAN RIGHTS',
-        city: 'Roma',
-        address: 'Piazza della Repubblica, Roma',
-        latitude: 41.9028,
-        longitude: 12.4964,
-        date: '2025-07-20',
-        time: '17:00',
-        image_url: CATEGORY_IMAGES['CIVIL & HUMAN RIGHTS'],
-        event_url: source.url,
-        source_name: source.name,
-        source_url: source.url
-      }
-    ];
-    
-    events.push(...testEvents);
-    stats.eventsFound += testEvents.length;
-    console.log(`✅ Added ${testEvents.length} test events`);
+  // Debug info about what we found
+  if (events.length === 0) {
+    console.log(`⚠️ No events found for ${source.name} - may need better selectors for this site`);
   }
 
   console.log(`📊 ${source.name} Stats: ${events.length} events found, ${stats.articlesAnalyzed} articles analyzed`);
