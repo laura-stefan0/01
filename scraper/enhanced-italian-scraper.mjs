@@ -524,26 +524,26 @@ async function extractAddressAndCity(text) {
     }
   }
 
-  // If no city detected, default to Milano
-  if (!detectedCity) {
-    detectedCity = 'Milano';
-  }
-
-  // Try to get precise coordinates using geocoding API
-  const geocodedCoords = await geocodeAddress(detectedAddress, detectedCity);
-  if (geocodedCoords) {
-    coordinates = geocodedCoords;
-    console.log(`🎯 Using geocoded coordinates for "${detectedAddress || detectedCity}"`);
+  // If no city detected, try geocoding anyway, but allow N/A
+  let coordinates = null;
+  
+  if (detectedCity) {
+    // Try to get precise coordinates using geocoding API
+    const geocodedCoords = await geocodeAddress(detectedAddress, detectedCity);
+    if (geocodedCoords) {
+      coordinates = geocodedCoords;
+      console.log(`🎯 Using geocoded coordinates for "${detectedAddress || detectedCity}"`);
+    } else {
+      console.log(`📍 No geocoding results for "${detectedCity}"`);
+    }
   } else {
-    console.log(`📍 Using fallback city coordinates for "${detectedCity}"`);
+    console.log(`⚠️ No city detected in text`);
   }
 
-  // If we found a specific address, use it; otherwise fall back to city
-  const finalAddress = detectedAddress || detectedCity;
-
+  // Return results, allowing N/A values
   return {
-    address: finalAddress,
-    city: detectedCity,
+    address: detectedAddress || detectedCity || null,
+    city: detectedCity || null,
     coordinates: coordinates
   };
 }
@@ -687,17 +687,17 @@ async function saveEventToDatabase(event) {
       return false;
     }
 
-    // Prepare event data
+    // Prepare event data - handle N/A values appropriately
     const eventData = {
       title: cleanTitle(event.title) || 'Untitled Event',
       description: event.description || 'No description available',
       category: event.category || 'OTHER',
-      city: event.city || 'Milano',
-      address: event.address || event.city || 'Milano',
-      latitude: String(event.latitude || 45.4642),  // Milan fallback
-      longitude: String(event.longitude || 9.1900), // Milan fallback
-      date: event.date || null,
-      time: event.time || 'N/A',  // N/A if no time found
+      city: event.city === 'N/A' ? 'N/A' : (event.city || 'Milano'),
+      address: event.address === 'N/A' ? 'N/A' : (event.address || event.city || 'Milano'),
+      latitude: String(event.latitude || 45.4642),  // Milan fallback for coordinates
+      longitude: String(event.longitude || 9.1900), // Milan fallback for coordinates
+      date: event.date === 'N/A' ? null : event.date,  // Store null for N/A dates in database
+      time: event.time || 'N/A',  // Keep N/A for missing time
       image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.OTHER,
       event_type: determineEventType(event.title, event.description),
       event_url: event.event_url || null,
@@ -825,12 +825,12 @@ async function scrapeWebsite(source) {
               title: cleanTitle(title),
               description: content.slice(0, 700),
               category: categorizeEvent(title, content),
-              city: locationInfo.city,
-              address: locationInfo.address,
-              latitude: locationInfo.coordinates.lat,
-              longitude: locationInfo.coordinates.lng,
-              date: date,
-              time: time,
+              city: locationInfo.city || 'N/A',
+              address: locationInfo.address || 'N/A',
+              latitude: locationInfo.coordinates?.lat || 0,
+              longitude: locationInfo.coordinates?.lng || 0,
+              date: date || 'N/A',
+              time: time || 'N/A',
               image_url: CATEGORY_IMAGES[categorizeEvent(title, content)] || CATEGORY_IMAGES.OTHER,
               event_url: articleUrl,
               source_name: source.name,
@@ -1007,7 +1007,7 @@ async function scrapeWebsite(source) {
         const dateText = cleanText($el.find('.date, time, .when, .data').text()) || description;
         const { date, time } = parseItalianDateTime(dateText);
 
-        // Check date cutoff
+        // Check date cutoff only if date exists
         if (date && !isDateWithinCutoff(date)) {
           console.log(`⏰ Skipping old event: "${title.slice(0, 50)}..." (${date})`);
           stats.eventsSkippedByDate++;
@@ -1027,17 +1027,17 @@ async function scrapeWebsite(source) {
         // Longer delay to respect geocoding API rate limits
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Create event object
+        // Create event object - use N/A for missing data
         const event = {
           title: cleanTitle(title),
           description: description.slice(0, 700),  // Limit description length
           category: categorizeEvent(title, description),
-          city: locationInfo.city,
-          address: locationInfo.address,
-          latitude: locationInfo.coordinates.lat,
-          longitude: locationInfo.coordinates.lng,
-          date: date,
-          time: time,
+          city: locationInfo.city || 'N/A',
+          address: locationInfo.address || 'N/A',
+          latitude: locationInfo.coordinates?.lat || 0,
+          longitude: locationInfo.coordinates?.lng || 0,
+          date: date || 'N/A',
+          time: time || 'N/A',
           image_url: CATEGORY_IMAGES[categorizeEvent(title, description)] || CATEGORY_IMAGES.other,
           event_url: eventUrl,
           source_name: source.name,
@@ -1047,7 +1047,7 @@ async function scrapeWebsite(source) {
         events.push(event);
         stats.eventsFound++;
 
-        console.log(`📋 Event found: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city} | ${event.date || 'No date'}`);
+        console.log(`📋 Event found: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city} | ${event.date}`);
 
       } catch (error) {
         console.log(`⚠️ Error processing event element:`, error.message);
