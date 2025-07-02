@@ -43,16 +43,16 @@ const ITALIAN_MONTHS = {
 
 // Category fallback images from Unsplash
 const CATEGORY_IMAGES = {
-  'environment': 'https://images.unsplash.com/photo-1569163139394-de44cb4e4ddb?w=500&h=300&fit=crop&auto=format',
-  'lgbtq+': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format',
-  'women\'s rights': 'https://images.unsplash.com/photo-1594736797933-d0d39831ad1f?w=500&h=300&fit=crop&auto=format',
-  'labor': 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&h=300&fit=crop&auto=format',
-  'racial & social justice': 'https://images.unsplash.com/photo-1593113616828-6f22bca04804?w=500&h=300&fit=crop&auto=format',
-  'civil & human rights': 'https://images.unsplash.com/photo-1585515656559-a9dc1f06cc13?w=500&h=300&fit=crop&auto=format',
-  'healthcare & education': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=300&fit=crop&auto=format',
-  'peace & anti-war': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format',
-  'transparency & anti-corruption': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&h=300&fit=crop&auto=format',
-  'other': 'https://images.unsplash.com/photo-1573152958734-1922c188fba3?w=500&h=300&fit=crop&auto=format'
+  'ENVIRONMENT': 'https://images.unsplash.com/photo-1569163139394-de44cb4e4ddb?w=500&h=300&fit=crop&auto=format',
+  'LGBTQ+': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format',
+  'WOMEN\'S RIGHTS': 'https://images.unsplash.com/photo-1594736797933-d0d39831ad1f?w=500&h=300&fit=crop&auto=format',
+  'LABOR': 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&h=300&fit=crop&auto=format',
+  'RACIAL & SOCIAL JUSTICE': 'https://images.unsplash.com/photo-1593113616828-6f22bca04804?w=500&h=300&fit=crop&auto=format',
+  'CIVIL & HUMAN RIGHTS': 'https://images.unsplash.com/photo-1585515656559-a9dc1f06cc13?w=500&h=300&fit=crop&auto=format',
+  'HEALTHCARE & EDUCATION': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=300&fit=crop&auto=format',
+  'PEACE & ANTI-WAR': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format',
+  'TRANSPARENCY & ANTI-CORRUPTION': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&h=300&fit=crop&auto=format',
+  'OTHER': 'https://images.unsplash.com/photo-1573152958734-1922c188fba3?w=500&h=300&fit=crop&auto=format'
 };
 
 // Major Italian cities with coordinates
@@ -274,17 +274,17 @@ function extractCityFromText(text) {
 function categorizeEvent(title, description) {
   const text = normalizeText(`${title} ${description}`);
 
-  if (text.includes('pride') || text.includes('lgbtq')) return 'lgbtq+';
-  if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento')) return 'environment';
-  if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato')) return 'labor';
-  if (text.includes('guerra') || text.includes('pace') || text.includes('war')) return 'peace & anti-war';
-  if (text.includes('diritti') || text.includes('giustizia') || text.includes('bezos')) return 'civil & human rights';
-  if (text.includes('donna') || text.includes('donne') || text.includes('femminicidi')) return 'women\'s rights';
-  if (text.includes('razzismo') || text.includes('discriminazione')) return 'racial & social justice';
-  if (text.includes('sanita') || text.includes('scuola') || text.includes('health')) return 'healthcare & education';
-  if (text.includes('corruzione') || text.includes('trasparenza')) return 'transparency & anti-corruption';
+  if (text.includes('pride') || text.includes('lgbtq')) return 'LGBTQ+';
+  if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento')) return 'ENVIRONMENT';
+  if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato')) return 'LABOR';
+  if (text.includes('guerra') || text.includes('pace') || text.includes('war')) return 'PEACE & ANTI-WAR';
+  if (text.includes('diritti') || text.includes('giustizia') || text.includes('bezos')) return 'CIVIL & HUMAN RIGHTS';
+  if (text.includes('donna') || text.includes('donne') || text.includes('femminicidi')) return 'WOMEN\'S RIGHTS';
+  if (text.includes('razzismo') || text.includes('discriminazione')) return 'RACIAL & SOCIAL JUSTICE';
+  if (text.includes('sanita') || text.includes('scuola') || text.includes('health')) return 'HEALTHCARE & EDUCATION';
+  if (text.includes('corruzione') || text.includes('trasparenza')) return 'TRANSPARENCY & ANTI-CORRUPTION';
 
-  return 'other';
+  return 'OTHER';
 }
 
 /**
@@ -411,14 +411,14 @@ async function saveEventToDatabase(event) {
     const eventData = {
       title: cleanTitle(event.title) || 'Untitled Event',
       description: event.description || 'No description available',
-      category: event.category || 'other',
+      category: event.category || 'OTHER',
       city: event.city || 'Milano',
       address: event.address || event.city || 'Milano',
       latitude: String(event.latitude || ITALIAN_CITIES.milano.lat),
       longitude: String(event.longitude || ITALIAN_CITIES.milano.lng),
       date: event.date || null,
       time: event.time || 'N/A',  // N/A if no time found
-      image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.other,
+      image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.OTHER,
       event_type: determineEventType(event.title, event.description),
       event_url: event.event_url || null,
       country_code: 'IT',
