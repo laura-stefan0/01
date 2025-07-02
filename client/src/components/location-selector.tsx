@@ -13,11 +13,11 @@ interface LocationSelectorProps {
   children: React.ReactNode;
 }
 
-// Available countries
+// Available countries (sorted alphabetically)
 const countryOptions = [
   { code: 'it', name: 'Italy', flag: '🇮🇹' },
   { code: 'us', name: 'United States', flag: '🇺🇸' }
-];
+].sort((a, b) => a.name.localeCompare(b.name));
 
 // Regional data for different countries
 const locationData = {
@@ -158,8 +158,8 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
   };
 
   const countryData = locationData[tempSelectedCountry as keyof typeof locationData];
-  const regions = countryData ? Object.keys(countryData.regions) : [];
-  const cities = selectedRegion && countryData ? (countryData.regions as any)[selectedRegion] || [] : [];
+  const regions = countryData ? Object.keys(countryData.regions).sort() : [];
+  const cities = selectedRegion && countryData ? ((countryData.regions as any)[selectedRegion] || []).sort() : [];
 
   const handleSubmit = () => {
     if (selectedCity && selectedRegion) {
