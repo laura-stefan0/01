@@ -526,7 +526,52 @@ async function saveEventToDatabase(event) {
 }
 
 /**
- * Enhanced website scraping with simplified logic
+ * Fetch and analyze full article content
+ */
+async function fetchArticleContent(articleUrl) {
+  try {
+    console.log(`📖 Fetching full article: ${articleUrl}`);
+    
+    const response = await makeRequest(articleUrl);
+    const $ = load(response.data);
+    
+    // Extract article content using various selectors
+    const contentSelectors = [
+      'article .content',
+      'article .post-content', 
+      '.entry-content',
+      '.post-body',
+      '.article-body',
+      'article p',
+      '.content',
+      'main article',
+      '[class*="content"]'
+    ];
+    
+    let articleContent = '';
+    
+    for (const selector of contentSelectors) {
+      const content = $(selector).text();
+      if (content && content.length > articleContent.length) {
+        articleContent = content;
+      }
+    }
+    
+    // Fallback: get all text from article tag
+    if (!articleContent) {
+      articleContent = $('article').text() || $('main').text() || '';
+    }
+    
+    return cleanText(articleContent);
+    
+  } catch (error) {
+    console.log(`⚠️ Could not fetch article content: ${error.message}`);
+    return '';
+  }
+}
+
+/**
+ * Enhanced website scraping with full article content analysis
  */
 async function scrapeWebsite(source) {
   console.log(`\n🔍 Scraping ${source.name}...`);
@@ -536,7 +581,8 @@ async function scrapeWebsite(source) {
     pagesScraped: 0,
     eventsFound: 0,
     eventsSkippedByDate: 0,
-    eventsSkippedByKeywords: 0
+    eventsSkippedByKeywords: 0,
+    articlesAnalyzed: 0
   };
 
   try {
@@ -564,9 +610,9 @@ async function scrapeWebsite(source) {
     }
 
     // Process each potential event
-    eventElements.slice(0, 20).each((index, element) => {
+    for (let i = 0; i < Math.min(20, eventElements.length); i++) {
       try {
-        const $el = $(element);
+        const $el = $(eventElements[i]);
 
         // Extract basic information
         const title = cleanText($el.find('h1, h2, h3, .title, .headline').first().text()) ||
@@ -587,12 +633,35 @@ async function scrapeWebsite(source) {
           eventUrl = link || source.url;
         }
 
-        // Check if this looks like activism-related content (protests, workshops, organizing events)
-        const fullText = `${title} ${description}`.toLowerCase();
-        if (!containsProtestKeywords(fullText)) {
+        // Initial check with title and description
+        let fullText = `${title} ${description}`.toLowerCase();
+        let hasProtestKeywords = containsProtestKeywords(fullText);
+        
+        // If no keywords found in title/description, fetch full article content
+        if (!hasProtestKeywords && eventUrl && eventUrl !== source.url) {
+          console.log(`🔍 No keywords in preview, fetching full article: "${title.slice(0, 50)}..."`);
+          
+          // Add small delay to avoid overwhelming the server
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          const articleContent = await fetchArticleContent(eventUrl);
+          stats.articlesAnalyzed++;
+          
+          if (articleContent) {
+            fullText = `${title} ${description} ${articleContent}`.toLowerCase();
+            hasProtestKeywords = containsProtestKeywords(fullText);
+            
+            if (hasProtestKeywords) {
+              console.log(`✅ Found activism keywords in full article: "${title.slice(0, 50)}..."`);
+            }
+          }
+        }
+
+        // Check if this looks like activism-related content
+        if (!hasProtestKeywords) {
           console.log(`⚠️ Skipping non-activism content: "${title.slice(0, 50)}..."`);
           stats.eventsSkippedByKeywords++;
-          return;
+          continue;
         }
 
         // Check for excluded content (but be more lenient for educational/organizing events)
@@ -602,7 +671,7 @@ async function scrapeWebsite(source) {
           if (!hasActivismKeywords) {
             console.log(`⚠️ Skipping excluded content: "${title.slice(0, 50)}..."`);
             stats.eventsSkippedByKeywords++;
-            return;
+            continue;
           } else {
             console.log(`✅ Keeping educational/organizing event: "${title.slice(0, 50)}..."`);
           }
@@ -616,7 +685,7 @@ async function scrapeWebsite(source) {
         if (date && !isDateWithinCutoff(date)) {
           console.log(`⏰ Skipping old event: "${title.slice(0, 50)}..." (${date})`);
           stats.eventsSkippedByDate++;
-          return;
+          continue;
         }
 
         // Extract location
@@ -647,13 +716,13 @@ async function scrapeWebsite(source) {
       } catch (error) {
         console.log(`⚠️ Error processing event element:`, error.message);
       }
-    });
+    }
 
   } catch (error) {
     console.error(`❌ Error scraping ${source.name}:`, error.message);
   }
 
-  console.log(`📊 ${source.name} Stats: ${events.length} events found`);
+  console.log(`📊 ${source.name} Stats: ${events.length} events found, ${stats.articlesAnalyzed} articles analyzed`);
   return { events, stats };
 }
 
@@ -670,6 +739,7 @@ async function main() {
     totalEventsSkippedByKeywords: 0,
     totalEventsSaved: 0,
     totalDuplicatesSkipped: 0,
+    totalArticlesAnalyzed: 0,
     sourcesProcessed: 0
   };
 
@@ -685,6 +755,7 @@ async function main() {
       globalStats.totalEventsFound += stats.eventsFound;
       globalStats.totalEventsSkippedByDate += stats.eventsSkippedByDate;
       globalStats.totalEventsSkippedByKeywords += stats.eventsSkippedByKeywords;
+      globalStats.totalArticlesAnalyzed += stats.articlesAnalyzed || 0;
       globalStats.sourcesProcessed++;
 
       // Save events to database
@@ -719,6 +790,7 @@ async function main() {
   console.log(`   ⏱️ Duration: ${duration} seconds`);
   console.log(`   🌐 Sources processed: ${globalStats.sourcesProcessed}/${SCRAPE_SOURCES.length}`);
   console.log(`   📋 Events found: ${globalStats.totalEventsFound}`);
+  console.log(`   📖 Articles analyzed: ${globalStats.totalArticlesAnalyzed}`);
   console.log(`   ✅ Events saved: ${globalStats.totalEventsSaved}`);
   console.log(`   📅 Skipped by date: ${globalStats.totalEventsSkippedByDate}`);
   console.log(`   🔍 Skipped by keywords: ${globalStats.totalEventsSkippedByKeywords}`);
