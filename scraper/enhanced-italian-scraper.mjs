@@ -493,34 +493,35 @@ async function extractAddressAndCity(text) {
     // Festivals and events
     /(?:al?|presso il?|at)\s+(festival\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+([a-zA-ZÀ-ÿ\s]+\s+festival)/gi,
+    /(?:allo?|presso lo?|at)\s+([a-zA-ZÀ-ÿ\s]+\s+festival)/gi,
     
     // Cultural centers and venues
     /(?:al?|presso il?|at)\s+(centro\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(teatro\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(cinema\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(palazzo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(sala\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(auditorium\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:alla?|presso la?|at)\s+(sala\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:all'?|presso l'?|at)\s+(auditorium\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     
     // Social centers and community spaces
     /(?:al?|presso il?|at)\s+(centro\s+sociale\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(circolo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(casa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:alla?|presso la?|at)\s+(casa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     
     // Educational institutions
-    /(?:al?|presso il?|at)\s+(università\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:all'?|presso l'?|at)\s+(università\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(campus\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(scuola\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:alla?|presso la?|at)\s+(scuola\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     
     // Bars, restaurants, and meeting places
     /(?:al?|presso il?|at)\s+(bar\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(caffè\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(ristorante\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(osteria\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:all'?|presso l'?|at)\s+(osteria\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     
     // Parks and outdoor spaces
-    /(?:al?|presso il?|at)\s+(giardini?\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(villa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:ai?|presso i?|at)\s+(giardini?\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:alla?|presso la?|at)\s+(villa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     
     // Generic venue patterns (more permissive)
     /(?:al?|presso il?|at)\s+([A-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,25}(?:\s+[A-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,25})?)/g
