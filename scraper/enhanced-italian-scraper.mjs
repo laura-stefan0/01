@@ -26,6 +26,10 @@ const PROTEST_KEYWORDS = [
   'assemblea pubblica', 'iniziativa politica', 'blocco', 'pride',
   'flash mob', 'raduno', 'comizio', 'assemblea',
   
+  // Prison and justice related (for the missing articles)
+  'carcere', 'processo', 'operazione', 'lotta', 'appuntamenti di lotta',
+  'bancali', 'sassari', 'torino', 'repressione', 'solidarietà',
+  
   // Educational and organizing events
   'workshop', 'seminario', 'formazione', 'incontro', 'presentazione', 'gruppo',
   'corso', 'laboratorio', 'addestramento', 'educazione', 'training',
@@ -808,21 +812,77 @@ async function scrapeWebsite(source) {
 
     console.log(`📄 Processing ${source.name}...`);
 
+    // Special handling for ilrovescio.info - also try to fetch specific known articles
+    if (source.name === 'ilrovescio.info') {
+      const knownArticles = [
+        'https://ilrovescio.info/2025/06/28/5-luglio-bancali-sassari-corteo-contro-il-carcere/',
+        'https://ilrovescio.info/2025/06/28/torino-3-e-4-luglio-appuntamenti-di-lotta-per-linizio-del-processo-per-loperazione-city/'
+      ];
+      
+      console.log(`🎯 Also checking ${knownArticles.length} specific known articles...`);
+      
+      for (const articleUrl of knownArticles) {
+        try {
+          console.log(`📖 Fetching specific article: ${articleUrl}`);
+          const articleResponse = await makeRequest(articleUrl);
+          const article$ = load(articleResponse.data);
+          
+          const title = cleanText(article$('h1, .entry-title, .article-title').first().text());
+          const content = cleanText(article$('.entry-content, .content, article').text());
+          
+          if (title && content && containsProtestKeywords(`${title} ${content}`)) {
+            const { date, time } = parseItalianDateTime(content);
+            const locationInfo = await extractAddressAndCity(content);
+            
+            // Add delay for geocoding
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const event = {
+              title: cleanTitle(title),
+              description: content.slice(0, 700),
+              category: categorizeEvent(title, content),
+              city: locationInfo.city,
+              address: locationInfo.address,
+              latitude: locationInfo.coordinates.lat,
+              longitude: locationInfo.coordinates.lng,
+              date: date,
+              time: time,
+              image_url: CATEGORY_IMAGES[categorizeEvent(title, content)] || CATEGORY_IMAGES.OTHER,
+              event_url: articleUrl,
+              source_name: source.name,
+              source_url: source.url
+            };
+            
+            events.push(event);
+            stats.eventsFound++;
+            console.log(`✅ Added specific article: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city}`);
+          }
+          
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } catch (error) {
+          console.log(`⚠️ Could not fetch specific article: ${error.message}`);
+        }
+      }
+    }
+
     // Site-specific selectors for better detection
     let eventSelectors = [];
     let eventElements = $();
 
     if (source.name === 'ilrovescio.info') {
-      // WordPress specific selectors for ilrovescio.info
+      // WordPress specific selectors for ilrovescio.info - try multiple approaches
       eventSelectors = [
-        '.slick-item',           // Homepage slider items
-        'article',               // WordPress article posts  
+        'article',               // WordPress article posts
         '.post',                 // WordPress post class
+        '.slick-item',           // Homepage slider items
         '.wp-block-post',        // Gutenberg blocks
         'figure.slick-item',     // Specific slider structure
         '.aft-slide-items',      // Theme-specific slides
         '.article-title',        // Title containers
-        'a[href*="ilrovescio.info/20"]' // Direct article links
+        '.entry',                // Entry wrapper
+        'main article',          // Main content articles
+        '.content article',      // Content wrapper articles
+        'a[href*="/2025/"]'      // Links to 2025 articles
       ];
     } else {
       // Generic selectors for other sites
@@ -865,15 +925,31 @@ async function scrapeWebsite(source) {
         let articleUrl = '';
         
         if (source.name === 'ilrovescio.info') {
-          // Extract title from WordPress structure
-          title = cleanText($el.find('.article-title a, h3 a, .slide-title a').text()) ||
+          // Extract title from WordPress structure - try multiple selectors
+          title = cleanText($el.find('.article-title a, h3 a, .slide-title a, .entry-title a').text()) ||
+                  cleanText($el.find('h1, h2, h3, .title').text()) ||
                   cleanText($el.find('a').attr('title')) ||
-                  cleanText($el.find('h1, h2, h3').text());
+                  cleanText($el.text()).split('\n')[0].trim(); // First line as fallback
           
-          // Extract article URL
-          const link = $el.find('a').first().attr('href') || $el.find('a[href*="ilrovescio.info"]').attr('href');
+          // Extract article URL - try multiple approaches
+          let link = $el.find('a').first().attr('href');
+          if (!link) {
+            // If element is already a link
+            link = $el.attr('href');
+          }
+          if (!link) {
+            // Look for any link containing /2025/
+            link = $el.find('a[href*="/2025/"]').first().attr('href');
+          }
+          
           if (link) {
-            articleUrl = link.startsWith('http') ? link : `https://ilrovescio.info${link}`;
+            if (link.startsWith('/')) {
+              articleUrl = `https://ilrovescio.info${link}`;
+            } else if (link.startsWith('http')) {
+              articleUrl = link;
+            } else {
+              articleUrl = `https://ilrovescio.info/${link}`;
+            }
           }
         } else {
           title = cleanText($el.find('h1, h2, h3, .title, .headline').first().text()) ||
