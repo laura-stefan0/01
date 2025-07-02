@@ -97,6 +97,89 @@ function determineEventType(title, description = '') {
   return 'Other';
 }
 
+/**
+ * Extract event date from article text content (not publication date)
+ */
+function extractEventDate(fullText) {
+  if (!fullText) return null;
+  
+  const text = fullText.toLowerCase();
+  const italianMonths = {
+    gennaio: '01', febbraio: '02', marzo: '03', aprile: '04',
+    maggio: '05', giugno: '06', luglio: '07', agosto: '08',
+    settembre: '09', ottobre: '10', novembre: '11', dicembre: '12'
+  };
+
+  // Event scheduling keywords
+  const eventKeywords = ['si terrà', 'avrà luogo', 'è previsto', 'in programma', 'evento', 'manifestazione', 'quando', 'data'];
+  
+  // Split into sentences and find event-related ones
+  const sentences = text.split(/[.!?]\s+/);
+  
+  for (const sentence of sentences) {
+    const hasEventKeyword = eventKeywords.some(keyword => sentence.includes(keyword));
+    
+    if (hasEventKeyword) {
+      // Look for "sabato 15 giugno" pattern
+      const dayDateMatch = sentence.match(/(?:lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/);
+      if (dayDateMatch) {
+        const day = dayDateMatch[1].padStart(2, '0');
+        const month = italianMonths[dayDateMatch[2]];
+        const year = dayDateMatch[3] || new Date().getFullYear().toString();
+        const eventDate = `${year}-${month}-${day}`;
+        
+        // Validate date is reasonable
+        const dateObj = new Date(eventDate);
+        const today = new Date();
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        
+        if (dateObj >= threeMonthsAgo) {
+          return eventDate;
+        }
+      }
+      
+      // Look for "il 15 giugno" pattern
+      const specificDateMatch = sentence.match(/(?:il|dal|fino al|per il)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/);
+      if (specificDateMatch) {
+        const day = specificDateMatch[1].padStart(2, '0');
+        const month = italianMonths[specificDateMatch[2]];
+        const year = specificDateMatch[3] || new Date().getFullYear().toString();
+        const eventDate = `${year}-${month}-${day}`;
+        
+        const dateObj = new Date(eventDate);
+        const today = new Date();
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        
+        if (dateObj >= threeMonthsAgo) {
+          return eventDate;
+        }
+      }
+    }
+  }
+  
+  // Fallback to any date in reasonable range
+  const generalDateMatch = text.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if (generalDateMatch) {
+    const day = generalDateMatch[1].padStart(2, '0');
+    const month = generalDateMatch[2].padStart(2, '0');
+    const year = generalDateMatch[3];
+    const eventDate = `${year}-${month}-${day}`;
+    
+    const dateObj = new Date(eventDate);
+    const today = new Date();
+    const twoMonthsAgo = new Date();
+    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+    
+    if (dateObj >= twoMonthsAgo) {
+      return eventDate;
+    }
+  }
+  
+  return null;
+}
+
 // Simple city-based coordinate assignment (no API calls for faster processing)
 function getCoordinatesForCity(text) {
   const normalizedText = normalizeText(text);
@@ -252,6 +335,9 @@ async function scrapeGlobalProject() {
       const fullText = `${title} ${description}`;
       const locationInfo = extractBasicLocation(fullText);
       
+      // Extract event date from content
+      const eventDate = extractEventDate(`${title} ${description}`);
+      
       const event = {
         title: cleanTitle(title),
         description: description || 'Evento di attivismo e giustizia sociale',
@@ -260,7 +346,7 @@ async function scrapeGlobalProject() {
         address: locationInfo.address,
         latitude: locationInfo.coordinates.lat,
         longitude: locationInfo.coordinates.lng,
-        date: null, // Will be parsed from content if available
+        date: eventDate, // Extracted from article content
         time: 'N/A',
         event_type: determineEventType(title, description),
         event_url: eventUrl,
@@ -314,6 +400,9 @@ async function scrapeFridaysForFuture() {
       const fullText = `${title} ${description}`;
       const locationInfo = extractBasicLocation(fullText);
       
+      // Extract event date from content
+      const eventDate = extractEventDate(`${title} ${description}`);
+      
       const event = {
         title: cleanTitle(title),
         description: description || 'Evento per il clima e la sostenibilità ambientale',
@@ -322,7 +411,7 @@ async function scrapeFridaysForFuture() {
         address: locationInfo.address,
         latitude: locationInfo.coordinates.lat,
         longitude: locationInfo.coordinates.lng,
-        date: null,
+        date: eventDate, // Extracted from article content
         time: 'N/A',
         event_type: determineEventType(title, description),
         event_url: eventUrl,

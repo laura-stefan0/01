@@ -261,66 +261,166 @@ function isDateWithinCutoff(eventDate) {
 }
 
 /**
- * Enhanced date parsing
+ * Enhanced date parsing - extracts actual event dates from article content, not publication dates
  */
-function parseItalianDateTime(dateTimeString) {
-  if (!dateTimeString || dateTimeString.trim().length === 0) {
+function parseItalianDateTime(fullArticleText) {
+  if (!fullArticleText || fullArticleText.trim().length === 0) {
     return { date: null, time: null };
   }
 
-  const cleanDateTimeString = cleanText(dateTimeString).toLowerCase();
-
+  const text = cleanText(fullArticleText).toLowerCase();
   let date = null;
   let time = null;
 
-  // Extract time (HH:MM format)
-  const timeMatch = cleanDateTimeString.match(/(\d{1,2})[:\.](\d{2})/);
-  if (timeMatch) {
-    const hours = timeMatch[1].padStart(2, '0');
-    const minutes = timeMatch[2];
-    time = `${hours}:${minutes}`;
-  }
+  console.log(`🔍 Analyzing article text for event dates (${text.length} chars)...`);
 
-  // Extract date - DD/MM/YYYY format
-  let dateMatch = cleanDateTimeString.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{4})/);
-  if (dateMatch) {
-    const day = dateMatch[1].padStart(2, '0');
-    const month = dateMatch[2].padStart(2, '0');
-    const year = dateMatch[3];
-    date = `${year}-${month}-${day}`;
-    return { date, time };
-  }
+  // Event-specific date patterns that look for actual event scheduling language
+  const eventDatePatterns = [
+    // "sabato 15 giugno" - day name + date + month
+    /(?:lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/gi,
+    
+    // "il 15 giugno" - specific date references
+    /(?:il|dal|fino al|entro il|per il)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/gi,
+    
+    // "15 giugno 2025" - full date format
+    /(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+(\d{4})/gi,
+    
+    // "15/06/2025" - numerical format
+    /(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/g
+  ];
 
-  // Extract date - DD/MM format (assume current year)
-  dateMatch = cleanDateTimeString.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})/);
-  if (dateMatch) {
-    const day = dateMatch[1].padStart(2, '0');
-    const month = dateMatch[2].padStart(2, '0');
-    const year = new Date().getFullYear();
-    date = `${year}-${month}-${day}`;
-    return { date, time };
-  }
+  // Event time patterns
+  const eventTimePatterns = [
+    // "alle ore 18:30", "dalle 19.00"
+    /(?:alle? ore?|dalle?|a partire dalle?|inizio)\s+(\d{1,2})[:\.](\d{2})/gi,
+    // "ore 15", "h 16:30"
+    /(?:ore?\s+|h\s+)(\d{1,2})(?:[:\.](\d{2}))?/gi,
+    // Time in event context
+    /(?:^|\s)(\d{1,2})[:\.](\d{2})(?=\s|$)/g
+  ];
 
-  // Try month names
-  let month = null;
-  let day = null;
-  let year = new Date().getFullYear();
+  // Keywords that indicate event scheduling (not publication)
+  const eventSchedulingKeywords = [
+    'si terrà', 'avrà luogo', 'è previsto', 'in programma', 'evento', 'manifestazione', 
+    'protesta', 'corteo', 'presidio', 'assemblea', 'incontro', 'iniziativa', 'mobilitazione',
+    'appuntamento', 'dalle ore', 'alle ore', 'quando', 'data'
+  ];
 
-  for (const [monthName, monthNum] of Object.entries(ITALIAN_MONTHS)) {
-    if (cleanDateTimeString.includes(monthName)) {
-      month = monthNum;
-      break;
+  // Split into sentences and prioritize those with event scheduling language
+  const sentences = text.split(/[.!?]\s+/);
+  const eventSentences = [];
+  const otherSentences = [];
+
+  for (const sentence of sentences) {
+    const hasSchedulingKeyword = eventSchedulingKeywords.some(keyword => 
+      sentence.includes(keyword)
+    );
+    
+    if (hasSchedulingKeyword) {
+      eventSentences.push(sentence);
+    } else {
+      otherSentences.push(sentence);
     }
   }
 
-  if (month) {
-    const dayMatch = cleanDateTimeString.match(/(\d{1,2})/);
-    if (dayMatch) {
-      day = dayMatch[1].padStart(2, '0');
-      date = `${year}-${month}-${day}`;
+  // First, look for dates in sentences with event scheduling keywords
+  const prioritizedSentences = [...eventSentences, ...otherSentences];
+  
+  for (const sentence of prioritizedSentences) {
+    // Try each date pattern
+    for (const pattern of eventDatePatterns) {
+      const matches = [...sentence.matchAll(pattern)];
+      
+      for (const match of matches) {
+        let foundDate = null;
+        
+        if (match[1] && match[2] && ITALIAN_MONTHS[match[2]]) {
+          // Day + month found
+          const day = match[1].padStart(2, '0');
+          const month = ITALIAN_MONTHS[match[2]];
+          const year = match[3] || new Date().getFullYear().toString();
+          foundDate = `${year}-${month}-${day}`;
+        } else if (match[1] && match[2] && !isNaN(match[2])) {
+          // Numerical date format DD/MM/YYYY
+          const day = match[1].padStart(2, '0');
+          const month = match[2].padStart(2, '0');
+          const year = match[3] || new Date().getFullYear().toString();
+          foundDate = `${year}-${month}-${day}`;
+        }
+        
+        if (foundDate) {
+          // Validate the date is reasonable (not too far in past, not too far in future)
+          const eventDate = new Date(foundDate);
+          const today = new Date();
+          const threeMonthsAgo = new Date();
+          threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+          const oneYearFromNow = new Date();
+          oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+          
+          if (eventDate >= threeMonthsAgo && eventDate <= oneYearFromNow) {
+            date = foundDate;
+            console.log(`📅 Found event date: "${sentence.slice(0, 80)}..." → ${date}`);
+            break;
+          }
+        }
+      }
+      if (date) break;
+    }
+    if (date) break;
+  }
+
+  // Look for times in the same prioritized way
+  for (const sentence of prioritizedSentences) {
+    for (const pattern of eventTimePatterns) {
+      const matches = [...sentence.matchAll(pattern)];
+      
+      for (const match of matches) {
+        const hours = parseInt(match[1]);
+        if (hours >= 6 && hours <= 23) { // Reasonable event hours
+          const minutes = (match[2] || '00').padStart(2, '0');
+          time = `${hours.toString().padStart(2, '0')}:${minutes}`;
+          console.log(`🕐 Found event time: "${sentence.slice(0, 80)}..." → ${time}`);
+          break;
+        }
+      }
+      if (time) break;
+    }
+    if (time) break;
+  }
+
+  // If no specific date found, try basic extraction as fallback
+  if (!date) {
+    const basicDateMatch = text.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (basicDateMatch) {
+      const day = basicDateMatch[1].padStart(2, '0');
+      const month = basicDateMatch[2].padStart(2, '0');
+      const year = basicDateMatch[3];
+      const testDate = `${year}-${month}-${day}`;
+      
+      const eventDate = new Date(testDate);
+      const today = new Date();
+      const twoMonthsAgo = new Date();
+      twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+      
+      if (eventDate >= twoMonthsAgo) {
+        date = testDate;
+        console.log(`📅 Found fallback date: ${date}`);
+      }
     }
   }
 
+  if (!time) {
+    const basicTimeMatch = text.match(/(?:ore?\s+|alle?\s+|h\s+)?(\d{1,2})[:\.](\d{2})/);
+    if (basicTimeMatch) {
+      const hours = parseInt(basicTimeMatch[1]);
+      if (hours >= 8 && hours <= 23) {
+        time = `${hours.toString().padStart(2, '0')}:${basicTimeMatch[2]}`;
+        console.log(`🕐 Found fallback time: ${time}`);
+      }
+    }
+  }
+
+  console.log(`📊 Date extraction result: date=${date}, time=${time}`);
   return { date, time };
 }
 
