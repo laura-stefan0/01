@@ -300,11 +300,13 @@ function parseItalianDateTime(fullArticleText) {
     /(?:orario\s+|inizio\s+|start\s+|dalle\s+)(\d{1,2})[:\.](\d{2})/gi
   ];
 
-  // Event scheduling keywords
+  // Event scheduling keywords (prioritize future-tense)
   const eventSchedulingKeywords = [
-    'si terrà', 'avrà luogo', 'è previsto', 'in programma', 'evento', 'manifestazione', 
-    'protesta', 'corteo', 'presidio', 'assemblea', 'incontro', 'iniziativa', 'mobilitazione',
-    'appuntamento', 'dalle ore', 'alle ore', 'quando', 'data', 'workshop', 'seminario'
+    'si terrà', 'avrà luogo', 'è previsto', 'in programma', 'si svolgerà',
+    'appuntamento', 'ci vediamo', 'vi aspettiamo', 'dalle ore', 'alle ore', 
+    'quando', 'data', 'orario', 'evento', 'manifestazione', 'protesta', 
+    'corteo', 'presidio', 'assemblea', 'incontro', 'iniziativa', 'mobilitazione',
+    'workshop', 'seminario', 'partecipa', 'unisciti', 'aderire'
   ];
 
   const sentences = text.split(/[.!?]\s+/);
@@ -695,6 +697,93 @@ async function saveEventToDatabase(event) {
 }
 
 /**
+ * Validate if content describes an actual event vs news article
+ */
+function validateActualEvent(title, description, fullText) {
+  const normalizedTitle = normalizeText(title);
+  const normalizedDescription = normalizeText(description);
+  const normalizedFullText = normalizeText(fullText);
+
+  // 1. STRONG INDICATORS this is NOT an event (news articles)
+  const newsArticleIndicators = [
+    // Article types
+    'primo piano', 'focus', 'analisi', 'riflessioni', 'comunicato stampa',
+    'dichiarazione', 'posizione', 'editoriale', 'opinione', 'commento',
+    'rassegna stampa', 'cronaca', 'resoconto', 'reportage', 'intervista',
+    
+    // Past tense reporting
+    'è avvenuto', 'si è svolto', 'ha avuto luogo', 'si è concluso',
+    'è terminato', 'ha partecipato', 'hanno partecipato', 'si sono riuniti',
+    
+    // News reporting language
+    'secondo quanto riportato', 'come riportato', 'stando a', 'fonti riferiscono',
+    'è stato dichiarato', 'ha dichiarato', 'hanno dichiarato',
+    
+    // Historical references
+    'la scorsa settimana', 'il mese scorso', 'lo scorso anno', 'in passato',
+    'tempo fa', 'recentemente si è svolto', 'si è tenuto ieri'
+  ];
+
+  const hasNewsIndicators = newsArticleIndicators.some(indicator => 
+    normalizedTitle.includes(indicator) || normalizedDescription.includes(indicator)
+  );
+
+  if (hasNewsIndicators) {
+    return { isEvent: false, reason: 'News article indicators detected' };
+  }
+
+  // 2. STRONG INDICATORS this IS an event (announcements)
+  const eventAnnouncementIndicators = [
+    // Future scheduling
+    'si terrà', 'avrà luogo', 'è in programma', 'è previsto', 'si svolgerà',
+    'ci vediamo', 'vi aspettiamo', 'appuntamento', 'partecipa', 'partecipate',
+    
+    // Call to action
+    'aderire', 'aderiscono', 'sostieni', 'unisciti', 'vieni', 'venite',
+    'saremo presenti', 'sarà presente', 'invita', 'invitano',
+    
+    // Event organization
+    'organizza', 'organizzano', 'promuove', 'promuovono', 'indice', 'indicono',
+    'convoca', 'convocano', 'lancia', 'lanciano',
+    
+    // Direct scheduling language
+    'quando:', 'dove:', 'data:', 'orario:', 'ore:', 'dalle ore', 'alle ore'
+  ];
+
+  const hasEventIndicators = eventAnnouncementIndicators.some(indicator => 
+    normalizedTitle.includes(indicator) || normalizedDescription.includes(indicator)
+  );
+
+  // 3. Check for specific event announcement patterns
+  const hasEventSchedulingPattern = /\b(si terrà|avrà luogo|è previsto|in programma)\b.*\b(il|dal|alle|ore)\b/.test(normalizedFullText) ||
+    /\b(appuntamento|ci vediamo|vi aspettiamo)\b.*\b(\d{1,2}\/\d{1,2}|\d{1,2}\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre))\b/.test(normalizedFullText);
+
+  // 4. Check if it's about farming/industrial issues without events
+  const isIndustrialIssue = /\b(allevamento|agricoltura|industria|fabbrica|stabilimento)\b/.test(normalizedTitle) &&
+    !/\b(protesta|manifestazione|presidio|mobilitazione|sciopero)\b/.test(normalizedTitle);
+
+  if (isIndustrialIssue && !hasEventIndicators) {
+    return { isEvent: false, reason: 'Industrial/farming issue without event indicators' };
+  }
+
+  // 5. Check for "about" language that suggests reporting rather than announcing
+  const isAboutEvents = /\b(parlano? di|riferiscono|raccontano|descrivono|spiegano|riguarda|tratta di)\b/.test(normalizedFullText) ||
+    /\b(storia|racconto|resoconto|cronaca|reportage|dossier)\b/.test(normalizedTitle);
+
+  if (isAboutEvents && !hasEventIndicators) {
+    return { isEvent: false, reason: 'Article about events rather than announcing events' };
+  }
+
+  // 6. POSITIVE validation: Must have event indicators OR clear scheduling
+  if (hasEventIndicators || hasEventSchedulingPattern) {
+    return { isEvent: true, reason: 'Event announcement indicators found' };
+  }
+
+  // 7. Fallback: If no clear indicators either way, be restrictive
+  return { isEvent: false, reason: 'No clear event announcement indicators' };
+}
+
+/**
  * Determine event type for map icons
  */
 function determineEventType(title, description = '') {
@@ -941,23 +1030,11 @@ async function scrapeWebsite(source) {
             }
           }
 
-          // Skip generic articles that only mention protests but aren't events
-          const genericArticleKeywords = [
-            'primo piano', 'focus', 'analisi', 'riflessioni', 'comunicato stampa',
-            'dichiarazione', 'posizione', 'editoriale', 'opinione', 'commento',
-            'rassegna stampa', 'cronaca', 'resoconto', 'reportage'
-          ];
+          // Enhanced validation to distinguish real events from news articles
+          const isActualEvent = validateActualEvent(title, description, fullText);
           
-          const isGenericArticle = genericArticleKeywords.some(keyword => 
-            title.toLowerCase().includes(keyword) || description.toLowerCase().includes(keyword)
-          );
-
-          // Check if title/description suggests it's talking ABOUT events rather than being an event
-          const isAboutEvents = /\b(parlano? di|riferiscono|raccontano|descrivono|spiegano)\b/.test(fullText) ||
-            /\b(storia|racconto|resoconto|cronaca|reportage)\b/.test(title.toLowerCase());
-
-          if (isGenericArticle || isAboutEvents) {
-            console.log(`❌ Skipping generic article: "${title.slice(0, 50)}..."`);
+          if (!isActualEvent.isEvent) {
+            console.log(`❌ Skipping non-event: "${title.slice(0, 50)}..." - Reason: ${isActualEvent.reason}`);
             stats.eventsSkippedByKeywords++;
             continue;
           }
@@ -996,6 +1073,16 @@ async function scrapeWebsite(source) {
 
           if (!locationInfo.address || locationInfo.address === 'N/A') {
             console.log(`❌ Skipping - no clear address: "${title.slice(0, 50)}..."`);
+            stats.eventsSkippedByKeywords++;
+            continue;
+          }
+
+          // FINAL VALIDATION: Ensure this has event announcement language, not just news reporting
+          const hasAnnouncementLanguage = /\b(si terrà|avrà luogo|è previsto|in programma|si svolgerà|appuntamento|ci vediamo|vi aspettiamo|partecipa|unisciti)\b/.test(fullText);
+          const hasPastTenseReporting = /\b(si è svolto|ha avuto luogo|è avvenuto|si è concluso|ha partecipato|si sono riuniti)\b/.test(fullText);
+          
+          if (hasPastTenseReporting && !hasAnnouncementLanguage) {
+            console.log(`❌ Skipping - past tense reporting without future event announcement: "${title.slice(0, 50)}..."`);
             stats.eventsSkippedByKeywords++;
             continue;
           }
