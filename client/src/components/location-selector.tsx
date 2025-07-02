@@ -267,7 +267,7 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
             </label>
             <Select value={selectedRegion} onValueChange={handleRegionChange}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a region" />
+                <SelectValue placeholder={`Select a ${tempSelectedCountry === 'it' ? 'region' : 'state'}`} />
               </SelectTrigger>
               <SelectContent>
                 {regions.map((region) => (
@@ -279,7 +279,7 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
             </Select>
           </div>
 
-          {/* City Selection */}
+          {/* City Selection - Only show after region is selected */}
           {selectedRegion && (
             <div className="space-y-2">
               <label className="text-sm font-medium">City</label>
