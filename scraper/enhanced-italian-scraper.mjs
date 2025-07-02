@@ -156,7 +156,7 @@ const SCRAPE_SOURCES = [
     type: 'movement'
   },
   {
-    url: 'https://ilrovescio.info/category/iniziative/',
+    url: 'https://ilrovescio.info/',
     name: 'ilrovescio.info',
     type: 'initiatives'
   },
@@ -342,7 +342,22 @@ function extractAddressAndCity(text) {
     /\b(ponte\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /\b(galleria\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /\b(lungotevere\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(circonvallazione\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi
+    /\b(circonvallazione\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(strada\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(piazzale\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(piazzetta\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(traversa\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(contrada\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(salita\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(discesa\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(rione\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(ronco\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(borgo\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(cammino\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(spianata\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(passeggiata\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi),
+    /\b(spalto\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(parco\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi
   ];
 
   let detectedAddress = null;
