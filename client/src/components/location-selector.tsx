@@ -145,16 +145,10 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
   const handleDialogOpen = (open: boolean) => {
     setIsOpen(open);
     if (open) {
-      // Only pre-populate if the current country matches the temp selected country
       setTempSelectedCountry(selectedCountry);
-      if (selectedCountry === tempSelectedCountry) {
-        const parsed = parseCurrentLocation();
-        setSelectedRegion(parsed.region);
-        setSelectedCity(parsed.city);
-      } else {
-        setSelectedRegion("");
-        setSelectedCity("");
-      }
+      // Always start fresh - don't pre-populate anything
+      setSelectedRegion("");
+      setSelectedCity("");
     } else {
       // Reset when closing
       setSelectedRegion("");
@@ -214,15 +208,6 @@ export function LocationSelector({ currentLocation, selectedCountry, onLocationS
     setTempSelectedCountry(country);
     setSelectedRegion(""); // Reset region when country changes
     setSelectedCity(""); // Reset city when country changes
-    
-    // Only pre-populate if changing to the same country as the current location
-    if (country === selectedCountry && currentLocation !== "Unknown Location") {
-      const parsed = parseCurrentLocation();
-      if (parsed.region) {
-        setSelectedRegion(parsed.region);
-        setSelectedCity(parsed.city);
-      }
-    }
   };
 
   const handleRegionChange = (region: string) => {
