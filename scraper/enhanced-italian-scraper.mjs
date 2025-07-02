@@ -822,13 +822,30 @@ async function scrapeWebsite(source) {
 
     console.log(`📄 Processing ${source.name}...`);
 
-    // Generic selectors for finding events/articles
-    const eventSelectors = [
-      'article', '.post', '.event', '.news-item', '.item', '.entry',
-      '.news', '.evento', '.manifestazione', '.iniziativa'
-    ];
-
+    // Site-specific selectors for better detection
+    let eventSelectors = [];
     let eventElements = $();
+
+    if (source.name === 'ilrovescio.info') {
+      // WordPress specific selectors for ilrovescio.info
+      eventSelectors = [
+        '.slick-item',           // Homepage slider items
+        'article',               // WordPress article posts  
+        '.post',                 // WordPress post class
+        '.wp-block-post',        // Gutenberg blocks
+        'figure.slick-item',     // Specific slider structure
+        '.aft-slide-items',      // Theme-specific slides
+        '.article-title',        // Title containers
+        'a[href*="ilrovescio.info/20"]' // Direct article links
+      ];
+    } else {
+      // Generic selectors for other sites
+      eventSelectors = [
+        'article', '.post', '.event', '.news-item', '.item', '.entry',
+        '.news', '.evento', '.manifestazione', '.iniziativa'
+      ];
+    }
+
     for (const selector of eventSelectors) {
       const elements = $(selector);
       if (elements.length > 0) {
@@ -838,28 +855,62 @@ async function scrapeWebsite(source) {
       }
     }
 
+    // Special handling for ilrovescio.info - also check slider links
+    if (source.name === 'ilrovescio.info' && eventElements.length === 0) {
+      // Look for article links in sliders and homepage structure
+      const slideLinks = $('a[href*="/2025/"]').filter((i, el) => {
+        const href = $(el).attr('href');
+        return href && href.includes('ilrovescio.info');
+      });
+      
+      if (slideLinks.length > 0) {
+        console.log(`📊 Found ${slideLinks.length} article links for ilrovescio.info`);
+        eventElements = slideLinks.parent();
+      }
+    }
+
     // Process each potential event
     for (let i = 0; i < Math.min(20, eventElements.length); i++) {
       try {
         const $el = $(eventElements[i]);
 
-        // Extract basic information
-        const title = cleanText($el.find('h1, h2, h3, .title, .headline').first().text()) ||
-          cleanText($el.text()).slice(0, 100) + '...';
+        // Extract basic information with site-specific logic
+        let title = '';
+        let articleUrl = '';
+        
+        if (source.name === 'ilrovescio.info') {
+          // Extract title from WordPress structure
+          title = cleanText($el.find('.article-title a, h3 a, .slide-title a').text()) ||
+                  cleanText($el.find('a').attr('title')) ||
+                  cleanText($el.find('h1, h2, h3').text());
+          
+          // Extract article URL
+          const link = $el.find('a').first().attr('href') || $el.find('a[href*="ilrovescio.info"]').attr('href');
+          if (link) {
+            articleUrl = link.startsWith('http') ? link : `https://ilrovescio.info${link}`;
+          }
+        } else {
+          title = cleanText($el.find('h1, h2, h3, .title, .headline').first().text()) ||
+                  cleanText($el.text()).slice(0, 100) + '...';
+        }
 
         const description = cleanText($el.find('p, .description, .excerpt, .content').first().text()) ||
           cleanText($el.text()).slice(0, 500);
 
-        const link = $el.find('a').first().attr('href');
         let eventUrl = '';
-        if (link && !link.startsWith('http')) {
-          try {
-            eventUrl = new URL(link, source.url).href;
-          } catch (e) {
-            eventUrl = source.url;
-          }
+        if (source.name === 'ilrovescio.info' && articleUrl) {
+          eventUrl = articleUrl;
         } else {
-          eventUrl = link || source.url;
+          const link = $el.find('a').first().attr('href');
+          if (link && !link.startsWith('http')) {
+            try {
+              eventUrl = new URL(link, source.url).href;
+            } catch (e) {
+              eventUrl = source.url;
+            }
+          } else {
+            eventUrl = link || source.url;
+          }
         }
 
         // Initial check with title and description
