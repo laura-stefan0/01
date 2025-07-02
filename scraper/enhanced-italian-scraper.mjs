@@ -594,8 +594,6 @@ async function extractAddressAndCity(text) {
   }
 
   // Try geocoding with different strategies
-  let coordinates = null;
-  
   if (detectedAddress && detectedCity) {
     // Strategy 1: Try full address + city
     console.log(`🔍 Geocoding strategy 1: "${detectedAddress}, ${detectedCity}"`);
