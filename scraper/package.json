@@ -1,8 +1,12 @@
 {
   "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.50.2",
-    "axios": "^1.10.0",
-    "cheerio": "^1.1.0"
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "puppeteer": "^22.8.1",
+    "@turf/turf": "^7.0.0",
+    "@turf/centroid": "^7.0.0",
+    "@turf/along": "^7.0.0",
+    "@turf/length": "^7.0.0"
   }
 }

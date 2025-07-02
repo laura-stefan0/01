@@ -25,48 +25,48 @@ const PROTEST_KEYWORDS = [
   'sit-in', 'mobilitazione', 'marcia', 'picchetto', 'concentramento',
   'assemblea pubblica', 'iniziativa politica', 'blocco', 'pride',
   'flash mob', 'raduno', 'comizio', 'assemblea',
-  
+
   // Prison and justice related (for the missing articles)
   'carcere', 'processo', 'operazione', 'lotta', 'appuntamenti di lotta',
   'bancali', 'sassari', 'torino', 'repressione', 'solidarietà',
-  
+
   // Educational and organizing events
   'workshop', 'seminario', 'formazione', 'incontro', 'presentazione', 'gruppo',
   'corso', 'laboratorio', 'addestramento', 'educazione', 'training',
   'skill-share', 'condivisione competenze', 'autoformazione',
-  
+
   // Activist organizing and meetings
   'riunione attivisti', 'gruppo di lavoro', 'coordinamento', 'network',
   'collettivo', 'circolo', 'centro sociale', 'spazio autogestito',
   'assemblea generale', 'assemblea cittadina', 'forum cittadino',
   'tavolo tematico', 'gruppo tematico', 'commissione',
-  
+
   // Information and awareness events
   'conferenza', 'dibattito', 'discussione', 'tavola rotonda',
   'incontro informativo', 'serata informativa', 'presentazione libro',
   'documentario', 'film politico', 'proiezione',
   'testimonianza', 'racconto', 'intervista pubblica',
-  
+
   // Legal and rights-related events
   'know your rights', 'conosci i tuoi diritti', 'diritti civili',
   'info legale', 'sportello legale', 'assistenza legale',
   'clinica legale', 'consulenza gratuita',
-  
+
   // Community organizing
   'organizzazione comunitaria', 'attivismo locale', 'cittadinanza attiva',
   'partecipazione civica', 'democrazia partecipativa',
   'assemblea di quartiere', 'comitato cittadino',
-  
+
   // Campaign and advocacy events
   'campagna', 'petizione', 'raccolta firme', 'advocacy',
   'sensibilizzazione', 'awareness', 'volantinaggio',
   'banchetto informativo', 'gazebo', 'stand informativo',
-  
+
   // Solidarity and mutual aid
   'solidarietà', 'mutuo soccorso', 'aiuto reciproco',
   'supporto comunitario', 'rete di sostegno', 'autoaiuto',
   'cucina popolare', 'mensa sociale', 'distribuzione cibo',
-  
+
   // Alternative economics and sustainability
   'economia solidale', 'commercio equo', 'consumo critico',
   'decrescita', 'sostenibilità', 'permacultura',
@@ -79,16 +79,16 @@ const EXCLUDE_KEYWORDS = [
   'mostra artistica', 'fiera commerciale', 'mercatino dell\'usato',
   'evento gastronomico', 'evento sportivo', 'corsa podistica', 'maratona sportiva',
   'dj set', 'sagra paesana', 'degustazione', 'aperitivo sociale',
-  
+
   // Religious events (unless activism-related)
   'messa domenicale', 'celebrazione religiosa', 'processione religiosa',
   'benedizione', 'liturgia', 'preghiera comunitaria',
-  
+
   // Pure business/commercial events
   'corso di cucina', 'corso di lingua', 'corso professionale',
   'formazione aziendale', 'team building', 'networking commerciale',
   'evento promozionale', 'lancio prodotto',
-  
+
   // Health and wellness (unless activism-related)
   'meditazione personale', 'yoga classe', 'fitness', 'palestra',
   'benessere personale', 'coaching individuale'
@@ -200,6 +200,8 @@ const SCRAPE_SOURCES = [
 /**
  * Utility Functions
  */
+// Import enhanced geocoding function
+import { geocodeAddress, FALLBACK_COORDINATES, clearGeocodeCache } from './enhanced-geocoding.mjs';
 
 function normalizeText(text) {
   if (!text) return '';
@@ -275,13 +277,13 @@ function parseItalianDateTime(fullArticleText) {
   const eventDatePatterns = [
     // "sabato 15 giugno" - day name + date + month
     /(?:lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/gi,
-    
+
     // "il 15 giugno" - specific date references
     /(?:il|dal|fino al|entro il|per il)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/gi,
-    
+
     // "15 giugno 2025" - full date format
     /(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+(\d{4})/gi,
-    
+
     // "15/06/2025" - numerical format
     /(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/g
   ];
@@ -312,7 +314,7 @@ function parseItalianDateTime(fullArticleText) {
     const hasSchedulingKeyword = eventSchedulingKeywords.some(keyword => 
       sentence.includes(keyword)
     );
-    
+
     if (hasSchedulingKeyword) {
       eventSentences.push(sentence);
     } else {
@@ -322,15 +324,15 @@ function parseItalianDateTime(fullArticleText) {
 
   // First, look for dates in sentences with event scheduling keywords
   const prioritizedSentences = [...eventSentences, ...otherSentences];
-  
+
   for (const sentence of prioritizedSentences) {
     // Try each date pattern
     for (const pattern of eventDatePatterns) {
       const matches = [...sentence.matchAll(pattern)];
-      
+
       for (const match of matches) {
         let foundDate = null;
-        
+
         if (match[1] && match[2] && ITALIAN_MONTHS[match[2]]) {
           // Day + month found
           const day = match[1].padStart(2, '0');
@@ -344,7 +346,7 @@ function parseItalianDateTime(fullArticleText) {
           const year = match[3] || new Date().getFullYear().toString();
           foundDate = `${year}-${month}-${day}`;
         }
-        
+
         if (foundDate) {
           // Validate the date is reasonable (not too far in past, not too far in future)
           const eventDate = new Date(foundDate);
@@ -353,7 +355,7 @@ function parseItalianDateTime(fullArticleText) {
           threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
           const oneYearFromNow = new Date();
           oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-          
+
           if (eventDate >= threeMonthsAgo && eventDate <= oneYearFromNow) {
             date = foundDate;
             console.log(`📅 Found event date: "${sentence.slice(0, 80)}..." → ${date}`);
@@ -370,7 +372,7 @@ function parseItalianDateTime(fullArticleText) {
   for (const sentence of prioritizedSentences) {
     for (const pattern of eventTimePatterns) {
       const matches = [...sentence.matchAll(pattern)];
-      
+
       for (const match of matches) {
         const hours = parseInt(match[1]);
         if (hours >= 6 && hours <= 23) { // Reasonable event hours
@@ -393,12 +395,12 @@ function parseItalianDateTime(fullArticleText) {
       const month = basicDateMatch[2].padStart(2, '0');
       const year = basicDateMatch[3];
       const testDate = `${year}-${month}-${day}`;
-      
+
       const eventDate = new Date(testDate);
       const today = new Date();
       const twoMonthsAgo = new Date();
       twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-      
+
       if (eventDate >= twoMonthsAgo) {
         date = testDate;
         console.log(`📅 Found fallback date: ${date}`);
@@ -419,63 +421,6 @@ function parseItalianDateTime(fullArticleText) {
 
   console.log(`📊 Date extraction result: date=${date}, time=${time}`);
   return { date, time };
-}
-
-// Cache for geocoding results to reduce API calls
-const geocodeCache = new Map();
-
-/**
- * Geocode address using OpenStreetMap Nominatim API with caching
- */
-async function geocodeAddress(address, city) {
-  const fullAddress = address && address !== city ? `${address}, ${city}, Italy` : `${city}, Italy`;
-  
-  // Check cache first
-  if (geocodeCache.has(fullAddress)) {
-    const cached = geocodeCache.get(fullAddress);
-    console.log(`💾 Using cached coordinates for "${fullAddress}": ${cached.lat}, ${cached.lng}`);
-    return cached;
-  }
-  
-  try {
-    console.log(`🌍 Geocoding: "${fullAddress}"`);
-    
-    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
-      params: {
-        q: fullAddress,
-        format: 'json',
-        limit: 1,
-        addressdetails: 1
-      },
-      headers: {
-        'User-Agent': 'Corteo-Scraper/1.0 (contact@corteo.app)'
-      },
-      timeout: 10000
-    });
-
-    if (response.data && response.data.length > 0) {
-      const result = response.data[0];
-      const coords = {
-        lat: parseFloat(result.lat),
-        lng: parseFloat(result.lon)
-      };
-      
-      // Cache the result
-      geocodeCache.set(fullAddress, coords);
-      
-      console.log(`✅ Geocoded "${fullAddress}" to coordinates: ${coords.lat}, ${coords.lng}`);
-      return coords;
-    } else {
-      console.log(`⚠️ No geocoding results for: "${fullAddress}"`);
-      return null;
-    }
-  } catch (error) {
-    console.log(`❌ Geocoding failed for "${fullAddress}":`, error.message);
-    
-    // Minimal fallback: use Milan coordinates if all else fails
-    console.log(`🔄 Using Milan fallback coordinates`);
-    return { lat: 45.4642, lng: 9.1900 };
-  }
 }
 
 /**
@@ -528,13 +473,13 @@ async function extractAddressAndCity(text) {
         .replace(/\s+/g, ' ')
         .split(/[,;]|presso|c\/o/)[0] // Stop at common separators
         .trim();
-      
+
       // Capitalize first letter of each word
       detectedAddress = detectedAddress
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
-      
+
       console.log(`🏠 Found specific address: "${detectedAddress}"`);
       break;
     }
@@ -542,7 +487,7 @@ async function extractAddressAndCity(text) {
 
   // Find the city name from text (we'll geocode it precisely later)
   const italianCities = ['roma', 'milano', 'napoli', 'torino', 'venezia', 'firenze', 'bologna', 'bari', 'palermo', 'genova', 'padova', 'verona', 'sassari', 'bancali'];
-  
+
   for (const cityName of italianCities) {
     if (normalizedText.includes(cityName)) {
       detectedCity = cityName.charAt(0).toUpperCase() + cityName.slice(1);
@@ -598,46 +543,46 @@ function categorizeEvent(title, description) {
  */
 function determineEventType(title, description = '') {
   const searchText = normalizeText(`${title} ${description}`);
-  
+
   // Define keywords for each type
   const protestKeywords = [
     'protest', 'march', 'rally', 'demonstration', 'strike', 'parade', 'pride', 'blockade', 'occupation', 'sit-in',
     'manifestazione', 'corteo', 'sciopero', 'mobilitazione', 'presidio', 'marcia', 'parata', 'assembramento',
     'blocco', 'occupazione', 'manifestare'
   ];
-  
+
   const workshopKeywords = [
     'workshop', 'training', 'skill-share', 'legal info', 'activist education', 'course', 'formazione',
     'corso', 'laboratorio', 'addestramento', 'educazione'
   ];
-  
+
   const assemblyKeywords = [
     'assembly', 'meeting', 'forum', 'strategy', 'open forum', 'public assembly',
     'assemblea', 'riunione', 'incontro', 'forum', 'strategia'
   ];
-  
+
   const talkKeywords = [
     'talk', 'presentation', 'speaker', 'lecture', 'conference', 'summit',
     'presentazione', 'conferenza', 'relatore', 'intervento', 'discorso'
   ];
-  
+
   // Check for each type in order of specificity
   if (workshopKeywords.some(keyword => searchText.includes(keyword))) {
     return 'Workshop';
   }
-  
+
   if (assemblyKeywords.some(keyword => searchText.includes(keyword))) {
     return 'Assembly';
   }
-  
+
   if (talkKeywords.some(keyword => searchText.includes(keyword))) {
     return 'Talk';
   }
-  
+
   if (protestKeywords.some(keyword => searchText.includes(keyword))) {
     return 'Protest';
   }
-  
+
   // Default to Other for political events that don't fit above categories
   return 'Other';
 }
@@ -760,10 +705,10 @@ async function saveEventToDatabase(event) {
 async function fetchArticleContent(articleUrl) {
   try {
     console.log(`📖 Fetching full article: ${articleUrl}`);
-    
+
     const response = await makeRequest(articleUrl);
     const $ = load(response.data);
-    
+
     // Extract article content using various selectors
     const contentSelectors = [
       'article .content',
@@ -776,23 +721,23 @@ async function fetchArticleContent(articleUrl) {
       'main article',
       '[class*="content"]'
     ];
-    
+
     let articleContent = '';
-    
+
     for (const selector of contentSelectors) {
       const content = $(selector).text();
       if (content && content.length > articleContent.length) {
         articleContent = content;
       }
     }
-    
+
     // Fallback: get all text from article tag
     if (!articleContent) {
       articleContent = $('article').text() || $('main').text() || '';
     }
-    
+
     return cleanText(articleContent);
-    
+
   } catch (error) {
     console.log(`⚠️ Could not fetch article content: ${error.message}`);
     return '';
@@ -828,25 +773,25 @@ async function scrapeWebsite(source) {
         'https://ilrovescio.info/2025/06/28/5-luglio-bancali-sassari-corteo-contro-il-carcere/',
         'https://ilrovescio.info/2025/06/28/torino-3-e-4-luglio-appuntamenti-di-lotta-per-linizio-del-processo-per-loperazione-city/'
       ];
-      
+
       console.log(`🎯 Also checking ${knownArticles.length} specific known articles...`);
-      
+
       for (const articleUrl of knownArticles) {
         try {
           console.log(`📖 Fetching specific article: ${articleUrl}`);
           const articleResponse = await makeRequest(articleUrl);
           const article$ = load(articleResponse.data);
-          
+
           const title = cleanText(article$('h1, .entry-title, .article-title').first().text());
           const content = cleanText(article$('.entry-content, .content, article').text());
-          
+
           if (title && content && containsProtestKeywords(`${title} ${content}`)) {
             const { date, time } = parseItalianDateTime(content);
             const locationInfo = await extractAddressAndCity(content);
-            
+
             // Add delay for geocoding
             await new Promise(resolve => setTimeout(resolve, 1500));
-            
+
             const event = {
               title: cleanTitle(title),
               description: content.slice(0, 700),
@@ -862,12 +807,12 @@ async function scrapeWebsite(source) {
               source_name: source.name,
               source_url: source.url
             };
-            
+
             events.push(event);
             stats.eventsFound++;
             console.log(`✅ Added specific article: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city}`);
           }
-          
+
           await new Promise(resolve => setTimeout(resolve, 1000));
         } catch (error) {
           console.log(`⚠️ Could not fetch specific article: ${error.message}`);
@@ -918,7 +863,7 @@ async function scrapeWebsite(source) {
         const href = $(el).attr('href');
         return href && href.includes('ilrovescio.info');
       });
-      
+
       if (slideLinks.length > 0) {
         console.log(`📊 Found ${slideLinks.length} article links for ilrovescio.info`);
         eventElements = slideLinks.parent();
@@ -933,14 +878,14 @@ async function scrapeWebsite(source) {
         // Extract basic information with site-specific logic
         let title = '';
         let articleUrl = '';
-        
+
         if (source.name === 'ilrovescio.info') {
           // Extract title from WordPress structure - try multiple selectors
           title = cleanText($el.find('.article-title a, h3 a, .slide-title a, .entry-title a').text()) ||
                   cleanText($el.find('h1, h2, h3, .title').text()) ||
                   cleanText($el.find('a').attr('title')) ||
                   cleanText($el.text()).split('\n')[0].trim(); // First line as fallback
-          
+
           // Extract article URL - try multiple approaches
           let link = $el.find('a').first().attr('href');
           if (!link) {
@@ -951,7 +896,7 @@ async function scrapeWebsite(source) {
             // Look for any link containing /2025/
             link = $el.find('a[href*="/2025/"]').first().attr('href');
           }
-          
+
           if (link) {
             if (link.startsWith('/')) {
               articleUrl = `https://ilrovescio.info${link}`;
@@ -988,21 +933,21 @@ async function scrapeWebsite(source) {
         // Initial check with title and description
         let fullText = `${title} ${description}`.toLowerCase();
         let hasProtestKeywords = containsProtestKeywords(fullText);
-        
+
         // If no keywords found in title/description, fetch full article content
         if (!hasProtestKeywords && eventUrl && eventUrl !== source.url) {
           console.log(`🔍 No keywords in preview, fetching full article: "${title.slice(0, 50)}..."`);
-          
+
           // Add small delay to avoid overwhelming the server
           await new Promise(resolve => setTimeout(resolve, 500));
-          
+
           const articleContent = await fetchArticleContent(eventUrl);
           stats.articlesAnalyzed++;
-          
+
           if (articleContent) {
             fullText = `${title} ${description} ${articleContent}`.toLowerCase();
             hasProtestKeywords = containsProtestKeywords(fullText);
-            
+
             if (hasProtestKeywords) {
               console.log(`✅ Found activism keywords in full article: "${title.slice(0, 50)}..."`);
             }
@@ -1042,14 +987,14 @@ async function scrapeWebsite(source) {
 
         // Extract location and address
         let fullTextForLocation = `${title} ${description}`;
-        
+
         // If we fetched article content, include it for better address detection
         if (fullText.length > `${title} ${description}`.length) {
           fullTextForLocation = fullText;
         }
-        
+
         const locationInfo = await extractAddressAndCity(fullTextForLocation);
-        
+
         // Longer delay to respect geocoding API rate limits
         await new Promise(resolve => setTimeout(resolve, 1500));
 
