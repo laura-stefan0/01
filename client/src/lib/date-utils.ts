@@ -1,8 +1,13 @@
 /**
  * Utility functions for consistent date and time formatting throughout the application
- * Date format: DD-MM-YYYY
+ * Date format: 24 June 2025
  * Time format: 24-hour (HH:MM)
  */
+
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 export function formatDate(dateInput: string | Date): string {
   let date: Date;
@@ -25,11 +30,11 @@ export function formatDate(dateInput: string | Date): string {
     date = dateInput;
   }
 
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate();
+  const month = MONTH_NAMES[date.getMonth()];
   const year = date.getFullYear();
   
-  return `${day}-${month}-${year}`;
+  return `${day} ${month} ${year}`;
 }
 
 export function formatTime(timeInput: string): string {
