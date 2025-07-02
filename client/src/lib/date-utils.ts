@@ -25,11 +25,15 @@ export function formatDate(dateInput: string | Date): string {
     date = dateInput;
   }
 
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate();
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const month = monthNames[date.getMonth()];
   const year = date.getFullYear();
   
-  return `${day}-${month}-${year}`;
+  return `${day} ${month} ${year}`;
 }
 
 export function formatTime(timeInput: string): string {
