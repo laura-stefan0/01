@@ -243,6 +243,33 @@ function cleanTitle(title) {
   return cleanedTitle;
 }
 
+function cleanDescription(description, title) {
+  if (!description || !title) return description || '';
+  
+  // Clean both title and description for comparison
+  const cleanedTitle = cleanTitle(title).replace(/[""""""]/g, '').trim();
+  const cleanedDescription = description.trim();
+  
+  // Check if description starts with the title (case-insensitive)
+  const titleLower = cleanedTitle.toLowerCase();
+  const descriptionLower = cleanedDescription.toLowerCase();
+  
+  if (descriptionLower.startsWith(titleLower)) {
+    // Remove the title from the start of the description
+    let remainingDescription = cleanedDescription.substring(cleanedTitle.length).trim();
+    
+    // Remove any leading punctuation or quotes that might remain
+    remainingDescription = remainingDescription.replace(/^[""".,;:!?\-\s]+/, '').trim();
+    
+    // If we have meaningful content left, return it; otherwise return original
+    if (remainingDescription.length > 20) {
+      return remainingDescription;
+    }
+  }
+  
+  return cleanedDescription;
+}
+
 function containsActivismKeywords(text) {
   const normalizedText = normalizeText(text);
   return ACTIVISM_KEYWORDS.some(keyword => normalizedText.includes(keyword));
@@ -657,9 +684,12 @@ async function saveEventToDatabase(event) {
       return false;
     }
 
+    const cleanedTitle = cleanTitle(event.title) || 'Untitled Event';
+    const cleanedDescription = cleanDescription(event.description || 'No description available', cleanedTitle);
+    
     const eventData = {
-      title: cleanTitle(event.title) || 'Untitled Event',
-      description: event.description || 'No description available',
+      title: cleanedTitle,
+      description: cleanedDescription,
       category: event.category || 'OTHER',
       city: event.city === 'N/A' ? 'Milano' : (event.city || 'Milano'),
       address: event.address === 'N/A' ? 'N/A' : (event.address || 'N/A'),
@@ -668,7 +698,7 @@ async function saveEventToDatabase(event) {
       date: event.date === 'N/A' ? null : event.date,
       time: event.time || 'N/A',
       image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.OTHER,
-      event_type: determineEventType(event.title, event.description),
+      event_type: determineEventType(cleanedTitle, cleanedDescription),
       event_url: event.event_url || null,
       country_code: 'IT',
       featured: false,
@@ -1102,9 +1132,12 @@ async function scrapeWebsite(source) {
           }
 
           // Create event object
+          const cleanedTitle = cleanTitle(title);
+          const cleanedDescription = cleanDescription(description, cleanedTitle);
+          
           const event = {
-            title: cleanTitle(title),
-            description: description.slice(0, 2500),
+            title: cleanedTitle,
+            description: cleanedDescription.slice(0, 2500),
             category: categorizeEvent(title, description),
             city: locationInfo.city || 'N/A',
             address: locationInfo.address || 'N/A',
