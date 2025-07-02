@@ -419,7 +419,21 @@ async function extractAddressAndCity(text) {
     /(?:alla?|presso la?|at)\s+(sala\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(circolo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:alla?|presso la?|at)\s+(biblioteca\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:all'?|presso l'?|at)\s+(università\s+[a-zA-ZÀ-ÿ\s]+)/gi
+    /(?:all'?|presso l'?|at)\s+(università\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?)\s+(municipio|comune)\s+di\s+([a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:in|a)\s+(piazza\s+[a-zA-ZÀ-ÿ\s]+)/gi
+  ];
+
+  // Patterns to exclude vague locations
+  const vagueLocationPatterns = [
+    /^italia$/i,
+    /^italy$/i,
+    /^tutta\s+italia$/i,
+    /^in\s+tutta\s+italia$/i,
+    /^territorio\s+nazionale$/i,
+    /^diverse\s+città$/i,
+    /^varie\s+città$/i,
+    /^più\s+città$/i
   ];
 
   let detectedAddress = null;
@@ -497,6 +511,17 @@ async function extractAddressAndCity(text) {
   } else if (detectedCity) {
     console.log(`🔍 Geocoding city: "${detectedCity}"`);
     geocodedCoordinates = await geocodeAddress(null, detectedCity);
+  }
+
+  // Final validation: reject vague locations
+  if (detectedAddress) {
+    const isVague = vagueLocationPatterns.some(pattern => 
+      pattern.test(detectedAddress.trim())
+    );
+    if (isVague) {
+      console.log(`❌ Rejecting vague location: "${detectedAddress}"`);
+      detectedAddress = null;
+    }
   }
 
   return {
@@ -888,6 +913,27 @@ async function scrapeWebsite(source) {
             }
           }
 
+          // Skip generic articles that only mention protests but aren't events
+          const genericArticleKeywords = [
+            'primo piano', 'focus', 'analisi', 'riflessioni', 'comunicato stampa',
+            'dichiarazione', 'posizione', 'editoriale', 'opinione', 'commento',
+            'rassegna stampa', 'cronaca', 'resoconto', 'reportage'
+          ];
+          
+          const isGenericArticle = genericArticleKeywords.some(keyword => 
+            title.toLowerCase().includes(keyword) || description.toLowerCase().includes(keyword)
+          );
+
+          // Check if title/description suggests it's talking ABOUT events rather than being an event
+          const isAboutEvents = /\b(parlano? di|riferiscono|raccontano|descrivono|spiegano)\b/.test(fullText) ||
+            /\b(storia|racconto|resoconto|cronaca|reportage)\b/.test(title.toLowerCase());
+
+          if (isGenericArticle || isAboutEvents) {
+            console.log(`❌ Skipping generic article: "${title.slice(0, 50)}..."`);
+            stats.eventsSkippedByKeywords++;
+            continue;
+          }
+
           // Check excluded content (but be lenient)
           if (containsExcludeKeywords(fullText)) {
             const hasEducationalKeywords = ['workshop', 'formazione', 'incontro', 'assemblea'].some(keyword => fullText.includes(keyword));
@@ -912,6 +958,33 @@ async function scrapeWebsite(source) {
           // Extract location
           const locationInfo = await extractAddressAndCity(dateText);
           await new Promise(resolve => setTimeout(resolve, 200));
+
+          // STRICT VALIDATION: Skip if no clear date or address
+          if (!date || date === 'N/A') {
+            console.log(`❌ Skipping - no clear date: "${title.slice(0, 50)}..."`);
+            stats.eventsSkippedByDate++;
+            continue;
+          }
+
+          if (!locationInfo.address || locationInfo.address === 'N/A') {
+            console.log(`❌ Skipping - no clear address: "${title.slice(0, 50)}..."`);
+            stats.eventsSkippedByKeywords++;
+            continue;
+          }
+
+          // Additional validation: ensure we have either a city or specific address
+          const hasLocation = locationInfo.city && locationInfo.city !== 'N/A';
+          const hasSpecificAddress = locationInfo.address && 
+            locationInfo.address !== 'N/A' && 
+            locationInfo.address.length > 3 &&
+            !locationInfo.address.toLowerCase().includes('italia') &&
+            !locationInfo.address.toLowerCase().includes('italy');
+
+          if (!hasLocation && !hasSpecificAddress) {
+            console.log(`❌ Skipping - unclear location: "${title.slice(0, 50)}..." (address: "${locationInfo.address}", city: "${locationInfo.city}")`);
+            stats.eventsSkippedByKeywords++;
+            continue;
+          }
 
           // Create event object
           const event = {
