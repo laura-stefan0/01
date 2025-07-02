@@ -8,14 +8,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Performance Configuration - Optimized for quick testing
+// Performance Configuration
 const PERFORMANCE_CONFIG = {
-  MAX_PAGES_PER_WEBSITE: 1,           // Only first page for testing
-  DATE_CUTOFF_DAYS: 30,               // Reduced for faster processing
-  REQUEST_TIMEOUT: 5000,              // Faster timeout
-  MAX_CONCURRENT_REQUESTS: 1,         // Sequential for reliability
-  DELAY_BETWEEN_REQUESTS: 500,        // Faster requests
-  DELAY_BETWEEN_SOURCES: 1000         // Faster source switching
+  MAX_PAGES_PER_WEBSITE: 3,           // Reduced for faster processing
+  DATE_CUTOFF_DAYS: 60,               // Extended for more events
+  REQUEST_TIMEOUT: 8000,              // Reduced timeout
+  MAX_CONCURRENT_REQUESTS: 2,         // Reduced concurrency
+  DELAY_BETWEEN_REQUESTS: 1000,       // Faster requests
+  DELAY_BETWEEN_SOURCES: 2000         // Faster source switching
 };
 
 // Keywords for filtering - expanded to include activism-related events
@@ -120,7 +120,6 @@ const CATEGORY_IMAGES = {
 // Note: No fallback city coordinates needed - we use precise geocoding with OpenStreetMap Nominatim API
 
 // Comprehensive Italian news and activism sources
-// Reduced sources for faster testing
 const SCRAPE_SOURCES = [
   // Activism and Social Movement Sites
   {
@@ -129,9 +128,72 @@ const SCRAPE_SOURCES = [
     type: 'activism'
   },
   {
+    url: 'https://www.dinamopress.it/categoria/eventi',
+    name: 'dinamopress.it',
+    type: 'activism'
+  },
+  {
+    url: 'https://adlcobas.it/',
+    name: 'adlcobas.it',
+    type: 'labor'
+  },
+  {
+    url: 'https://www.notav.info/',
+    name: 'notav.info',
+    type: 'movement'
+  },
+  {
+    url: 'https://ilrovescio.info/',
+    name: 'ilrovescio.info',
+    type: 'initiatives'
+  },
+
+  // Environmental Activism
+  {
     url: 'https://fridaysforfutureitalia.it/eventi/',
     name: 'fridaysforfutureitalia.it',
     type: 'environment'
+  },
+  {
+    url: 'https://extinctionrebellion.it/eventi/futuri/',
+    name: 'extinctionrebellion.it',
+    type: 'environment'
+  },
+  {
+    url: 'https://rebellion.global/groups/it-bologna/#events',
+    name: 'rebellion.global/it-bologna',
+    type: 'environment'
+  },
+  {
+    url: 'https://rebellion.global/groups/it-verona/#events',
+    name: 'rebellion.global/it-verona',
+    type: 'environment'
+  },
+
+  // Alternative Movement Sources
+  {
+    url: 'https://rivoluzioneanarchica.it/',
+    name: 'rivoluzioneanarchica.it',
+    type: 'anarchist'
+  },
+
+  // Educational and organizing spaces
+  {
+    url: 'https://www.inventati.org/',
+    name: 'inventati.org',
+    type: 'tech-activism'
+  },
+  {
+    url: 'https://www.ecn.org/',
+    name: 'ecn.org',
+    type: 'counter-info'
+  },
+
+  // Social centers and community spaces
+  {
+    url: 'https://www.autistici.org/',
+    name: 'autistici.org',
+    type: 'social-center'
   }
 ];
 
