@@ -264,14 +264,10 @@ export default function ProtestDetail() {
                 <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                 <div className="flex-1">
                   <p className="font-medium text-gray-900 break-words whitespace-normal">
-                    {(() => {
-                      console.log('Address:', protest.address);
-                      console.log('Location:', protest.location);
-                      if (protest.address && protest.location) {
-                        return `${protest.address}, ${protest.location}`;
-                      }
-                      return protest.address || protest.location || 'Location not specified';
-                    })()}
+                    {protest.address && (protest.location || protest.city)
+                      ? `${protest.address}, ${protest.location || protest.city}`
+                      : protest.address || protest.location || protest.city || 'Location not specified'
+                    }
                   </p>
                 </div>
               </div>

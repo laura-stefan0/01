@@ -100,6 +100,7 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 2, 2025: Fixed location display in event detail pages to show both address and city (e.g., "Via Del Giardino Vecchio, Roma") without cropping, with proper handling of existing database field structure
 - July 2, 2025: Hidden attendees count from event cards and detail pages - removed attendee numbers for cleaner interface while keeping save functionality
 - July 2, 2025: Updated Italian scraper to fetch longer descriptions up to 1000 characters instead of 700 for more detailed event information
 - July 2, 2025: Successfully completed migration from Replit Agent to standard Replit environment - fixed import issues with Turf library and restored all 13 scraper sources
