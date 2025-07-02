@@ -91,7 +91,6 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
               {protest.category.toUpperCase()}
             </Badge>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">{protest.attendees} going</span>
               <Button
                 variant="ghost"
                 size="sm"

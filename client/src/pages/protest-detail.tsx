@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Share2, MapPin, Calendar, Users, ExternalLink, Heart } from "lucide-react";
+import { ArrowLeft, Share2, MapPin, Calendar, ExternalLink, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -232,16 +232,11 @@ export default function ProtestDetail() {
           {/* Title and basic info */}
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{protest.title}</h1>
-            <div className="flex items-center text-gray-600 mb-4">
-              <Users className="h-4 w-4 mr-1" />
-              <span className="text-sm">{protest.attendees} people going</span>
-              {protest.distance && (
-                <>
-                  <span className="mx-2">•</span>
-                  <span className="text-sm">{protest.distance}</span>
-                </>
-              )}
-            </div>
+            {protest.distance && (
+              <div className="flex items-center text-gray-600 mb-4">
+                <span className="text-sm">{protest.distance}</span>
+              </div>
+            )}
           </div>
 
           {/* Description */}
@@ -281,7 +276,6 @@ export default function ProtestDetail() {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
               size="lg"
             >
-              <Users className="h-4 w-4 mr-2" />
               I'm Going
             </Button>
 

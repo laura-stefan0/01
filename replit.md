@@ -100,6 +100,9 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 2, 2025: Hidden attendees count from event cards and detail pages - removed attendee numbers for cleaner interface while keeping save functionality
+- July 2, 2025: Updated Italian scraper to fetch longer descriptions up to 1000 characters instead of 700 for more detailed event information
+- July 2, 2025: Successfully completed migration from Replit Agent to standard Replit environment - fixed import issues with Turf library and restored all 13 scraper sources
 - July 2, 2025: Cleaned up scraper architecture by removing redundant ITALIAN_CITIES constant - system now relies entirely on precise OpenStreetMap Nominatim geocoding API for exact coordinates with minimal Milan fallback only for API failures
 - July 2, 2025: Enhanced ilrovescio.info scraper with WordPress-specific selectors to capture missed protests including "5 luglio, Bancali (Sassari): Corteo contro il carcere" and "Torino, 3 e 4 luglio: appuntamenti di lotta per l'operazione City"
 - July 2, 2025: Enhanced date extraction system to parse actual event dates from article content instead of publication dates - scrapers now analyze text for event scheduling language like "si terrà sabato 15 giugno" and "è previsto per il 20 luglio" with Italian date pattern recognition and validation
