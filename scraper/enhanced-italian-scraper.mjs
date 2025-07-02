@@ -159,6 +159,16 @@ const SCRAPE_SOURCES = [
     name: 'extinctionrebellion.it',
     type: 'environment'
   },
+  {
+    url: 'https://rebellion.global/groups/it-bologna/#events',
+    name: 'rebellion.global/it-bologna',
+    type: 'environment'
+  },
+  {
+    url: 'https://rebellion.global/groups/it-verona/#events',
+    name: 'rebellion.global/it-verona',
+    type: 'environment'
+  },
 
   // Alternative Movement Sources
   {
