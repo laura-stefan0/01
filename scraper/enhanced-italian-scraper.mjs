@@ -324,11 +324,21 @@ function parseItalianDateTime(dateTimeString) {
   return { date, time };
 }
 
+// Cache for geocoding results to reduce API calls
+const geocodeCache = new Map();
+
 /**
- * Geocode address using OpenStreetMap Nominatim API
+ * Geocode address using OpenStreetMap Nominatim API with caching
  */
 async function geocodeAddress(address, city) {
   const fullAddress = address && address !== city ? `${address}, ${city}, Italy` : `${city}, Italy`;
+  
+  // Check cache first
+  if (geocodeCache.has(fullAddress)) {
+    const cached = geocodeCache.get(fullAddress);
+    console.log(`💾 Using cached coordinates for "${fullAddress}": ${cached.lat}, ${cached.lng}`);
+    return cached;
+  }
   
   try {
     console.log(`🌍 Geocoding: "${fullAddress}"`);
@@ -343,7 +353,7 @@ async function geocodeAddress(address, city) {
       headers: {
         'User-Agent': 'Corteo-Scraper/1.0 (contact@corteo.app)'
       },
-      timeout: 5000
+      timeout: 10000
     });
 
     if (response.data && response.data.length > 0) {
@@ -352,6 +362,9 @@ async function geocodeAddress(address, city) {
         lat: parseFloat(result.lat),
         lng: parseFloat(result.lon)
       };
+      
+      // Cache the result
+      geocodeCache.set(fullAddress, coords);
       
       console.log(`✅ Geocoded "${fullAddress}" to coordinates: ${coords.lat}, ${coords.lng}`);
       return coords;
@@ -814,8 +827,8 @@ async function scrapeWebsite(source) {
         
         const locationInfo = await extractAddressAndCity(fullTextForLocation);
         
-        // Small delay to respect geocoding API rate limits
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Longer delay to respect geocoding API rate limits
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
         // Create event object
         const event = {
