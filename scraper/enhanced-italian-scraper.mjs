@@ -327,21 +327,72 @@ function parseItalianDateTime(dateTimeString) {
 /**
  * Address and location extraction
  */
-function extractCityFromText(text) {
+function extractAddressAndCity(text) {
   const normalizedText = normalizeText(text);
+  const originalText = text.toLowerCase();
 
-  for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
-    if (normalizedText.includes(cityName)) {
-      return {
-        city: cityName.charAt(0).toUpperCase() + cityName.slice(1),
-        coordinates: coords
-      };
+  // Italian address patterns - look for specific street types
+  const addressPatterns = [
+    /\b(via\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(corso\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(viale\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(piazza\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(largo\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(vicolo\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(ponte\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /\b(galleria\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /\b(lungotevere\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
+    /\b(circonvallazione\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi
+  ];
+
+  let detectedAddress = null;
+  let detectedCity = null;
+  let coordinates = null;
+
+  // First, try to find a specific address
+  for (const pattern of addressPatterns) {
+    const matches = originalText.match(pattern);
+    if (matches && matches.length > 0) {
+      // Take the first match and clean it up
+      detectedAddress = matches[0]
+        .trim()
+        .replace(/\s+/g, ' ')
+        .split(/[,;]|presso|c\/o/)[0] // Stop at common separators
+        .trim();
+      
+      // Capitalize first letter of each word
+      detectedAddress = detectedAddress
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      console.log(`🏠 Found specific address: "${detectedAddress}"`);
+      break;
     }
   }
 
+  // Find the city regardless of whether we found a specific address
+  for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
+    if (normalizedText.includes(cityName)) {
+      detectedCity = cityName.charAt(0).toUpperCase() + cityName.slice(1);
+      coordinates = coords;
+      break;
+    }
+  }
+
+  // If no city detected, default to Milano
+  if (!detectedCity) {
+    detectedCity = 'Milano';
+    coordinates = ITALIAN_CITIES.milano;
+  }
+
+  // If we found a specific address, use it; otherwise fall back to city
+  const finalAddress = detectedAddress || detectedCity;
+
   return {
-    city: 'Milano',  // Default fallback
-    coordinates: ITALIAN_CITIES.milano
+    address: finalAddress,
+    city: detectedCity,
+    coordinates: coordinates
   };
 }
 
@@ -688,8 +739,15 @@ async function scrapeWebsite(source) {
           continue;
         }
 
-        // Extract location
-        const locationInfo = extractCityFromText(`${title} ${description}`);
+        // Extract location and address
+        let fullTextForLocation = `${title} ${description}`;
+        
+        // If we fetched article content, include it for better address detection
+        if (fullText.length > `${title} ${description}`.length) {
+          fullTextForLocation = fullText;
+        }
+        
+        const locationInfo = extractAddressAndCity(fullTextForLocation);
 
         // Create event object
         const event = {
@@ -697,7 +755,7 @@ async function scrapeWebsite(source) {
           description: description.slice(0, 700),  // Limit description length
           category: categorizeEvent(title, description),
           city: locationInfo.city,
-          address: locationInfo.city,
+          address: locationInfo.address,
           latitude: locationInfo.coordinates.lat,
           longitude: locationInfo.coordinates.lng,
           date: date,
