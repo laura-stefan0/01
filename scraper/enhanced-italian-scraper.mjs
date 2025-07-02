@@ -526,11 +526,12 @@ async function extractAddressAndCity(text) {
     }
   }
 
-  // Find the city regardless of whether we found a specific address
-  for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
+  // Find the city name from text (we'll geocode it precisely later)
+  const italianCities = ['roma', 'milano', 'napoli', 'torino', 'venezia', 'firenze', 'bologna', 'bari', 'palermo', 'genova', 'padova', 'verona', 'sassari', 'bancali'];
+  
+  for (const cityName of italianCities) {
     if (normalizedText.includes(cityName)) {
       detectedCity = cityName.charAt(0).toUpperCase() + cityName.slice(1);
-      coordinates = coords; // Keep as fallback
       break;
     }
   }
@@ -538,7 +539,6 @@ async function extractAddressAndCity(text) {
   // If no city detected, default to Milano
   if (!detectedCity) {
     detectedCity = 'Milano';
-    coordinates = ITALIAN_CITIES.milano;
   }
 
   // Try to get precise coordinates using geocoding API
@@ -706,8 +706,8 @@ async function saveEventToDatabase(event) {
       category: event.category || 'OTHER',
       city: event.city || 'Milano',
       address: event.address || event.city || 'Milano',
-      latitude: String(event.latitude || ITALIAN_CITIES.milano.lat),
-      longitude: String(event.longitude || ITALIAN_CITIES.milano.lng),
+      latitude: String(event.latitude || 45.4642),  // Milan fallback
+      longitude: String(event.longitude || 9.1900), // Milan fallback
       date: event.date || null,
       time: event.time || 'N/A',  // N/A if no time found
       image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.OTHER,

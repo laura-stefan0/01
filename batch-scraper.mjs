@@ -346,7 +346,7 @@ async function scrapeGlobalProject() {
         address: locationInfo.address,
         latitude: locationInfo.coordinates.lat,
         longitude: locationInfo.coordinates.lng,
-        date: eventDate, // Extracted from article content
+        date: eventDate || '2025-12-31', // Use end of year if no date found
         time: 'N/A',
         event_type: determineEventType(title, description),
         event_url: eventUrl,
@@ -411,7 +411,7 @@ async function scrapeFridaysForFuture() {
         address: locationInfo.address,
         latitude: locationInfo.coordinates.lat,
         longitude: locationInfo.coordinates.lng,
-        date: eventDate, // Extracted from article content
+        date: eventDate || '2025-12-31', // Use end of year if no date found
         time: 'N/A',
         event_type: determineEventType(title, description),
         event_url: eventUrl,
