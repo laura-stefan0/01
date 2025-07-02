@@ -3,7 +3,13 @@ import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client
 const SUPABASE_URL = 'https://mfzlajgnahbhwswpqzkj.supabase.co';
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1memxhamduYWhiaHdzd3BxemtqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDg0NTk2NiwiZXhwIjoyMDY2NDIxOTY2fQ.eBsUTTrlCRuQhAQP6HMcOJg2D18LVr3KV7TIE1QwNho';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_SERVICE_KEY) {
+  console.error('❌ SUPABASE_SERVICE_ROLE_KEY environment variable is missing!');
+  console.error('Please add it to your Replit secrets.');
+  process.exit(1);
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
