@@ -913,7 +913,7 @@ async function scrapeWebsite(source) {
 
             const event = {
               title: cleanTitle(title),
-              description: content.slice(0, 700),
+              description: content.slice(0, 1000),
               category: categorizeEvent(title, content),
               city: locationInfo.city || 'N/A',
               address: locationInfo.address || 'N/A',
@@ -1120,7 +1120,7 @@ async function scrapeWebsite(source) {
         // Create event object - use N/A for missing data
         const event = {
           title: cleanTitle(title),
-          description: description.slice(0, 700),  // Limit description length
+          description: description.slice(0, 1000),  // Limit description length
           category: categorizeEvent(title, description),
           city: locationInfo.city || 'N/A',
           address: locationInfo.address || 'N/A',
