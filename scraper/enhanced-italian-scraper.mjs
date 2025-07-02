@@ -876,9 +876,9 @@ async function scrapeWebsite(source) {
             continue;
           }
 
-          // Extract description
-          const description = cleanText($el.find('p, .description, .excerpt, .content').first().text()) ||
-            cleanText($el.text()).slice(0, 500);
+          // Extract description - start with initial content
+          let description = cleanText($el.find('p, .description, .excerpt, .content').first().text()) ||
+            cleanText($el.text()).slice(0, 2000);
 
           // Extract article URL
           let eventUrl = '';
@@ -912,6 +912,12 @@ async function scrapeWebsite(source) {
             if (articleContent) {
               fullText = `${title} ${description} ${articleContent}`.toLowerCase();
               hasActivismKeywords = containsActivismKeywords(fullText);
+
+              // Use full article content for a richer description if it's longer
+              if (articleContent.length > description.length) {
+                description = cleanText(articleContent).slice(0, 2500);
+                console.log(`📝 Enhanced description with full article content (${description.length} chars)`);
+              }
 
               if (hasActivismKeywords) {
                 console.log(`✅ Found activism keywords in full article`);
@@ -1011,7 +1017,7 @@ async function scrapeWebsite(source) {
           // Create event object
           const event = {
             title: cleanTitle(title),
-            description: description.slice(0, 1000),
+            description: description.slice(0, 2500),
             category: categorizeEvent(title, description),
             city: locationInfo.city || 'N/A',
             address: locationInfo.address || 'N/A',
