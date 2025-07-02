@@ -1,4 +1,4 @@
-import { main as runEnhancedScraper } from './enhanced-italian-scraper.js';
+import { main as runEnhancedScraper } from './enhanced-italian-scraper.mjs';
 
 /**
  * TypeScript wrapper for the enhanced Italian protest scraper
