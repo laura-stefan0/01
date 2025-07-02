@@ -1,5 +1,5 @@
 
-import turf from '@turf/turf';
+import * as turf from '@turf/turf';
 import axios from 'axios';
 
 /**
