@@ -18,18 +18,76 @@ const PERFORMANCE_CONFIG = {
   DELAY_BETWEEN_SOURCES: 2000         // Faster source switching
 };
 
-// Keywords for filtering
+// Keywords for filtering - expanded to include activism-related events
 const PROTEST_KEYWORDS = [
+  // Traditional protest activities
   'manifestazione', 'protesta', 'sciopero', 'presidio', 'corteo', 'occupazione',
   'sit-in', 'mobilitazione', 'marcia', 'picchetto', 'concentramento',
   'assemblea pubblica', 'iniziativa politica', 'blocco', 'pride',
   'flash mob', 'raduno', 'comizio', 'assemblea',
-  // NEW: educational and organizing events
-  'workshop', 'seminario', 'formazione', 'incontro', 'presentazione', 'assemblea', 'gruppo'
+  
+  // Educational and organizing events
+  'workshop', 'seminario', 'formazione', 'incontro', 'presentazione', 'gruppo',
+  'corso', 'laboratorio', 'addestramento', 'educazione', 'training',
+  'skill-share', 'condivisione competenze', 'autoformazione',
+  
+  // Activist organizing and meetings
+  'riunione attivisti', 'gruppo di lavoro', 'coordinamento', 'network',
+  'collettivo', 'circolo', 'centro sociale', 'spazio autogestito',
+  'assemblea generale', 'assemblea cittadina', 'forum cittadino',
+  'tavolo tematico', 'gruppo tematico', 'commissione',
+  
+  // Information and awareness events
+  'conferenza', 'dibattito', 'discussione', 'tavola rotonda',
+  'incontro informativo', 'serata informativa', 'presentazione libro',
+  'documentario', 'film politico', 'proiezione',
+  'testimonianza', 'racconto', 'intervista pubblica',
+  
+  // Legal and rights-related events
+  'know your rights', 'conosci i tuoi diritti', 'diritti civili',
+  'info legale', 'sportello legale', 'assistenza legale',
+  'clinica legale', 'consulenza gratuita',
+  
+  // Community organizing
+  'organizzazione comunitaria', 'attivismo locale', 'cittadinanza attiva',
+  'partecipazione civica', 'democrazia partecipativa',
+  'assemblea di quartiere', 'comitato cittadino',
+  
+  // Campaign and advocacy events
+  'campagna', 'petizione', 'raccolta firme', 'advocacy',
+  'sensibilizzazione', 'awareness', 'volantinaggio',
+  'banchetto informativo', 'gazebo', 'stand informativo',
+  
+  // Solidarity and mutual aid
+  'solidarietà', 'mutuo soccorso', 'aiuto reciproco',
+  'supporto comunitario', 'rete di sostegno', 'autoaiuto',
+  'cucina popolare', 'mensa sociale', 'distribuzione cibo',
+  
+  // Alternative economics and sustainability
+  'economia solidale', 'commercio equo', 'consumo critico',
+  'decrescita', 'sostenibilità', 'permacultura',
+  'economia circolare', 'beni comuni', 'commons'
 ];
 
 const EXCLUDE_KEYWORDS = [
-  'concerto', 'spettacolo', 'festival', 'mostra', 'fiera', 'mercatino', 'messa', 'celebrazione', 'evento gastronomico', 'evento sportivo', 'corsa', 'maratona', 'dj set', 'sagra', 'reading', 'meditazione', 'cena', 'aperitivo'
+  // Entertainment and leisure (but preserve political/awareness content)
+  'concerto commerciale', 'spettacolo teatrale', 'festival musicale', 
+  'mostra artistica', 'fiera commerciale', 'mercatino dell\'usato',
+  'evento gastronomico', 'evento sportivo', 'corsa podistica', 'maratona sportiva',
+  'dj set', 'sagra paesana', 'degustazione', 'aperitivo sociale',
+  
+  // Religious events (unless activism-related)
+  'messa domenicale', 'celebrazione religiosa', 'processione religiosa',
+  'benedizione', 'liturgia', 'preghiera comunitaria',
+  
+  // Pure business/commercial events
+  'corso di cucina', 'corso di lingua', 'corso professionale',
+  'formazione aziendale', 'team building', 'networking commerciale',
+  'evento promozionale', 'lancio prodotto',
+  
+  // Health and wellness (unless activism-related)
+  'meditazione personale', 'yoga classe', 'fitness', 'palestra',
+  'benessere personale', 'coaching individuale'
 ];
 
 // Italian month names to numbers
@@ -120,6 +178,25 @@ const SCRAPE_SOURCES = [
     url: 'https://rivoluzioneanarchica.it/',
     name: 'rivoluzioneanarchica.it',
     type: 'anarchist'
+  },
+
+  // Educational and organizing spaces
+  {
+    url: 'https://www.inventati.org/',
+    name: 'inventati.org',
+    type: 'tech-activism'
+  },
+  {
+    url: 'https://www.ecn.org/',
+    name: 'ecn.org',
+    type: 'counter-info'
+  },
+
+  // Social centers and community spaces
+  {
+    url: 'https://www.autistici.org/',
+    name: 'autistici.org',
+    type: 'social-center'
   }
 ];
 
@@ -275,14 +352,14 @@ function categorizeEvent(title, description) {
   const text = normalizeText(`${title} ${description}`);
 
   if (text.includes('pride') || text.includes('lgbtq')) return 'LGBTQ+';
-  if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento')) return 'ENVIRONMENT';
-  if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato')) return 'LABOR';
-  if (text.includes('guerra') || text.includes('pace') || text.includes('war')) return 'PEACE & ANTI-WAR';
-  if (text.includes('diritti') || text.includes('giustizia') || text.includes('bezos')) return 'CIVIL & HUMAN RIGHTS';
-  if (text.includes('donna') || text.includes('donne') || text.includes('femminicidi')) return 'WOMEN\'S RIGHTS';
-  if (text.includes('razzismo') || text.includes('discriminazione')) return 'RACIAL & SOCIAL JUSTICE';
-  if (text.includes('sanita') || text.includes('scuola') || text.includes('health')) return 'HEALTHCARE & EDUCATION';
-  if (text.includes('corruzione') || text.includes('trasparenza')) return 'TRANSPARENCY & ANTI-CORRUPTION';
+  if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento') || text.includes('sostenibilità') || text.includes('permacultura')) return 'ENVIRONMENT';
+  if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato') || text.includes('mutuo soccorso') || text.includes('economia solidale')) return 'LABOR';
+  if (text.includes('guerra') || text.includes('pace') || text.includes('war') || text.includes('antimilitarista')) return 'PEACE & ANTI-WAR';
+  if (text.includes('diritti') || text.includes('giustizia') || text.includes('bezos') || text.includes('know your rights') || text.includes('conosci i tuoi diritti')) return 'CIVIL & HUMAN RIGHTS';
+  if (text.includes('donna') || text.includes('donne') || text.includes('femminicidi') || text.includes('femminismo')) return 'WOMEN\'S RIGHTS';
+  if (text.includes('razzismo') || text.includes('discriminazione') || text.includes('antifascist') || text.includes('antirazzist')) return 'RACIAL & SOCIAL JUSTICE';
+  if (text.includes('sanita') || text.includes('scuola') || text.includes('health') || text.includes('formazione') || text.includes('educazione')) return 'HEALTHCARE & EDUCATION';
+  if (text.includes('corruzione') || text.includes('trasparenza') || text.includes('democrazia partecipativa')) return 'TRANSPARENCY & ANTI-CORRUPTION';
 
   return 'OTHER';
 }
@@ -510,19 +587,25 @@ async function scrapeWebsite(source) {
           eventUrl = link || source.url;
         }
 
-        // Check if this looks like a protest/event
+        // Check if this looks like activism-related content (protests, workshops, organizing events)
         const fullText = `${title} ${description}`.toLowerCase();
         if (!containsProtestKeywords(fullText)) {
-          console.log(`⚠️ Skipping non-protest content: "${title.slice(0, 50)}..."`);
+          console.log(`⚠️ Skipping non-activism content: "${title.slice(0, 50)}..."`);
           stats.eventsSkippedByKeywords++;
           return;
         }
 
-        // Check for excluded content
+        // Check for excluded content (but be more lenient for educational/organizing events)
         if (containsExcludeKeywords(fullText)) {
-          console.log(`⚠️ Skipping excluded content: "${title.slice(0, 50)}..."`);
-          stats.eventsSkippedByKeywords++;
-          return;
+          // Double-check: if it contains activism keywords, don't exclude it
+          const hasActivismKeywords = ['workshop', 'formazione', 'presentazione', 'assemblea', 'incontro', 'dibattito', 'conferenza', 'seminario'].some(keyword => fullText.includes(keyword));
+          if (!hasActivismKeywords) {
+            console.log(`⚠️ Skipping excluded content: "${title.slice(0, 50)}..."`);
+            stats.eventsSkippedByKeywords++;
+            return;
+          } else {
+            console.log(`✅ Keeping educational/organizing event: "${title.slice(0, 50)}..."`);
+          }
         }
 
         // Extract date/time
