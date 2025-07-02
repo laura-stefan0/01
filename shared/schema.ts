@@ -41,6 +41,7 @@ export const protests = pgTable("protests", {
   attendees: integer("attendees").notNull().default(0),
   distance: text("distance").notNull().default(""),
   image_url: text("image_url"),
+  event_type: text("event_type").notNull().default("Protest"), // Protest, Workshop, Assembly, Talk, Other
   country_code: text("country_code").notNull().default("IT"),
   featured: boolean("featured").notNull().default(false),
 });

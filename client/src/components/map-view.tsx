@@ -64,39 +64,17 @@ function MapBoundsUpdater({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
   return null;
 }
 
-// Determine event type based on title and description
-const getEventType = (title: string, description: string = ''): 'protest' | 'workshop' => {
-  const protestKeywords = [
-    'protest', 'march', 'rally', 'demonstration', 'strike', 'parade', 'pride', 
-    'manifestazione', 'corteo', 'sciopero', 'mobilitazione', 'presidio', 
-    'marcia', 'parata', 'assembramento'
-  ];
-  
-  const workshopKeywords = [
-    'workshop', 'meeting', 'presentation', 'conference', 'seminar', 'talk', 
-    'discussion', 'assembly', 'forum', 'summit', 'course', 'training',
-    'incontro', 'riunione', 'presentazione', 'conferenza', 'seminario', 
-    'assemblea', 'dibattito', 'corso', 'formazione'
-  ];
-  
-  const searchText = `${title} ${description}`.toLowerCase();
-  
-  // Check for workshop keywords first as they tend to be more specific
-  const hasWorkshopKeywords = workshopKeywords.some(keyword => searchText.includes(keyword));
-  if (hasWorkshopKeywords) return 'workshop';
-  
-  // Default to protest for most activism events
-  const hasProtestKeywords = protestKeywords.some(keyword => searchText.includes(keyword));
-  if (hasProtestKeywords) return 'protest';
-  
-  // Default to protest for general activism events
-  return 'protest';
-};
-
 // Custom marker icons based on event type
-const createEventIcon = (title: string, description: string = '') => {
-  const eventType = getEventType(title, description);
-  const emoji = eventType === 'protest' ? '✊' : '📣';
+const createEventIcon = (eventType: string) => {
+  const iconMap = {
+    'Protest': '📣',
+    'Workshop': '🛠️', 
+    'Assembly': '🧑‍🤝‍🧑',
+    'Talk': '🎤',
+    'Other': '🧭'
+  };
+  
+  const emoji = iconMap[eventType as keyof typeof iconMap] || '📣';
   
   return L.divIcon({
     html: `<div style="background-color: white; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #E11D48; box-shadow: 0 2px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px;">${emoji}</div>`,
@@ -349,7 +327,7 @@ export function MapView() {
                   <Marker
                     key={protest.id}
                     position={[parseFloat(protest.latitude), parseFloat(protest.longitude)]}
-                    icon={createEventIcon(protest.title, protest.description)}
+                    icon={createEventIcon(protest.event_type || 'Protest')}
                   >
                     <Popup>
                       <div className="p-2 max-w-xs">

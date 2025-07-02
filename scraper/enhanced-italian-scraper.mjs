@@ -23,7 +23,7 @@ const PROTEST_KEYWORDS = [
   'manifestazione', 'protesta', 'sciopero', 'presidio', 'corteo', 'occupazione',
   'sit-in', 'mobilitazione', 'marcia', 'picchetto', 'concentramento',
   'assemblea pubblica', 'iniziativa politica', 'blocco', 'pride',
-  'flash mob', 'raduno', 'comizio', 'assemblea'
+  'flash mob', 'raduno', 'comizio', 'assemblea',
   // NEW: educational and organizing events
   'workshop', 'seminario', 'formazione', 'incontro', 'presentazione', 'assemblea', 'gruppo'
 ];
@@ -277,7 +277,7 @@ function categorizeEvent(title, description) {
   if (text.includes('pride') || text.includes('lgbtq')) return 'lgbtq+';
   if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento')) return 'environment';
   if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato')) return 'labor';
-  if (text.includes('guerra') || text.includes('pace') || text.includes('war') return 'peace & anti-war';
+  if (text.includes('guerra') || text.includes('pace') || text.includes('war')) return 'peace & anti-war';
   if (text.includes('diritti') || text.includes('giustizia') || text.includes('bezos')) return 'civil & human rights';
   if (text.includes('donna') || text.includes('donne') || text.includes('femminicidi')) return 'women\'s rights';
   if (text.includes('razzismo') || text.includes('discriminazione')) return 'racial & social justice';
@@ -285,6 +285,55 @@ function categorizeEvent(title, description) {
   if (text.includes('corruzione') || text.includes('trasparenza')) return 'transparency & anti-corruption';
 
   return 'other';
+}
+
+/**
+ * Event type classification (for map icons)
+ */
+function determineEventType(title, description = '') {
+  const searchText = normalizeText(`${title} ${description}`);
+  
+  // Define keywords for each type
+  const protestKeywords = [
+    'protest', 'march', 'rally', 'demonstration', 'strike', 'parade', 'pride', 'blockade', 'occupation', 'sit-in',
+    'manifestazione', 'corteo', 'sciopero', 'mobilitazione', 'presidio', 'marcia', 'parata', 'assembramento',
+    'blocco', 'occupazione', 'manifestare'
+  ];
+  
+  const workshopKeywords = [
+    'workshop', 'training', 'skill-share', 'legal info', 'activist education', 'course', 'formazione',
+    'corso', 'laboratorio', 'addestramento', 'educazione'
+  ];
+  
+  const assemblyKeywords = [
+    'assembly', 'meeting', 'forum', 'strategy', 'open forum', 'public assembly',
+    'assemblea', 'riunione', 'incontro', 'forum', 'strategia'
+  ];
+  
+  const talkKeywords = [
+    'talk', 'presentation', 'speaker', 'lecture', 'conference', 'summit',
+    'presentazione', 'conferenza', 'relatore', 'intervento', 'discorso'
+  ];
+  
+  // Check for each type in order of specificity
+  if (workshopKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Workshop';
+  }
+  
+  if (assemblyKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Assembly';
+  }
+  
+  if (talkKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Talk';
+  }
+  
+  if (protestKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Protest';
+  }
+  
+  // Default to Other for political events that don't fit above categories
+  return 'Other';
 }
 
 /**
@@ -370,6 +419,7 @@ async function saveEventToDatabase(event) {
       date: event.date || null,
       time: event.time || 'N/A',  // N/A if no time found
       image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.other,
+      event_type: determineEventType(event.title, event.description),
       event_url: event.event_url || null,
       country_code: 'IT',
       featured: false,
