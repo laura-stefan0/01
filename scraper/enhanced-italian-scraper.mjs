@@ -8,6 +8,30 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Date range filter: 30 days in the past to future events
+const getDateRange = () => {
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+  const futureLimit = new Date(now.getTime() + (365 * 24 * 60 * 60 * 1000)); // Allow future events up to 1 year
+
+  return {
+    minDate: thirtyDaysAgo,
+    maxDate: futureLimit,
+    minDateString: thirtyDaysAgo.toISOString().split('T')[0],
+    maxDateString: futureLimit.toISOString().split('T')[0]
+  };
+};
+
+// Check if a date is within our range
+const isDateInRange = (dateString) => {
+  if (!dateString) return false;
+
+  const eventDate = new Date(dateString);
+  const { minDate, maxDate } = getDateRange();
+
+  return eventDate >= minDate && eventDate <= maxDate;
+};
+
 // Performance Configuration - Enhanced for deeper searching
 const PERFORMANCE_CONFIG = {
   MAX_PAGES_PER_WEBSITE: 10,          // Increased from 5 to 10 as requested
