@@ -121,41 +121,43 @@ const CATEGORY_IMAGES = {
 
 // Comprehensive Italian news and activism sources
 const SCRAPE_SOURCES = [
-  // Core Activism and Social Movement Sites
+  // Activism and Social Movement Sites (4 sources)
   {
     url: 'http://globalproject.info/',
-    name: 'Globalproject.info',
+    name: 'globalproject.info',
     type: 'activism'
   },
   {
     url: 'http://dinamopress.it/',
-    name: 'Dinamopress.it',
+    name: 'dinamopress.it',
     type: 'activism'
-  },
-  {
-    url: 'https://adlcobas.it/',
-    name: 'ADL Cobas',
-    type: 'labor'
-  },
-  {
-    url: 'http://notav.info/',
-    name: 'Notav.info',
-    type: 'territorial-activism'
-  },
-  {
-    url: 'https://fridaysforfutureitalia.it/',
-    name: 'Fridays for Future Italia',
-    type: 'environment'
-  },
-  {
-    url: 'https://extinctionrebellion.it/',
-    name: 'Extinction Rebellion Italia',
-    type: 'environment'
   },
   {
     url: 'http://ilrovescio.info/',
-    name: 'Ilrovescio.info',
+    name: 'ilrovescio.info',
     type: 'activism'
+  },
+  {
+    url: 'http://notav.info/',
+    name: 'notav.info',
+    type: 'territorial-activism'
+  },
+
+  // Environmental and Climate Sources (5 sources)
+  {
+    url: 'http://fridaysforfutureitalia.it/',
+    name: 'fridaysforfutureitalia.it',
+    type: 'environment'
+  },
+  {
+    url: 'https://ultima-generazione.com/eventi/',
+    name: 'ultima-generazione.com',
+    type: 'environment'
+  },
+  {
+    url: 'http://greenpeace.org/italy',
+    name: 'greenpeace.org/italy',
+    type: 'environment'
   },
   {
     url: 'https://rebellion.global/groups/it-bologna/#events',
@@ -167,31 +169,29 @@ const SCRAPE_SOURCES = [
     name: 'XR Verona',
     type: 'environment'
   },
-  
-  // Additional Environmental and Climate Sources
+
+  // Labor and Union Sources (2 sources)
   {
-    url: 'https://www.ultimagenerazione.com/',
-    name: 'ultimagenerazione.com',
-    type: 'environment'
+    url: 'http://adlcobas.it/',
+    name: 'adlcobas.it',
+    type: 'labor'
   },
   {
-    url: 'https://www.greenpeace.org/italy/',
-    name: 'greenpeace.org/italy',
-    type: 'environment'
+    url: 'http://usb.it/',
+    name: 'usb.it',
+    type: 'labor'
   },
-  
-  // LGBTQ+ and Rights Sources
+
+  // LGBTQ+ and Rights Sources (2 sources)
   {
-    url: 'https://www.arcigay.it/',
+    url: 'https://www.arcigay.it/en/eventi/',
     name: 'arcigay.it',
     type: 'lgbtq'
   },
-  
-  // Tech Activism
   {
-    url: 'https://www.inventati.org/',
-    name: 'inventati.org',
-    type: 'tech-activism'
+    url: 'http://gaynet.it/',
+    name: 'gaynet.it',
+    type: 'lgbtq'
   }
 ];
 
