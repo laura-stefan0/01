@@ -759,8 +759,7 @@ async function saveEventToDatabase(event) {
       featured: false,
       attendees: 0,
       source_name: event.source_name || 'enhanced-scraper',
-      source_url: event.source_url || '',
-      scraped_at: new Date().toISOString()
+      source_url: event.source_url || ''
     };
 
     const { data, error } = await supabase
