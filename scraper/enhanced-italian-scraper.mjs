@@ -36,7 +36,7 @@ const isDateInRange = (dateString) => {
 const PERFORMANCE_CONFIG = {
   MAX_PAGES_PER_WEBSITE: 10,          // Increased from 5 to 10 as requested
   MAX_ARTICLES_PER_PAGE: 15,          // More articles per page
-  DATE_CUTOFF_DAYS: 120,              // Extended date range for more events
+  DATE_CUTOFF_DAYS: 30,               // Limited to 30 days in the past
   REQUEST_TIMEOUT: 15000,             // Longer timeout for complex pages
   MAX_CONCURRENT_REQUESTS: 1,         // Sequential for reliability
   DELAY_BETWEEN_REQUESTS: 300,        // Faster processing
