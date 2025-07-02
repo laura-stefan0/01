@@ -488,11 +488,49 @@ async function extractAddressAndCity(text) {
     /\b(parco\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi
   ];
 
+  // Venue and event location patterns - NEW!
+  const venuePatterns = [
+    // Festivals and events
+    /(?:al?|presso il?|at)\s+(festival\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+([a-zA-ZÀ-ÿ\s]+\s+festival)/gi,
+    
+    // Cultural centers and venues
+    /(?:al?|presso il?|at)\s+(centro\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(teatro\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(cinema\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(palazzo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(sala\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(auditorium\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    
+    // Social centers and community spaces
+    /(?:al?|presso il?|at)\s+(centro\s+sociale\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(circolo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(casa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    
+    // Educational institutions
+    /(?:al?|presso il?|at)\s+(università\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(campus\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(scuola\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    
+    // Bars, restaurants, and meeting places
+    /(?:al?|presso il?|at)\s+(bar\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(caffè\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(ristorante\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(osteria\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    
+    // Parks and outdoor spaces
+    /(?:al?|presso il?|at)\s+(giardini?\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(villa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    
+    // Generic venue patterns (more permissive)
+    /(?:al?|presso il?|at)\s+([A-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,25}(?:\s+[A-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,25})?)/g
+  ];
+
   let detectedAddress = null;
   let detectedCity = null;
   let coordinates = null;
 
-  // First, try to find a specific address
+  // First, try to find a specific street address
   for (const pattern of addressPatterns) {
     const matches = originalText.match(pattern);
     if (matches && matches.length > 0) {
@@ -514,6 +552,36 @@ async function extractAddressAndCity(text) {
     }
   }
 
+  // If no street address found, look for venue names and event locations
+  if (!detectedAddress) {
+    for (const pattern of venuePatterns) {
+      const matches = [...originalText.matchAll(pattern)];
+      if (matches && matches.length > 0) {
+        // Take the first match and clean it up
+        let venueName = matches[0][1]
+          .trim()
+          .replace(/\s+/g, ' ')
+          .split(/[,;]|presso|c\/o/)[0] // Stop at common separators
+          .trim();
+
+        // Skip if venue name is too short or contains only common words
+        const commonWords = ['il', 'la', 'le', 'lo', 'gli', 'di', 'da', 'del', 'della', 'dei', 'delle'];
+        const words = venueName.toLowerCase().split(' ').filter(word => !commonWords.includes(word));
+        
+        if (words.length >= 1 && venueName.length >= 5) {
+          // Capitalize first letter of each word
+          detectedAddress = venueName
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+          console.log(`🎪 Found venue/event location: "${detectedAddress}"`);
+          break;
+        }
+      }
+    }
+  }
+
   // Find the city name from text (we'll geocode it precisely later)
   const italianCities = ['roma', 'milano', 'napoli', 'torino', 'venezia', 'firenze', 'bologna', 'bari', 'palermo', 'genova', 'padova', 'verona', 'sassari', 'bancali'];
 
@@ -524,20 +592,42 @@ async function extractAddressAndCity(text) {
     }
   }
 
-  // If no city detected, try geocoding anyway, but allow N/A
+  // Try geocoding with different strategies
   let coordinates = null;
   
-  if (detectedCity) {
-    // Try to get precise coordinates using geocoding API
-    const geocodedCoords = await geocodeAddress(detectedAddress, detectedCity);
-    if (geocodedCoords) {
-      coordinates = geocodedCoords;
-      console.log(`🎯 Using geocoded coordinates for "${detectedAddress || detectedCity}"`);
-    } else {
-      console.log(`📍 No geocoding results for "${detectedCity}"`);
+  if (detectedAddress && detectedCity) {
+    // Strategy 1: Try full address + city
+    console.log(`🔍 Geocoding strategy 1: "${detectedAddress}, ${detectedCity}"`);
+    coordinates = await geocodeAddress(detectedAddress, detectedCity);
+    
+    if (!coordinates) {
+      // Strategy 2: Try just the venue/address name with "Italy"
+      console.log(`🔍 Geocoding strategy 2: "${detectedAddress}, Italy"`);
+      coordinates = await geocodeAddress(detectedAddress, 'Italy');
     }
+  } else if (detectedAddress && !detectedCity) {
+    // Strategy 3: Address without specific city - search broadly in Italy
+    console.log(`🔍 Geocoding strategy 3: "${detectedAddress}, Italy"`);
+    coordinates = await geocodeAddress(detectedAddress, 'Italy');
+    
+    // If successful, try to extract city from the geocoding result
+    if (coordinates) {
+      // The geocoding function might help us identify the city
+      console.log(`🎯 Successfully geocoded venue without city context`);
+    }
+  } else if (detectedCity) {
+    // Strategy 4: City only
+    console.log(`🔍 Geocoding strategy 4: City only - "${detectedCity}"`);
+    coordinates = await geocodeAddress(null, detectedCity);
+  }
+
+  // Log results
+  if (coordinates) {
+    console.log(`🎯 Using geocoded coordinates for "${detectedAddress || detectedCity}"`);
+  } else if (detectedAddress || detectedCity) {
+    console.log(`📍 No geocoding results for "${detectedAddress || detectedCity}"`);
   } else {
-    console.log(`⚠️ No city detected in text`);
+    console.log(`⚠️ No address or city detected in text`);
   }
 
   // Return results, allowing N/A values
