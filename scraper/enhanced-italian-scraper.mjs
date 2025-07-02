@@ -325,9 +325,50 @@ function parseItalianDateTime(dateTimeString) {
 }
 
 /**
- * Address and location extraction
+ * Geocode address using OpenStreetMap Nominatim API
  */
-function extractAddressAndCity(text) {
+async function geocodeAddress(address, city) {
+  const fullAddress = address && address !== city ? `${address}, ${city}, Italy` : `${city}, Italy`;
+  
+  try {
+    console.log(`🌍 Geocoding: "${fullAddress}"`);
+    
+    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+      params: {
+        q: fullAddress,
+        format: 'json',
+        limit: 1,
+        addressdetails: 1
+      },
+      headers: {
+        'User-Agent': 'Corteo-Scraper/1.0 (contact@corteo.app)'
+      },
+      timeout: 5000
+    });
+
+    if (response.data && response.data.length > 0) {
+      const result = response.data[0];
+      const coords = {
+        lat: parseFloat(result.lat),
+        lng: parseFloat(result.lon)
+      };
+      
+      console.log(`✅ Geocoded "${fullAddress}" to coordinates: ${coords.lat}, ${coords.lng}`);
+      return coords;
+    } else {
+      console.log(`⚠️ No geocoding results for: "${fullAddress}"`);
+      return null;
+    }
+  } catch (error) {
+    console.log(`❌ Geocoding failed for "${fullAddress}":`, error.message);
+    return null;
+  }
+}
+
+/**
+ * Address and location extraction with enhanced geocoding
+ */
+async function extractAddressAndCity(text) {
   const normalizedText = normalizeText(text);
   const originalText = text.toLowerCase();
 
@@ -355,7 +396,7 @@ function extractAddressAndCity(text) {
     /\b(borgo\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
     /\b(cammino\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
     /\b(spianata\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(passeggiata\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi),
+    /\b(passeggiata\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
     /\b(spalto\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
     /\b(parco\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi
   ];
@@ -390,7 +431,7 @@ function extractAddressAndCity(text) {
   for (const [cityName, coords] of Object.entries(ITALIAN_CITIES)) {
     if (normalizedText.includes(cityName)) {
       detectedCity = cityName.charAt(0).toUpperCase() + cityName.slice(1);
-      coordinates = coords;
+      coordinates = coords; // Keep as fallback
       break;
     }
   }
@@ -399,6 +440,15 @@ function extractAddressAndCity(text) {
   if (!detectedCity) {
     detectedCity = 'Milano';
     coordinates = ITALIAN_CITIES.milano;
+  }
+
+  // Try to get precise coordinates using geocoding API
+  const geocodedCoords = await geocodeAddress(detectedAddress, detectedCity);
+  if (geocodedCoords) {
+    coordinates = geocodedCoords;
+    console.log(`🎯 Using geocoded coordinates for "${detectedAddress || detectedCity}"`);
+  } else {
+    console.log(`📍 Using fallback city coordinates for "${detectedCity}"`);
   }
 
   // If we found a specific address, use it; otherwise fall back to city
@@ -762,7 +812,10 @@ async function scrapeWebsite(source) {
           fullTextForLocation = fullText;
         }
         
-        const locationInfo = extractAddressAndCity(fullTextForLocation);
+        const locationInfo = await extractAddressAndCity(fullTextForLocation);
+        
+        // Small delay to respect geocoding API rate limits
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Create event object
         const event = {
