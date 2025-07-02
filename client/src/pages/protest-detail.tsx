@@ -264,9 +264,9 @@ export default function ProtestDetail() {
                 <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                 <div className="flex-1">
                   <p className="font-medium text-gray-900">
-                    {protest.address && protest.address !== 'N/A' && protest.location && protest.location !== 'N/A' 
-                      ? `${protest.address}, ${protest.location}`
-                      : protest.location}
+                    {protest.address && protest.address !== 'N/A' && protest.address !== '' 
+                      ? `${protest.address}, ${protest.location || ''}`
+                      : protest.location || 'Location not specified'}
                   </p>
                 </div>
               </div>
