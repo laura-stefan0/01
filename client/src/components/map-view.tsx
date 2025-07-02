@@ -258,6 +258,45 @@ export function MapView() {
       return true;
     });
 
+  // Add offset logic for markers in same location
+  const getOffsetPosition = (protests: Protest[], currentIndex: number): [number, number] => {
+    const currentProtest = protests[currentIndex];
+    const lat = parseFloat(currentProtest.latitude!);
+    const lng = parseFloat(currentProtest.longitude!);
+    
+    // Find other protests at the same location (within 0.001 degrees ~ 100m)
+    const sameLocationProtests = protests
+      .map((protest, index) => ({ protest, index }))
+      .filter(({ protest, index }) => {
+        if (index >= currentIndex) return false; // Only count previous protests
+        if (!protest.latitude || !protest.longitude) return false;
+        
+        const protestLat = parseFloat(protest.latitude);
+        const protestLng = parseFloat(protest.longitude);
+        
+        const latDiff = Math.abs(lat - protestLat);
+        const lngDiff = Math.abs(lng - protestLng);
+        
+        return latDiff < 0.001 && lngDiff < 0.001;
+      });
+    
+    // Calculate offset based on number of protests already placed at this location
+    const offsetCount = sameLocationProtests.length;
+    
+    if (offsetCount === 0) {
+      return [lat, lng]; // No offset needed
+    }
+    
+    // Create circular offset pattern
+    const angle = (offsetCount * 60) * (Math.PI / 180); // 60 degrees apart
+    const offsetDistance = 0.002; // ~200m offset
+    
+    const offsetLat = lat + (offsetDistance * Math.cos(angle));
+    const offsetLng = lng + (offsetDistance * Math.sin(angle));
+    
+    return [offsetLat, offsetLng];
+  };
+
   // Calculate map center - prioritize user location (from Home page cache), then search location, then Milan default
   let mapCenter: [number, number];
   let mapZoom: number;
@@ -323,12 +362,14 @@ export function MapView() {
               />
               {filteredProtests
                 .filter(protest => protest.latitude && protest.longitude)
-                .map((protest) => (
-                  <Marker
-                    key={protest.id}
-                    position={[parseFloat(protest.latitude), parseFloat(protest.longitude)]}
-                    icon={createEventIcon(protest.event_type || 'Protest')}
-                  >
+                .map((protest, index) => {
+                  const offsetPosition = getOffsetPosition(filteredProtests.filter(p => p.latitude && p.longitude), index);
+                  return (
+                    <Marker
+                      key={protest.id}
+                      position={offsetPosition}
+                      icon={createEventIcon(protest.event_type || 'Protest')}
+                    >
                     <Popup>
                       <div className="p-2 max-w-xs">
                         <h3 className="font-semibold text-sm mb-1">{protest.title}</h3>
@@ -349,8 +390,9 @@ export function MapView() {
                         </Button>
                       </div>
                     </Popup>
-                  </Marker>
-                ))}
+                    </Marker>
+                  );
+                })}
 
               {/* User Location Marker */}
               {userLocation && (
