@@ -8,90 +8,77 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Performance Configuration
+// Performance Configuration - Enhanced for deeper searching
 const PERFORMANCE_CONFIG = {
-  MAX_PAGES_PER_WEBSITE: 5,           // More pages for better results
-  DATE_CUTOFF_DAYS: 90,               // Even more extended for more events
-  REQUEST_TIMEOUT: 10000,             // Reduced timeout
+  MAX_PAGES_PER_WEBSITE: 10,          // Increased from 5 to 10 as requested
+  MAX_ARTICLES_PER_PAGE: 15,          // More articles per page
+  DATE_CUTOFF_DAYS: 120,              // Extended date range for more events
+  REQUEST_TIMEOUT: 15000,             // Longer timeout for complex pages
   MAX_CONCURRENT_REQUESTS: 1,         // Sequential for reliability
-  DELAY_BETWEEN_REQUESTS: 500,        // Faster processing
-  DELAY_BETWEEN_SOURCES: 1000         // Faster source switching
+  DELAY_BETWEEN_REQUESTS: 300,        // Faster processing
+  DELAY_BETWEEN_SOURCES: 800,         // Balanced source switching
+  DELAY_BETWEEN_PAGES: 500            // Page switching delay
 };
 
-// Keywords for filtering - expanded to include activism-related events
-const PROTEST_KEYWORDS = [
+// Expanded keywords for broader event detection - including meetups, workshops, talks
+const ACTIVISM_KEYWORDS = [
   // Traditional protest activities
   'manifestazione', 'protesta', 'sciopero', 'presidio', 'corteo', 'occupazione',
   'sit-in', 'mobilitazione', 'marcia', 'picchetto', 'concentramento',
   'assemblea pubblica', 'iniziativa politica', 'blocco', 'pride',
   'flash mob', 'raduno', 'comizio', 'assemblea',
 
-  // Prison and justice related (for the missing articles)
-  'carcere', 'processo', 'operazione', 'lotta', 'appuntamenti di lotta',
-  'bancali', 'sassari', 'torino', 'repressione', 'solidarietà',
+  // Meetings and gatherings
+  'incontro', 'riunione', 'assemblea', 'meeting', 'tavolo', 'forum',
+  'dibattito', 'discussione', 'confronto', 'dialogo', 'colloquio',
+  'gruppo di lavoro', 'coordinamento', 'network', 'collettivo',
 
-  // Educational and organizing events
-  'workshop', 'seminario', 'formazione', 'incontro', 'presentazione', 'gruppo',
-  'corso', 'laboratorio', 'addestramento', 'educazione', 'training',
-  'skill-share', 'condivisione competenze', 'autoformazione',
+  // Educational events
+  'workshop', 'seminario', 'formazione', 'corso', 'laboratorio',
+  'addestramento', 'educazione', 'training', 'skill-share',
+  'condivisione competenze', 'autoformazione', 'lezione',
 
-  // Activist organizing and meetings
-  'riunione attivisti', 'gruppo di lavoro', 'coordinamento', 'network',
-  'collettivo', 'circolo', 'centro sociale', 'spazio autogestito',
-  'assemblea generale', 'assemblea cittadina', 'forum cittadino',
-  'tavolo tematico', 'gruppo tematico', 'commissione',
+  // Talks and presentations
+  'conferenza', 'presentazione', 'relatore', 'intervento', 'discorso',
+  'talk', 'speaker', 'lecture', 'testimonianza', 'racconto',
 
-  // Information and awareness events
-  'conferenza', 'dibattito', 'discussione', 'tavola rotonda',
-  'incontro informativo', 'serata informativa', 'presentazione libro',
-  'documentario', 'film politico', 'proiezione',
-  'testimonianza', 'racconto', 'intervista pubblica',
+  // Activism organizing
+  'attivismo', 'attivisti', 'movimento', 'campagna', 'advocacy',
+  'sensibilizzazione', 'awareness', 'volontariato', 'solidarietà',
 
-  // Legal and rights-related events
-  'know your rights', 'conosci i tuoi diritti', 'diritti civili',
-  'info legale', 'sportello legale', 'assistenza legale',
-  'clinica legale', 'consulenza gratuita',
+  // Justice and rights
+  'diritti', 'giustizia', 'lotta', 'resistenza', 'liberazione',
+  'uguaglianza', 'discriminazione', 'oppressione', 'emancipazione',
 
-  // Community organizing
-  'organizzazione comunitaria', 'attivismo locale', 'cittadinanza attiva',
-  'partecipazione civica', 'democrazia partecipativa',
-  'assemblea di quartiere', 'comitato cittadino',
+  // Community and social
+  'comunità', 'sociale', 'civico', 'cittadino', 'partecipazione',
+  'democrazia', 'inclusione', 'diversità', 'integrazione',
 
-  // Campaign and advocacy events
-  'campagna', 'petizione', 'raccolta firme', 'advocacy',
-  'sensibilizzazione', 'awareness', 'volantinaggio',
-  'banchetto informativo', 'gazebo', 'stand informativo',
+  // Environment and climate
+  'ambiente', 'clima', 'sostenibilità', 'ecologia', 'verde',
+  'rinnovabili', 'inquinamento', 'biodiversità',
 
-  // Solidarity and mutual aid
-  'solidarietà', 'mutuo soccorso', 'aiuto reciproco',
-  'supporto comunitario', 'rete di sostegno', 'autoaiuto',
-  'cucina popolare', 'mensa sociale', 'distribuzione cibo',
+  // Labor and workers
+  'lavoro', 'lavoratori', 'sindacato', 'operai', 'precari',
+  'diritti del lavoro', 'sicurezza sul lavoro',
 
-  // Alternative economics and sustainability
-  'economia solidale', 'commercio equo', 'consumo critico',
-  'decrescita', 'sostenibilità', 'permacultura',
-  'economia circolare', 'beni comuni', 'commons'
+  // LGBTQ+ and gender
+  'lgbtq', 'gay', 'lesbian', 'trans', 'queer', 'gender',
+  'identità', 'orientamento', 'discriminazione di genere',
+
+  // Anti-war and peace
+  'pace', 'guerra', 'antimilitarista', 'nonviolenza', 'disarmo',
+
+  // Generic activism terms
+  'cambiamento', 'trasformazione', 'riforma', 'rivoluzione',
+  'protesta pacifica', 'azione diretta', 'disobbedienza civile'
 ];
 
+// Reduced exclusion keywords to be less restrictive
 const EXCLUDE_KEYWORDS = [
-  // Entertainment and leisure (but preserve political/awareness content)
-  'concerto commerciale', 'spettacolo teatrale', 'festival musicale', 
-  'mostra artistica', 'fiera commerciale', 'mercatino dell\'usato',
-  'evento gastronomico', 'evento sportivo', 'corsa podistica', 'maratona sportiva',
-  'dj set', 'sagra paesana', 'degustazione', 'aperitivo sociale',
-
-  // Religious events (unless activism-related)
-  'messa domenicale', 'celebrazione religiosa', 'processione religiosa',
-  'benedizione', 'liturgia', 'preghiera comunitaria',
-
-  // Pure business/commercial events
-  'corso di cucina', 'corso di lingua', 'corso professionale',
-  'formazione aziendale', 'team building', 'networking commerciale',
-  'evento promozionale', 'lancio prodotto',
-
-  // Health and wellness (unless activism-related)
-  'meditazione personale', 'yoga classe', 'fitness', 'palestra',
-  'benessere personale', 'coaching individuale'
+  'partita calcio', 'match sportivo', 'evento gastronomico',
+  'sagra paesana', 'degustazione vini', 'aperitivo commerciale',
+  'concerto pop', 'dj commerciale', 'discoteca', 'nightclub'
 ];
 
 // Italian month names to numbers
@@ -117,90 +104,101 @@ const CATEGORY_IMAGES = {
   'OTHER': 'https://images.unsplash.com/photo-1573152958734-1922c188fba3?w=500&h=300&fit=crop&auto=format'
 };
 
-// Note: No fallback city coordinates needed - we use precise geocoding with OpenStreetMap Nominatim API
-
-// Comprehensive Italian news and activism sources
+// All 13 specified Italian activism sources with multiple pages each
 const SCRAPE_SOURCES = [
-  // Activism and Social Movement Sites (4 sources)
+  // 4 Activism and Social Movement Sites
   {
     url: 'http://globalproject.info/',
     name: 'globalproject.info',
-    type: 'activism'
+    type: 'activism',
+    pages: ['/', '/it/', '/in_movimento/', '/categoria/appuntamenti/']
   },
   {
     url: 'http://dinamopress.it/',
     name: 'dinamopress.it',
-    type: 'activism'
+    type: 'activism',
+    pages: ['/', '/categoria/movimenti/', '/categoria/societa/', '/eventi/']
   },
   {
     url: 'http://ilrovescio.info/',
     name: 'ilrovescio.info',
-    type: 'activism'
+    type: 'activism',
+    pages: ['/', '/category/appuntamenti/', '/category/eventi/']
   },
   {
     url: 'http://notav.info/',
     name: 'notav.info',
-    type: 'territorial-activism'
+    type: 'territorial-activism',
+    pages: ['/', '/appuntamenti/', '/iniziative/']
   },
 
-  // Environmental and Climate Sources (5 sources)
+  // 5 Environmental and Climate Sources
   {
     url: 'http://fridaysforfutureitalia.it/',
     name: 'fridaysforfutureitalia.it',
-    type: 'environment'
+    type: 'environment',
+    pages: ['/', '/eventi/', '/appuntamenti/']
   },
   {
-    url: 'https://ultima-generazione.com/eventi/',
+    url: 'https://ultima-generazione.com/',
     name: 'ultima-generazione.com',
-    type: 'environment'
+    type: 'environment',
+    pages: ['/eventi/', '/', '/appuntamenti/']
   },
   {
-    url: 'http://greenpeace.org/italy',
+    url: 'http://greenpeace.org/italy/',
     name: 'greenpeace.org/italy',
-    type: 'environment'
+    type: 'environment',
+    pages: ['/', '/eventi/', '/campagne/']
   },
   {
-    url: 'https://rebellion.global/groups/it-bologna/#events',
+    url: 'https://rebellion.global/groups/it-bologna/',
     name: 'XR Bologna',
-    type: 'environment'
+    type: 'environment',
+    pages: ['/#events', '/', '/events/']
   },
   {
-    url: 'https://rebellion.global/groups/it-verona/#events',
+    url: 'https://rebellion.global/groups/it-verona/',
     name: 'XR Verona',
-    type: 'environment'
+    type: 'environment',
+    pages: ['/#events', '/', '/events/']
   },
 
-  // Labor and Union Sources (2 sources)
+  // 2 Labor and Union Sources
   {
     url: 'http://adlcobas.it/',
     name: 'adlcobas.it',
-    type: 'labor'
+    type: 'labor',
+    pages: ['/', '/appuntamenti/', '/eventi/', '/iniziative/']
   },
   {
     url: 'http://usb.it/',
     name: 'usb.it',
-    type: 'labor'
+    type: 'labor',
+    pages: ['/', '/eventi/', '/mobilitazioni/', '/appuntamenti/']
   },
 
-  // LGBTQ+ and Rights Sources (2 sources)
+  // 2 LGBTQ+ and Rights Sources
   {
-    url: 'https://www.arcigay.it/en/eventi/',
+    url: 'https://www.arcigay.it/',
     name: 'arcigay.it',
-    type: 'lgbtq'
+    type: 'lgbtq',
+    pages: ['/en/eventi/', '/eventi/', '/', '/iniziative/']
   },
   {
     url: 'http://gaynet.it/',
     name: 'gaynet.it',
-    type: 'lgbtq'
+    type: 'lgbtq',
+    pages: ['/', '/eventi/', '/appuntamenti/']
   }
 ];
+
+// Import enhanced geocoding function
+import { geocodeAddress, FALLBACK_COORDINATES, clearGeocodeCache } from './enhanced-geocoding.mjs';
 
 /**
  * Utility Functions
  */
-// Import enhanced geocoding function
-import { geocodeAddress, FALLBACK_COORDINATES, clearGeocodeCache } from './enhanced-geocoding.mjs';
-
 function normalizeText(text) {
   if (!text) return '';
   return text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -212,26 +210,18 @@ function cleanText(text) {
 
 function cleanTitle(title) {
   if (!title) return '';
-
   let cleanedTitle = title.trim();
-
-  // Only remove quotes at the beginning and end
   cleanedTitle = cleanedTitle.replace(/^["""]/, '').replace(/["""]$/, '');
-
-  // Clean up extra spaces
   cleanedTitle = cleanedTitle.replace(/\s+/g, ' ').trim();
-
-  // Capitalize first letter if needed
   if (cleanedTitle.length > 0) {
     cleanedTitle = cleanedTitle.charAt(0).toUpperCase() + cleanedTitle.slice(1);
   }
-
   return cleanedTitle;
 }
 
-function containsProtestKeywords(text) {
+function containsActivismKeywords(text) {
   const normalizedText = normalizeText(text);
-  return PROTEST_KEYWORDS.some(keyword => normalizedText.includes(keyword));
+  return ACTIVISM_KEYWORDS.some(keyword => normalizedText.includes(keyword));
 }
 
 function containsExcludeKeywords(text) {
@@ -247,7 +237,6 @@ function getDateCutoff() {
 
 function isDateWithinCutoff(eventDate) {
   if (!eventDate) return true;
-
   try {
     const eventDateObj = new Date(eventDate);
     const cutoffDate = getDateCutoff();
@@ -258,7 +247,7 @@ function isDateWithinCutoff(eventDate) {
 }
 
 /**
- * Enhanced date parsing - extracts actual event dates from article content, not publication dates
+ * Enhanced date parsing
  */
 function parseItalianDateTime(fullArticleText) {
   if (!fullArticleText || fullArticleText.trim().length === 0) {
@@ -269,45 +258,31 @@ function parseItalianDateTime(fullArticleText) {
   let date = null;
   let time = null;
 
-  console.log(`🔍 Analyzing article text for event dates (${text.length} chars)...`);
+  console.log(`🔍 Analyzing text for dates (${text.length} chars)...`);
 
-  // Event-specific date patterns that look for actual event scheduling language
+  // Enhanced date patterns
   const eventDatePatterns = [
-    // "sabato 15 giugno" - day name + date + month
     /(?:lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/gi,
-
-    // "il 15 giugno" - specific date references
     /(?:il|dal|fino al|entro il|per il)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/gi,
-
-    // "15 giugno 2025" - full date format
     /(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+(\d{4})/gi,
-
-    // "15/06/2025" - numerical format
     /(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/g
   ];
 
-  // Event time patterns - improved for better precision
+  // Enhanced time patterns
   const eventTimePatterns = [
-    // "alle ore 18:30", "dalle 19.00", "alle 14:30"
     /(?:alle?\s+ore?\s+|dalle?\s+ore?\s+|alle?\s+|dalle?\s+|a partire dalle?\s+|inizio\s+alle?\s+|inizio\s+ore?\s+)(\d{1,2})[:\.](\d{2})/gi,
-    // "ore 15:30", "h 16:30", "ore 15.30"
     /(?:ore?\s+|h\s+)(\d{1,2})[:\.](\d{2})/gi,
-    // Standalone time patterns like "14:30" or "14.30"
     /(?:^|\s|,|\(|\[)(\d{1,2})[:\.](\d{2})(?=\s|$|,|\)|\]|\.)/g,
-    // Time with context words "orario 14:30", "inizio 15:00"
-    /(?:orario\s+|inizio\s+|start\s+|dalle\s+)(\d{1,2})[:\.](\d{2})/gi,
-    // "alle 14" followed by minutes elsewhere
-    /alle?\s+(\d{1,2})(?:\s+e\s+(\d{2})|[:\.](\d{2}))?/gi
+    /(?:orario\s+|inizio\s+|start\s+|dalle\s+)(\d{1,2})[:\.](\d{2})/gi
   ];
 
-  // Keywords that indicate event scheduling (not publication)
+  // Event scheduling keywords
   const eventSchedulingKeywords = [
     'si terrà', 'avrà luogo', 'è previsto', 'in programma', 'evento', 'manifestazione', 
     'protesta', 'corteo', 'presidio', 'assemblea', 'incontro', 'iniziativa', 'mobilitazione',
-    'appuntamento', 'dalle ore', 'alle ore', 'quando', 'data'
+    'appuntamento', 'dalle ore', 'alle ore', 'quando', 'data', 'workshop', 'seminario'
   ];
 
-  // Split into sentences and prioritize those with event scheduling language
   const sentences = text.split(/[.!?]\s+/);
   const eventSentences = [];
   const otherSentences = [];
@@ -316,7 +291,6 @@ function parseItalianDateTime(fullArticleText) {
     const hasSchedulingKeyword = eventSchedulingKeywords.some(keyword => 
       sentence.includes(keyword)
     );
-
     if (hasSchedulingKeyword) {
       eventSentences.push(sentence);
     } else {
@@ -324,25 +298,20 @@ function parseItalianDateTime(fullArticleText) {
     }
   }
 
-  // First, look for dates in sentences with event scheduling keywords
   const prioritizedSentences = [...eventSentences, ...otherSentences];
 
+  // Extract date
   for (const sentence of prioritizedSentences) {
-    // Try each date pattern
     for (const pattern of eventDatePatterns) {
       const matches = [...sentence.matchAll(pattern)];
-
       for (const match of matches) {
         let foundDate = null;
-
         if (match[1] && match[2] && ITALIAN_MONTHS[match[2]]) {
-          // Day + month found
           const day = match[1].padStart(2, '0');
           const month = ITALIAN_MONTHS[match[2]];
           const year = match[3] || new Date().getFullYear().toString();
           foundDate = `${year}-${month}-${day}`;
         } else if (match[1] && match[2] && !isNaN(match[2])) {
-          // Numerical date format DD/MM/YYYY
           const day = match[1].padStart(2, '0');
           const month = match[2].padStart(2, '0');
           const year = match[3] || new Date().getFullYear().toString();
@@ -350,17 +319,16 @@ function parseItalianDateTime(fullArticleText) {
         }
 
         if (foundDate) {
-          // Validate the date is reasonable (not too far in past, not too far in future)
           const eventDate = new Date(foundDate);
           const today = new Date();
-          const threeMonthsAgo = new Date();
-          threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+          const fourMonthsAgo = new Date();
+          fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
           const oneYearFromNow = new Date();
           oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
 
-          if (eventDate >= threeMonthsAgo && eventDate <= oneYearFromNow) {
+          if (eventDate >= fourMonthsAgo && eventDate <= oneYearFromNow) {
             date = foundDate;
-            console.log(`📅 Found event date: "${sentence.slice(0, 80)}..." → ${date}`);
+            console.log(`📅 Found event date: ${date}`);
             break;
           }
         }
@@ -370,27 +338,21 @@ function parseItalianDateTime(fullArticleText) {
     if (date) break;
   }
 
-  // Look for times in the same prioritized way - improved precision
+  // Extract time
   for (const sentence of prioritizedSentences) {
     for (const pattern of eventTimePatterns) {
       const matches = [...sentence.matchAll(pattern)];
-
       for (const match of matches) {
         const hours = parseInt(match[1]);
-        if (hours >= 0 && hours <= 23) { // Valid hours (expanded range)
-          // Handle different minute capture groups
+        if (hours >= 0 && hours <= 23) {
           let minutes = '00';
           if (match[2] && !isNaN(parseInt(match[2]))) {
             minutes = match[2].padStart(2, '0');
-          } else if (match[3] && !isNaN(parseInt(match[3]))) {
-            minutes = match[3].padStart(2, '0');
           }
-
-          // Validate minutes
           const minutesNum = parseInt(minutes);
           if (minutesNum >= 0 && minutesNum <= 59) {
             time = `${hours.toString().padStart(2, '0')}:${minutes}`;
-            console.log(`🕐 Found event time: "${sentence.slice(0, 80)}..." → ${time}`);
+            console.log(`🕐 Found event time: ${time}`);
             break;
           }
         }
@@ -400,64 +362,18 @@ function parseItalianDateTime(fullArticleText) {
     if (time) break;
   }
 
-  // If no specific date found, try basic extraction as fallback
-  if (!date) {
-    const basicDateMatch = text.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-    if (basicDateMatch) {
-      const day = basicDateMatch[1].padStart(2, '0');
-      const month = basicDateMatch[2].padStart(2, '0');
-      const year = basicDateMatch[3];
-      const testDate = `${year}-${month}-${day}`;
-
-      const eventDate = new Date(testDate);
-      const today = new Date();
-      const twoMonthsAgo = new Date();
-      twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-
-      if (eventDate >= twoMonthsAgo) {
-        date = testDate;
-        console.log(`📅 Found fallback date: ${date}`);
-      }
-    }
-  }
-
-  if (!time) {
-    // More comprehensive fallback time extraction
-    const fallbackPatterns = [
-      // Match exact time formats like "14:30" or "14.30"
-      /(?:^|\s|,|\()(\d{1,2})[:\.](\d{2})(?=\s|$|,|\)|\.|\s+[a-zA-Z])/g,
-      // Match times with Italian context
-      /(?:ore?\s+|alle?\s+|h\s+)(\d{1,2})[:\.](\d{2})/g
-    ];
-
-    for (const pattern of fallbackPatterns) {
-      const matches = [...text.matchAll(pattern)];
-      for (const match of matches) {
-        const hours = parseInt(match[1]);
-        const minutes = parseInt(match[2]);
-
-        if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
-          time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-          console.log(`🕐 Found fallback time: ${time}`);
-          break;
-        }
-      }
-      if (time) break;
-    }
-  }
-
   console.log(`📊 Date extraction result: date=${date}, time=${time}`);
   return { date, time };
 }
 
 /**
- * Address and location extraction with enhanced geocoding
+ * Enhanced address and location extraction
  */
 async function extractAddressAndCity(text) {
   const normalizedText = normalizeText(text);
   const originalText = text.toLowerCase();
 
-  // Italian address patterns - look for specific street types
+  // Comprehensive Italian address patterns
   const addressPatterns = [
     /\b(via\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
     /\b(corso\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
@@ -467,121 +383,76 @@ async function extractAddressAndCity(text) {
     /\b(vicolo\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
     /\b(ponte\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /\b(galleria\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /\b(lungotevere\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(circonvallazione\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(strada\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(piazzale\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(piazzetta\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(traversa\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(contrada\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(salita\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(discesa\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(rione\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(ronco\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(borgo\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(cammino\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(spianata\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(passeggiata\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(spalto\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi,
-    /\b(parco\s+[a-zA-ZÀ-ÿ\s]+(?:\d+)?)/gi
+    /\b(palazzo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /\b(centro\s+[a-zA-ZÀ-ÿ\s]+)/gi
   ];
 
-  // Venue and event location patterns - NEW!
+  // Enhanced venue patterns
   const venuePatterns = [
-    // Festivals and events
-    /(?:al?|presso il?|at)\s+(festival\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+([a-zA-ZÀ-ÿ\s]+\s+festival)/gi,
-    /(?:allo?|presso lo?|at)\s+([a-zA-ZÀ-ÿ\s]+\s+festival)/gi,
-
-    // Cultural centers and venues
-    /(?:al?|presso il?|at)\s+(centro\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:al?|presso il?|at)\s+(centro\s+sociale\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(teatro\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(cinema\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(palazzo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:alla?|presso la?|at)\s+(sala\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:all'?|presso l'?|at)\s+(auditorium\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-
-    // Social centers and community spaces
-    /(?:al?|presso il?|at)\s+(centro\s+sociale\s+[a-zA-ZÀ-ÿ\s]+)/gi,
     /(?:al?|presso il?|at)\s+(circolo\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:alla?|presso la?|at)\s+(casa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-
-    // Educational institutions
-    /(?:all'?|presso l'?|at)\s+(università\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(campus\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:alla?|presso la?|at)\s+(scuola\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-
-    // Bars, restaurants, and meeting places
-    /(?:al?|presso il?|at)\s+(bar\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(caffè\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:al?|presso il?|at)\s+(ristorante\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:all'?|presso l'?|at)\s+(osteria\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-
-    // Parks and outdoor spaces
-    /(?:ai?|presso i?|at)\s+(giardini?\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-    /(?:alla?|presso la?|at)\s+(villa\s+[a-zA-ZÀ-ÿ\s]+)/gi,
-
-    // Generic venue patterns (more permissive)
-    /(?:al?|presso il?|at)\s+([A-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,25}(?:\s+[A-ZÀ-ÿ][a-zA-ZÀ-ÿ\s]{2,25})?)/g
+    /(?:alla?|presso la?|at)\s+(biblioteca\s+[a-zA-ZÀ-ÿ\s]+)/gi,
+    /(?:all'?|presso l'?|at)\s+(università\s+[a-zA-ZÀ-ÿ\s]+)/gi
   ];
 
   let detectedAddress = null;
   let detectedCity = null;
 
-  // First, try to find a specific street address
+  // Try to find specific address
   for (const pattern of addressPatterns) {
     const matches = originalText.match(pattern);
     if (matches && matches.length > 0) {
-      // Take the first match and clean it up
       detectedAddress = matches[0]
         .trim()
         .replace(/\s+/g, ' ')
-        .split(/[,;]|presso|c\/o/)[0] // Stop at common separators
+        .split(/[,;]|presso|c\/o/)[0]
         .trim();
-
-      // Capitalize first letter of each word
       detectedAddress = detectedAddress
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
-
-      console.log(`🏠 Found specific address: "${detectedAddress}"`);
+      console.log(`🏠 Found address: "${detectedAddress}"`);
       break;
     }
   }
 
-  // If no street address found, look for venue names and event locations
+  // Try to find venue if no address found
   if (!detectedAddress) {
     for (const pattern of venuePatterns) {
       const matches = [...originalText.matchAll(pattern)];
       if (matches && matches.length > 0) {
-        // Take the first match and clean it up
         let venueName = matches[0][1]
           .trim()
           .replace(/\s+/g, ' ')
-          .split(/[,;]|presso|c\/o/)[0] // Stop at common separators
+          .split(/[,;]|presso|c\/o/)[0]
           .trim();
 
-        // Skip if venue name is too short or contains only common words
-        const commonWords = ['il', 'la', 'le', 'lo', 'gli', 'di', 'da', 'del', 'della', 'dei', 'delle'];
+        const commonWords = ['il', 'la', 'le', 'lo', 'gli', 'di', 'da', 'del', 'della'];
         const words = venueName.toLowerCase().split(' ').filter(word => !commonWords.includes(word));
 
         if (words.length >= 1 && venueName.length >= 5) {
-          // Capitalize first letter of each word
           detectedAddress = venueName
             .split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
-
-          console.log(`🎪 Found venue/event location: "${detectedAddress}"`);
+          console.log(`🎪 Found venue: "${detectedAddress}"`);
           break;
         }
       }
     }
   }
 
-  // Find the city name from text (we'll geocode it precisely later)
-  const italianCities = ['roma', 'milano', 'napoli', 'torino', 'venezia', 'firenze', 'bologna', 'bari', 'palermo', 'genova', 'padova', 'verona', 'sassari', 'bancali'];
+  // Enhanced city detection
+  const italianCities = [
+    'roma', 'milano', 'napoli', 'torino', 'venezia', 'firenze', 'bologna', 
+    'bari', 'palermo', 'genova', 'padova', 'verona', 'sassari', 'bancali',
+    'catania', 'messina', 'brescia', 'prato', 'taranto', 'modena', 'reggio',
+    'livorno', 'cagliari', 'foggia', 'rimini', 'salerno', 'ferrara', 'ravenna',
+    'vicenza', 'terni', 'forlì', 'novara', 'piacenza', 'cesena', 'lecce'
+  ];
 
   for (const cityName of italianCities) {
     if (normalizedText.includes(cityName)) {
@@ -590,45 +461,20 @@ async function extractAddressAndCity(text) {
     }
   }
 
-  // Try geocoding with different strategies
+  // Try geocoding
   let geocodedCoordinates = null;
-  
+
   if (detectedAddress && detectedCity) {
-    // Strategy 1: Try full address + city
-    console.log(`🔍 Geocoding strategy 1: "${detectedAddress}, ${detectedCity}"`);
+    console.log(`🔍 Geocoding: "${detectedAddress}, ${detectedCity}"`);
     geocodedCoordinates = await geocodeAddress(detectedAddress, detectedCity);
-
-    if (!geocodedCoordinates) {
-      // Strategy 2: Try just the venue/address name with "Italy"
-      console.log(`🔍 Geocoding strategy 2: "${detectedAddress}, Italy"`);
-      geocodedCoordinates = await geocodeAddress(detectedAddress, 'Italy');
-    }
   } else if (detectedAddress && !detectedCity) {
-    // Strategy 3: Address without specific city - search broadly in Italy
-    console.log(`🔍 Geocoding strategy 3: "${detectedAddress}, Italy"`);
+    console.log(`🔍 Geocoding: "${detectedAddress}, Italy"`);
     geocodedCoordinates = await geocodeAddress(detectedAddress, 'Italy');
-
-    // If successful, try to extract city from the geocoding result
-    if (geocodedCoordinates) {
-      // The geocoding function might help us identify the city
-      console.log(`🎯 Successfully geocoded venue without city context`);
-    }
   } else if (detectedCity) {
-    // Strategy 4: City only
-    console.log(`🔍 Geocoding strategy 4: City only - "${detectedCity}"`);
+    console.log(`🔍 Geocoding city: "${detectedCity}"`);
     geocodedCoordinates = await geocodeAddress(null, detectedCity);
   }
 
-  // Log results
-  if (geocodedCoordinates) {
-    console.log(`🎯 Using geocoded coordinates for "${detectedAddress || detectedCity}"`);
-  } else if (detectedAddress || detectedCity) {
-    console.log(`📍 No geocoding results for "${detectedAddress || detectedCity}"`);
-  } else {
-    console.log(`⚠️ No address or city detected in text`);
-  }
-
-  // Return results, allowing N/A values
   return {
     address: detectedAddress || detectedCity || null,
     city: detectedCity || null,
@@ -643,88 +489,45 @@ function categorizeEvent(title, description) {
   const text = normalizeText(`${title} ${description}`);
 
   if (text.includes('pride') || text.includes('lgbtq')) return 'LGBTQ+';
-  if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento') || text.includes('sostenibilità') || text.includes('permacultura')) return 'ENVIRONMENT';
-  if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato') || text.includes('mutuo soccorso') || text.includes('economia solidale')) return 'LABOR';
-  if (text.includes('guerra') || text.includes('pace') || text.includes('war') || text.includes('antimilitarista')) return 'PEACE & ANTI-WAR';
-  if (text.includes('diritti') || text.includes('giustizia') || text.includes('bezos') || text.includes('know your rights') || text.includes('conosci i tuoi diritti')) return 'CIVIL & HUMAN RIGHTS';
-  if (text.includes('donna') || text.includes('donne') || text.includes('femminicidi') || text.includes('femminismo')) return 'WOMEN\'S RIGHTS';
-  if (text.includes('razzismo') || text.includes('discriminazione') || text.includes('antifascist') || text.includes('antirazzist')) return 'RACIAL & SOCIAL JUSTICE';
-  if (text.includes('sanita') || text.includes('scuola') || text.includes('health') || text.includes('formazione') || text.includes('educazione')) return 'HEALTHCARE & EDUCATION';
-  if (text.includes('corruzione') || text.includes('trasparenza') || text.includes('democrazia partecipativa')) return 'TRANSPARENCY & ANTI-CORRUPTION';
+  if (text.includes('clima') || text.includes('ambiente') || text.includes('riscaldamento') || text.includes('sostenibilità')) return 'ENVIRONMENT';
+  if (text.includes('lavoro') || text.includes('sciopero') || text.includes('sindacato')) return 'LABOR';
+  if (text.includes('guerra') || text.includes('pace') || text.includes('antimilitarista')) return 'PEACE & ANTI-WAR';
+  if (text.includes('diritti') || text.includes('giustizia')) return 'CIVIL & HUMAN RIGHTS';
+  if (text.includes('donna') || text.includes('donne') || text.includes('femminismo')) return 'WOMEN\'S RIGHTS';
+  if (text.includes('razzismo') || text.includes('discriminazione') || text.includes('antifascist')) return 'RACIAL & SOCIAL JUSTICE';
+  if (text.includes('sanita') || text.includes('scuola') || text.includes('formazione')) return 'HEALTHCARE & EDUCATION';
+  if (text.includes('corruzione') || text.includes('trasparenza')) return 'TRANSPARENCY & ANTI-CORRUPTION';
 
   return 'OTHER';
 }
 
 /**
- * Event type classification (for map icons)
+ * Enhanced HTTP request with retry
  */
-function determineEventType(title, description = '') {
-  const searchText = normalizeText(`${title} ${description}`);
+async function makeRequest(url, retries = 2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      console.log(`🔗 Fetching (attempt ${attempt + 1}): ${url}`);
 
-  // Define keywords for each type
-  const protestKeywords = [
-    'protest', 'march', 'rally', 'demonstration', 'strike', 'parade', 'pride', 'blockade', 'occupation', 'sit-in',
-    'manifestazione', 'corteo', 'sciopero', 'mobilitazione', 'presidio', 'marcia', 'parata', 'assembramento',
-    'blocco', 'occupazione', 'manifestare'
-  ];
+      const response = await axios.get(url, {
+        timeout: PERFORMANCE_CONFIG.REQUEST_TIMEOUT,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3'
+        }
+      });
 
-  const workshopKeywords = [
-    'workshop', 'training', 'skill-share', 'legal info', 'activist education', 'course', 'formazione',
-    'corso', 'laboratorio', 'addestramento', 'educazione'
-  ];
-
-  const assemblyKeywords = [
-    'assembly', 'meeting', 'forum', 'strategy', 'open forum', 'public assembly',
-    'assemblea', 'riunione', 'incontro', 'forum', 'strategia'
-  ];
-
-  const talkKeywords = [
-    'talk', 'presentation', 'speaker', 'lecture', 'conference', 'summit',
-    'presentazione', 'conferenza', 'relatore', 'intervento', 'discorso'
-  ];
-
-  // Check for each type in order of specificity
-  if (workshopKeywords.some(keyword => searchText.includes(keyword))) {
-    return 'Workshop';
-  }
-
-  if (assemblyKeywords.some(keyword => searchText.includes(keyword))) {
-    return 'Assembly';
-  }
-
-  if (talkKeywords.some(keyword => searchText.includes(keyword))) {
-    return 'Talk';
-  }
-
-  if (protestKeywords.some(keyword => searchText.includes(keyword))) {
-    return 'Protest';
-  }
-
-  // Default to Other for political events that don't fit above categories
-  return 'Other';
-}
-
-/**
- * Enhanced HTTP request with simple retry
- */
-async function makeRequest(url) {
-  try {
-    console.log(`🔗 Fetching: ${url}`);
-
-    const response = await axios.get(url, {
-      timeout: PERFORMANCE_CONFIG.REQUEST_TIMEOUT,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3'
+      console.log(`✅ Request successful: ${response.status}`);
+      return response;
+    } catch (error) {
+      console.log(`❌ Request failed (attempt ${attempt + 1}): ${error.message}`);
+      if (attempt === retries) {
+        throw error;
       }
-    });
-
-    console.log(`✅ Request successful: ${response.status}`);
-    return response;
-  } catch (error) {
-    console.log(`❌ Request failed: ${error.message}`);
-    throw error;
+      // Wait before retry
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
   }
 }
 
@@ -735,33 +538,29 @@ async function checkDuplicate(title, date, city) {
   try {
     const cleanTitleForDupe = cleanTitle(title).toLowerCase();
 
-    // Query existing events to check for duplicates
     const { data, error } = await supabase
       .from('protests')
       .select('id, title, city')
       .eq('city', city)
-      .limit(20);
+      .limit(30);
 
     if (error) {
       console.log('⚠️ Error checking duplicates:', error.message);
       return false;
     }
 
-    // Check for similar titles (more strict to avoid false positives)
     const isDuplicate = data.some(event => {
       const existingTitle = cleanTitle(event.title).toLowerCase();
-      // Only consider exact matches or very close matches (80%+ similarity)
       if (existingTitle === cleanTitleForDupe) return true;
-      
-      // Check if titles are very similar (length difference < 20% and one contains the other)
+
       const lengthDiff = Math.abs(existingTitle.length - cleanTitleForDupe.length);
       const maxLength = Math.max(existingTitle.length, cleanTitleForDupe.length);
-      
+
       if (lengthDiff / maxLength < 0.2 && 
           (existingTitle.includes(cleanTitleForDupe) || cleanTitleForDupe.includes(existingTitle))) {
         return true;
       }
-      
+
       return false;
     });
 
@@ -773,30 +572,28 @@ async function checkDuplicate(title, date, city) {
 }
 
 /**
- * Save event to database with validation
+ * Save event to database
  */
 async function saveEventToDatabase(event) {
   try {
     console.log(`💾 Saving event: "${event.title}"`);
 
-    // Check for duplicate
     const isDuplicate = await checkDuplicate(event.title, event.date, event.city);
     if (isDuplicate) {
       console.log(`⏭️ Skipping duplicate: "${event.title}"`);
       return false;
     }
 
-    // Prepare event data - handle N/A values appropriately
     const eventData = {
       title: cleanTitle(event.title) || 'Untitled Event',
       description: event.description || 'No description available',
       category: event.category || 'OTHER',
       city: event.city === 'N/A' ? 'Milano' : (event.city || 'Milano'),
       address: event.address === 'N/A' ? 'N/A' : (event.address || 'N/A'),
-      latitude: String(event.latitude || 45.4642),  // Milan fallback for coordinates
-      longitude: String(event.longitude || 9.1900), // Milan fallback for coordinates
-      date: event.date === 'N/A' ? null : event.date,  // Store null for N/A dates in database
-      time: event.time || 'N/A',  // Keep N/A for missing time
+      latitude: String(event.latitude || 45.4642),
+      longitude: String(event.longitude || 9.1900),
+      date: event.date === 'N/A' ? null : event.date,
+      time: event.time || 'N/A',
       image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.OTHER,
       event_type: determineEventType(event.title, event.description),
       event_url: event.event_url || null,
@@ -827,6 +624,46 @@ async function saveEventToDatabase(event) {
 }
 
 /**
+ * Determine event type for map icons
+ */
+function determineEventType(title, description = '') {
+  const searchText = normalizeText(`${title} ${description}`);
+
+  const protestKeywords = [
+    'protest', 'march', 'rally', 'demonstration', 'strike', 'blockade', 'occupation',
+    'manifestazione', 'corteo', 'sciopero', 'mobilitazione', 'presidio', 'marcia'
+  ];
+
+  const workshopKeywords = [
+    'workshop', 'training', 'skill-share', 'course', 'formazione',
+    'corso', 'laboratorio', 'addestramento', 'educazione'
+  ];
+
+  const assemblyKeywords = [
+    'assembly', 'meeting', 'forum', 'assemblea', 'riunione', 'incontro'
+  ];
+
+  const talkKeywords = [
+    'talk', 'presentation', 'speaker', 'lecture', 'conference',
+    'presentazione', 'conferenza', 'relatore', 'intervento'
+  ];
+
+  if (workshopKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Workshop';
+  }
+  if (assemblyKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Assembly';
+  }
+  if (talkKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Talk';
+  }
+  if (protestKeywords.some(keyword => searchText.includes(keyword))) {
+    return 'Protest';
+  }
+  return 'Other';
+}
+
+/**
  * Fetch and analyze full article content
  */
 async function fetchArticleContent(articleUrl) {
@@ -836,13 +673,12 @@ async function fetchArticleContent(articleUrl) {
     const response = await makeRequest(articleUrl);
     const $ = load(response.data);
 
-    // Extract article content using various selectors
     const contentSelectors = [
       'article .content',
       'article .post-content', 
       '.entry-content',
       '.post-body',
-      '.article-body',
+'.article-body',
       'article p',
       '.content',
       'main article',
@@ -858,7 +694,6 @@ async function fetchArticleContent(articleUrl) {
       }
     }
 
-    // Fallback: get all text from article tag
     if (!articleContent) {
       articleContent = $('article').text() || $('main').text() || '';
     }
@@ -872,10 +707,10 @@ async function fetchArticleContent(articleUrl) {
 }
 
 /**
- * Enhanced website scraping with full article content analysis
+ * Enhanced website scraping with multiple pages per source
  */
 async function scrapeWebsite(source) {
-  console.log(`\n🔍 Scraping ${source.name}...`);
+  console.log(`\n🔍 Scraping ${source.name} (${source.pages.length} pages)...`);
 
   const events = [];
   const stats = {
@@ -886,326 +721,216 @@ async function scrapeWebsite(source) {
     articlesAnalyzed: 0
   };
 
-  try {
-    const response = await makeRequest(source.url);
-    const $ = load(response.data);
+  // Process each page for this source
+  for (let pageIndex = 0; pageIndex < Math.min(source.pages.length, PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE); pageIndex++) {
+    const page = source.pages[pageIndex];
+    const fullUrl = source.url + (page === '/' ? '' : page);
 
-    stats.pagesScraped = 1;
+    console.log(`📄 Processing page ${pageIndex + 1}/${source.pages.length}: ${fullUrl}`);
 
-    console.log(`📄 Processing ${source.name}...`);
+    try {
+      const response = await makeRequest(fullUrl);
+      const $ = load(response.data);
+      stats.pagesScraped++;
 
-    // Special handling for ilrovescio.info - also try to fetch specific known articles
-    if (source.name === 'ilrovescio.info') {
-      const knownArticles = [
-        'https://ilrovescio.info/2025/06/28/5-luglio-bancali-sassari-corteo-contro-il-carcere/',
-        'https://ilrovescio.info/2025/06/28/torino-3-e-4-luglio-appuntamenti-di-lotta-per-linizio-del-processo-per-loperazione-city/'
+      // Enhanced selectors for finding events
+      let eventElements = [];
+      const eventSelectors = [
+        // WordPress and CMS selectors
+        'article', '.post', '.hentry', '.entry', '.wp-block-post',
+
+        // Event-specific selectors
+        '.event', '.evento', '.manifestazione', '.iniziativa',
+        '.news-item', '.item', '.news', '.comunicato',
+
+        // Content containers
+        '.content-item', '.blog-post', '.article-item',
+        '.post-item', '.entry-content', '.post-content',
+
+        // Links to articles (most important for activism sites)
+        'h1 a', 'h2 a', 'h3 a', 'h4 a',
+        '.title a', '.headline a', '.post-title a',
+        '.entry-title a', '.article-title a',
+
+        // Date-based content
+        'a[href*="/2025/"]', 'a[href*="/2024/"]',
+
+        // Sidebar and navigation elements
+        '.sidebar a', '.menu a', '.navigation a',
+        '.widget a', '.recent-posts a',
+
+        // Generic containers that might hold events
+        '.list-item', '.grid-item', 'li:has(a)'
       ];
 
-      console.log(`🎯 Also checking ${knownArticles.length} specific known articles...`);
+      // Try each selector until we find content
+      for (const selector of eventSelectors) {
+        const elements = $(selector);
+        if (elements.length > 0) {
+          eventElements = elements;
+          console.log(`📊 Found ${elements.length} potential events using: ${selector}`);
+          break;
+        }
+      }
 
-      for (const articleUrl of knownArticles) {
+      // If still no elements, try broader search
+      if (eventElements.length === 0) {
+        console.log(`⚠️ No elements found with standard selectors for ${source.name}`);
+        eventElements = $('a[href]').filter((i, el) => {
+          const text = $(el).text().trim();
+          return text.length > 10 && text.length < 200;
+        }).slice(0, 20);
+        console.log(`📊 Using ${eventElements.length} fallback link elements`);
+      }
+
+      // Process events from this page
+      const maxEventsFromPage = Math.min(PERFORMANCE_CONFIG.MAX_ARTICLES_PER_PAGE, eventElements.length);
+      console.log(`🔍 Processing ${maxEventsFromPage} elements from this page...`);
+
+      for (let i = 0; i < maxEventsFromPage; i++) {
         try {
-          console.log(`📖 Fetching specific article: ${articleUrl}`);
-          const articleResponse = await makeRequest(articleUrl);
-          const article$ = load(articleResponse.data);
+          const $el = $(eventElements[i]);
 
-          const title = cleanText(article$('h1, .entry-title, .article-title').first().text());
-          const content = cleanText(article$('.entry-content, .content, article').text());
-
-          if (title && content && containsProtestKeywords(`${title} ${content}`)) {
-            const { date, time } = parseItalianDateTime(content);
-            const locationInfo = await extractAddressAndCity(content);
-
-            // Add delay for geocoding
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            const event = {
-              title: cleanTitle(title),
-              description: content.slice(0, 1000),
-              category: categorizeEvent(title, content),
-              city: locationInfo.city || 'N/A',
-              address: locationInfo.address || 'N/A',
-              latitude: locationInfo.coordinates?.lat || 0,
-              longitude: locationInfo.coordinates?.lng || 0,
-              date: date || 'N/A',
-              time: time || 'N/A',
-              image_url: CATEGORY_IMAGES[categorizeEvent(title, content)] || CATEGORY_IMAGES.OTHER,
-              event_url: articleUrl,
-              source_name: source.name,
-              source_url: source.url
-            };
-
-            events.push(event);
-            stats.eventsFound++;
-            console.log(`✅ Added specific article: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city}`);
+          // Extract title
+          let title = '';
+          if ($el.is('a')) {
+            title = cleanText($el.text()) || cleanText($el.attr('title')) || '';
+          } else {
+            title = cleanText($el.find('h1, h2, h3, h4, .title, .headline').first().text()) ||
+                    cleanText($el.find('a').first().text()) ||
+                    cleanText($el.text()).slice(0, 100);
           }
 
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        } catch (error) {
-          console.log(`⚠️ Could not fetch specific article: ${error.message}`);
-        }
-      }
-    }
-
-    // Enhanced selectors for better event detection
-    let eventElements = [];
-    let eventSelectors = [
-      // WordPress standard selectors (most Italian activism sites use WordPress)
-      'article', '.post', '.hentry', '.entry',
-      
-      // Standard content selectors
-      '.event', '.news-item', '.item', '.news',
-      '.evento', '.manifestazione', '.iniziativa', '.comunicato',
-      
-      // WordPress and CMS selectors
-      '.wp-block-post', '.post-item', '.entry-content',
-      '.post-content', '.content-area',
-      
-      // News and blog selectors
-      '.news-article', '.blog-post', '.content-item',
-      '.article-item', '.blog-item',
-      
-      // Event-specific selectors
-      '.event-item', '.calendar-event', '.upcoming-event',
-      '.tribe-events-list-event-row', '.event-listing',
-      
-      // Generic content containers with links
-      '.content a', '.main-content a', 'main a',
-      '.primary a', '.site-content a',
-      
-      // List items that might contain events
-      'li:has(a)', '.list-item', '.grid-item',
-      
-      // Article and post links (most common for activism sites)
-      'h1 a', 'h2 a', 'h3 a', 'h4 a',
-      '.title a', '.headline a', '.post-title a',
-      '.entry-title a', '.article-title a',
-      
-      // Date-based article links (catches recent content)
-      'a[href*="/2025/"]', 'a[href*="/2024/"]',
-      
-      // Italian activism-specific terms in URLs
-      'a[href*="evento"]', 'a[href*="manifestazione"]',
-      'a[href*="corteo"]', 'a[href*="assemblea"]',
-      'a[href*="protesta"]', 'a[href*="sciopero"]'
-    ];
-
-    for (const selector of eventSelectors) {
-      const elements = $(selector);
-      if (elements.length > 0) {
-        eventElements = elements;
-        console.log(`📊 Found ${elements.length} potential events using selector: ${selector}`);
-        break;
-      }
-    }
-    
-    // If no elements found, try a broader search and log what we do find
-    if (eventElements.length === 0) {
-      console.log(`⚠️ No elements found with standard selectors for ${source.name}`);
-      console.log(`🔍 Trying broader search...`);
-      
-      // Try to find any links at all
-      const allLinks = $('a[href]');
-      console.log(`📊 Found ${allLinks.length} total links on the page`);
-      
-      // Try to find any elements with text content
-      const textElements = $('*').filter((i, el) => {
-        return $(el).text().trim().length > 50; // Elements with substantial text
-      });
-      console.log(`📊 Found ${textElements.length} elements with substantial text`);
-      
-      // Use any articles or posts we can find
-      eventElements = $('article, .post, .entry, h2, h3').slice(0, 10);
-      console.log(`📊 Using ${eventElements.length} fallback elements`);
-    }
-
-    // Special handling for ilrovescio.info - also check slider links
-    if (source.name === 'ilrovescio.info' && eventElements.length === 0) {
-      // Look for article links in sliders and homepage structure
-      const slideLinks = $('a[href*="/2025/"]').filter((i, el) => {
-        const href = $(el).attr('href');
-        return href && href.includes('ilrovescio.info');
-      });
-
-      if (slideLinks.length > 0) {
-        console.log(`📊 Found ${slideLinks.length} article links for ilrovescio.info`);
-        eventElements = slideLinks.parent();
-      }
-    }
-
-    // Process each potential event (limit to 5 per source for faster testing)
-    for (let i = 0; i < Math.min(5, eventElements.length); i++) {
-      try {
-        const $el = $(eventElements[i]);
-
-        // Extract basic information with site-specific logic
-        let title = '';
-        let articleUrl = '';
-
-        if (source.name === 'ilrovescio.info') {
-          // Extract title from WordPress structure - try multiple selectors
-          title = cleanText($el.find('.article-title a, h3 a, .slide-title a, .entry-title a').text()) ||
-                  cleanText($el.find('h1, h2, h3, .title').text()) ||
-                  cleanText($el.find('a').attr('title')) ||
-                  cleanText($el.text()).split('\n')[0].trim(); // First line as fallback
-
-          // Extract article URL - try multiple approaches
-          let link = $el.find('a').first().attr('href');
-          if (!link) {
-            // If element is already a link
-            link = $el.attr('href');
-          }
-          if (!link) {
-            // Look for any link containing /2025/
-            link = $el.find('a[href*="/2025/"]').first().attr('href');
+          if (!title || title.length < 10) {
+            continue;
           }
 
-          if (link) {
-            if (link.startsWith('/')) {
-              articleUrl = `https://ilrovescio.info${link}`;
-            } else if (link.startsWith('http')) {
-              articleUrl = link;
-            } else {
-              articleUrl = `https://ilrovescio.info/${link}`;
-            }
+          // Extract description
+          const description = cleanText($el.find('p, .description, .excerpt, .content').first().text()) ||
+            cleanText($el.text()).slice(0, 500);
+
+          // Extract article URL
+          let eventUrl = '';
+          if ($el.is('a')) {
+            eventUrl = $el.attr('href');
+          } else {
+            eventUrl = $el.find('a').first().attr('href');
           }
-        } else {
-          title = cleanText($el.find('h1, h2, h3, .title, .headline').first().text()) ||
-                  cleanText($el.text()).slice(0, 100) + '...';
-        }
 
-        const description = cleanText($el.find('p, .description, .excerpt, .content').first().text()) ||
-          cleanText($el.text()).slice(0, 500);
-
-        let eventUrl = '';
-        if (source.name === 'ilrovescio.info' && articleUrl) {
-          eventUrl = articleUrl;
-        } else {
-          const link = $el.find('a').first().attr('href');
-          if (link && !link.startsWith('http')) {
+          if (eventUrl && !eventUrl.startsWith('http')) {
             try {
-              eventUrl = new URL(link, source.url).href;
+              eventUrl = new URL(eventUrl, source.url).href;
             } catch (e) {
               eventUrl = source.url;
             }
-          } else {
-            eventUrl = link || source.url;
           }
-        }
 
-        // Initial check with title and description
-        let fullText = `${title} ${description}`.toLowerCase();
-        let hasProtestKeywords = containsProtestKeywords(fullText);
+          // Initial keyword check
+          let fullText = `${title} ${description}`.toLowerCase();
+          let hasActivismKeywords = containsActivismKeywords(fullText);
 
-        // If no keywords found in title/description, fetch full article content
-        if (!hasProtestKeywords && eventUrl && eventUrl !== source.url) {
-          console.log(`🔍 No keywords in preview, fetching full article: "${title.slice(0, 50)}..."`);
+          // If no keywords found, fetch full article content
+          if (!hasActivismKeywords && eventUrl && eventUrl !== source.url) {
+            console.log(`🔍 Fetching full article for: "${title.slice(0, 50)}..."`);
 
-          // Add small delay to avoid overwhelming the server
-          await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 300));
 
-          const articleContent = await fetchArticleContent(eventUrl);
-          stats.articlesAnalyzed++;
+            const articleContent = await fetchArticleContent(eventUrl);
+            stats.articlesAnalyzed++;
 
-          if (articleContent) {
-            fullText = `${title} ${description} ${articleContent}`.toLowerCase();
-            hasProtestKeywords = containsProtestKeywords(fullText);
+            if (articleContent) {
+              fullText = `${title} ${description} ${articleContent}`.toLowerCase();
+              hasActivismKeywords = containsActivismKeywords(fullText);
 
-            if (hasProtestKeywords) {
-              console.log(`✅ Found activism keywords in full article: "${title.slice(0, 50)}..."`);
+              if (hasActivismKeywords) {
+                console.log(`✅ Found activism keywords in full article`);
+              }
             }
           }
-        }
 
-        // Check if this looks like activism-related content (be more lenient)
-        if (!hasProtestKeywords) {
-          // Secondary check: look for any social/political indicators
-          const socialKeywords = ['sociale', 'politico', 'diritti', 'giustizia', 'comunità', 'cittadini', 'pubblico', 'partecipazione', 'cambiamento', 'azione', 'lotta', 'movimento', 'attivismo', 'solidarietà', 'resistenza', 'rivoluzione', 'critica', 'denuncia', 'protesta', 'scontro', 'conflitto', 'repressione'];
-          const hasSocialKeywords = socialKeywords.some(keyword => fullText.includes(keyword));
-          
-          if (!hasSocialKeywords) {
-            console.log(`⚠️ Skipping non-activism content: "${title.slice(0, 50)}..."`);
-            stats.eventsSkippedByKeywords++;
-            continue;
-          } else {
-            console.log(`✅ Including social/political content: "${title.slice(0, 50)}..."`);
-          }
-        }
-
-        // Check for excluded content (but be more lenient for educational/organizing events)
-        if (containsExcludeKeywords(fullText)) {
-          // Double-check: if it contains activism keywords, don't exclude it
-          const hasActivismKeywords = ['workshop', 'formazione', 'presentazione', 'assemblea', 'incontro', 'dibattito', 'conferenza', 'seminario'].some(keyword => fullText.includes(keyword));
+          // Relaxed keyword filtering - include more social/political content
           if (!hasActivismKeywords) {
-            console.log(`⚠️ Skipping excluded content: "${title.slice(0, 50)}..."`);
-            stats.eventsSkippedByKeywords++;
-            continue;
-          } else {
-            console.log(`✅ Keeping educational/organizing event: "${title.slice(0, 50)}..."`);
+            const socialKeywords = [
+              'sociale', 'politico', 'diritti', 'giustizia', 'comunità',
+              'cittadini', 'pubblico', 'partecipazione', 'cambiamento',
+              'azione', 'movimento', 'organizzazione', 'coordinamento'
+            ];
+            const hasSocialKeywords = socialKeywords.some(keyword => fullText.includes(keyword));
+
+            if (!hasSocialKeywords) {
+              console.log(`⚠️ No activism/social keywords: "${title.slice(0, 50)}..."`);
+              stats.eventsSkippedByKeywords++;
+              continue;
+            }
           }
+
+          // Check excluded content (but be lenient)
+          if (containsExcludeKeywords(fullText)) {
+            const hasEducationalKeywords = ['workshop', 'formazione', 'incontro', 'assemblea'].some(keyword => fullText.includes(keyword));
+            if (!hasEducationalKeywords) {
+              console.log(`⚠️ Excluded content: "${title.slice(0, 50)}..."`);
+              stats.eventsSkippedByKeywords++;
+              continue;
+            }
+          }
+
+          // Extract date/time (use fuller text if available)
+          const dateText = fullText.length > `${title} ${description}`.length ? fullText : `${title} ${description}`;
+          const { date, time } = parseItalianDateTime(dateText);
+
+          // Date cutoff check
+          if (date && !isDateWithinCutoff(date)) {
+            console.log(`⏰ Skipping old event: "${title.slice(0, 50)}..." (${date})`);
+            stats.eventsSkippedByDate++;
+            continue;
+          }
+
+          // Extract location
+          const locationInfo = await extractAddressAndCity(dateText);
+          await new Promise(resolve => setTimeout(resolve, 200));
+
+          // Create event object
+          const event = {
+            title: cleanTitle(title),
+            description: description.slice(0, 1000),
+            category: categorizeEvent(title, description),
+            city: locationInfo.city || 'N/A',
+            address: locationInfo.address || 'N/A',
+            latitude: locationInfo.coordinates?.lat || 0,
+            longitude: locationInfo.coordinates?.lng || 0,
+            date: date || 'N/A',
+            time: time || 'N/A',
+            image_url: CATEGORY_IMAGES[categorizeEvent(title, description)] || CATEGORY_IMAGES.OTHER,
+            event_url: eventUrl,
+            source_name: source.name,
+            source_url: source.url
+          };
+
+          events.push(event);
+          stats.eventsFound++;
+
+          console.log(`📋 Event found: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city} | ${event.date}`);
+
+          // Small delay between elements
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+        } catch (error) {
+          console.log(`⚠️ Error processing element:`, error.message);
         }
-
-        // Extract date/time
-        const dateText = cleanText($el.find('.date, time, .when, .data').text()) || description;
-        const { date, time } = parseItalianDateTime(dateText);
-
-        // Check date cutoff only if date exists
-        if (date && !isDateWithinCutoff(date)) {
-          console.log(`⏰ Skipping old event: "${title.slice(0, 50)}..." (${date})`);
-          stats.eventsSkippedByDate++;
-          continue;
-        }
-
-        // Extract location and address
-        let fullTextForLocation = `${title} ${description}`;
-
-        // If we fetched article content, include it for better address detection
-        if (fullText.length > `${title} ${description}`.length) {
-          fullTextForLocation = fullText;
-        }
-
-        const locationInfo = await extractAddressAndCity(fullTextForLocation);
-
-        // Shorter delay for geocoding
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        // Create event object - use N/A for missing data
-        const event = {
-          title: cleanTitle(title),
-          description: description.slice(0, 1000),  // Limit description length
-          category: categorizeEvent(title, description),
-          city: locationInfo.city || 'N/A',
-          address: locationInfo.address || 'N/A',
-          latitude: locationInfo.coordinates?.lat || 0,
-          longitude: locationInfo.coordinates?.lng || 0,
-          date: date || 'N/A',
-          time: time || 'N/A',
-          image_url: CATEGORY_IMAGES[categorizeEvent(title, description)] || CATEGORY_IMAGES.other,
-          event_url: eventUrl,
-          source_name: source.name,
-          source_url: source.url
-        };
-
-        events.push(event);
-        stats.eventsFound++;
-
-        console.log(`📋 Event found: "${event.title.slice(0, 50)}..." | ${event.category} | ${event.city} | ${event.date}`);
-
-      } catch (error) {
-        console.log(`⚠️ Error processing event element:`, error.message);
       }
+
+      // Delay between pages
+      if (pageIndex < source.pages.length - 1) {
+        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_PAGES}ms before next page...`);
+        await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_PAGES));
+      }
+
+    } catch (error) {
+      console.error(`❌ Error scraping page ${fullUrl}:`, error.message);
     }
-
-  } catch (error) {
-    console.error(`❌ Error scraping ${source.name}:`, error.message);
   }
 
-  // Debug info about what we found
-  if (events.length === 0) {
-    console.log(`⚠️ No events found for ${source.name} - may need better selectors for this site`);
-  }
-
-  console.log(`📊 ${source.name} Stats: ${events.length} events found, ${stats.articlesAnalyzed} articles analyzed`);
+  console.log(`📊 ${source.name} Results: ${events.length} events found, ${stats.articlesAnalyzed} articles analyzed`);
   return { events, stats };
 }
 
@@ -1213,8 +938,8 @@ async function scrapeWebsite(source) {
  * Main scraping function
  */
 async function main() {
-  console.log('🚀 Starting Enhanced Italian Protest Scraper...');
-  console.log(`📊 Configuration: ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days, ${SCRAPE_SOURCES.length} sources\n`);
+  console.log('🚀 Starting Enhanced Italian Activism Scraper...');
+  console.log(`📊 Configuration: ${PERFORMANCE_CONFIG.DATE_CUTOFF_DAYS} days, ${SCRAPE_SOURCES.length} sources, ${PERFORMANCE_CONFIG.MAX_PAGES_PER_WEBSITE} pages per source\n`);
 
   const globalStats = {
     totalEventsFound: 0,
@@ -1228,13 +953,14 @@ async function main() {
 
   const startTime = Date.now();
 
+  // Process each source
   for (const source of SCRAPE_SOURCES) {
     console.log(`\n🌐 Processing source ${globalStats.sourcesProcessed + 1}/${SCRAPE_SOURCES.length}: ${source.name}`);
 
     try {
       const { events, stats } = await scrapeWebsite(source);
 
-      // Update global statistics
+      // Update statistics
       globalStats.totalEventsFound += stats.eventsFound;
       globalStats.totalEventsSkippedByDate += stats.eventsSkippedByDate;
       globalStats.totalEventsSkippedByKeywords += stats.eventsSkippedByKeywords;
@@ -1242,6 +968,7 @@ async function main() {
       globalStats.sourcesProcessed++;
 
       // Save events to database
+      console.log(`💾 Saving ${events.length} events from ${source.name}...`);
       for (const event of events) {
         const success = await saveEventToDatabase(event);
         if (success) {
@@ -1250,13 +977,12 @@ async function main() {
           globalStats.totalDuplicatesSkipped++;
         }
 
-        // Small delay between saves
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 150));
       }
 
       // Delay before next source
       if (globalStats.sourcesProcessed < SCRAPE_SOURCES.length) {
-        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES}ms...`);
+        console.log(`⏳ Waiting ${PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES}ms before next source...`);
         await new Promise(resolve => setTimeout(resolve, PERFORMANCE_CONFIG.DELAY_BETWEEN_SOURCES));
       }
 
@@ -1268,10 +994,11 @@ async function main() {
   const endTime = Date.now();
   const duration = Math.round((endTime - startTime) / 1000);
 
-  console.log('\n🎉 Scraping completed!');
+  console.log('\n🎉 Enhanced Activism Scraping Completed!');
   console.log('\n📊 FINAL STATISTICS:');
   console.log(`   ⏱️ Duration: ${duration} seconds`);
   console.log(`   🌐 Sources processed: ${globalStats.sourcesProcessed}/${SCRAPE_SOURCES.length}`);
+  console.log(`   📄 Pages analyzed: Multiple pages per source`);
   console.log(`   📋 Events found: ${globalStats.totalEventsFound}`);
   console.log(`   📖 Articles analyzed: ${globalStats.totalArticlesAnalyzed}`);
   console.log(`   ✅ Events saved: ${globalStats.totalEventsSaved}`);
@@ -1279,6 +1006,14 @@ async function main() {
   console.log(`   🔍 Skipped by keywords: ${globalStats.totalEventsSkippedByKeywords}`);
   console.log(`   ⏭️ Duplicates skipped: ${globalStats.totalDuplicatesSkipped}`);
   console.log(`   📈 Success rate: ${Math.round((globalStats.totalEventsSaved / Math.max(globalStats.totalEventsFound, 1)) * 100)}%`);
+
+  if (globalStats.totalEventsSaved >= 50) {
+    console.log('\n✅ SUCCESS: Found comprehensive activism event coverage!');
+  } else if (globalStats.totalEventsSaved >= 25) {
+    console.log('\n⚠️ PARTIAL SUCCESS: Found good event coverage but could be improved');
+  } else {
+    console.log('\n❌ LOW COVERAGE: Consider reviewing scraper settings or website structures');
+  }
 
   return globalStats;
 }
