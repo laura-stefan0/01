@@ -105,10 +105,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
           </div>
           <div className="flex-1">
             <h3 className="font-medium text-dark-slate text-sm mb-1 line-clamp-1">{protest.title}</h3>
-            <div className="flex items-center mb-1">
-              <MapPin className="h-3 w-3 text-gray-400 mr-1 flex-shrink-0" />
-              <p className="text-xs text-gray-500 truncate">{protest.location || 'Location not specified'}</p>
-            </div>
+            <p className="text-xs text-gray-500 mb-1">{protest.location}</p>
             <p className="text-xs text-gray-600 font-medium">{formatDateTime(protest.date, protest.time)}</p>
           </div>
         </CardContent>
