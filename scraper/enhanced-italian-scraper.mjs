@@ -24,10 +24,12 @@ const PROTEST_KEYWORDS = [
   'sit-in', 'mobilitazione', 'marcia', 'picchetto', 'concentramento',
   'assemblea pubblica', 'iniziativa politica', 'blocco', 'pride',
   'flash mob', 'raduno', 'comizio', 'assemblea'
+  // NEW: educational and organizing events
+  'workshop', 'seminario', 'formazione', 'incontro', 'presentazione', 'assemblea', 'gruppo'
 ];
 
 const EXCLUDE_KEYWORDS = [
-  'concerto', 'spettacolo', 'festival', 'mostra', 'fiera', 'mercatino', 'messa', 'celebrazione', 'evento gastronomico', 'evento sportivo', 'corsa', 'maratona', 'dj set', 'sagra', 'reading', 'meditazione', 'presentazione', 'cena', 'aperitivo'
+  'concerto', 'spettacolo', 'festival', 'mostra', 'fiera', 'mercatino', 'messa', 'celebrazione', 'evento gastronomico', 'evento sportivo', 'corsa', 'maratona', 'dj set', 'sagra', 'reading', 'meditazione', 'cena', 'aperitivo'
 ];
 
 // Italian month names to numbers

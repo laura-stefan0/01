@@ -64,28 +64,45 @@ function MapBoundsUpdater({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
   return null;
 }
 
-// Custom marker icons based on category
-const createCategoryIcon = (category: string) => {
-  const colors = {
-    'Environment': '#059669',
-    'LGBTQ+': '#f43f5e',
-    'Women\'s Rights': '#be185d',
-    'Labor': '#d97706',
-    'Racial & Social Justice': '#7c3aed',
-    'Civil & Human Rights': '#2563eb',
-    'Healthcare & Education': '#0891b2',
-    'Peace & Anti-War': '#0ea5e9',
-    'Transparency & Anti-Corruption': '#4b5563',
-    'Other': '#4f46e5'
-  };
+// Determine event type based on title and description
+const getEventType = (title: string, description: string = ''): 'protest' | 'workshop' => {
+  const protestKeywords = [
+    'protest', 'march', 'rally', 'demonstration', 'strike', 'parade', 'pride', 
+    'manifestazione', 'corteo', 'sciopero', 'mobilitazione', 'presidio', 
+    'marcia', 'parata', 'assembramento'
+  ];
+  
+  const workshopKeywords = [
+    'workshop', 'meeting', 'presentation', 'conference', 'seminar', 'talk', 
+    'discussion', 'assembly', 'forum', 'summit', 'course', 'training',
+    'incontro', 'riunione', 'presentazione', 'conferenza', 'seminario', 
+    'assemblea', 'dibattito', 'corso', 'formazione'
+  ];
+  
+  const searchText = `${title} ${description}`.toLowerCase();
+  
+  // Check for workshop keywords first as they tend to be more specific
+  const hasWorkshopKeywords = workshopKeywords.some(keyword => searchText.includes(keyword));
+  if (hasWorkshopKeywords) return 'workshop';
+  
+  // Default to protest for most activism events
+  const hasProtestKeywords = protestKeywords.some(keyword => searchText.includes(keyword));
+  if (hasProtestKeywords) return 'protest';
+  
+  // Default to protest for general activism events
+  return 'protest';
+};
 
-  const color = colors[category as keyof typeof colors] || '#4f46e5';
-
+// Custom marker icons based on event type
+const createEventIcon = (title: string, description: string = '') => {
+  const eventType = getEventType(title, description);
+  const emoji = eventType === 'protest' ? '✊' : '📣';
+  
   return L.divIcon({
-    html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+    html: `<div style="background-color: white; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #E11D48; box-shadow: 0 2px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px;">${emoji}</div>`,
     className: 'custom-marker',
-    iconSize: [20, 20],
-    iconAnchor: [10, 10]
+    iconSize: [32, 32],
+    iconAnchor: [16, 16]
   });
 };
 
@@ -332,7 +349,7 @@ export function MapView() {
                   <Marker
                     key={protest.id}
                     position={[parseFloat(protest.latitude), parseFloat(protest.longitude)]}
-                    icon={createCategoryIcon(protest.category)}
+                    icon={createEventIcon(protest.title, protest.description)}
                   >
                     <Popup>
                       <div className="p-2 max-w-xs">
