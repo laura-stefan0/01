@@ -43,21 +43,21 @@ export function Navbar() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe">
       <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-around py-3 px-4 pb-safe">
+        <div className="flex items-center justify-around py-3 px-2 pb-safe">
           {navItems.map((item) => (
             <NavLink
               key={item.id}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center py-3 px-4 rounded-lg transition-colors ${
+                `flex flex-col items-center py-3 px-1 rounded-lg transition-colors min-w-0 flex-1 ${
                   isActive
                     ? "text-[#E11D48]" // Active color (#E11D48)
                     : "text-[#94A3B8]" // Inactive (#94A3B8)
                 }`
               }
             >
-              <item.icon className="w-5 h-5 mb-1.5" />
-              <span className="text-xs font-medium">{item.label}</span>
+              <item.icon className="w-5 h-5 mb-1" />
+              <span className="text-xs font-medium truncate">{item.label}</span>
             </NavLink>
           ))}
         </div>
