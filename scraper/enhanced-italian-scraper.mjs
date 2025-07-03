@@ -164,7 +164,7 @@ const SCRAPE_SOURCES = [
     pages: ['/', '/eventi/', '/appuntamenti/']
   },
   {
-    url: 'https://ultima-generazione.com/',
+    url: 'https://ultima-generazione.com/eventi/',
     name: 'ultima-generazione.com',
     type: 'environment',
     pages: ['/eventi/', '/', '/appuntamenti/']
