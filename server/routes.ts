@@ -10,6 +10,7 @@ import safetyTips from "./routes/safety-tips";
 import laws from "./routes/laws";
 import whatsNew from "./routes/whats-new";
 import imageUpdater from "./routes/image-updater";
+import imageProxyRouter from './routes/image-proxy';
 
 // Protests data (using local data for now as fallback)
 const protestsData = [
@@ -68,6 +69,11 @@ export function registerRoutes(app: Express) {
       language: "en",
     });
   });
+
+  app.use('/api/laws', laws);
+  app.use('/api/safety-tips', safetyTips);
+  app.use('/api/whats-new', whatsNew);
+  app.use('/api/image', imageProxyRouter);
 
   const httpServer = createServer(app);
   return httpServer;

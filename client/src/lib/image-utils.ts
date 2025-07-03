@@ -69,12 +69,16 @@ export function getMapColor(category: string): string {
 
 /**
  * Get the best image URL with fallback logic
- * Prioritizes scraped images from the source website, then falls back to category images
+ * Uses proxy for scraped images to bypass CORS, falls back to category images
  */
 export function getImageUrl(imageUrl: string | null | undefined, category: string): string {
-  // If we have a valid image URL, always try to use it first
-  // Let the error handler in the component deal with failed loads
+  // If we have a valid image URL, proxy it through our server to bypass CORS
   if (imageUrl && imageUrl.trim() !== '') {
+    // Check if it's a scraped image that might have CORS issues
+    if (isScrapedImage(imageUrl)) {
+      return `/api/image/proxy?url=${encodeURIComponent(imageUrl)}`;
+    }
+    // For fallback images (Unsplash, etc.), use directly
     return imageUrl;
   }
   
