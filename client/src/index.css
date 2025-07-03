@@ -136,6 +136,23 @@ body.bg-gradient-mint {
   background: linear-gradient(135deg, #86efac 0%, #34d399 50%, #22d3ee 100%) !important;
 }
 
+/* New light gradient backgrounds */
+body.bg-gradient-lavender {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #ede9fe 100%) !important;
+}
+
+body.bg-gradient-soft-mint {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #f0fdfa 100%) !important;
+}
+
+body.bg-gradient-peach {
+  background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 50%, #fefce8 100%) !important;
+}
+
+body.bg-gradient-sky {
+  background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 50%, #ecfeff 100%) !important;
+}
+
 /* Custom image backgrounds are now handled via JavaScript in theme-context.tsx */
 
 /* Ensure app background inherits from body */
@@ -189,6 +206,22 @@ body.bg-gradient-fire .app-background {
 
 body.bg-gradient-mint .app-background {
   background: linear-gradient(135deg, #86efac 0%, #34d399 50%, #22d3ee 100%) !important;
+}
+
+body.bg-gradient-lavender .app-background {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #ede9fe 100%) !important;
+}
+
+body.bg-gradient-soft-mint .app-background {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #f0fdfa 100%) !important;
+}
+
+body.bg-gradient-peach .app-background {
+  background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 50%, #fefce8 100%) !important;
+}
+
+body.bg-gradient-sky .app-background {
+  background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 50%, #ecfeff 100%) !important;
 }
 
 /* Preview class for theme selector */

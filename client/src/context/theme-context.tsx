@@ -50,7 +50,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const body = document.body;
     
     // Remove existing background classes
-    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-subtle', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-gradient-aurora', 'bg-gradient-fire', 'bg-gradient-mint');
+    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-subtle', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-gradient-aurora', 'bg-gradient-fire', 'bg-gradient-mint', 'bg-gradient-lavender', 'bg-gradient-soft-mint', 'bg-gradient-peach', 'bg-gradient-sky');
     
     // Remove any existing custom background styles
     body.style.removeProperty('background-image');

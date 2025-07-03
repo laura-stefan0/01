@@ -80,29 +80,13 @@ export function ThemeSettingsContent() {
 
   const solidColorOptions = [
     { value: 'gradient-subtle', label: 'Subtle', preview: 'bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50' },
-    { value: 'pink', label: 'Pink', color: '#fdf2f8', preview: 'bg-pink-50' },
-    { value: 'green', label: 'Green', color: '#f0fdf4', preview: 'bg-green-50' },
-    { value: 'blue', label: 'Blue', color: '#eff6ff', preview: 'bg-blue-50' },
-    { value: 'purple', label: 'Purple', color: '#faf5ff', preview: 'bg-purple-50' },
-    { value: 'orange', label: 'Orange', color: '#fff7ed', preview: 'bg-orange-50' }
+    { value: 'gradient-lavender', label: 'Lavender', preview: 'bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50' },
+    { value: 'gradient-soft-mint', label: 'Mint', preview: 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50' },
+    { value: 'gradient-peach', label: 'Peach', preview: 'bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50' },
+    { value: 'gradient-sky', label: 'Sky', preview: 'bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50' }
   ];
 
   const gradientOptions = [
-    { 
-          name: 'Sunset', 
-          value: 'gradient-sunset', 
-          preview: 'bg-gradient-to-br from-orange-400 via-red-400 to-pink-500' 
-        },
-        { 
-          name: 'Ocean', 
-          value: 'gradient-ocean', 
-          preview: 'bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600' 
-        },
-        { 
-          name: 'Forest', 
-          value: 'gradient-forest', 
-          preview: 'bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600' 
-        },
         { 
           name: 'Aurora', 
           value: 'gradient-aurora', 
@@ -114,8 +98,8 @@ export function ThemeSettingsContent() {
           preview: 'bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600' 
         },
         { 
-          name: 'Mint', 
-          value: 'gradient-mint', 
+          name: 'Ocean', 
+          value: 'gradient-ocean', 
           preview: 'bg-gradient-to-br from-green-300 via-emerald-400 to-cyan-500' 
         },
   ];
