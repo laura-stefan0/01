@@ -255,7 +255,7 @@ router.post('/', async (req, res) => {
       description,
       category,
       event_type,
-      location,
+      city: location, // Map location to city column
       address: address || '', // Default to empty string if not provided
       latitude,
       longitude,
