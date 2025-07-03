@@ -96,7 +96,6 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
             <p className="text-xs text-gray-600 font-medium">{formatDateTime(protest.date, protest.time)}</p>
           </div>
         </CardContent>
-      </div>
     </Card>
   );
 }
