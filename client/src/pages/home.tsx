@@ -114,7 +114,7 @@ export default function HomePage() {
     onSuccess: () => {
       toast({
         title: "🎉 Event Submitted Successfully!",
-        description: "Thank you for contributing to the movement! Your event is now live and helping others discover meaningful activism opportunities.",
+        description: "Thank you for your contribution! Your event will be reviewed and published shortly.",
         variant: "success",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/protests"] });
@@ -693,7 +693,7 @@ export default function HomePage() {
               </Button>
 
               <div className="text-xs text-gray-500 text-center mt-2">
-                Your event will be visible to users immediately after submission.
+                Your event will be reviewed before being published.
               </div>
             </form>
           </DialogContent>

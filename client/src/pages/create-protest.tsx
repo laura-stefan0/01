@@ -72,7 +72,7 @@ export default function CreateProtest() {
     onSuccess: () => {
       toast({
         title: "🎉 Event Submitted Successfully!",
-        description: "Thank you for contributing to the movement! Your event is now live and helping others discover meaningful activism opportunities.",
+        description: "Thank you for your contribution! Your event will be reviewed and published shortly.",
         variant: "success",
         className: "border-green-200 bg-green-50 text-green-800 success-bounce",
       });
@@ -294,7 +294,7 @@ export default function CreateProtest() {
               </Button>
 
               <div className="text-xs text-gray-500 text-center mt-2">
-                Your event will be visible to users immediately after submission.
+                Your event will be reviewed before being published.
               </div>
             </form>
           </CardContent>
