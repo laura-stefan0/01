@@ -212,19 +212,11 @@ export default function ProtestDetail() {
           </div>
         </div>
 
-        {/* Hero Image */}
-        <div className="relative">
-          <img 
-            src={getImageUrl()} 
-            alt={protest.title}
-            className="w-full h-64 object-cover"
-            onError={handleImageError}
-          />
-          <div className="absolute top-4 left-4">
-            <Badge className={`${getCategoryColor(protest.category)} text-white`}>
-              {protest.category}
-            </Badge>
-          </div>
+        {/* Category Badge */}
+        <div className="p-4 border-b">
+          <Badge className={`${getCategoryColor(protest.category)} text-white`}>
+            {protest.category}
+          </Badge>
         </div>
 
         {/* Content */}
