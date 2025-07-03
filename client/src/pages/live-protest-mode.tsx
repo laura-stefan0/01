@@ -393,105 +393,58 @@ export default function LiveProtestModePage() {
     }
   ];
 
-  // Loading Screen with Complex Transformation Animation
+  // Loading Screen with Concentric Circles Animation
   if (isLoading) {
-    const loadingMessages = [
-      "Initializing Live Mode...",
-      "Securing connections...", 
-      "Activating safety protocols...",
-      "Establishing emergency links...",
-      "Optimizing location services...",
-      "Live Mode activated"
-    ];
-
-    const loadingIcons = [Shield, Lock, Eye, Phone, MapPin, Zap];
-    const CurrentIcon = loadingIcons[loadingStep] || Shield;
-
     return (
       <div className="fixed inset-0 z-50 overflow-hidden" style={{
         background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
       }}>
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Smoothly rotating circles */}
-          {[...Array(6)].map((_, i) => (
+          {/* Multiple concentric circles smoothly rotating */}
+          {[...Array(12)].map((_, i) => (
             <div
               key={i}
-              className="absolute rounded-full border-2 border-white/20"
+              className="absolute rounded-full border border-white/15"
               style={{
-                width: `${150 + i * 50}px`,
-                height: `${150 + i * 50}px`,
+                width: `${120 + i * 40}px`,
+                height: `${120 + i * 40}px`,
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                animation: `smoothRotate ${12 + i * 4}s linear infinite ${i % 2 === 0 ? 'normal' : 'reverse'}`
+                animation: `smoothRotate ${15 + i * 3}s linear infinite ${i % 2 === 0 ? 'normal' : 'reverse'}`
               }}
             />
           ))}
           
-          {/* Smoothly floating dots */}
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={`dot-${i}`}
-              className="absolute w-2 h-2 bg-white/40 rounded-full"
-              style={{
-                top: `${20 + Math.sin(i * 0.5) * 60}%`,
-                left: `${20 + Math.cos(i * 0.5) * 60}%`,
-                animation: `smoothFloat ${4 + i * 0.5}s ease-in-out infinite`,
-                animationDelay: `${i * 0.3}s`
-              }}
-            />
-          ))}
-
-          {/* Smoothly floating geometric shapes */}
+          {/* Additional inner circles for depth */}
           {[...Array(8)].map((_, i) => (
             <div
-              key={`shape-${i}`}
-              className="absolute opacity-20"
+              key={`inner-${i}`}
+              className="absolute rounded-full border border-white/10"
               style={{
-                top: `${10 + (i * 12)}%`,
-                left: `${5 + (i * 11)}%`,
-                animation: `smoothBounce ${6 + i * 0.8}s ease-in-out infinite`,
-                animationDelay: `${i * 0.6}s`
+                width: `${60 + i * 20}px`,
+                height: `${60 + i * 20}px`,
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                animation: `smoothRotate ${8 + i * 2}s linear infinite ${i % 3 === 0 ? 'reverse' : 'normal'}`
               }}
-            >
-              <div 
-                className="w-6 h-6 bg-white transform rotate-45"
-                style={{
-                  borderRadius: i % 2 === 0 ? '0' : '50%'
-                }}
-              />
-            </div>
+            />
           ))}
         </div>
 
         {/* Main Content */}
         <div className="relative z-10 flex items-center justify-center min-h-screen px-8">
           <div className="text-center max-w-sm">
-            
-
             {/* App Name */}
-            <div className="relative mb-6">
+            <div className="relative mb-8">
               <h1 className="text-4xl font-bold text-white mb-2">
                 Corteo
               </h1>
               <div className="text-white/90 text-lg font-medium">
                 Live Protest Mode
               </div>
-            </div>
-
-            {/* Loading Message with Typewriter Effect */}
-            <div className="mb-8">
-              <p className="text-white/80 text-sm font-medium h-6 overflow-hidden">
-                {loadingMessages[loadingStep] && (
-                  <span 
-                    className="inline-block animate-pulse"
-                    style={{ animationDuration: '1s' }}
-                  >
-                    {loadingMessages[loadingStep]}
-                  </span>
-                )}
-              </p>
             </div>
 
             {/* Progress Bar */}
@@ -506,8 +459,6 @@ export default function LiveProtestModePage() {
                 </div>
               </div>
             </div>
-
-            
           </div>
         </div>
 
@@ -516,16 +467,6 @@ export default function LiveProtestModePage() {
           @keyframes smoothRotate {
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
-          }
-          
-          @keyframes smoothFloat {
-            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.4; }
-            50% { transform: translateY(-10px) scale(1.1); opacity: 0.7; }
-          }
-          
-          @keyframes smoothBounce {
-            0%, 100% { transform: translateY(0px) rotate(45deg) scale(1); }
-            50% { transform: translateY(-15px) rotate(45deg) scale(1.2); }
           }
         `}</style>
       </div>
