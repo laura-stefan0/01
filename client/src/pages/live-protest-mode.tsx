@@ -405,13 +405,13 @@ export default function LiveProtestModePage() {
   ];
 
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-white z-50 overflow-y-auto max-w-screen-sm mx-auto">
       {/* Police Interaction Guide Screen */}
       {showPoliceGuide && (
-        <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
+        <div className="fixed inset-0 bg-white z-60 overflow-y-auto max-w-screen-sm mx-auto">
           {/* Police Guide Header */}
           <header className="bg-blue-600 text-white sticky top-0 z-70">
-            <div className="px-4 py-4 flex items-center justify-between">
+            <div className="px-4 py-4 flex items-center justify-between max-w-full">
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -591,10 +591,10 @@ export default function LiveProtestModePage() {
 
       {/* Quick Phonebook Screen */}
       {showQuickPhonebook && (
-        <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
+        <div className="fixed inset-0 bg-white z-60 overflow-y-auto max-w-screen-sm mx-auto">
           {/* Phonebook Header */}
           <header className="bg-purple-600 text-white sticky top-0 z-70">
-            <div className="px-4 py-4 flex items-center justify-between">
+            <div className="px-4 py-4 flex items-center justify-between max-w-full">
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -781,10 +781,10 @@ export default function LiveProtestModePage() {
 
       {/* Emergency Contacts Screen */}
       {showEmergencyContacts && (
-        <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
+        <div className="fixed inset-0 bg-white z-60 overflow-y-auto max-w-screen-sm mx-auto">
           {/* Emergency Header */}
           <header className="bg-red-600 text-white sticky top-0 z-70">
-            <div className="px-4 py-4 flex items-center justify-between">
+            <div className="px-4 py-4 flex items-center justify-between max-w-full">
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -1004,9 +1004,9 @@ export default function LiveProtestModePage() {
         </div>
       </header>
 
-      <div className="px-4 py-6 space-y-6">
+      <div className="px-4 py-6 space-y-6 max-w-sm mx-auto w-full">
         {/* Status Bar */}
-        <div className="bg-gray-50 rounded-lg p-4">
+        <div className="bg-gray-50 rounded-lg p-4 w-full">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
@@ -1023,9 +1023,9 @@ export default function LiveProtestModePage() {
         </div>
 
         {/* Emergency Actions */}
-        <section>
+        <section className="w-full">
           <h2 className="text-lg font-semibold text-dark-slate mb-4">Emergency Actions</h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 w-full">
             {emergencyFeatures.map((feature, index) => (
               <Card 
                 key={index} 
@@ -1054,9 +1054,9 @@ export default function LiveProtestModePage() {
         </section>
 
         {/* Communication */}
-        <section>
+        <section className="w-full">
           <h2 className="text-lg font-semibold text-dark-slate mb-4">Communication</h2>
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-3 w-full">
             {communicationFeatures.map((feature, index) => (
               <Card 
                 key={index} 
@@ -1089,9 +1089,9 @@ export default function LiveProtestModePage() {
         </section>
 
         {/* Live Monitoring */}
-        <section>
+        <section className="w-full">
           <h2 className="text-lg font-semibold text-dark-slate mb-4">Live Monitoring</h2>
-          <div className="space-y-3">
+          <div className="space-y-3 w-full">
             {liveFeatures.map((feature, index) => (
               <Card key={index} className="border-gray-200 bg-white">
                 <CardContent className="p-4">
@@ -1137,7 +1137,7 @@ export default function LiveProtestModePage() {
         
 
         {/* Safety Tips */}
-        <section>
+        <section className="w-full">
           <h2 className="text-lg font-semibold text-dark-slate mb-4">Live Safety Tips</h2>
           <Card 
             className={`border-2 ${
@@ -1215,7 +1215,7 @@ export default function LiveProtestModePage() {
         </section>
 
         {/* Deactivate Mode */}
-        <section className="pt-4">
+        <section className="pt-4 w-full">
           <button
             onClick={() => navigate("/resources")}
             className="w-full py-3 px-4 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg transition-colors duration-200 hover:bg-gray-200"
