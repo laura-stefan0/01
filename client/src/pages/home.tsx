@@ -386,6 +386,11 @@ export default function HomePage() {
               onClick={(e) => {
                 e.preventDefault();
                 fetchUserRealLocation(true);
+                // Also refresh protests data
+                queryClient.invalidateQueries({ queryKey: ["/api/protests"] });
+                queryClient.invalidateQueries({ queryKey: ["/api/protests/featured"] });
+                queryClient.invalidateQueries({ queryKey: ["/api/protests/nearby"] });
+                queryClient.invalidateQueries({ queryKey: ["/api/whats-new"] });
               }}
               disabled={isLoadingLocation}
             >
