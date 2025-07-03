@@ -86,12 +86,17 @@ router.get("/today", async (req, res) => {
       return res.status(500).json({ error: "Failed to fetch saved protests" });
     }
 
+    console.log(`🔍 Found ${savedData?.length || 0} saved protests for user ${userId}`);
+
     if (!savedData || savedData.length === 0) {
+      console.log('❌ No saved protests found for user');
       return res.json([]);
     }
 
     // Get the actual protest data for today
     const protestIds = savedData.map(item => item.protest_id);
+    console.log(`🔍 Looking for protests with IDs: ${protestIds.join(', ')} on date: ${date}`);
+    
     const { data: protests, error: protestsError } = await supabase
       .from('protests')
       .select('*')
@@ -105,6 +110,7 @@ router.get("/today", async (req, res) => {
     }
 
     console.log(`✅ Successfully fetched ${protests?.length || 0} today's saved events for user ${userId}`);
+    console.log('🔍 Today\'s events:', protests?.map(p => ({ id: p.id, title: p.title, date: p.date })));
     res.json(protests || []);
   } catch (error) {
     console.error('❌ Error in /today route:', error);
@@ -360,6 +366,38 @@ router.post("/checkin", async (req, res) => {
   } catch (error) {
     console.error('❌ Error in /checkin route:', error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Debug endpoint to check saved protests and today's events
+router.get("/debug", async (req, res) => {
+  try {
+    const userId = 1;
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Check saved protests
+    const { data: savedData } = await supabase
+      .from('saved_protests')
+      .select('*')
+      .eq('user_id', userId);
+      
+    // Check all events for today
+    const { data: todayEvents } = await supabase
+      .from('protests')
+      .select('*')
+      .eq('date', today)
+      .eq('approved', true);
+      
+    res.json({
+      today: today,
+      savedProtests: savedData || [],
+      todayEvents: todayEvents || [],
+      savedCount: savedData?.length || 0,
+      todayCount: todayEvents?.length || 0
+    });
+  } catch (error) {
+    console.error('Debug error:', error);
+    res.status(500).json({ error: "Debug failed" });
   }
 });
 
