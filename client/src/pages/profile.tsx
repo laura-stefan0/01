@@ -39,7 +39,7 @@ export default function ProfilePage() {
 
   // Main profile page content
   return (
-    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen">
+    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       
       {/* Hero Profile Section */}
       <div className="relative">

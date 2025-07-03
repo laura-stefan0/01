@@ -14,7 +14,8 @@ export default function SavedPage() {
 
   if (savedProtests.length === 0) {
     return (
-      <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+      <div>
         {/* Page Header */}
         <section className="mb-6">
           <div className="flex items-center justify-between">
@@ -42,11 +43,13 @@ export default function SavedPage() {
           </div>
         </div>
       </div>
+    </div>
     );
   }
 
   return (
-    <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+      <div>
       {/* Page Header */}
       <section className="mb-6">
         <div className="flex items-center justify-between">
@@ -61,7 +64,7 @@ export default function SavedPage() {
           <h2 className="text-xl font-semibold text-dark-slate">Saved Protests</h2>
           <span className="text-sm text-gray-500">{savedProtests.length} saved</span>
         </div>
-        
+
         <div className="space-y-3">
           {savedProtests.map((protest) => (
             <ProtestCard 
@@ -71,7 +74,7 @@ export default function SavedPage() {
             />
           ))}
         </div>
-        
+
         <div className="pt-4 border-t">
           <Button 
             variant="outline" 
@@ -83,6 +86,7 @@ export default function SavedPage() {
           </Button>
         </div>
       </div>
+    </div>
     </div>
   );
 }

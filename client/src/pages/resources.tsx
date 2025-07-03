@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Phone, BookOpen, Users, AlertTriangle, FileText, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -54,7 +53,8 @@ export default function ResourcesPage() {
   ];
 
   return (
-    <div className="px-4 py-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+      <div>
       {/* Page Header */}
       <section className="mb-8">
         <div className="flex items-center justify-between">
@@ -70,7 +70,7 @@ export default function ResourcesPage() {
           <h2 className="text-lg font-medium text-dark-slate mb-2">For You</h2>
           <p className="text-sm text-gray-600">Personalized resources based on your location</p>
         </div>
-        
+
         <div className="space-y-3">
           {forYouResources.map((resource, index) => (
             <Card 
@@ -108,7 +108,7 @@ export default function ResourcesPage() {
           <h2 className="text-lg font-medium text-dark-slate mb-2">More Resources</h2>
           <p className="text-sm text-gray-600">Additional support and tools</p>
         </div>
-        
+
         <div className="space-y-3">
           {additionalResources.map((resource, index) => (
             <Card 
@@ -158,6 +158,7 @@ export default function ResourcesPage() {
           </button>
         </div>
       </section>
+    </div>
     </div>
   );
 }
