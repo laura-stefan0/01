@@ -85,8 +85,8 @@ export default function CreateProtest() {
     },
     onSuccess: () => {
       toast({
-        title: "Protest Created",
-        description: "Your protest has been successfully created and is now visible to users.",
+        title: "Event Submitted",
+        description: "Your event has been successfully submitted and is now visible to users.",
       });
       // Invalidate protests queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["/api/protests"] });
@@ -97,7 +97,7 @@ export default function CreateProtest() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to create protest. Please try again.",
+        description: "Failed to submit event. Please try again.",
         variant: "destructive",
       });
       console.error("Error creating protest:", error);
@@ -177,7 +177,7 @@ export default function CreateProtest() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-xl font-bold text-dark-slate">Create Protest</h1>
+            <h1 className="text-xl font-bold text-dark-slate">Add Event</h1>
             <div className="w-10"></div>
           </div>
         </div>
@@ -187,7 +187,7 @@ export default function CreateProtest() {
       <main className="px-4 py-4 pb-20">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Organize Your Event</CardTitle>
+            <CardTitle className="text-lg">Submit Event Details</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -339,11 +339,11 @@ export default function CreateProtest() {
                 disabled={createProtestMutation.isPending || uploadImageMutation.isPending}
               >
                 {uploadImageMutation.isPending ? "Uploading..." : 
-                 createProtestMutation.isPending ? "Creating..." : "Create Protest"}
+                 createProtestMutation.isPending ? "Submitting..." : "Submit Event"}
               </Button>
 
               <div className="text-xs text-gray-500 text-center mt-2">
-                Your protest will be visible to users immediately after creation.
+                Your event will be visible to users immediately after submission.
               </div>
             </form>
           </CardContent>
