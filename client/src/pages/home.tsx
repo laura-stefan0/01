@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, Calendar } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, Calendar, Check } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -50,6 +50,7 @@ export default function HomePage() {
   const [manualLocation, setManualLocation] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [userCoordinates, setUserCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [manualLocationCoordinates, setManualLocationCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -240,9 +241,10 @@ export default function HomePage() {
     }
   };
 
-  // Enhanced refresh function with better animations and data refetch
+  // Enhanced refresh function with spin-to-checkmark animation
   const handleRefresh = async () => {
     setIsRefreshing(true);
+    setShowSuccess(false);
     
     try {
       // Clear location cache and fetch fresh location
@@ -260,17 +262,24 @@ export default function HomePage() {
         queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] })
       ]);
 
-      // Success - no toast notification needed
+      // Show success checkmark
+      setIsRefreshing(false);
+      setShowSuccess(true);
+      
+      // Hide checkmark after 2 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 2000);
       
     } catch (error) {
       console.error('Refresh failed:', error);
+      setIsRefreshing(false);
+      setShowSuccess(false);
       toast({
         title: "Refresh failed", 
         description: "Unable to update content. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setIsRefreshing(false);
     }
   };
 
@@ -422,12 +431,16 @@ export default function HomePage() {
               variant="ghost"
               size="sm"
               onClick={handleRefresh}
-              disabled={isRefreshing || isLoadingLocation}
+              disabled={isRefreshing || isLoadingLocation || showSuccess}
               className="transition-all duration-200 hover:bg-gray-100"
             >
-              <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
-                (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
-              }`} />
+              {showSuccess ? (
+                <Check className="w-4 h-4 text-green-600 animate-in fade-in duration-300" />
+              ) : (
+                <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
+                  (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
+                }`} />
+              )}
             </Button>
 
             {/* Notification bell */}
