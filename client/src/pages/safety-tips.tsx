@@ -11,7 +11,7 @@ export default function SafetyTips() {
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/?tab=resources")}>
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/resources")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-dark-slate ml-3">Safety Tips</h1>

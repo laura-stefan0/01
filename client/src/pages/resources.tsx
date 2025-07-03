@@ -60,7 +60,6 @@ export default function ResourcesPage() {
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <h1 className="text-2xl font-medium text-dark-slate mb-1">Resources</h1>
-            <p className="text-sm text-gray-600">Essential tools and information for activists</p>
           </div>
         </div>
       </section>
