@@ -86,23 +86,7 @@ export function ThemeSettingsContent() {
     { value: 'gradient-sky', label: 'Sky', preview: 'bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50' }
   ];
 
-  const gradientOptions = [
-        { 
-          name: 'Aurora', 
-          value: 'gradient-aurora', 
-          preview: 'bg-gradient-to-br from-purple-400 via-pink-500 to-indigo-600' 
-        },
-        { 
-          name: 'Fire', 
-          value: 'gradient-fire', 
-          preview: 'bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600' 
-        },
-        { 
-          name: 'Ocean', 
-          value: 'gradient-ocean', 
-          preview: 'bg-gradient-to-br from-green-300 via-emerald-400 to-cyan-500' 
-        },
-  ];
+  const gradientOptions: { name: string; value: string; preview: string }[] = [];
 
   // State for local background images
   const [localImages, setLocalImages] = useState<string[]>([]);
