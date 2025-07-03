@@ -36,9 +36,9 @@ async function fetchApifyData() {
     console.log(`✅ Found successful run: ${successfulRun.id}`);
     console.log(`📅 Started: ${new Date(successfulRun.startedAt).toLocaleString()}`);
     
-    // Fetch the dataset results
+    // Fetch the dataset results with all fields
     const datasetResponse = await fetch(
-      `https://api.apify.com/v2/datasets/${successfulRun.defaultDatasetId}/items?token=${apiToken}&format=json`
+      `https://api.apify.com/v2/datasets/${successfulRun.defaultDatasetId}/items?token=${apiToken}&format=json&clean=false&attachment=false`
     );
     
     if (!datasetResponse.ok) {
