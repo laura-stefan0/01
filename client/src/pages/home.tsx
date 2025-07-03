@@ -611,267 +611,264 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Create Protest Section */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Did we miss one?</h2>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 shadow-xl cursor-pointer">
-              <CardContent className="p-4">
-                <Button 
-                  className="w-full bg-white text-indigo-600 hover:bg-gray-50 font-semibold shadow-none border-0 h-12"
-                >
-                  <TrendingUp className="w-5 h-5 mr-2" />
-                  Add an event
-                </Button>
-              </CardContent>
-            </Card>
-          </DialogTrigger>
-          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-lg">Add Event</DialogTitle>
-              <div className="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-lg">
-                We appreciate any details you can provide about this event to help others discover and participate in meaningful activism.
-              </div>
-            </DialogHeader>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Event Name */}
-              <div className="space-y-2">
-                <Label htmlFor="title">Event name *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="March for Climate Action"
-                  required
-                />
-              </div>
-
-              {/* Type */}
-              <div className="space-y-2">
-                <Label htmlFor="event_type">Type *</Label>
-                <Select value={formData.event_type} onValueChange={(value) => setFormData({ ...formData, event_type: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select event type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {eventTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Cause */}
-              <div className="space-y-2">
-                <Label htmlFor="category">Cause *</Label>
-                <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a cause" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Any other info */}
-              <div className="space-y-2">
-                <Label htmlFor="description">Any other info</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Additional details about the event, meeting point, what to bring, etc..."
-                  rows={3}
-                />
-              </div>
-
-              {/* Address */}
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="City Hall, 1 Dr Carlton B Goodlett Pl"
-                />
-              </div>
-
-              {/* City */}
-              <div className="space-y-2">
-                <Label htmlFor="location">City *</Label>
-                <div className="relative">
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="San Francisco, CA"
-                    className="pl-10"
-                    required
-                  />
-                  <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                </div>
-              </div>
-
-              {/* Date */}
-              <div className="space-y-2">
-                <Label htmlFor="date">Date *</Label>
-                <div className="relative">
-                  <Input
-                    id="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="pl-10"
-                    required
-                  />
-                  <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                </div>
-              </div>
-
-              {/* Time */}
-              <div className="space-y-2">
-                <Label htmlFor="time">Time</Label>
-                <Input
-                  id="time"
-                  type="time"
-                  value={formData.time}
-                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                />
-              </div>
-
-              {/* URL */}
-              <div className="space-y-2">
-                <Label htmlFor="url">Event URL</Label>
-                <Input
-                  id="url"
-                  type="url"
-                  value={formData.url || ''}
-                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  placeholder="https://example.com/event-details"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <Button 
-                type="submit" 
-                className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-                disabled={createProtestMutation.isPending}
-              >
-                {createProtestMutation.isPending ? "Submitting..." : "Submit Event"}
-              </Button>
-
-              <div className="text-xs text-gray-500 text-center mt-2">
-                Your event will be reviewed before being published.
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </section>
-
-      {/* Feedback Section */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Help us improve</h2>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
-              background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
-            }}>
-              <CardContent className="p-4 text-center relative z-10">
-                <div className="flex flex-col items-center space-y-2">
-                  <MessageCircle className="w-8 h-8 text-white" />
-                  <h3 className="font-bold text-base text-white drop-shadow-lg">Share your feedback</h3>
-                </div>
-              </CardContent>
-            </Card>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-lg">Share Your Feedback</DialogTitle>
-              <div className="text-sm text-gray-600 mt-2">
-                Your suggestions help us build a better platform for activists and organizers.
-              </div>
-            </DialogHeader>
-
-            <form className="space-y-4" onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target as HTMLFormElement);
-              const feedbackType = formData.get('feedbackType') as string;
-              const message = formData.get('message') as string;
-              
-              // Here you would typically send this to your backend
-              console.log('Feedback submitted:', { feedbackType, message });
-              
-              toast({
-                title: "Thank you for your feedback!",
-                description: "We appreciate your input and will review it carefully.",
-                variant: "success",
-              });
-              
-              // Reset form
-              (e.target as HTMLFormElement).reset();
-            }}>
-              {/* Feedback Type */}
-              <div className="space-y-2">
-                <Label htmlFor="feedbackType">What would you like to share?</Label>
-                <Select name="feedbackType" required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select feedback type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="suggestion">Feature suggestion</SelectItem>
-                    <SelectItem value="bug">Report a bug</SelectItem>
-                    <SelectItem value="improvement">App improvement</SelectItem>
-                    <SelectItem value="content">Content feedback</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Message */}
-              <div className="space-y-2">
-                <Label htmlFor="message">Your message</Label>
-                <Textarea
-                  name="message"
-                  placeholder="Tell us what you think, what could be improved, or any ideas you have..."
-                  rows={4}
-                  required
-                />
-              </div>
-
-              {/* Submit Button */}
-              <Button type="submit" className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
-                Send Feedback
-              </Button>
-
-              <div className="text-xs text-gray-500 text-center">
-                We read every piece of feedback and use it to improve Corteo.
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </section>
-
-      {/* Donations Section */}
+      {/* Get Involved Section */}
       <section>
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Support Us</h2>
-        <Card className="bg-activist-blue">
-          <CardContent className="p-4">
-            <h3 className="font-semibold mb-2 text-white">Make a Difference</h3>
-            <p className="text-sm mb-3 text-white">Your donation helps support activists and organizations fighting for change.</p>
-            <Button className="w-full bg-white text-activist-blue hover:bg-clean-white">
-              Donate Now
-            </Button>
-          </CardContent>
-        </Card>
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Get Involved</h2>
+        <div className="space-y-4">
+          {/* Add an event */}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 shadow-xl cursor-pointer">
+                <CardContent className="p-4">
+                  <Button 
+                    className="w-full bg-white text-indigo-600 hover:bg-gray-50 font-semibold shadow-none border-0 h-12"
+                  >
+                    <TrendingUp className="w-5 h-5 mr-2" />
+                    Add an event
+                  </Button>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-lg">Add Event</DialogTitle>
+                <div className="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-lg">
+                  We appreciate any details you can provide about this event to help others discover and participate in meaningful activism.
+                </div>
+              </DialogHeader>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Event Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="title">Event name *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="March for Climate Action"
+                    required
+                  />
+                </div>
+
+                {/* Type */}
+                <div className="space-y-2">
+                  <Label htmlFor="event_type">Type *</Label>
+                  <Select value={formData.event_type} onValueChange={(value) => setFormData({ ...formData, event_type: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select event type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {eventTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Cause */}
+                <div className="space-y-2">
+                  <Label htmlFor="category">Cause *</Label>
+                  <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a cause" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Any other info */}
+                <div className="space-y-2">
+                  <Label htmlFor="description">Any other info</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Additional details about the event, meeting point, what to bring, etc..."
+                    rows={3}
+                  />
+                </div>
+
+                {/* Address */}
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="City Hall, 1 Dr Carlton B Goodlett Pl"
+                  />
+                </div>
+
+                {/* City */}
+                <div className="space-y-2">
+                  <Label htmlFor="location">City *</Label>
+                  <div className="relative">
+                    <Input
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      placeholder="San Francisco, CA"
+                      className="pl-10"
+                      required
+                    />
+                    <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+
+                {/* Date */}
+                <div className="space-y-2">
+                  <Label htmlFor="date">Date *</Label>
+                  <div className="relative">
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      className="pl-10"
+                      required
+                    />
+                    <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+
+                {/* Time */}
+                <div className="space-y-2">
+                  <Label htmlFor="time">Time</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    value={formData.time}
+                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                  />
+                </div>
+
+                {/* URL */}
+                <div className="space-y-2">
+                  <Label htmlFor="url">Event URL</Label>
+                  <Input
+                    id="url"
+                    type="url"
+                    value={formData.url || ''}
+                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                    placeholder="https://example.com/event-details"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <Button 
+                  type="submit" 
+                  className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+                  disabled={createProtestMutation.isPending}
+                >
+                  {createProtestMutation.isPending ? "Submitting..." : "Submit Event"}
+                </Button>
+
+                <div className="text-xs text-gray-500 text-center mt-2">
+                  Your event will be reviewed before being published.
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Share your feedback */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+                background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
+              }}>
+                <CardContent className="p-4 text-center relative z-10">
+                  <div className="flex flex-col items-center space-y-2">
+                    <MessageCircle className="w-8 h-8 text-white" />
+                    <h3 className="font-bold text-base text-white drop-shadow-lg">Share your feedback</h3>
+                  </div>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-lg">Share Your Feedback</DialogTitle>
+                <div className="text-sm text-gray-600 mt-2">
+                  Your suggestions help us build a better platform for activists and organizers.
+                </div>
+              </DialogHeader>
+
+              <form className="space-y-4" onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                const feedbackType = formData.get('feedbackType') as string;
+                const message = formData.get('message') as string;
+                
+                // Here you would typically send this to your backend
+                console.log('Feedback submitted:', { feedbackType, message });
+                
+                toast({
+                  title: "Thank you for your feedback!",
+                  description: "We appreciate your input and will review it carefully.",
+                  variant: "success",
+                });
+                
+                // Reset form
+                (e.target as HTMLFormElement).reset();
+              }}>
+                {/* Feedback Type */}
+                <div className="space-y-2">
+                  <Label htmlFor="feedbackType">What would you like to share?</Label>
+                  <Select name="feedbackType" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select feedback type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="suggestion">Feature suggestion</SelectItem>
+                      <SelectItem value="bug">Report a bug</SelectItem>
+                      <SelectItem value="improvement">App improvement</SelectItem>
+                      <SelectItem value="content">Content feedback</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Message */}
+                <div className="space-y-2">
+                  <Label htmlFor="message">Your message</Label>
+                  <Textarea
+                    name="message"
+                    placeholder="Tell us what you think, what could be improved, or any ideas you have..."
+                    rows={4}
+                    required
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <Button type="submit" className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
+                  Send Feedback
+                </Button>
+
+                <div className="text-xs text-gray-500 text-center">
+                  We read every piece of feedback and use it to improve Corteo.
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Make a Difference */}
+          <Card className="bg-activist-blue">
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2 text-white">Make a Difference</h3>
+              <p className="text-sm mb-3 text-white">Your donation helps support activists and organizations fighting for change.</p>
+              <Button className="w-full bg-white text-activist-blue hover:bg-clean-white">
+                Donate Now
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </section>
       </div>
     </div>
