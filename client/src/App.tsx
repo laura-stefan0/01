@@ -33,6 +33,7 @@ import { AuthProvider, useAuth } from "@/context/auth-context";
 import { ThemeProvider } from "@/context/theme-context";
 import { Navbar } from "@/components/navbar";
 import { SavedProtestsProvider } from "@/context/saved-protests-context";
+import LiveProtestModePage from "./pages/live-protest-mode";
 
 /**
  * Layout component that conditionally shows navbar
@@ -121,6 +122,7 @@ function AuthenticatedRouter() {
         <Route path="/create-protest" element={<CreateProtest />} />
         <Route path="/transparency" element={<Transparency />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/live-protest-mode" element={<LiveProtestModePage />} />
 
         {/* 404 fallback */}
         <Route path="*" element={<NotFound />} />

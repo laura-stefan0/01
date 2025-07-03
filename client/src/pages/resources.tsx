@@ -140,17 +140,22 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* Help Section */}
+      {/* Live Protest Mode Section */}
       <section className="mt-12 mb-6">
         <div className="text-center py-6 px-4 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-medium text-dark-slate mb-2">Need Help?</h3>
+          <h3 className="text-sm font-medium text-dark-slate mb-2">Real-Time Safety</h3>
           <p className="text-xs text-gray-600 mb-4">
-            Contact our support team for assistance with any of these resources
+            Access emergency features and live updates during protests
           </p>
-          <div className="flex items-center justify-center text-xs" style={{ color: '#e11d48' }}>
-            <Phone className="w-4 h-4 mr-1" />
-            <span>Get Support</span>
-          </div>
+          <button
+            onClick={() => navigate("/live-protest-mode")}
+            className="w-full py-3 px-4 text-sm font-medium text-white rounded-lg transition-colors duration-200"
+            style={{ backgroundColor: '#e11d48' }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#be185d'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#e11d48'}
+          >
+            Live Protest Mode
+          </button>
         </div>
       </section>
     </div>
