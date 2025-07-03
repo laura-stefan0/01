@@ -404,7 +404,7 @@ export default function HomePage() {
               <Skeleton className="h-20 w-full" />
             </>
           ) : nearbyProtests.length > 0 ? (
-            sortProtestsByDistance(nearbyProtests).slice(0, 10).map((protest, index) => (
+            sortProtestsByDistance(nearbyProtests).slice(0, 5).map((protest, index) => (
               <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
             ))
           ) : (
@@ -413,6 +413,16 @@ export default function HomePage() {
             </div>
           )}
         </div>
+      </section>
+
+      {/* Create Protest Section */}
+      <section className="mb-6">
+        <Button 
+          className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white py-4 text-base font-medium"
+          onClick={() => navigate('/create-protest')}
+        >
+          Create Protest
+        </Button>
       </section>
 
       {/* Donations Section */}
