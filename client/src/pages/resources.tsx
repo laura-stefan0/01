@@ -58,10 +58,10 @@ export default function ResourcesPage() {
       </section>
 
       {/* For You Section */}
-      <section className="space-y-4">
-        <div className="bg-activist-blue rounded-lg p-4">
-          <h2 className="text-lg font-semibold text-white mb-4">For You</h2>
-          <div className="grid grid-cols-3 gap-3">
+      <section className="space-y-4 mb-8">
+        <div className="rounded-lg p-4" style={{ backgroundColor: '#e11d48' }}>
+          <h2 className="text-lg font-semibold text-white mb-6">For You</h2>
+          <div className="grid grid-cols-3 gap-4">
             {forYouResources.map((resource, index) => (
               <Card 
                 key={index} 
@@ -74,8 +74,8 @@ export default function ResourcesPage() {
                 }}
               >
                 <CardContent className="p-4 flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
-                    <resource.icon className="w-6 h-6 text-activist-blue" />
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: '#e11d4819', color: '#e11d48' }}>
+                    <resource.icon className="w-6 h-6" />
                   </div>
                   <h3 className="font-medium text-foreground text-sm">{resource.title}</h3>
                 </CardContent>
@@ -87,7 +87,7 @@ export default function ResourcesPage() {
 
       {/* Additional Resources */}
       <section className="space-y-4">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-4">
           {additionalResources.map((resource, index) => (
             <Card 
               key={index} 
@@ -100,8 +100,8 @@ export default function ResourcesPage() {
               }}
             >
               <CardContent className="p-4 flex flex-col items-center text-center">
-                <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
-                  <resource.icon className="w-6 h-6 text-activist-blue" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: '#e11d4819', color: '#e11d48' }}>
+                  <resource.icon className="w-6 h-6" />
                 </div>
                 <h3 className="font-medium text-foreground text-sm">{resource.title}</h3>
               </CardContent>
