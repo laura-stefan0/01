@@ -1,5 +1,5 @@
 
-import { ArrowLeft, Shield, Phone, Camera, MapPin, Users, AlertTriangle, Clock, Wifi, WifiOff, Download, Share2, Video, StopCircle, Battery, BatteryLow, Eye, Lock, Zap } from "lucide-react";
+import { ArrowLeft, Shield, Phone, Camera, MapPin, Users, AlertTriangle, Clock, Wifi, WifiOff, Download, Share2, Video, StopCircle, Battery, BatteryLow } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -10,8 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 export default function LiveProtestModePage() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingStep, setLoadingStep] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isRecording, setIsRecording] = useState(false);
@@ -38,33 +36,6 @@ export default function LiveProtestModePage() {
     return saved ? JSON.parse(saved) : [];
   });
   const [editingContact, setEditingContact] = useState<{name: string; number: string; id?: string} | null>(null);
-
-  // Loading sequence effect
-  useEffect(() => {
-    const loadingSteps = [
-      { step: 0, text: "Initializing Live Mode...", duration: 1200 },
-      { step: 1, text: "Securing connections...", duration: 1300 },
-      { step: 2, text: "Activating safety protocols...", duration: 1100 },
-      { step: 3, text: "Establishing emergency links...", duration: 1200 },
-      { step: 4, text: "Optimizing location services...", duration: 1000 },
-      { step: 5, text: "Live Mode activated", duration: 1200 }
-    ];
-
-    let currentStep = 0;
-    
-    const advanceStep = () => {
-      if (currentStep < loadingSteps.length - 1) {
-        currentStep++;
-        setLoadingStep(currentStep);
-        setTimeout(advanceStep, loadingSteps[currentStep].duration);
-      } else {
-        setTimeout(() => setIsLoading(false), 300);
-      }
-    };
-
-    // Start loading sequence
-    setTimeout(advanceStep, loadingSteps[0].duration);
-  }, []);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -392,86 +363,6 @@ export default function LiveProtestModePage() {
       value: `${riskLevel} Risk`
     }
   ];
-
-  // Loading Screen with Concentric Circles Animation
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 z-50 overflow-hidden" style={{
-        background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
-      }}>
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Multiple concentric circles smoothly rotating */}
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full border border-white/15"
-              style={{
-                width: `${120 + i * 40}px`,
-                height: `${120 + i * 40}px`,
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                animation: `smoothRotate ${15 + i * 3}s linear infinite ${i % 2 === 0 ? 'normal' : 'reverse'}`
-              }}
-            />
-          ))}
-          
-          {/* Additional inner circles for depth */}
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={`inner-${i}`}
-              className="absolute rounded-full border border-white/10"
-              style={{
-                width: `${60 + i * 20}px`,
-                height: `${60 + i * 20}px`,
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                animation: `smoothRotate ${8 + i * 2}s linear infinite ${i % 3 === 0 ? 'reverse' : 'normal'}`
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Main Content */}
-        <div className="relative z-10 flex items-center justify-center min-h-screen px-8">
-          <div className="text-center max-w-sm">
-            {/* App Name */}
-            <div className="relative mb-8">
-              <h1 className="text-4xl font-bold text-white mb-2">
-                Corteo
-              </h1>
-              <div className="text-white/90 text-lg font-medium">
-                Live Protest Mode
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="w-full max-w-xs mx-auto">
-              <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-white to-rose-200 rounded-full transition-all duration-1000 ease-out relative"
-                  style={{ width: `${(loadingStep + 1) * 16.66}%` }}
-                >
-                  {/* Shimmer effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Additional CSS for smooth animations */}
-        <style jsx>{`
-          @keyframes smoothRotate {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
