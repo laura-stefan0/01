@@ -215,9 +215,20 @@ export default function CreateProtest() {
                 />
               </div>
 
-              {/* Location */}
+              {/* Address */}
               <div className="space-y-2">
-                <Label htmlFor="location">City/Area *</Label>
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  placeholder="City Hall, 1 Dr Carlton B Goodlett Pl"
+                />
+              </div>
+
+              {/* City */}
+              <div className="space-y-2">
+                <Label htmlFor="location">City *</Label>
                 <div className="relative">
                   <Input
                     id="location"
@@ -229,18 +240,6 @@ export default function CreateProtest() {
                   />
                   <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
                 </div>
-              </div>
-
-              {/* Address */}
-              <div className="space-y-2">
-                <Label htmlFor="address">Specific Address *</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="City Hall, 1 Dr Carlton B Goodlett Pl"
-                  required
-                />
               </div>
 
               {/* Date */}
@@ -261,13 +260,12 @@ export default function CreateProtest() {
 
               {/* Time */}
               <div className="space-y-2">
-                <Label htmlFor="time">Time *</Label>
+                <Label htmlFor="time">Time</Label>
                 <Input
                   id="time"
                   type="time"
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                  required
                 />
               </div>
 

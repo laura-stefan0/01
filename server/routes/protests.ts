@@ -241,7 +241,7 @@ router.post('/', async (req, res) => {
   try {
     const { title, description, category, event_type, location, address, latitude, longitude, date, time, imageUrl } = req.body;
 
-    if (!title || !category || !event_type || !location || !address || !latitude || !longitude || !date || !time) {
+    if (!title || !category || !event_type || !location || !latitude || !longitude || !date) {
       return res.status(400).json({ message: "Required fields missing" });
     }
 
@@ -256,11 +256,11 @@ router.post('/', async (req, res) => {
       category,
       event_type,
       location,
-      address,
+      address: address || '', // Default to empty string if not provided
       latitude,
       longitude,
       date,
-      time,
+      time: time || '18:00', // Default to 6 PM if not provided
       image_url: imageUrl || `https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/teemu-paananen-rd5uNIUJCF0-unsplash.jpg`,
       country_code: userCountryCode,
       attendees: 0,
