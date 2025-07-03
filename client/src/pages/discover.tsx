@@ -5,5 +5,9 @@ import { MapView } from "@/components/map-view";
  * This page displays the map view for users to discover protests in their area
  */
 export default function DiscoverPage() {
-  return <MapView />;
+  return (
+    <div className="animate-in fade-in duration-300 ease-out">
+      <MapView />
+    </div>
+  );
 }

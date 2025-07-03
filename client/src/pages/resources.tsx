@@ -29,7 +29,7 @@ export default function ResourcesPage() {
   ];
 
   return (
-    <div className="px-4 py-4 max-w-md mx-auto">
+    <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       <div className="grid grid-cols-3 gap-3">
         {protestResources.map((resource, index) => (
           <Card 

@@ -14,7 +14,7 @@ export default function SavedPage() {
 
   if (savedProtests.length === 0) {
     return (
-      <div className="px-4 py-4 max-w-md mx-auto">
+      <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
         <div className="space-y-4">
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
@@ -38,7 +38,7 @@ export default function SavedPage() {
   }
 
   return (
-    <div className="px-4 py-4 max-w-md mx-auto">
+    <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-dark-slate">Saved Protests</h2>

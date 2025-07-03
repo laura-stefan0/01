@@ -64,8 +64,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="app-background">
-      <div className="animate-in fade-in duration-300 min-h-screen">
-        {children}
+      <div className="animate-in fade-in duration-500 ease-out min-h-screen">
+        <div className="transition-all duration-300 ease-in-out">
+          {children}
+        </div>
         {/* Show navbar only on main routes */}
         {!shouldHideNavbar && <Navbar />}
         {/* Add bottom padding when navbar is visible - matches navbar height */}
@@ -85,8 +87,8 @@ function AuthenticatedRouter() {
   if (isLoading) {
     return (
       <div className="app-background">
-        <div className="min-h-screen flex items-center justify-center animate-in fade-in duration-300">
-          <div className="text-center">
+        <div className="min-h-screen flex items-center justify-center animate-in fade-in duration-500 ease-out">
+          <div className="text-center transition-all duration-300 ease-in-out">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
           </div>
@@ -137,7 +139,7 @@ function AppRouter() {
       <Routes>
         <Route path="/sign-in" element={
           <div className="app-background">
-            <div className="animate-in fade-in duration-300">
+            <div className="animate-in fade-in duration-500 ease-out">
               <SignIn />
             </div>
           </div>

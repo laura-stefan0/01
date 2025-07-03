@@ -23,7 +23,7 @@ export default function ProfilePage() {
 
   // Main profile page content
   return (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
+    <div className="px-4 py-4 space-y-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Profile Info */}
       <Card>
         <CardContent className="p-6">
