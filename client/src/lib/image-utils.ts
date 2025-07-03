@@ -73,12 +73,32 @@ export function getMapColor(category: string): string {
  */
 export function getImageUrl(imageUrl: string | null | undefined, category: string): string {
   // If we have a valid image URL (from scraping), use it
-  if (imageUrl && imageUrl.trim() !== '' && !imageUrl.includes('unsplash.com/photo-') && !imageUrl.includes('source.unsplash.com')) {
-    // Check if it's an Instagram image that might fail due to CORS
-    if (imageUrl.includes('instagram') || imageUrl.includes('fbcdn.net')) {
-      // Try to use the Instagram image, but the error handler will catch failures
+  if (imageUrl && imageUrl.trim() !== '') {
+    // Skip known problematic domains that frequently fail
+    const problematicDomains = [
+      'greenpeace.org',
+      'ultima-generazione.com', 
+      'arcigay.it',
+      'instagram.com',
+      'fbcdn.net',
+      'facebook.com'
+    ];
+    
+    const isProblematic = problematicDomains.some(domain => imageUrl.includes(domain));
+    
+    // If it's not from our fallback sources and not problematic, try to use it
+    if (!imageUrl.includes('unsplash.com/photo-') && 
+        !imageUrl.includes('source.unsplash.com') && 
+        !isProblematic) {
       return imageUrl;
     }
+    
+    // If it's from problematic domains, go straight to fallback
+    if (isProblematic) {
+      return getCategoryFallbackImage(category);
+    }
+    
+    // For other cases (Instagram, etc.), try the original but error handler will catch failures
     return imageUrl;
   }
   
@@ -108,10 +128,13 @@ export function createImageErrorHandler(category: string) {
     // Prevent infinite loops if fallback also fails
     if (target.src !== fallbackUrl) {
       const wasScraped = isScrapedImage(target.src);
-      console.log(`Image failed, using fallback for ${category}`, { 
-        originalSrc: target.src, 
-        wasScraped 
-      });
+      // Only log for debugging if needed - reduce console noise
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Image failed, using fallback for ${category}`, { 
+          originalSrc: target.src, 
+          wasScraped 
+        });
+      }
       target.src = fallbackUrl;
     }
   };
