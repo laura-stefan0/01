@@ -5,51 +5,50 @@ import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Clock, Users, CheckCircle, CalendarDays } from "lucide-react";
-import { useTodaysEvents } from "@/hooks/use-protests";
-import { useUser } from "@/hooks/use-user";
+import { useSavedProtests } from "@/context/saved-protests-context";
 import { Skeleton } from "@/components/ui/skeleton";
-// Note: getCachedUserLocation returns a Promise, so we'll handle this differently
+import { useMemo } from "react";
 
 interface TodaysEventsProps {
   userCoordinates?: { latitude: number; longitude: number } | null;
 }
 
 export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
-  const { data: user } = useUser();
-  const { data: todaysEvents = [], isLoading } = useTodaysEvents(user?.id || 1, userCoordinates?.latitude, userCoordinates?.longitude);
+  const { savedProtests } = useSavedProtests();
+  
+  // Filter saved protests to only show today's events
+  const todaysEvents = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return savedProtests.filter(protest => protest.date === today);
+  }, [savedProtests]);
+  
+  const isLoading = false; // No API loading since we're using local storage
   const [checkingIn, setCheckingIn] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const checkInMutation = useMutation({
-    mutationFn: async ({ protestId, userLat, userLng }: { protestId: string; userLat?: number; userLng?: number }) => {
-      const response = await fetch("/api/saved-protests/checkin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          protestId,
-          userLat,
-          userLng,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to check in");
-      }
-
-      return response.json();
+    mutationFn: async ({ protestId }: { protestId: string }) => {
+      // Store check-in locally
+      const checkInsKey = 'corteo_checked_in_protests';
+      const existingCheckIns = JSON.parse(localStorage.getItem(checkInsKey) || '[]');
+      
+      const checkIn = {
+        protestId,
+        checkedInAt: new Date().toISOString(),
+        date: new Date().toISOString().split('T')[0]
+      };
+      
+      const updatedCheckIns = [...existingCheckIns, checkIn];
+      localStorage.setItem(checkInsKey, JSON.stringify(updatedCheckIns));
+      
+      return { success: true };
     },
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       toast({
         title: "✅ Checked in successfully!",
         description: "You've been checked in to the event. Thanks for participating!",
-        variant: "success",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/saved-protests/today"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/saved-protests"] });
       setCheckingIn(null);
     },
     onError: (error: any) => {
@@ -64,40 +63,27 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   const handleCheckIn = async (protestId: string) => {
     setCheckingIn(protestId);
-
-    try {
-      // Get current location for check-in validation
-      let currentLocation = userCoordinates;
-
-      // Skip cached location for now - we'll use passed coordinates or fresh location
-
-      if (!currentLocation) {
-        // Try to get fresh location
-        if (navigator.geolocation) {
-          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 10000,
-              maximumAge: 60000,
-            });
-          });
-          currentLocation = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-        }
-      }
-
-      checkInMutation.mutate({
-        protestId,
-        userLat: currentLocation?.latitude,
-        userLng: currentLocation?.longitude,
+    
+    // Check if already checked in today
+    const checkInsKey = 'corteo_checked_in_protests';
+    const existingCheckIns = JSON.parse(localStorage.getItem(checkInsKey) || '[]');
+    const today = new Date().toISOString().split('T')[0];
+    
+    const alreadyCheckedIn = existingCheckIns.some((checkIn: any) => 
+      checkIn.protestId === protestId && checkIn.date === today
+    );
+    
+    if (alreadyCheckedIn) {
+      toast({
+        title: "Already checked in",
+        description: "You've already checked in to this event today!",
+        variant: "default",
       });
-    } catch (locationError) {
-      console.warn("Could not get location for check-in:", locationError);
-      // Still allow check-in without location validation
-      checkInMutation.mutate({ protestId });
+      setCheckingIn(null);
+      return;
     }
+
+    checkInMutation.mutate({ protestId });
   };
 
   const getCategoryColor = (category: string) => {
