@@ -232,15 +232,52 @@ function cleanText(text) {
   return text?.trim().replace(/\s+/g, ' ').replace(/\n+/g, ' ') || '';
 }
 
-function cleanTitle(title) {
-  if (!title) return '';
-  let cleanedTitle = title.trim();
-  cleanedTitle = cleanedTitle.replace(/^["""]/, '').replace(/["""]$/, '');
-  cleanedTitle = cleanedTitle.replace(/\s+/g, ' ').trim();
-  if (cleanedTitle.length > 0) {
-    cleanedTitle = cleanedTitle.charAt(0).toUpperCase() + cleanedTitle.slice(1);
+/**
+ * Enhanced title generation for web scraping - similar to Instagram approach
+ * Automatically cleans and generates meaningful titles from extracted content
+ */
+function generateTitle(rawTitle) {
+  if (!rawTitle) return 'Evento Senza Titolo';
+  
+  let title = rawTitle.trim();
+  
+  // Remove common prefixes and suffixes
+  title = title.replace(/^(evento|iniziativa|manifestazione|appuntamento):\s*/i, '');
+  title = title.replace(/\s*-\s*(evento|iniziativa|manifestazione|appuntamento)$/i, '');
+  
+  // Remove dates and locations from titles (like Instagram scraper removes emojis)
+  title = title.replace(/\b\d{1,2}\/\d{1,2}\/?\d{0,4}\b/g, ''); // Remove dates like 15/07 or 15/07/2025
+  title = title.replace(/\b\d{1,2}\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\b/gi, ''); // Remove "15 luglio"
+  title = title.replace(/\b(lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica)\s+\d{1,2}\b/gi, ''); // Remove "sabato 15"
+  
+  // Remove location indicators from title (keep Italian locations intact)
+  title = title.replace(/^(a\s+|in\s+|presso\s+)/i, '');
+  title = title.replace(/\s*-\s*(milano|roma|napoli|torino|venezia|firenze|bologna|bari|palermo|genova)$/i, '');
+  
+  // Remove quotes (like Instagram removes specific emojis)
+  title = title.replace(/^["""]/, '').replace(/["""]$/, '');
+  
+  // Remove hashtags if any leaked through
+  title = title.replace(/#\w+/g, '').trim();
+  
+  // Clean up extra whitespace
+  title = title.replace(/\s+/g, ' ').trim();
+  
+  // Remove leading/trailing punctuation
+  title = title.replace(/^[.,;:\-\s]+/, '').replace(/[.,;:\-\s]+$/, '');
+  
+  // Limit title length (similar to Instagram's 100 character limit)
+  if (title.length > 100) {
+    title = title.slice(0, 97) + '...';
   }
-  return cleanedTitle;
+  
+  // Ensure proper capitalization
+  if (title.length > 0) {
+    title = title.charAt(0).toUpperCase() + title.slice(1);
+  }
+  
+  // Fallback if title becomes empty
+  return title || 'Evento Senza Titolo';
 }
 
 function cleanDescription(description, title) {
@@ -684,11 +721,11 @@ async function saveEventToDatabase(event) {
       return false;
     }
 
-    const cleanedTitle = cleanTitle(event.title) || 'Untitled Event';
-    const cleanedDescription = cleanDescription(event.description || 'No description available', cleanedTitle);
+    const eventTitle = event.title || 'Evento Senza Titolo';
+    const cleanedDescription = cleanDescription(event.description || 'Nessuna descrizione disponibile', eventTitle);
     
     const eventData = {
-      title: cleanedTitle,
+      title: eventTitle,
       description: cleanedDescription,
       category: event.category || 'OTHER',
       city: event.city === 'N/A' ? 'Milano' : (event.city || 'Milano'),
@@ -981,15 +1018,18 @@ async function scrapeWebsite(source) {
         try {
           const $el = $(eventElements[i]);
 
-          // Extract title
-          let title = '';
+          // Extract and generate title
+          let rawTitle = '';
           if ($el.is('a')) {
-            title = cleanText($el.text()) || cleanText($el.attr('title')) || '';
+            rawTitle = cleanText($el.text()) || cleanText($el.attr('title')) || '';
           } else {
-            title = cleanText($el.find('h1, h2, h3, h4, .title, .headline').first().text()) ||
-                    cleanText($el.find('a').first().text()) ||
-                    cleanText($el.text()).slice(0, 100);
+            rawTitle = cleanText($el.find('h1, h2, h3, h4, .title, .headline').first().text()) ||
+                       cleanText($el.find('a').first().text()) ||
+                       cleanText($el.text()).slice(0, 100);
           }
+          
+          // Generate clean title using enhanced function
+          const title = generateTitle(rawTitle);
 
           if (!title || title.length < 10) {
             continue;
@@ -1132,11 +1172,10 @@ async function scrapeWebsite(source) {
           }
 
           // Create event object
-          const cleanedTitle = cleanTitle(title);
-          const cleanedDescription = cleanDescription(description, cleanedTitle);
+          const cleanedDescription = cleanDescription(description, title);
           
           const event = {
-            title: cleanedTitle,
+            title: title, // Already generated and cleaned by generateTitle()
             description: cleanedDescription.slice(0, 2500),
             category: categorizeEvent(title, description),
             city: locationInfo.city || 'N/A',
