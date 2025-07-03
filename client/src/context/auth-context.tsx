@@ -37,7 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('corteo_user');
       }
     }
-    setIsLoading(false);
+    
+    // Add 5 seconds delay to show loading screen clearly
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
   }, []);
 
   const signIn = async (username: string, password: string): Promise<void> => {

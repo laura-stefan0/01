@@ -2,7 +2,9 @@ import { Heart } from "lucide-react";
 
 export function LoadingScreen() {
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-pink-400 via-pink-500 to-pink-600 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700 flex items-center justify-center z-50" style={{
+      background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
+    }}>
       <div className="text-center">
         {/* Main loading animation */}
         <div className="relative mb-8">
