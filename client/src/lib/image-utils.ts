@@ -72,37 +72,13 @@ export function getMapColor(category: string): string {
  * Prioritizes scraped images from the source website, then falls back to category images
  */
 export function getImageUrl(imageUrl: string | null | undefined, category: string): string {
-  // If we have a valid image URL (from scraping), use it
+  // If we have a valid image URL, always try to use it first
+  // Let the error handler in the component deal with failed loads
   if (imageUrl && imageUrl.trim() !== '') {
-    // Skip known problematic domains that frequently fail
-    const problematicDomains = [
-      'greenpeace.org',
-      'ultima-generazione.com', 
-      'arcigay.it',
-      'instagram.com',
-      'fbcdn.net',
-      'facebook.com'
-    ];
-    
-    const isProblematic = problematicDomains.some(domain => imageUrl.includes(domain));
-    
-    // If it's not from our fallback sources and not problematic, try to use it
-    if (!imageUrl.includes('unsplash.com/photo-') && 
-        !imageUrl.includes('source.unsplash.com') && 
-        !isProblematic) {
-      return imageUrl;
-    }
-    
-    // If it's from problematic domains, go straight to fallback
-    if (isProblematic) {
-      return getCategoryFallbackImage(category);
-    }
-    
-    // For other cases (Instagram, etc.), try the original but error handler will catch failures
     return imageUrl;
   }
   
-  // Only use fallback images if we don't have a scraped image
+  // Only use fallback images if we don't have any image URL
   return getCategoryFallbackImage(category);
 }
 
