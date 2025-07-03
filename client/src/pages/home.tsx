@@ -115,8 +115,8 @@ export default function HomePage() {
     },
     onSuccess: () => {
       toast({
-        title: "🎉 Event Submitted Successfully!",
-        description: "Thank you for your contribution! Your event will be reviewed and published shortly.",
+        title: "🎉 Event submitted successfully!",
+        description: "Thank you for your contribution. Your event will be reviewed and published shortly.",
         variant: "success",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/protests"] });
