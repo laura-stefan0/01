@@ -25,7 +25,7 @@ export function formatDate(dateInput: string | Date): string {
     date = dateInput;
   }
 
-  const day = date.getDate();
+  const day = date.getDate().toString().padStart(2, '0');
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
