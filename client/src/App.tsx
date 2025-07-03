@@ -56,7 +56,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     '/safety-tips',
     '/transparency',
     '/filter',
-    '/notifications'
+    '/notifications',
+    '/live-protest-mode'
   ];
 
   // Check if current route starts with any pattern that should hide navbar
