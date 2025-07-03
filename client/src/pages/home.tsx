@@ -417,11 +417,12 @@ export default function HomePage() {
 
       {/* Create Protest Section */}
       <section className="mb-6">
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Did we miss one?</h2>
         <Button 
           className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white py-4 text-base font-medium"
           onClick={() => navigate('/create-protest')}
         >
-          Create Protest
+          Add an event
         </Button>
       </section>
 
