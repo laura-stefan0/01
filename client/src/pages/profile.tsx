@@ -24,6 +24,15 @@ export default function ProfilePage() {
   // Main profile page content
   return (
     <div className="px-4 py-4 space-y-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+      {/* Page Header */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <h1 className="text-lg font-semibold text-dark-slate">Profile</h1>
+          </div>
+        </div>
+      </section>
+
       {/* Profile Info */}
       <Card>
         <CardContent className="p-6">
