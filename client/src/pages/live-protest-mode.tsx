@@ -671,65 +671,73 @@ export default function LiveProtestModePage() {
 
       {/* Header */}
       <header className="bg-white sticky top-0 z-50 border-b border-gray-100">
+        {/* Title Row */}
         <div className="px-4 py-3 flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={() => navigate("/resources")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-dark-slate">Live Protest Mode</h1>
-          <div className="flex items-center space-x-3">
-            {/* Battery Indicator */}
-            <div className="flex items-center space-x-1">
-              {batteryLevel <= 20 ? (
-                <BatteryLow className="w-5 h-5 text-red-600" />
-              ) : (
-                <Battery className="w-5 h-5 text-gray-600" />
-              )}
-              <span 
-                className={`text-xs font-medium ${
-                  batteryLevel <= 20 ? 'text-red-600' : 
-                  batteryLevel <= 50 ? 'text-yellow-600' : 'text-green-600'
-                }`}
-              >
-                {batteryLevel}%
-              </span>
-            </div>
-            {/* Connectivity Indicators */}
-            <div className="flex items-center space-x-2">
-              {/* Wi-Fi Indicator */}
-              {hasWifi ? (
-                <div className="flex items-center space-x-1">
-                  <Wifi className="w-4 h-4 text-green-600" />
-                  <span className="text-xs text-green-600">WiFi</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-1">
-                  <WifiOff className="w-4 h-4 text-gray-400" />
-                  <span className="text-xs text-gray-400">WiFi</span>
-                </div>
-              )}
-              
-              {/* Mobile Data Indicator */}
-              {hasMobileData ? (
-                <div className="flex items-center space-x-1">
-                  <div className="flex space-x-0.5">
-                    <div className="w-1 h-2 bg-green-600 rounded-sm"></div>
-                    <div className="w-1 h-3 bg-green-600 rounded-sm"></div>
-                    <div className="w-1 h-4 bg-green-600 rounded-sm"></div>
-                  </div>
-                  <span className="text-xs text-green-600">Mobile</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-1">
-                  <div className="flex space-x-0.5">
-                    <div className="w-1 h-2 bg-gray-400 rounded-sm"></div>
-                    <div className="w-1 h-3 bg-gray-400 rounded-sm"></div>
-                    <div className="w-1 h-4 bg-gray-400 rounded-sm"></div>
-                  </div>
-                  <span className="text-xs text-gray-400">Mobile</span>
-                </div>
-              )}
-            </div>
+          <div className="w-9"></div> {/* Spacer for centering */}
+        </div>
+        
+        {/* Status Indicators Row */}
+        <div className="px-4 pb-3 flex items-center justify-center space-x-4">
+          {/* Battery Indicator - Always show */}
+          <div className="flex items-center space-x-1">
+            {batteryLevel <= 20 ? (
+              <BatteryLow className="w-4 h-4 text-red-600" />
+            ) : (
+              <Battery className="w-4 h-4 text-gray-600" />
+            )}
+            <span 
+              className={`text-xs font-medium ${
+                batteryLevel <= 20 ? 'text-red-600' : 
+                batteryLevel <= 50 ? 'text-yellow-600' : 'text-green-600'
+              }`}
+            >
+              {batteryLevel}%
+            </span>
           </div>
+
+          {/* Signal Strength - Always show */}
+          <div className="flex items-center space-x-1">
+            <div className="flex space-x-0.5">
+              <div className={`w-1 h-2 rounded-sm ${
+                hasWifi || hasMobileData ? 'bg-green-600' : 'bg-gray-400'
+              }`}></div>
+              <div className={`w-1 h-3 rounded-sm ${
+                hasWifi || hasMobileData ? 'bg-green-600' : 'bg-gray-400'
+              }`}></div>
+              <div className={`w-1 h-4 rounded-sm ${
+                hasWifi || hasMobileData ? 'bg-green-600' : 'bg-gray-400'
+              }`}></div>
+            </div>
+            <span className={`text-xs ${
+              hasWifi || hasMobileData ? 'text-green-600' : 'text-gray-400'
+            }`}>
+              Signal
+            </span>
+          </div>
+          
+          {/* Wi-Fi Indicator - Only show when active */}
+          {hasWifi && (
+            <div className="flex items-center space-x-1">
+              <Wifi className="w-4 h-4 text-green-600" />
+              <span className="text-xs text-green-600">WiFi</span>
+            </div>
+          )}
+          
+          {/* Mobile Data Indicator - Only show when active */}
+          {hasMobileData && (
+            <div className="flex items-center space-x-1">
+              <div className="flex space-x-0.5">
+                <div className="w-1 h-2 bg-blue-600 rounded-sm"></div>
+                <div className="w-1 h-3 bg-blue-600 rounded-sm"></div>
+                <div className="w-1 h-4 bg-blue-600 rounded-sm"></div>
+              </div>
+              <span className="text-xs text-blue-600">Mobile</span>
+            </div>
+          )}
         </div>
       </header>
 
