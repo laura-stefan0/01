@@ -1,7 +1,12 @@
 
-import fs from 'fs/promises';
-import path from 'path';
-import { supabase } from '../db/index.ts';
+const fs = require('fs').promises;
+const path = require('path');
+
+// Use dynamic import for ES modules
+async function loadSupabase() {
+  const { supabase } = await import('../db/index.ts');
+  return supabase;
+}
 
 /**
  * Fetch latest Instagram data from Apify and import to database
@@ -14,6 +19,8 @@ async function importInstagramFromApify() {
     if (!apiToken) {
       throw new Error('APIFY_API_TOKEN environment variable is required');
     }
+    
+    console.log('🔑 API token found, making request...');
     
     // Fetch recent runs from Instagram Post Scraper
     const runsResponse = await fetch(
@@ -58,10 +65,21 @@ async function importInstagramFromApify() {
     // Save raw data for reference
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `instagram-data-${timestamp}.json`;
-    const filepath = path.join(process.cwd(), 'data', 'imports', 'instagram', filename);
+    const instagramDir = path.join(process.cwd(), 'data', 'imports', 'instagram');
     
+    // Create directory if it doesn't exist
+    try {
+      await fs.mkdir(instagramDir, { recursive: true });
+    } catch (err) {
+      // Directory might already exist
+    }
+    
+    const filepath = path.join(instagramDir, filename);
     await fs.writeFile(filepath, JSON.stringify(posts, null, 2));
     console.log(`💾 Raw data saved to: ${filepath}`);
+    
+    // Load Supabase client
+    const supabase = await loadSupabase();
     
     // Extract and import events from the posts
     console.log('🎯 Extracting events from Instagram posts...');
@@ -204,7 +222,9 @@ importInstagramFromApify()
     } else {
       console.log(`\n⚠️ No events were imported. Check if your Apify scraper found event-related posts.`);
     }
+    process.exit(0);
   })
   .catch(error => {
     console.error('Import failed:', error);
+    process.exit(1);
   });
