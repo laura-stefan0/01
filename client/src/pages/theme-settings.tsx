@@ -7,7 +7,7 @@ export default function ThemeSettings() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen max-w-md mx-auto">
+    <div className="min-h-screen app-background">
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center">

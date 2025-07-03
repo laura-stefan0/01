@@ -7,7 +7,7 @@ export default function SafetyTips() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-md mx-auto bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50 min-h-screen">
+    <div className="min-h-screen app-background">
       {/* Header */}
       <header className="bg-white sticky top-0 z-40 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center">

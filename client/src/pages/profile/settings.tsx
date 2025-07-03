@@ -14,9 +14,9 @@ export default function ProfileSettingsPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-md mx-auto bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50 min-h-screen">
-      {/* Header with back button */}
-      <div className="px-4 py-4 space-y-4">
+    <div className="min-h-screen app-background">
+      <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+        {/* Header with back button */}
         <div className="flex items-center gap-3 mb-6">
           <Button 
             variant="ghost" 

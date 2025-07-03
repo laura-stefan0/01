@@ -3,7 +3,7 @@ import { useUser } from '@/hooks/use-user';
 
 interface ThemeContextType {
   theme: 'system' | 'light' | 'dark';
-  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | string;
+  background: 'white' | 'pink' | 'green' | 'blue' | 'purple' | 'orange' | 'gradient-sunset' | 'gradient-ocean' | 'gradient-forest' | 'gradient-aurora' | 'gradient-fire' | 'gradient-mint' | string;
   setTheme: (theme: 'system' | 'light' | 'dark') => void;
   setBackground: (background: string) => void;
 }
@@ -50,7 +50,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const body = document.body;
     
     // Remove existing background classes
-    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-subtle', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-gradient-warm');
+    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-subtle', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-gradient-aurora', 'bg-gradient-fire', 'bg-gradient-mint');
     
     // Remove any existing custom background styles
     body.style.removeProperty('background-image');

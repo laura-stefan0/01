@@ -113,19 +113,27 @@ body.bg-gradient-subtle {
 }
 
 body.bg-gradient-sunset {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%) !important;
+  background: linear-gradient(135deg, #fb923c 0%, #f87171 50%, #ec4899 100%) !important;
 }
 
 body.bg-gradient-ocean {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 50%, #9333ea 100%) !important;
 }
 
 body.bg-gradient-forest {
-  background: linear-gradient(135deg, #134e5e 0%, #71b280 100%) !important;
+  background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #0d9488 100%) !important;
 }
 
-body.bg-gradient-warm {
-  background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%) !important;
+body.bg-gradient-aurora {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #6366f1 100%) !important;
+}
+
+body.bg-gradient-fire {
+  background: linear-gradient(135deg, #facc15 0%, #f97316 50%, #dc2626 100%) !important;
+}
+
+body.bg-gradient-mint {
+  background: linear-gradient(135deg, #86efac 0%, #34d399 50%, #22d3ee 100%) !important;
 }
 
 /* Custom image backgrounds are now handled via JavaScript in theme-context.tsx */
@@ -160,35 +168,27 @@ body.bg-gradient-subtle .app-background {
 }
 
 body.bg-gradient-sunset .app-background {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%) !important;
+  background: linear-gradient(135deg, #fb923c 0%, #f87171 50%, #ec4899 100%) !important;
 }
 
 body.bg-gradient-ocean .app-background {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 50%, #9333ea 100%) !important;
 }
 
 body.bg-gradient-forest .app-background {
-  background: linear-gradient(135deg, #134e5e 0%, #71b280 100%) !important;
+  background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #0d9488 100%) !important;
 }
 
-body.bg-gradient-warm .app-background {
-  background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%) !important;
+body.bg-gradient-aurora .app-background {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #6366f1 100%) !important;
 }
 
-body.bg-gradient-sunset .app-background {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%) !important;
+body.bg-gradient-fire .app-background {
+  background: linear-gradient(135deg, #facc15 0%, #f97316 50%, #dc2626 100%) !important;
 }
 
-body.bg-gradient-ocean .app-background {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-}
-
-body.bg-gradient-forest .app-background {
-  background: linear-gradient(135deg, #134e5e 0%, #71b280 100%) !important;
-}
-
-body.bg-gradient-warm .app-background {
-  background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%) !important;
+body.bg-gradient-mint .app-background {
+  background: linear-gradient(135deg, #86efac 0%, #34d399 50%, #22d3ee 100%) !important;
 }
 
 /* Preview class for theme selector */
@@ -211,7 +211,10 @@ body[style*="background-image"] .app-background {
 .dark body.bg-gradient-subtle,
 .dark body.bg-gradient-sunset,
 .dark body.bg-gradient-ocean,
-.dark body.bg-gradient-forest {
+.dark body.bg-gradient-forest,
+.dark body.bg-gradient-aurora,
+.dark body.bg-gradient-fire,
+.dark body.bg-gradient-mint {
   background-color: #121212 !important;
   background-image: none !important;
 }
@@ -225,7 +228,10 @@ body[style*="background-image"] .app-background {
 .dark body.bg-gradient-subtle .app-background,
 .dark body.bg-gradient-sunset .app-background,
 .dark body.bg-gradient-ocean .app-background,
-.dark body.bg-gradient-forest .app-background {
+.dark body.bg-gradient-forest .app-background,
+.dark body.bg-gradient-aurora .app-background,
+.dark body.bg-gradient-fire .app-background,
+.dark body.bg-gradient-mint .app-background {
   background: #121212 !important;
 }
 

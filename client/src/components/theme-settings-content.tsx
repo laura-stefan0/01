@@ -88,10 +88,36 @@ export function ThemeSettingsContent() {
   ];
 
   const gradientOptions = [
-    { value: 'gradient-sunset', label: 'Sunset', preview: 'bg-gradient-to-r from-pink-300 to-purple-300' },
-    { value: 'gradient-ocean', label: 'Ocean', preview: 'bg-gradient-to-r from-blue-400 to-purple-500' },
-    { value: 'gradient-forest', label: 'Forest', preview: 'bg-gradient-to-r from-green-600 to-blue-600' },
-    { value: 'gradient-warm', label: 'Warm', preview: 'gradient-warm-preview' }
+    { 
+          name: 'Sunset', 
+          value: 'gradient-sunset', 
+          preview: 'bg-gradient-to-br from-orange-400 via-red-400 to-pink-500' 
+        },
+        { 
+          name: 'Ocean', 
+          value: 'gradient-ocean', 
+          preview: 'bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600' 
+        },
+        { 
+          name: 'Forest', 
+          value: 'gradient-forest', 
+          preview: 'bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600' 
+        },
+        { 
+          name: 'Aurora', 
+          value: 'gradient-aurora', 
+          preview: 'bg-gradient-to-br from-purple-400 via-pink-500 to-indigo-600' 
+        },
+        { 
+          name: 'Fire', 
+          value: 'gradient-fire', 
+          preview: 'bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600' 
+        },
+        { 
+          name: 'Mint', 
+          value: 'gradient-mint', 
+          preview: 'bg-gradient-to-br from-green-300 via-emerald-400 to-cyan-500' 
+        },
   ];
 
   // State for local background images

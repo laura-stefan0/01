@@ -53,7 +53,7 @@ export default function ResourcesPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       <div>
       {/* Page Header */}

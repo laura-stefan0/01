@@ -189,7 +189,12 @@ export default function ProtestDetail() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background animate-in fade-in duration-300 ease-out max-w-md mx-auto">
+    <div className="min-h-screen app-background">
+      <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+
+      
+
+    <div className="flex flex-col min-h-screen animate-in fade-in duration-300 ease-out max-w-md mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b bg-white">
         <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
@@ -305,6 +310,7 @@ export default function ProtestDetail() {
           </Card>
         </div>
       </div>
+    </div>
     </div>
   );
 }
