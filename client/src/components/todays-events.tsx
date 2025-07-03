@@ -131,20 +131,20 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
   if (!todaysEvents || todaysEvents.length === 0) {
     return (
       <section className="mb-6">
-        <div className="bg-orange-500 rounded-2xl p-6">
+        <div className="bg-[#e11d48] rounded-xl p-4">
           <div className="flex items-center gap-3 mb-4">
-            <CalendarDays className="w-6 h-6 text-white" />
-            <h2 className="text-xl font-bold text-white">Are you going today?</h2>
+            <CalendarDays className="w-5 h-5 text-white" />
+            <h2 className="text-lg font-semibold text-white">Are you going today?</h2>
           </div>
-          <Card className="border-0 bg-white/95 backdrop-blur-sm">
-            <CardContent className="p-8 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-100 to-cyan-100 flex items-center justify-center">
-                  <CalendarDays className="w-10 h-10 text-emerald-600" />
+          <Card className="border-0 bg-white">
+            <CardContent className="p-6 text-center">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                  <CalendarDays className="w-8 h-8 text-gray-400" />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800 text-lg">No events saved for today</p>
-                  <p className="text-gray-600 mt-2">When you save events happening today, you'll see them here with check-in options!</p>
+                  <p className="font-medium text-gray-800">No events saved for today</p>
+                  <p className="text-gray-600 text-sm mt-1">When you save events happening today, you'll see them here with check-in options!</p>
                 </div>
               </div>
             </CardContent>
@@ -156,31 +156,30 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   return (
     <section className="mb-6">
-      <div className="bg-orange-500 rounded-2xl p-6">
+      <div className="bg-[#e11d48] rounded-xl p-4">
         <div className="flex items-center gap-3 mb-4">
-          <CalendarDays className="w-6 h-6 text-white" />
-          <h2 className="text-xl font-bold text-white">Are you going today?</h2>
+          <CalendarDays className="w-5 h-5 text-white" />
+          <h2 className="text-lg font-semibold text-white">Are you going today?</h2>
           <div className="ml-auto">
-            <Badge className="bg-white text-emerald-600 font-bold text-lg px-3 py-1 animate-bounce">
+            <Badge className="bg-white text-[#e11d48] font-medium text-sm px-2 py-1">
               {todaysEvents.length} event{todaysEvents.length !== 1 ? 's' : ''}
             </Badge>
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {todaysEvents.map((event) => (
-            <Card key={event.id} className="border-0 bg-white/95 backdrop-blur-sm transition-all duration-500 transform hover:-translate-y-1">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
+            <Card key={event.id} className="border-0 bg-white">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-3">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full animate-pulse"></div>
-                      <h3 className="font-bold text-gray-800 text-xl">{event.title}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-semibold text-gray-800 text-lg">{event.title}</h3>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge className={`${getCategoryColor(event.category)} text-white text-sm font-bold px-3 py-1`}>
+                      <Badge className={`${getCategoryColor(event.category)} text-white text-xs font-medium px-2 py-1`}>
                         {event.category}
                       </Badge>
-                      <Badge className="bg-emerald-100 text-emerald-700 text-xs font-medium px-2 py-1">
+                      <Badge className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1">
                         Saved
                       </Badge>
                     </div>
@@ -189,18 +188,18 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
                     <Button
                       onClick={() => handleCheckIn(String(event.id))}
                       disabled={checkingIn === String(event.id)}
-                      className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white transition-all duration-300 transform hover:scale-105 font-bold text-base px-6 py-3"
-                      size="lg"
+                      className="bg-[#e11d48] hover:bg-[#be185d] text-white font-medium text-sm px-4 py-2"
+                      size="sm"
                     >
                       {checkingIn === String(event.id) ? (
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           Checking in...
                         </div>
                       ) : (
                         <>
-                          <CheckCircle className="w-5 h-5 mr-2" />
-                          Yes, I'm going!
+                          <CheckCircle className="w-4 h-4 mr-1" />
+                          I'm going!
                         </>
                       )}
                     </Button>
@@ -208,20 +207,20 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                  <div className="flex items-center text-sm text-gray-700">
-                    <Clock className="w-4 h-4 mr-2 text-emerald-600" />
-                    <span className="font-medium">{event.time}</span>
+                <div className="bg-gray-50 rounded-md p-3 space-y-2">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                    <span>{event.time}</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-700">
-                    <MapPin className="w-4 h-4 mr-2 text-emerald-600" />
+                  <div className="flex items-center text-sm text-gray-600">
+                    <MapPin className="w-4 h-4 mr-2 text-gray-500" />
                     <span>{event.address}, {event.city}</span>
                   </div>
                 </div>
 
                 {event.description && (
-                  <div className="mt-3 p-3 bg-emerald-50 rounded-lg">
-                    <p className="text-sm text-gray-700 line-clamp-2">
+                  <div className="mt-3 p-3 bg-gray-50 rounded-md">
+                    <p className="text-sm text-gray-600 line-clamp-2">
                       {event.description}
                     </p>
                   </div>
