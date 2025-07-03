@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, Calendar, Check } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, MessageCircle, Sparkles, Star, Zap, ChevronDown, RefreshCw, Calendar, Check } from "lucide-react";
 import { getCachedUserLocation, getUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -775,14 +775,13 @@ export default function HomePage() {
             <Card className="cursor-pointer border-0 shadow-xl max-w-xs mx-auto relative overflow-hidden" style={{
               background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
             }}>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.4)_1px,transparent_0)] bg-[length:12px_12px]"></div>
               <CardContent className="p-5 text-center relative z-10">
                 <div className="flex flex-col items-center space-y-3">
                   <div className="flex items-end justify-center space-x-1 relative">
-                    <Heart className="w-4 h-4 text-white/80 transform rotate-12" />
-                    <Heart className="w-7 h-7 text-white" />
-                    <Heart className="w-5 h-5 text-white/90 transform -rotate-6 translate-y-1" />
-                    <Heart className="w-3 h-3 text-white/70 absolute -top-1 left-8 transform rotate-45" />
+                    <Sparkles className="w-4 h-4 text-white/80 transform rotate-12" />
+                    <MessageCircle className="w-7 h-7 text-white" />
+                    <Star className="w-5 h-5 text-white/90 transform -rotate-6 translate-y-1" />
+                    <Zap className="w-3 h-3 text-white/70 absolute -top-1 left-8 transform rotate-45" />
                   </div>
                   <h3 className="font-bold text-base text-white drop-shadow-lg">Share your feedback</h3>
                 </div>
