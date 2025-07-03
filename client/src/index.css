@@ -38,6 +38,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
 .animate-in {
   animation-fill-mode: both;
 }
@@ -52,6 +61,10 @@
 
 .check-pulse {
   animation: check-pulse 0.8s ease-in-out;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }
 
 .duration-300 {
