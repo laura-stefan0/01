@@ -412,12 +412,12 @@ body[style*="background-image"] .app-background {
 
   /* Navigation bar consistent height with safe area */
   nav {
-    min-height: 72px;
+    min-height: 80px;
     padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 
   .dark nav {
-    min-height: 72px;
+    min-height: 80px;
     padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 
