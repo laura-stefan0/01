@@ -108,6 +108,10 @@ body.bg-orange {
 }
 
 /* Gradient Backgrounds */
+body.bg-gradient-subtle {
+  background: linear-gradient(135deg, #f8fafc 0%, #f9fafb 50%, #fdf2f8 100%) !important;
+}
+
 body.bg-gradient-sunset {
   background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%) !important;
 }
@@ -151,6 +155,10 @@ body.bg-orange .app-background {
   background: #F8F8F6 !important;
 }
 
+body.bg-gradient-subtle .app-background {
+  background: linear-gradient(135deg, #f8fafc 0%, #f9fafb 50%, #fdf2f8 100%) !important;
+}
+
 body.bg-gradient-sunset .app-background {
   background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%) !important;
 }
@@ -184,6 +192,7 @@ body[style*="background-image"] .app-background {
 .dark body.bg-blue,
 .dark body.bg-purple,
 .dark body.bg-orange,
+.dark body.bg-gradient-subtle,
 .dark body.bg-gradient-sunset,
 .dark body.bg-gradient-ocean,
 .dark body.bg-gradient-forest {
@@ -197,6 +206,7 @@ body[style*="background-image"] .app-background {
 .dark body.bg-blue .app-background,
 .dark body.bg-purple .app-background,
 .dark body.bg-orange .app-background,
+.dark body.bg-gradient-subtle .app-background,
 .dark body.bg-gradient-sunset .app-background,
 .dark body.bg-gradient-ocean .app-background,
 .dark body.bg-gradient-forest .app-background {

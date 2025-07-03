@@ -77,7 +77,7 @@ export default function SavedProtestsPage() {
   const handleUnsaveProtest = async (protestId: string) => {
     try {
       setRemovingId(protestId);
-      
+
       const response = await fetch(`/api/user/protests/save/${protestId}`, {
         method: 'DELETE',
       });
@@ -111,7 +111,7 @@ export default function SavedProtestsPage() {
 
   const confirmCheckIn = () => {
     if (!selectedProtestId) return;
-    
+
     checkInMutation.mutate({
       protestId: selectedProtestId,
       notes: checkInNotes,
@@ -148,7 +148,7 @@ export default function SavedProtestsPage() {
   };
 
   return (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="px-4 py-4 space-y-4 max-w-md mx-auto bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50 animate-in fade-in duration-300 ease-out">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
@@ -210,11 +210,11 @@ export default function SavedProtestsPage() {
                       {protest.event_type}
                     </span>
                   </div>
-                  
+
                   <h3 className="font-semibold text-dark-slate text-sm leading-tight mb-2">
                     {protest.title}
                   </h3>
-                  
+
                   <div className="space-y-1 text-xs text-gray-600">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-3 w-3" />
@@ -228,7 +228,7 @@ export default function SavedProtestsPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col gap-2">
                   <Button
                     variant="outline"
@@ -265,7 +265,7 @@ export default function SavedProtestsPage() {
             <p className="text-sm text-gray-600">
               Checking in will add this protest to your attendance history and remove it from your saved list.
             </p>
-            
+
             <div className="space-y-2">
               <Label htmlFor="notes">Notes (optional)</Label>
               <Textarea
@@ -276,7 +276,7 @@ export default function SavedProtestsPage() {
                 rows={4}
               />
             </div>
-            
+
             <div className="flex space-x-3">
               <Button
                 variant="outline"

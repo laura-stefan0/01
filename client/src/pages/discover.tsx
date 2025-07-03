@@ -6,7 +6,7 @@ import { MapView } from "@/components/map-view";
  */
 export default function DiscoverPage() {
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="max-w-md mx-auto bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50 min-h-screen">
       <div className="max-w-md mx-auto h-[calc(100vh-5rem)] overflow-hidden">
         <MapView />
       </div>

@@ -256,20 +256,20 @@ export default function HomePage() {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     setShowSuccess(false);
-    
+
     try {
       // Clear manual location override to use fresh GPS location
       setManualLocation(null);
       setManualLocationCoordinates(null);
       localStorage.removeItem('corteo_manual_location');
       localStorage.removeItem('corteo_manual_location_coords');
-      
+
       // Clear location cache and fetch fresh location
       await fetchUserRealLocation(true);
-      
+
       // Add a small delay for visual feedback
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Invalidate all queries to refresh data
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["/api/protests"] }),
@@ -282,12 +282,12 @@ export default function HomePage() {
       // Show success checkmark
       setIsRefreshing(false);
       setShowSuccess(true);
-      
+
       // Hide checkmark after 2 seconds
       setTimeout(() => {
         setShowSuccess(false);
       }, 2000);
-      
+
     } catch (error) {
       console.error('Refresh failed:', error);
       setIsRefreshing(false);
@@ -805,16 +805,16 @@ export default function HomePage() {
                 const formData = new FormData(e.target as HTMLFormElement);
                 const feedbackType = formData.get('feedbackType') as string;
                 const message = formData.get('message') as string;
-                
+
                 // Here you would typically send this to your backend
                 console.log('Feedback submitted:', { feedbackType, message });
-                
+
                 toast({
                   title: "Thank you for your feedback!",
                   description: "We appreciate your input and will review it carefully.",
                   variant: "success",
                 });
-                
+
                 // Reset form
                 (e.target as HTMLFormElement).reset();
               }}>
@@ -835,7 +835,7 @@ export default function HomePage() {
                   </Select>
                 </div>
 
-                {/* Message */}
+                {/* Message */
                 <div className="space-y-2">
                   <Label htmlFor="message">Your message</Label>
                   <Textarea

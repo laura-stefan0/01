@@ -79,7 +79,7 @@ export function ThemeSettingsContent() {
   ];
 
   const solidColorOptions = [
-    { value: 'white', label: 'White', color: '#ffffff', preview: 'bg-white' },
+    { value: 'gradient-subtle', label: 'Subtle', preview: 'bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50' },
     { value: 'pink', label: 'Pink', color: '#fdf2f8', preview: 'bg-pink-50' },
     { value: 'green', label: 'Green', color: '#f0fdf4', preview: 'bg-green-50' },
     { value: 'blue', label: 'Blue', color: '#eff6ff', preview: 'bg-blue-50' },
@@ -104,7 +104,7 @@ export function ThemeSettingsContent() {
         // Check for the actual .png files in the backgrounds folder
         const commonImages = ['background1.png', 'background2.png', 'background3.png'];
         const availableImages: string[] = [];
-        
+
         for (const imageName of commonImages) {
           try {
             const response = await fetch(`/backgrounds/${imageName}`, { method: 'HEAD' });
@@ -116,7 +116,7 @@ export function ThemeSettingsContent() {
             console.log(`Image ${imageName} not found`);
           }
         }
-        
+
         console.log('Available background images:', availableImages);
         setLocalImages(availableImages);
       } catch (error) {

@@ -14,7 +14,7 @@ export default function ProtestDetail() {
   const params = useParams();
   const navigate = useNavigate();
   const { isProtestSaved, saveProtest, unsaveProtest } = useSavedProtests();
-  
+
   const protestId = params.id;
 
   const { data: protest, isLoading, error } = useQuery<Protest>({
@@ -32,7 +32,7 @@ export default function ProtestDetail() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!protest) return;
-      
+
       if (isProtestSaved(protest.id.toString())) {
         await unsaveProtest(protest.id.toString());
         toast({

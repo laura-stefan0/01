@@ -65,7 +65,7 @@ export default function ArchivedProtestsPage() {
   };
 
   return (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="px-4 py-4 space-y-4 max-w-md mx-auto bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50 min-h-screen animate-in fade-in duration-300 ease-out">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
@@ -128,11 +128,11 @@ export default function ArchivedProtestsPage() {
                     <span>Attended</span>
                   </div>
                 </div>
-                
+
                 <h3 className="font-semibold text-dark-slate text-sm leading-tight mb-2">
                   {protest.title}
                 </h3>
-                
+
                 <div className="space-y-1 text-xs text-gray-600">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-3 w-3" />
