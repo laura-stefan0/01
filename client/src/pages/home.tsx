@@ -416,7 +416,7 @@ export default function HomePage() {
   const [city] = displayLocation.split(', ');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Location Section with Notification Bell */}
       <section className="mb-6">
@@ -858,14 +858,16 @@ export default function HomePage() {
             </DialogContent>
           </Dialog>
 
-          {/* Make a Difference */}
+          {/* Donate now */}
           <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
             background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
           }}>
             <CardContent className="p-4 text-center relative z-10">
               <div className="flex flex-col items-center space-y-2">
-                <Target className="w-8 h-8 text-white" />
-                <h3 className="font-bold text-base text-white drop-shadow-lg">Make a Difference</h3>
+                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M13.8 11.2L20.2 7c.6-.4.6-1.4 0-1.8L13.8.8c-.5-.3-1.1-.3-1.6 0L5.8 5.2c-.6.4-.6 1.4 0 1.8l6.4 4.2c.5.3 1.1.3 1.6 0zM10 16v5c0 .6.4 1 1 1h2c.6 0 1-.4 1-1v-5l-2-1.3L10 16zm8-2.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5zM4 13.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5z"/>
+                </svg>
+                <h3 className="font-bold text-base text-white drop-shadow-lg">Donate now</h3>
               </div>
             </CardContent>
           </Card>

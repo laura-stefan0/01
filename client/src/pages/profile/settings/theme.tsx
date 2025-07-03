@@ -11,7 +11,8 @@ export default function ProfileThemeSettingsPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="px-4 py-4 space-y-4 max-w-md mx-auto">
+    <div className="min-h-screen">
+      <div className="px-4 py-4 space-y-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Header with back button */}
       <div className="flex items-center gap-3 mb-6">
         <Button 
@@ -27,6 +28,7 @@ export default function ProfileThemeSettingsPage() {
 
       {/* Use the theme settings content component without header */}
       <ThemeSettingsContent />
+      </div>
     </div>
   );
 }

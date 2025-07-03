@@ -175,6 +175,22 @@ body.bg-gradient-warm .app-background {
   background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%) !important;
 }
 
+body.bg-gradient-sunset .app-background {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%) !important;
+}
+
+body.bg-gradient-ocean .app-background {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+body.bg-gradient-forest .app-background {
+  background: linear-gradient(135deg, #134e5e 0%, #71b280 100%) !important;
+}
+
+body.bg-gradient-warm .app-background {
+  background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%) !important;
+}
+
 /* Preview class for theme selector */
 .gradient-warm-preview {
   background: linear-gradient(to bottom, #f0edeb 0%, #f7f6f5 100%);

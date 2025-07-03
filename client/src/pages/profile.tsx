@@ -85,15 +85,15 @@ export default function ProfilePage() {
 
   // Main profile page content
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-rose-50">
+    <div className="min-h-screen">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
-      
+
       {/* Hero Profile Section */}
       <div className="relative">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-3xl opacity-90"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-3xl"></div>
-        
+
         {/* Profile content */}
         <Card className="relative bg-transparent border-0 shadow-none">
           <CardContent className="p-8 text-center text-white">
@@ -123,7 +123,7 @@ export default function ProfilePage() {
               Activist Level 7
             </Badge>
 
-            
+
           </CardContent>
         </Card>
       </div>
@@ -137,7 +137,7 @@ export default function ProfilePage() {
             <div className="text-xs text-green-100">Protests</div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 border-0 text-white">
           <CardContent className="p-4 text-center">
             <Calendar className="w-6 h-6 mx-auto mb-2 text-blue-100" />
@@ -145,7 +145,7 @@ export default function ProfilePage() {
             <div className="text-xs text-blue-100">This Month</div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-gradient-to-br from-purple-500 to-violet-600 border-0 text-white">
           <CardContent className="p-4 text-center">
             <Heart className="w-6 h-6 mx-auto mb-2 text-purple-100" />
@@ -155,7 +155,7 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-      
+
 
       {/* Beginner Badges */}
       <Card className="bg-white/70 backdrop-blur-sm border-white/50">
@@ -164,7 +164,7 @@ export default function ProfilePage() {
             <h3 className="font-semibold text-gray-800">Your Badges</h3>
             <Award className="w-5 h-5 text-gray-600" />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-3">
             {beginnerBadges.map((badge) => {
               const IconComponent = badge.icon;
@@ -185,7 +185,7 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      
+
 
       {/* My Activity */}
       <Card className="bg-white/70 backdrop-blur-sm border-white/50">
@@ -196,7 +196,7 @@ export default function ProfilePage() {
               My Activity
             </h3>
           </div>
-          
+
           <div className="divide-y divide-gray-100">
             <div 
               className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/50 transition-colors"
@@ -210,7 +210,7 @@ export default function ProfilePage() {
               </div>
               <div className="text-gray-400">→</div>
             </div>
-            
+
             <div 
               className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/50 transition-colors"
               onClick={() => navigate('/profile/archived')}

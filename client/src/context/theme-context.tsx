@@ -13,13 +13,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { data: user } = useUser();
   const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('light');
-  const [background, setBackground] = useState<string>('white');
+  const [background, setBackground] = useState<string>('gradient-subtle');
 
   // Load theme preferences from user data
   useEffect(() => {
     if (user) {
       const userTheme = (user.theme as 'system' | 'light' | 'dark') || 'light';
-      const userBackground = user.background || 'white';
+      const userBackground = user.background || 'gradient-subtle';
       
       setTheme(userTheme);
       setBackground(userBackground);
@@ -50,7 +50,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const body = document.body;
     
     // Remove existing background classes
-    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-gradient-warm');
+    body.classList.remove('bg-white', 'bg-pink', 'bg-green', 'bg-blue', 'bg-purple', 'bg-orange', 'bg-gradient-subtle', 'bg-gradient-sunset', 'bg-gradient-ocean', 'bg-gradient-forest', 'bg-gradient-warm');
     
     // Remove any existing custom background styles
     body.style.removeProperty('background-image');
