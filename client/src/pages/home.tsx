@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, Calendar, CheckCircle } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, Calendar, Check } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -435,7 +435,7 @@ export default function HomePage() {
               className="transition-all duration-200 hover:bg-gray-100"
             >
               {showSuccess ? (
-                <CheckCircle className="w-4 h-4 text-green-600 animate-in fade-in duration-300" />
+                <Check className="w-4 h-4 animate-in fade-in duration-300" />
               ) : (
                 <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
                   (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
