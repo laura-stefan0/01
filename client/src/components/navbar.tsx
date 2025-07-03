@@ -42,7 +42,6 @@ export function Navbar() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-[1002] pb-safe">
-</nav>
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-around py-3 px-2 pb-safe">
           {navItems.map((item) => (
