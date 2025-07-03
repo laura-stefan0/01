@@ -185,7 +185,7 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
                       ) : (
                         <>
                           <CheckCircle className="w-4 h-4 mr-1" />
-                          I'm going!
+                          I'm here!
                         </>
                       )}
                     </Button>
