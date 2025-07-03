@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, BookmarkMinus, Calendar, MapPin, Clock } from "lucide-react";
+import { ArrowLeft, BookmarkMinus, Calendar, MapPin, Clock, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,10 +25,53 @@ interface SavedProtest {
 export default function SavedProtestsPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [checkInNotes, setCheckInNotes] = useState("");
+  const [isCheckInDialogOpen, setIsCheckInDialogOpen] = useState(false);
+  const [selectedProtestId, setSelectedProtestId] = useState<string | null>(null);
 
   const { data: savedProtests = [], refetch, isLoading } = useQuery<SavedProtest[]>({
     queryKey: ["/api/user/protests/saved"],
+  });
+
+  // Check-in mutation
+  const checkInMutation = useMutation({
+    mutationFn: async ({ protestId, notes }: { protestId: string; notes: string }) => {
+      const response = await fetch('/api/user/protests/checkin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ protestId, notes }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to check in to protest');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user/protests/archived"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/protests/saved"] });
+      setIsCheckInDialogOpen(false);
+      setCheckInNotes("");
+      setSelectedProtestId(null);
+      toast({
+        title: "Checked in!",
+        description: "You've successfully checked in to this protest. It has been added to your attendance history.",
+      });
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Check-in error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to check in. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   const handleUnsaveProtest = async (protestId: string) => {
@@ -56,6 +102,20 @@ export default function SavedProtestsPage() {
     } finally {
       setRemovingId(null);
     }
+  };
+
+  const handleCheckIn = (protestId: string) => {
+    setSelectedProtestId(protestId);
+    setIsCheckInDialogOpen(true);
+  };
+
+  const confirmCheckIn = () => {
+    if (!selectedProtestId) return;
+    
+    checkInMutation.mutate({
+      protestId: selectedProtestId,
+      notes: checkInNotes,
+    });
   };
 
   const formatDate = (dateStr: string) => {
@@ -169,20 +229,77 @@ export default function SavedProtestsPage() {
                   </div>
                 </div>
                 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleUnsaveProtest(protest.id)}
-                  disabled={removingId === protest.id}
-                  className="p-2 hover:bg-red-50 hover:text-red-600"
-                >
-                  <BookmarkMinus className="h-4 w-4" />
-                </Button>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCheckIn(protest.id)}
+                    className="px-3 py-1 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+                  >
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Check In
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleUnsaveProtest(protest.id)}
+                    disabled={removingId === protest.id}
+                    className="p-2 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <BookmarkMinus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Check-in Dialog */}
+      <Dialog open={isCheckInDialogOpen} onOpenChange={setIsCheckInDialogOpen}>
+        <DialogContent className="max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle>Check In to Protest</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Checking in will add this protest to your attendance history and remove it from your saved list.
+            </p>
+            
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notes (optional)</Label>
+              <Textarea
+                id="notes"
+                placeholder="Share your experience, thoughts, or observations about this protest..."
+                value={checkInNotes}
+                onChange={(e) => setCheckInNotes(e.target.value)}
+                rows={4}
+              />
+            </div>
+            
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsCheckInDialogOpen(false);
+                  setCheckInNotes("");
+                  setSelectedProtestId(null);
+                }}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmCheckIn}
+                disabled={checkInMutation.isPending}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              >
+                {checkInMutation.isPending ? "Checking in..." : "Check In"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

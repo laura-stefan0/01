@@ -1,28 +1,20 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Share2, MapPin, Calendar, ExternalLink, Heart, CheckCircle } from "lucide-react";
+import { ArrowLeft, Share2, MapPin, Calendar, ExternalLink, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import type { Protest } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { formatDate, formatTime } from "@/lib/date-utils";
 import { useSavedProtests } from "@/context/saved-protests-context";
-import { useState } from "react";
 
 export default function ProtestDetail() {
   const params = useParams();
   const navigate = useNavigate();
   const { isProtestSaved, saveProtest, unsaveProtest } = useSavedProtests();
-  const queryClient = useQueryClient();
   
-  const [checkInNotes, setCheckInNotes] = useState("");
-  const [isCheckInDialogOpen, setIsCheckInDialogOpen] = useState(false);
-
   const protestId = params.id;
 
   const { data: protest, isLoading, error } = useQuery<Protest>({
@@ -37,39 +29,23 @@ export default function ProtestDetail() {
     enabled: !!protestId,
   });
 
-  // Check-in mutation
-  const checkInMutation = useMutation({
-    mutationFn: async ({ protestId, notes }: { protestId: string; notes: string }) => {
-      const response = await fetch('/api/user/protests/checkin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ protestId, notes }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to check in to protest');
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      if (!protest) return;
+      
+      if (isProtestSaved(protest.id.toString())) {
+        await unsaveProtest(protest.id.toString());
+        toast({
+          title: "Removed from saved",
+          description: "This protest has been removed from your saved list.",
+        });
+      } else {
+        await saveProtest(protest);
+        toast({
+          title: "Saved!",
+          description: "This protest has been added to your saved list.",
+        });
       }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/user/protests/archived"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/user/protests/saved"] });
-      setIsCheckInDialogOpen(false);
-      setCheckInNotes("");
-      toast({
-        title: "Checked in!",
-        description: "You've successfully checked into this protest. It's now in your attendance history.",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Check-in failed",
-        description: error.message,
-        variant: "destructive",
-      });
     },
   });
 
@@ -103,31 +79,29 @@ export default function ProtestDetail() {
   const getCategoryFallbackImage = (category: string) => {
     switch (category.toLowerCase()) {
       case "environment":
-        return "https://images.unsplash.com/photo-1573160813959-c9157b3f8e7c?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1569163139394-de44cb164e3b?w=400&h=200&fit=crop";
       case "lgbtq+":
-        return "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=200&fit=crop";
       case "women's rights":
-        return "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400&h=200&fit=crop";
       case "labor":
-        return "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400&h=200&fit=crop";
       case "racial & social justice":
-        return "https://images.unsplash.com/photo-1591608971362-f08b2a75731a?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=200&fit=crop";
       case "civil & human rights":
-        return "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=200&fit=crop";
       case "healthcare & education":
-        return "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=200&fit=crop";
       case "peace & anti-war":
-        return "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop";
       case "transparency & anti-corruption":
-        return "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=500&h=300&fit=crop&auto=format";
-      case "other":
-        return "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400&h=200&fit=crop";
       default:
-        return "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=500&h=300&fit=crop&auto=format";
+        return "https://images.unsplash.com/photo-1573152143286-0c422b4d2175?w=400&h=200&fit=crop";
     }
   };
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const target = e.target as HTMLImageElement;
     const fallbackUrl = getCategoryFallbackImage(protest?.category || 'other');
 
@@ -158,69 +132,35 @@ export default function ProtestDetail() {
   };
 
   const handleSaveClick = () => {
-    if (!protest) return;
-
-    if (isProtestSaved(protest.id.toString())) {
-      unsaveProtest(protest.id.toString());
-      toast({
-        title: "Removed from saved",
-        description: "Protest removed from your saved list.",
-      });
-    } else {
-      saveProtest(protest);
-      toast({
-        title: "Saved!",
-        description: "Protest added to your saved list.",
-      });
-    }
-  };
-
-  const handleCheckIn = () => {
-    if (!protest) return;
-    
-    checkInMutation.mutate({
-      protestId: protest.id.toString(),
-      notes: checkInNotes,
-    });
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      toast({
-        title: "Link copied!",
-        description: "The protest link has been copied to your clipboard.",
-      });
-    });
+    saveMutation.mutate();
   };
 
   const handleGetDirections = () => {
     if (protest?.latitude && protest?.longitude) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${protest.latitude},${protest.longitude}`;
-      window.open(url, '_blank');
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${protest.latitude},${protest.longitude}`;
+      window.open(googleMapsUrl, '_blank');
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-md mx-auto bg-white min-h-screen">
-          {/* Header skeleton */}
-          <div className="sticky top-0 bg-white border-b z-10 p-4 flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <Skeleton className="h-8 w-8 rounded" />
+      <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex items-center justify-between p-4 border-b">
+          <Button variant="ghost" size="sm">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center gap-2">
+            <Skeleton className="w-8 h-8" />
+            <Skeleton className="w-8 h-8" />
           </div>
-
-          {/* Image skeleton */}
-          <Skeleton className="w-full h-64" />
-
-          {/* Content skeleton */}
-          <div className="p-4 space-y-4">
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-12 w-full" />
+        </div>
+        <div className="flex-1 px-4 py-6 space-y-6">
+          <Skeleton className="w-full h-48 rounded-lg" />
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
           </div>
         </div>
       </div>
@@ -229,16 +169,19 @@ export default function ProtestDetail() {
 
   if (error || !protest) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-md mx-auto bg-white min-h-screen">
-          <div className="sticky top-0 bg-white border-b z-10 p-4 flex items-center">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="p-4 text-center">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Protest Not Found</h2>
-            <p className="text-gray-600">The protest you're looking for doesn't exist or has been removed.</p>
+      <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex items-center justify-between p-4 border-b">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Protest not found</h2>
+            <p className="text-gray-600 mb-4">
+              The protest you're looking for doesn't exist or has been removed.
+            </p>
+            <Button onClick={() => navigate("/")}>Go back home</Button>
           </div>
         </div>
       </div>
@@ -246,79 +189,70 @@ export default function ProtestDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto bg-white min-h-screen">
-        {/* Header */}
-        <div className="sticky top-0 bg-white border-b z-10 p-4 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-            <ArrowLeft className="h-4 w-4" />
+    <div className="flex flex-col min-h-screen bg-background animate-in fade-in duration-300 ease-out">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b bg-white">
+        <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={handleSaveClick}>
+            <Heart 
+              className={`h-4 w-4 ${protest && isProtestSaved(protest.id.toString()) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
+            />
           </Button>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleSaveClick}>
-              <Heart 
-                className={`h-4 w-4 ${protest && isProtestSaved(protest.id.toString()) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
-              />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleShare}>
-              <Share2 className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm" onClick={handleShare}>
+            <Share2 className="h-4 w-4 text-gray-600" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 pb-6">
+        {/* Hero Image */}
+        <div className="w-full h-64 bg-gray-100 overflow-hidden">
+          <img
+            src={getImageUrl()}
+            alt={protest.title}
+            className="w-full h-full object-cover"
+            onError={handleImageError}
+          />
         </div>
 
-        {/* Category Badge */}
-        <div className="p-4 border-b">
-          <Badge className={`${getCategoryColor(protest.category)} text-white`}>
-            {protest.category}
-          </Badge>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-6">
-          {/* Title and basic info */}
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{protest.title}</h1>
-            {protest.distance && (
-              <div className="flex items-center text-gray-600 mb-4">
-                <span className="text-sm">{protest.distance}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Description */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-2">About This Event</h3>
-            <p className="text-gray-700 leading-relaxed">
-              {protest.description.length > 1000 
-                ? `${protest.description.substring(0, 1000)}...` 
-                : protest.description}
-            </p>
+        <div className="px-4 py-6 space-y-6 max-w-md mx-auto">
+          {/* Title and Badge */}
+          <div className="space-y-3">
+            <Badge className={`${getCategoryColor(protest.category)} text-white w-fit`}>
+              {protest.category}
+            </Badge>
+            <h1 className="text-2xl font-bold text-gray-900 leading-tight">
+              {protest.title}
+            </h1>
           </div>
 
           {/* Event Details */}
           <Card>
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="p-4 space-y-4">
               <div className="flex items-start space-x-3">
-                <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
+                <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-900">
-                    {protest.date ? formatDate(protest.date) : 'Date not specified'}
+                    {formatDate(protest.date)}
                   </p>
-                  {protest.time && (
-                    <p className="text-sm text-gray-600">{formatTime(protest.time)}</p>
-                  )}
-                  {!protest.time && (
-                    <p className="text-sm text-gray-600">Time not specified</p>
-                  )}
+                  <p className="text-sm text-gray-600">
+                    {formatTime(protest.time)}
+                  </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900 break-words whitespace-normal">
-                    {protest.address && (protest.location || protest.city)
-                      ? `${protest.address}, ${protest.location || protest.city}`
-                      : protest.address || protest.location || protest.city || 'Location not specified'
+                <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                <div>
+                  <p className="font-medium text-gray-900">Location</p>
+                  <p className="text-sm text-gray-600">
+                    {protest.address && protest.city 
+                      ? `${protest.address}, ${protest.city}`
+                      : protest.address || protest.city || 'Location not specified'
                     }
                   </p>
                 </div>
@@ -326,57 +260,38 @@ export default function ProtestDetail() {
             </CardContent>
           </Card>
 
+          {/* Description */}
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">About this protest</h3>
+              <p className="text-gray-700 leading-relaxed">
+                {protest.description}
+              </p>
+            </CardContent>
+          </Card>
+
           {/* Action Buttons */}
           <div className="space-y-3">
-            <Dialog open={isCheckInDialogOpen} onOpenChange={setIsCheckInDialogOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                  size="lg"
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Check In to Protest
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md mx-auto">
-                <DialogHeader>
-                  <DialogTitle>Check In to Protest</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-600">
-                    Checking in will add this protest to your attendance history and remove it from your saved list if applicable.
-                  </p>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Notes (optional)</Label>
-                    <Textarea
-                      id="notes"
-                      placeholder="Share your experience, thoughts, or observations about this protest..."
-                      value={checkInNotes}
-                      onChange={(e) => setCheckInNotes(e.target.value)}
-                      rows={4}
-                    />
-                  </div>
-                  
-                  <div className="flex space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsCheckInDialogOpen(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleCheckIn}
-                      disabled={checkInMutation.isPending}
-                      className="flex-1 bg-primary hover:bg-primary/90"
-                    >
-                      {checkInMutation.isPending ? "Checking in..." : "Check In"}
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button 
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+              size="lg"
+              onClick={handleSaveClick}
+              disabled={saveMutation.isPending}
+            >
+              {saveMutation.isPending ? (
+                "Saving..."
+              ) : protest && isProtestSaved(protest.id.toString()) ? (
+                <>
+                  <Heart className="h-4 w-4 mr-2 fill-current" />
+                  Saved
+                </>
+              ) : (
+                <>
+                  <Heart className="h-4 w-4 mr-2" />
+                  I'm Going
+                </>
+              )}
+            </Button>
 
             <Button 
               variant="outline" 
