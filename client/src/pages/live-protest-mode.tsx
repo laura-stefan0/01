@@ -20,6 +20,7 @@ export default function LiveProtestModePage() {
   const [batteryLevel, setBatteryLevel] = useState(85);
   const [hasWifi, setHasWifi] = useState(false);
   const [hasMobileData, setHasMobileData] = useState(false);
+  const [showEmergencyContacts, setShowEmergencyContacts] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -124,61 +125,25 @@ export default function LiveProtestModePage() {
 
   // Emergency action handlers
   const handleEmergencyCall = () => {
-    const emergencyNumbers = [
-      { name: "Emergency Services", number: "112" },
-      { name: "Legal Aid Hotline", number: "+39 06 8511 0020" },
-      { name: "Human Rights Defense", number: "+39 06 4825 1001" }
-    ];
+    setShowEmergencyContacts(true);
+  };
 
-    // First confirmation to prevent accidental calls
-    const confirmEmergency = window.confirm(
-      "⚠️ EMERGENCY CALL CONFIRMATION ⚠️\n\n" +
-      "This will initiate an emergency call. Only proceed if you have a genuine emergency.\n\n" +
-      "Click OK to see call options or Cancel to abort."
+  const handleCallNumber = (number: string, name: string) => {
+    const finalConfirm = window.confirm(
+      `🚨 CALLING ${name.toUpperCase()} 🚨\n\n` +
+      `This will immediately dial ${number}.\n` +
+      "Only proceed if you have a real emergency or need.\n\n" +
+      "Click OK to dial now."
     );
-
-    if (!confirmEmergency) {
+    
+    if (finalConfirm) {
+      window.location.href = `tel:${number}`;
       toast({
-        title: "Emergency Call Cancelled",
-        description: "Emergency call was cancelled. You can access emergency numbers anytime from this menu.",
-        duration: 3000,
+        title: `Calling ${name}`,
+        description: `Dialing ${number}. Stay calm and provide your location if needed.`,
+        duration: 5000,
       });
-      return;
-    }
-
-    // Second step: Choose which number to call
-    const choice = window.confirm(
-      "Emergency Call Options:\n\n" +
-      "1. 112 - Emergency Services (Police/Fire/Medical)\n" +
-      "2. Legal Aid Hotline - For legal assistance\n" +
-      "3. Human Rights Defense - For rights violations\n\n" +
-      "Click OK to call Emergency Services (112)\n" +
-      "Click Cancel to see all numbers without calling"
-    );
-
-    if (choice) {
-      // Final confirmation before dialing 112
-      const finalConfirm = window.confirm(
-        "🚨 CALLING EMERGENCY SERVICES (112) 🚨\n\n" +
-        "This will immediately dial emergency services.\n" +
-        "Only proceed if you have a real emergency.\n\n" +
-        "Click OK to dial 112 now."
-      );
-      
-      if (finalConfirm) {
-        window.location.href = "tel:112";
-        toast({
-          title: "Calling Emergency Services",
-          description: "Dialing 112 - Emergency Services. Stay calm and provide your location.",
-          duration: 5000,
-        });
-      }
-    } else {
-      toast({
-        title: "Emergency Contact Numbers",
-        description: "112 (Emergency) • +39 06 8511 0020 (Legal Aid) • +39 06 4825 1001 (Human Rights)",
-        duration: 8000,
-      });
+      setShowEmergencyContacts(false);
     }
   };
 
@@ -266,9 +231,9 @@ export default function LiveProtestModePage() {
   const emergencyFeatures = [
     {
       title: "Emergency Contacts",
-      description: "Secure access to emergency and legal aid numbers",
+      description: "Quick access to emergency and legal aid numbers",
       icon: Phone,
-      action: "Emergency Call",
+      action: "View Contacts",
       color: "#dc2626",
       handler: handleEmergencyCall
     },
@@ -319,6 +284,145 @@ export default function LiveProtestModePage() {
 
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+      {/* Emergency Contacts Screen */}
+      {showEmergencyContacts && (
+        <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
+          {/* Emergency Header */}
+          <header className="bg-red-600 text-white sticky top-0 z-70">
+            <div className="px-4 py-4 flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowEmergencyContacts(false)}
+                className="text-white hover:bg-red-700"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <h1 className="text-xl font-bold">Emergency Contacts</h1>
+              <div className="w-9"></div> {/* Spacer for centering */}
+            </div>
+          </header>
+
+          <div className="px-4 py-6 space-y-6">
+            {/* Warning Message */}
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-3">
+                  <AlertTriangle className="w-6 h-6 text-red-600 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-bold text-red-900 text-lg mb-2">
+                      ⚠️ Important Warning
+                    </h3>
+                    <p className="text-red-800 text-sm leading-relaxed">
+                      Clicking on any number below will open your phone app and initiate a call to emergency authorities. 
+                      Only use these numbers if you have a genuine emergency or need assistance.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Emergency Contact Buttons */}
+            <div className="space-y-4">
+              {/* Emergency Services 112 */}
+              <Card className="border-red-300 hover:shadow-lg transition-shadow">
+                <CardContent className="p-0">
+                  <button
+                    onClick={() => handleCallNumber("112", "Emergency Services")}
+                    className="w-full p-6 text-left hover:bg-red-50 transition-colors rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-red-900 mb-1">112</h3>
+                        <h4 className="text-lg font-semibold text-red-800 mb-2">Emergency Services</h4>
+                        <p className="text-sm text-red-700 leading-relaxed">
+                          Police, Fire Department, Medical Emergency. Use for immediate threats to life, safety, 
+                          or property. Available 24/7 throughout Europe.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                </CardContent>
+              </Card>
+
+              {/* Legal Aid Hotline */}
+              <Card className="border-blue-300 hover:shadow-lg transition-shadow">
+                <CardContent className="p-0">
+                  <button
+                    onClick={() => handleCallNumber("+39 06 8511 0020", "Legal Aid Hotline")}
+                    className="w-full p-6 text-left hover:bg-blue-50 transition-colors rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-blue-900 mb-1">+39 06 8511 0020</h3>
+                        <h4 className="text-lg font-semibold text-blue-800 mb-2">Legal Aid Hotline</h4>
+                        <p className="text-sm text-blue-700 leading-relaxed">
+                          Free legal assistance for protesters. Help with understanding your rights, 
+                          dealing with arrests, and legal procedures. Available during business hours.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                </CardContent>
+              </Card>
+
+              {/* Human Rights Defense */}
+              <Card className="border-green-300 hover:shadow-lg transition-shadow">
+                <CardContent className="p-0">
+                  <button
+                    onClick={() => handleCallNumber("+39 06 4825 1001", "Human Rights Defense")}
+                    className="w-full p-6 text-left hover:bg-green-50 transition-colors rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-green-900 mb-1">+39 06 4825 1001</h3>
+                        <h4 className="text-lg font-semibold text-green-800 mb-2">Human Rights Defense</h4>
+                        <p className="text-sm text-green-700 leading-relaxed">
+                          Report human rights violations, police misconduct, or discrimination. 
+                          Specialized support for protesters facing rights violations.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Additional Safety Info */}
+            <Card className="border-gray-200 bg-gray-50">
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-gray-900 mb-3">📞 Emergency Call Tips</h3>
+                <ul className="text-sm text-gray-700 space-y-2">
+                  <li>• Stay calm and speak clearly</li>
+                  <li>• Provide your exact location if possible</li>
+                  <li>• Describe the situation briefly</li>
+                  <li>• Follow the operator's instructions</li>
+                  <li>• Don't hang up until told to do so</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Close Button */}
+            <Button
+              onClick={() => setShowEmergencyContacts(false)}
+              variant="outline"
+              className="w-full py-3 text-lg"
+            >
+              Close Emergency Contacts
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white sticky top-0 z-50 border-b border-gray-100">
         <div className="px-4 py-3 flex items-center justify-between">
