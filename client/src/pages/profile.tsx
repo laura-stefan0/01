@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import { useState } from "react";
 import { 
   Trophy, 
   Users, 
@@ -16,7 +18,10 @@ import {
   TrendingUp,
   Heart,
   Shield,
-  Zap
+  Zap,
+  Sparkles,
+  BookOpen,
+  User
 } from "lucide-react";
 
 /**
@@ -28,9 +33,50 @@ export default function ProfilePage() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [selectedBadge, setSelectedBadge] = useState<any>(null);
 
   // Check if we're on a nested route
   const isNestedRoute = location.pathname !== '/profile';
+
+  // Beginner badges data
+  const beginnerBadges = [
+    {
+      id: 'welcome',
+      name: 'Welcome',
+      icon: Sparkles,
+      color: 'from-pink-400 to-purple-500',
+      title: 'Welcome to Corteo! 🎉',
+      description: 'Congratulations on joining the community! This badge shows that you\'ve successfully created your account and are ready to start making a difference. Welcome to the movement!',
+      achieved: true
+    },
+    {
+      id: 'profile-complete',
+      name: 'Profile Complete',
+      icon: User,
+      color: 'from-blue-400 to-cyan-500',
+      title: 'Profile Completed! ✅',
+      description: 'Great job! You\'ve completed your profile setup. Having a complete profile helps you connect better with the community and shows your commitment to the cause.',
+      achieved: true
+    },
+    {
+      id: 'first-browse',
+      name: 'Explorer',
+      icon: BookOpen,
+      color: 'from-green-400 to-emerald-500',
+      title: 'First Steps Explorer 🔍',
+      description: 'You\'ve started exploring protests and events in your area! This shows you\'re actively looking for ways to get involved. Keep exploring to find causes that matter to you.',
+      achieved: true
+    },
+    {
+      id: 'app-learner',
+      name: 'Quick Learner',
+      icon: Zap,
+      color: 'from-yellow-400 to-orange-500',
+      title: 'Quick Learner ⚡',
+      description: 'You\'re getting the hang of the app! This badge recognizes that you\'ve learned how to navigate through different sections and are becoming familiar with Corteo\'s features.',
+      achieved: true
+    }
+  ];
 
   // If on nested route, render the outlet (subpage)
   if (isNestedRoute) {
@@ -110,35 +156,30 @@ export default function ProfilePage() {
 
       
 
-      {/* Recent Badges */}
+      {/* Beginner Badges */}
       <Card className="bg-white/70 backdrop-blur-sm border-white/50">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-800">Recent Badges</h3>
+            <h3 className="font-semibold text-gray-800">Your Badges</h3>
             <Award className="w-5 h-5 text-gray-600" />
           </div>
           
-          <div className="flex space-x-3">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-2 shadow-lg">
-                <Flame className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xs text-gray-600 font-medium">Streak Master</span>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-2 shadow-lg">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xs text-gray-600 font-medium">First Timer</span>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center mb-2 shadow-lg">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xs text-gray-600 font-medium">Quick Start</span>
-            </div>
+          <div className="grid grid-cols-2 gap-3">
+            {beginnerBadges.map((badge) => {
+              const IconComponent = badge.icon;
+              return (
+                <div 
+                  key={badge.id}
+                  className="text-center cursor-pointer transition-transform hover:scale-105"
+                  onClick={() => setSelectedBadge(badge)}
+                >
+                  <div className={`w-12 h-12 bg-gradient-to-br ${badge.color} rounded-full flex items-center justify-center mb-2 shadow-lg mx-auto`}>
+                    <IconComponent className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="text-xs text-gray-600 font-medium">{badge.name}</span>
+                </div>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -213,6 +254,35 @@ export default function ProfilePage() {
       >
         Sign Out
       </Button>
+
+      {/* Badge Detail Dialog */}
+      <Dialog open={!!selectedBadge} onOpenChange={() => setSelectedBadge(null)}>
+        <DialogContent className="max-w-sm mx-auto">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              {selectedBadge?.title}
+            </DialogTitle>
+            <div className="flex justify-center my-4">
+              {selectedBadge && (
+                <div className={`w-16 h-16 bg-gradient-to-br ${selectedBadge.color} rounded-full flex items-center justify-center shadow-lg`}>
+                  <selectedBadge.icon className="w-8 h-8 text-white" />
+                </div>
+              )}
+            </div>
+            <DialogDescription className="text-center text-gray-600">
+              {selectedBadge?.description}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center mt-4">
+            <Button 
+              onClick={() => setSelectedBadge(null)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
+            >
+              Awesome!
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
