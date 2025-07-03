@@ -74,6 +74,11 @@ export function getMapColor(category: string): string {
 export function getImageUrl(imageUrl: string | null | undefined, category: string): string {
   // If we have a valid image URL (from scraping), use it
   if (imageUrl && imageUrl.trim() !== '' && !imageUrl.includes('unsplash.com/photo-') && !imageUrl.includes('source.unsplash.com')) {
+    // Check if it's an Instagram image that might fail due to CORS
+    if (imageUrl.includes('instagram') || imageUrl.includes('fbcdn.net')) {
+      // Try to use the Instagram image, but the error handler will catch failures
+      return imageUrl;
+    }
     return imageUrl;
   }
   
