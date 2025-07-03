@@ -410,15 +410,20 @@ body[style*="background-image"] .app-background {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
   }
 
-  /* Navigation bar consistent height */
+  /* Navigation bar consistent height with safe area */
   nav {
-    min-height: 56px;
-    height: 56px;
+    min-height: 72px;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 
   .dark nav {
-    min-height: 56px;
-    height: 56px;
+    min-height: 72px;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+
+  /* Safe area support for mobile devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 
   /* Disable card hover effects */

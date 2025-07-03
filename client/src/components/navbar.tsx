@@ -41,15 +41,15 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe">
       <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-around py-2">
+        <div className="flex items-center justify-around py-3 pb-4">
           {navItems.map((item) => (
             <NavLink
               key={item.id}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+                `flex flex-col items-center py-3 px-4 rounded-lg transition-colors ${
                   isActive
                     ? "text-[#E11D48]" // Active color (#E11D48)
                     : "text-[#94A3B8]" // Inactive (#94A3B8)
