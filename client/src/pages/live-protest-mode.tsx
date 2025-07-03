@@ -1,5 +1,5 @@
 
-import { ArrowLeft, Shield, Phone, Camera, MapPin, Users, AlertTriangle, Clock, Wifi, WifiOff, Download, Share2, Video, StopCircle, Battery, BatteryLow } from "lucide-react";
+import { ArrowLeft, Shield, Phone, Camera, MapPin, Users, AlertTriangle, Clock, Wifi, WifiOff, Download, Share2, Video, StopCircle, Battery, BatteryLow, Eye, Lock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 export default function LiveProtestModePage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isRecording, setIsRecording] = useState(false);
@@ -36,6 +38,33 @@ export default function LiveProtestModePage() {
     return saved ? JSON.parse(saved) : [];
   });
   const [editingContact, setEditingContact] = useState<{name: string; number: string; id?: string} | null>(null);
+
+  // Loading sequence effect
+  useEffect(() => {
+    const loadingSteps = [
+      { step: 0, text: "Initializing Live Mode...", duration: 800 },
+      { step: 1, text: "Securing connections...", duration: 900 },
+      { step: 2, text: "Activating safety protocols...", duration: 700 },
+      { step: 3, text: "Establishing emergency links...", duration: 800 },
+      { step: 4, text: "Optimizing location services...", duration: 600 },
+      { step: 5, text: "Live Mode activated", duration: 500 }
+    ];
+
+    let currentStep = 0;
+    
+    const advanceStep = () => {
+      if (currentStep < loadingSteps.length - 1) {
+        currentStep++;
+        setLoadingStep(currentStep);
+        setTimeout(advanceStep, loadingSteps[currentStep].duration);
+      } else {
+        setTimeout(() => setIsLoading(false), 300);
+      }
+    };
+
+    // Start loading sequence
+    setTimeout(advanceStep, loadingSteps[0].duration);
+  }, []);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -363,6 +392,219 @@ export default function LiveProtestModePage() {
       value: `${riskLevel} Risk`
     }
   ];
+
+  // Loading Screen with Complex Transformation Animation
+  if (isLoading) {
+    const loadingMessages = [
+      "Initializing Live Mode...",
+      "Securing connections...", 
+      "Activating safety protocols...",
+      "Establishing emergency links...",
+      "Optimizing location services...",
+      "Live Mode activated"
+    ];
+
+    const loadingIcons = [Shield, Lock, Eye, Phone, MapPin, Zap];
+    const CurrentIcon = loadingIcons[loadingStep] || Shield;
+
+    return (
+      <div className="fixed inset-0 z-50 overflow-hidden" style={{
+        background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
+      }}>
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Rotating circles */}
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full border-2 border-white/20 animate-spin"
+              style={{
+                width: `${150 + i * 50}px`,
+                height: `${150 + i * 50}px`,
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                animationDuration: `${8 + i * 2}s`,
+                animationDelay: `${i * 0.3}s`,
+                animationDirection: i % 2 === 0 ? 'normal' : 'reverse'
+              }}
+            />
+          ))}
+          
+          {/* Pulsing dots */}
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={`dot-${i}`}
+              className="absolute w-2 h-2 bg-white/40 rounded-full animate-pulse"
+              style={{
+                top: `${20 + Math.sin(i * 0.5) * 60}%`,
+                left: `${20 + Math.cos(i * 0.5) * 60}%`,
+                animationDelay: `${i * 0.2}s`,
+                animationDuration: '2s'
+              }}
+            />
+          ))}
+
+          {/* Floating geometric shapes */}
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={`shape-${i}`}
+              className="absolute opacity-20 animate-bounce"
+              style={{
+                top: `${10 + (i * 12)}%`,
+                left: `${5 + (i * 11)}%`,
+                animationDelay: `${i * 0.4}s`,
+                animationDuration: '3s'
+              }}
+            >
+              <div 
+                className="w-6 h-6 bg-white transform rotate-45"
+                style={{
+                  borderRadius: i % 2 === 0 ? '0' : '50%'
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Main Content */}
+        <div className="relative z-10 flex items-center justify-center min-h-screen px-8">
+          <div className="text-center max-w-sm">
+            {/* Main Icon with Transformation Effect */}
+            <div className="relative mb-8">
+              <div className="w-24 h-24 mx-auto relative">
+                {/* Outer rotating ring */}
+                <div className="absolute inset-0 border-4 border-white/30 rounded-full animate-spin" style={{ animationDuration: '3s' }} />
+                
+                {/* Inner pulsing circle */}
+                <div className="absolute inset-2 bg-white/20 rounded-full animate-pulse" />
+                
+                {/* Icon container with morphing effect */}
+                <div 
+                  className="absolute inset-4 bg-white rounded-full flex items-center justify-center transition-all duration-500 shadow-lg"
+                  style={{
+                    transform: `scale(${0.8 + loadingStep * 0.04})`,
+                    boxShadow: `0 0 ${20 + loadingStep * 5}px rgba(255, 255, 255, 0.5)`
+                  }}
+                >
+                  <CurrentIcon 
+                    className="text-rose-600 transition-all duration-300"
+                    style={{ 
+                      width: `${20 + loadingStep * 2}px`, 
+                      height: `${20 + loadingStep * 2}px` 
+                    }}
+                  />
+                </div>
+
+                {/* Progress indicators around the circle */}
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`absolute w-3 h-3 rounded-full transition-all duration-300 ${
+                      i <= loadingStep ? 'bg-white shadow-lg' : 'bg-white/30'
+                    }`}
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(-50%, -50%) rotate(${i * 60}deg) translateY(-45px)`,
+                      animationDelay: `${i * 0.1}s`
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* App Name with Glitch Effect */}
+            <div className="relative mb-6">
+              <h1 className="text-4xl font-bold text-white mb-2 relative">
+                <span className="relative z-10">Corteo</span>
+                {/* Glitch layers */}
+                <span 
+                  className="absolute top-0 left-0 text-4xl font-bold text-red-300 opacity-70"
+                  style={{
+                    transform: `translate(${Math.sin(Date.now() * 0.01) * 2}px, ${Math.cos(Date.now() * 0.015) * 1}px)`,
+                    animation: 'glitch1 0.5s infinite'
+                  }}
+                >
+                  Corteo
+                </span>
+                <span 
+                  className="absolute top-0 left-0 text-4xl font-bold text-blue-300 opacity-50"
+                  style={{
+                    transform: `translate(${Math.cos(Date.now() * 0.012) * -2}px, ${Math.sin(Date.now() * 0.008) * 1}px)`,
+                    animation: 'glitch2 0.7s infinite'
+                  }}
+                >
+                  Corteo
+                </span>
+              </h1>
+              <div className="text-white/90 text-lg font-medium">
+                Live Protest Mode
+              </div>
+            </div>
+
+            {/* Loading Message with Typewriter Effect */}
+            <div className="mb-8">
+              <p className="text-white/80 text-sm font-medium h-6 overflow-hidden">
+                {loadingMessages[loadingStep] && (
+                  <span 
+                    className="inline-block animate-pulse"
+                    style={{ animationDuration: '1s' }}
+                  >
+                    {loadingMessages[loadingStep]}
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full max-w-xs mx-auto">
+              <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-white to-rose-200 rounded-full transition-all duration-500 ease-out relative"
+                  style={{ width: `${(loadingStep + 1) * 16.66}%` }}
+                >
+                  {/* Shimmer effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+                </div>
+              </div>
+              <div className="flex justify-between mt-2 text-xs text-white/60">
+                <span>Connecting...</span>
+                <span>{Math.round((loadingStep + 1) * 16.66)}%</span>
+              </div>
+            </div>
+
+            {/* Safety notice */}
+            <div className="mt-8 text-xs text-white/70 leading-relaxed">
+              <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                🔒 Establishing secure emergency protocols<br/>
+                📍 Optimizing location & safety features<br/>
+                🚨 Ready for live monitoring
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Additional CSS for glitch animations */}
+        <style jsx>{`
+          @keyframes glitch1 {
+            0%, 100% { transform: translate(0px, 0px); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+          }
+          
+          @keyframes glitch2 {
+            0%, 100% { transform: translate(0px, 0px); }
+            25% { transform: translate(2px, 0px); }
+            50% { transform: translate(-2px, 2px); }
+            75% { transform: translate(2px, -2px); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
