@@ -257,6 +257,12 @@ export default function HomePage() {
     setShowSuccess(false);
     
     try {
+      // Clear manual location override to use fresh GPS location
+      setManualLocation(null);
+      setManualLocationCoordinates(null);
+      localStorage.removeItem('corteo_manual_location');
+      localStorage.removeItem('corteo_manual_location_coords');
+      
       // Clear location cache and fetch fresh location
       await fetchUserRealLocation(true);
       
