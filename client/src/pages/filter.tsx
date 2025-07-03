@@ -5,10 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft } from "lucide-react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 
 export default function Filter() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
   const [dateFilter, setDateFilter] = useState("all");
   const [organizerFilter, setOrganizerFilter] = useState("all");
@@ -57,13 +57,14 @@ export default function Filter() {
       organizer: organizerFilter,
       appliedAt: Date.now()
     };
+    console.log("🎯 Applying filters:", filterData);
     localStorage.setItem('corteo_map_filters', JSON.stringify(filterData));
     
     // Dispatch custom event to notify MapView of filter changes
     window.dispatchEvent(new CustomEvent('corteo-filters-applied', { detail: filterData }));
     
     // Navigate back to map with filters applied
-    setLocation("/discover");
+    navigate("/discover");
   };
 
   const handleClearFilters = () => {
@@ -83,7 +84,7 @@ export default function Filter() {
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={() => setLocation("/discover")}
+              onClick={() => navigate("/discover")}
               className="text-gray-600"
             >
               <ArrowLeft className="w-5 h-5" />
