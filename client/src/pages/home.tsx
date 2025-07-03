@@ -111,8 +111,9 @@ export default function HomePage() {
     },
     onSuccess: () => {
       toast({
-        title: "Event Submitted",
-        description: "Your event has been successfully submitted and is now visible to users.",
+        title: "Event Submitted! ✅",
+        description: "Your event has been submitted - we'll review it and thank you for your contribution!",
+        className: "border-green-200 bg-green-50 text-green-800 success-bounce",
       });
       // Invalidate protests queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["/api/protests"] });

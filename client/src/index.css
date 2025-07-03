@@ -15,12 +15,43 @@
   }
 }
 
+@keyframes success-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  50% {
+    transform: scale(1.02) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes check-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
 .animate-in {
   animation-fill-mode: both;
 }
 
 .fade-in {
   animation: fade-in 0.3s ease-out;
+}
+
+.success-bounce {
+  animation: success-bounce 0.5s ease-out;
+}
+
+.check-pulse {
+  animation: check-pulse 0.8s ease-in-out;
 }
 
 .duration-300 {
