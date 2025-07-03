@@ -131,92 +131,99 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
   if (!todaysEvents || todaysEvents.length === 0) {
     return (
       <section className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <CalendarDays className="w-5 h-5 text-rose-600" />
-          <h2 className="text-lg font-bold text-dark-slate">Today's Events</h2>
+        <div className="bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+            <CalendarDays className="w-6 h-6 text-white" />
+            <h2 className="text-xl font-bold text-white">Today's Events</h2>
+            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+          </div>
+          <Card className="border-0 bg-white/95 backdrop-blur-sm">
+            <CardContent className="p-8 text-center">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-100 to-purple-100 flex items-center justify-center">
+                  <CalendarDays className="w-10 h-10 text-rose-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-800 text-lg">No saved events for today</p>
+                  <p className="text-gray-600 mt-2">Save events you're interested in to see them here on event day!</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <Card className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-gray-50 to-white">
-          <CardContent className="p-6 text-center text-gray-500">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
-                <CalendarDays className="w-8 h-8 text-gray-400" />
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">No saved events for today</p>
-                <p className="text-sm text-gray-500 mt-1">Save events you're interested in to see them here on event day!</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </section>
     );
   }
 
   return (
     <section className="mb-6">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-2 h-2 bg-rose-600 rounded-full animate-pulse"></div>
-        <CalendarDays className="w-5 h-5 text-rose-600" />
-        <h2 className="text-lg font-bold text-dark-slate">Today's Events</h2>
-        <div className="ml-auto">
-          <Badge className="bg-rose-600 text-white animate-pulse">
-            {todaysEvents.length}
-          </Badge>
+      <div className="bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+          <CalendarDays className="w-6 h-6 text-white" />
+          <h2 className="text-xl font-bold text-white">Today's Events</h2>
+          <div className="ml-auto">
+            <Badge className="bg-white text-rose-600 font-bold text-lg px-3 py-1 animate-bounce">
+              {todaysEvents.length}
+            </Badge>
+          </div>
+          <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
         </div>
-      </div>
-      <div className="space-y-3">
-        {todaysEvents.map((event) => (
-          <Card key={event.id} className="border-2 border-rose-200 bg-gradient-to-r from-rose-50 via-white to-rose-50 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardContent className="p-5">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 bg-rose-600 rounded-full animate-pulse"></div>
-                    <h3 className="font-bold text-dark-slate text-lg">{event.title}</h3>
-                  </div>
-                  <Badge className={`${getCategoryColor(event.category)} text-white text-sm font-medium`}>
-                    {event.category}
-                  </Badge>
-                </div>
-                <Button
-                  onClick={() => handleCheckIn(String(event.id))}
-                  disabled={checkingIn === String(event.id)}
-                  className="bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white ml-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  size="lg"
-                >
-                  {checkingIn === String(event.id) ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Checking in...
+        <div className="space-y-4">
+          {todaysEvents.map((event) => (
+            <Card key={event.id} className="border-0 bg-white/95 backdrop-blur-sm transition-all duration-500 transform hover:-translate-y-1">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-4 h-4 bg-gradient-to-r from-rose-500 to-purple-500 rounded-full animate-pulse"></div>
+                      <h3 className="font-bold text-gray-800 text-xl">{event.title}</h3>
                     </div>
-                  ) : (
-                    <>
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      Check-in Now
-                    </>
-                  )}
-                </Button>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center text-sm text-gray-600">
-                  <Clock className="w-4 h-4 mr-2" />
-                  <span>{event.time}</span>
+                    <Badge className={`${getCategoryColor(event.category)} text-white text-sm font-bold px-3 py-1`}>
+                      {event.category}
+                    </Badge>
+                  </div>
+                  <Button
+                    onClick={() => handleCheckIn(String(event.id))}
+                    disabled={checkingIn === String(event.id)}
+                    className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white ml-4 transition-all duration-300 transform hover:scale-110 font-bold text-base px-6 py-3"
+                    size="lg"
+                  >
+                    {checkingIn === String(event.id) ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Checking in...
+                      </div>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-6 h-6 mr-2" />
+                        Check-in Now!
+                      </>
+                    )}
+                  </Button>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  <span>{event.address}, {event.city}</span>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Clock className="w-4 h-4 mr-2" />
+                    <span>{event.time}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span>{event.address}, {event.city}</span>
+                  </div>
                 </div>
-              </div>
-              
-              {event.description && (
-                <p className="text-sm text-gray-700 mt-2 line-clamp-2">
-                  {event.description}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                
+                {event.description && (
+                  <p className="text-sm text-gray-700 mt-2 line-clamp-2">
+                    {event.description}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
   );
