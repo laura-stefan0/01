@@ -396,7 +396,7 @@ export default function HomePage() {
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby</h2>
 
         {/* Vertical List of Protest Cards */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {nearbyLoading ? (
             <>
               <Skeleton className="h-20 w-full" />
