@@ -755,7 +755,7 @@ export function MapView() {
             </div>
 
             {/* Help Button with Legend */}
-            <div className="absolute bottom-4 left-4 z-[1000]">
+            <div className="absolute bottom-4 left-4 z-[1002]">
               <Sheet>
                 <SheetTrigger asChild>
                   <Button
@@ -767,7 +767,7 @@ export function MapView() {
                     ?
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="bottom" className="h-auto rounded-t-lg">
+                <SheetContent side="bottom" className="h-auto rounded-t-lg z-[9999]">
                   <SheetHeader className="pb-4">
                     <SheetTitle className="text-left">Map Legend</SheetTitle>
                   </SheetHeader>
@@ -819,7 +819,7 @@ export function MapView() {
       {/* Bottom Sheet with Protest List */}
       <Sheet open={isBottomSheetOpen} onOpenChange={setIsBottomSheetOpen}>
         <SheetTrigger asChild>
-          <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-[1001]">
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[1001]">
             <Button
               variant="default"
               className="bg-white text-gray-700 border border-gray-200 shadow-lg hover:bg-gray-50 rounded-full px-4 py-2 flex items-center space-x-2"
@@ -834,7 +834,7 @@ export function MapView() {
           </div>
         </SheetTrigger>
 
-        <SheetContent side="bottom" className="h-[70vh] rounded-t-lg">
+        <SheetContent side="bottom" className="h-[70vh] rounded-t-lg z-[9999]">
           <SheetHeader className="pb-4">
             <SheetTitle className="text-left">
               Protests in this area ({protestsInView.length})

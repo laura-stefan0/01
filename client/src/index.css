@@ -535,6 +535,24 @@ body[style*="background-image"] .app-background {
     padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 
+  /* Ensure Sheet components appear above Leaflet map */
+  [data-radix-dialog-overlay] {
+    z-index: 9998 !important;
+  }
+  
+  [data-radix-dialog-content] {
+    z-index: 9999 !important;
+  }
+
+  /* Leaflet map z-index constraints */
+  .leaflet-container {
+    z-index: 1;
+  }
+  
+  .leaflet-control-container {
+    z-index: 800;
+  }
+
   /* Disable card hover effects */
   .hover\\:bg-gray-50:hover,
   .hover\\:bg-gray-100:hover,
