@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, Calendar } from "lucide-react";
 import { getCachedUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -12,12 +15,26 @@ import { ProtestCard } from "@/components/protest-card";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { useUser } from "@/hooks/use-user";
 import { useWhatsNew } from "@/hooks/use-whats-new";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/auth-context";
 import { useNavigate } from "react-router-dom";
 import { LocationSelector } from "@/components/location-selector";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+
+interface CreateProtestData {
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  date: string;
+  time: string;
+  image_url?: string;
+}
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,7 +49,22 @@ export default function HomePage() {
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [userCoordinates, setUserCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [manualLocationCoordinates, setManualLocationCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<CreateProtestData>({
+    title: "",
+    description: "",
+    category: "",
+    location: "",
+    address: "",
+    latitude: 37.7749,
+    longitude: -122.4194,
+    date: "",
+    time: "",
+    image_url: ""
+  });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Determine which coordinates to use for distance calculation
   const referenceCoordinates = manualLocationCoordinates || userCoordinates;
@@ -55,6 +87,82 @@ export default function HomePage() {
 
   const { data: whatsNewData = [], isLoading: whatsNewLoading } = useWhatsNew(whatsNewCountryCode);
   const { signOut, isAuthenticated } = useAuth();
+
+  const createProtestMutation = useMutation({
+    mutationFn: async (data: CreateProtestData & { image_url?: string }) => {
+      const response = await fetch("/api/protests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          image_url: data.image_url,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Event Submitted",
+        description: "Your event has been successfully submitted and is now visible to users.",
+      });
+      // Invalidate protests queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["/api/protests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/protests/featured"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/protests/nearby"] });
+      setIsDialogOpen(false);
+      // Reset form
+      setFormData({
+        title: "",
+        description: "",
+        category: "",
+        location: "",
+        address: "",
+        latitude: 37.7749,
+        longitude: -122.4194,
+        date: "",
+        time: "",
+        image_url: ""
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to submit event. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error creating protest:", error);
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.description || !formData.category || !formData.location || !formData.address || !formData.date || !formData.time) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    createProtestMutation.mutate(formData);
+  };
+
+  const categories = [
+    "Climate",
+    "Pride", 
+    "Workers",
+    "Justice",
+    "Environment",
+    "Education"
+  ];
 
   // Handle country selection change
   const handleCountryChange = (newCountry: string) => {
@@ -418,12 +526,136 @@ export default function HomePage() {
       {/* Create Protest Section */}
       <section className="mb-6">
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Did we miss one?</h2>
-        <Button 
-          className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white py-4 text-base font-medium"
-          onClick={() => navigate('/create-protest')}
-        >
-          Add an event
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button 
+              className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white py-4 text-base font-medium"
+            >
+              Add an event
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-lg">Add Event</DialogTitle>
+              <div className="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-lg">
+                We appreciate any details you can provide about this event to help others discover and participate in meaningful activism.
+              </div>
+            </DialogHeader>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title">Event Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="March for Climate Action"
+                  required
+                />
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Description *</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Join us for a peaceful demonstration to demand climate action..."
+                  rows={4}
+                  required
+                />
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2">
+                <Label htmlFor="category">Category *</Label>
+                <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Location */}
+              <div className="space-y-2">
+                <Label htmlFor="location">City/Area *</Label>
+                <div className="relative">
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="San Francisco, CA"
+                    className="pl-10"
+                    required
+                  />
+                  <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Address */}
+              <div className="space-y-2">
+                <Label htmlFor="address">Specific Address *</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  placeholder="City Hall, 1 Dr Carlton B Goodlett Pl"
+                  required
+                />
+              </div>
+
+              {/* Date */}
+              <div className="space-y-2">
+                <Label htmlFor="date">Date *</Label>
+                <div className="relative">
+                  <Input
+                    id="date"
+                    type="date"
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    className="pl-10"
+                    required
+                  />
+                  <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Time */}
+              <div className="space-y-2">
+                <Label htmlFor="time">Time *</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={formData.time}
+                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                  required
+                />
+              </div>
+
+              {/* Submit Button */}
+              <Button 
+                type="submit" 
+                className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+                disabled={createProtestMutation.isPending}
+              >
+                {createProtestMutation.isPending ? "Submitting..." : "Submit Event"}
+              </Button>
+
+              <div className="text-xs text-gray-500 text-center mt-2">
+                Your event will be visible to users immediately after submission.
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </section>
 
       {/* Donations Section */}
