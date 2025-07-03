@@ -108,24 +108,7 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-      {/* Achievement Progress */}
-      <Card className="bg-white/70 backdrop-blur-sm border-white/50">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-800">Next Achievement</h3>
-            <Target className="w-5 h-5 text-gray-600" />
-          </div>
-          
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Climate Warrior</span>
-              <span className="font-medium text-gray-800">7/10</span>
-            </div>
-            <Progress value={70} className="h-3 bg-gray-100" />
-            <p className="text-xs text-gray-500">3 more climate protests to unlock</p>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* Recent Badges */}
       <Card className="bg-white/70 backdrop-blur-sm border-white/50">

@@ -209,16 +209,6 @@ export default function ProtestDetail() {
 
       {/* Content */}
       <div className="flex-1 pb-6">
-        {/* Hero Image */}
-        <div className="w-full h-64 bg-gray-100 overflow-hidden">
-          <img
-            src={getImageUrl()}
-            alt={protest.title}
-            className="w-full h-full object-cover"
-            onError={handleImageError}
-          />
-        </div>
-
         <div className="px-4 py-6 space-y-6 max-w-md mx-auto">
           {/* Title and Badge */}
           <div className="space-y-3">
