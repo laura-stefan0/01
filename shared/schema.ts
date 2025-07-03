@@ -32,7 +32,7 @@ export const protests = pgTable("protests", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   category: text("category").notNull(),
-  location: text("location").notNull(),
+  city: text("city").notNull(),
   address: text("address").notNull(),
   latitude: text("latitude").notNull(),
   longitude: text("longitude").notNull(),

@@ -192,7 +192,7 @@ router.get('/search', async (req, res) => {
       .select('*')
       .eq('country_code', userCountryCode)
       .eq('approved', true) // Only show approved protests
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%,location.ilike.%${query}%`)
+      .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%,city.ilike.%${query}%`)
       .order('created_at', { ascending: false });
 
     if (error) {
