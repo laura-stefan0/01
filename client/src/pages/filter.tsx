@@ -59,6 +59,9 @@ export default function Filter() {
     };
     localStorage.setItem('corteo_map_filters', JSON.stringify(filterData));
     
+    // Dispatch custom event to notify MapView of filter changes
+    window.dispatchEvent(new CustomEvent('corteo-filters-applied', { detail: filterData }));
+    
     // Navigate back to map with filters applied
     setLocation("/discover");
   };

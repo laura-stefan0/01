@@ -151,8 +151,30 @@ export function MapView() {
       }
     };
 
+    // Listen for focus events (when returning from filter page)
+    const handleFocus = () => {
+      loadAppliedFilters();
+    };
+
+    // Listen for custom filter events
+    const handleFiltersApplied = (e: any) => {
+      console.log("🎯 Received filter event:", e.detail);
+      setAppliedFilters({
+        causes: e.detail.causes || [],
+        date: e.detail.date || "all",
+        organizer: e.detail.organizer || "all"
+      });
+    };
+
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('corteo-filters-applied', handleFiltersApplied);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('corteo-filters-applied', handleFiltersApplied);
+    };
   }, []);
 
   const filters = [
@@ -651,7 +673,7 @@ export function MapView() {
             {/* Filter Tags Overlay - Always Visible */}
             <div className="absolute top-20 left-4 right-4 z-[1000]">
               <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
-                {(searchQuery || activeFilter !== "all" || searchLocation) && (
+                {(searchQuery || activeFilter !== "all" || searchLocation || appliedFilters) && (
                   <div className="text-sm text-gray-600 mb-2">
                     {searchLocation ? (
                       <>
@@ -665,6 +687,12 @@ export function MapView() {
                         {filteredProtests.length} result{filteredProtests.length !== 1 ? 's' : ''} found
                         {searchQuery && ` for "${searchQuery}"`}
                         {activeFilter !== "all" && !searchQuery && ` for ${filters.find(f => f.id === activeFilter)?.label}`}
+                        {appliedFilters && appliedFilters.causes.length > 0 && (
+                          <> · Filtered by: {appliedFilters.causes.join(', ')}</>
+                        )}
+                        {appliedFilters && appliedFilters.date !== "all" && (
+                          <> · Date: {appliedFilters.date}</>
+                        )}
                       </>
                     )}
                   </div>
@@ -684,6 +712,20 @@ export function MapView() {
                       {filter.label}
                     </Badge>
                   ))}
+                  {appliedFilters && (appliedFilters.causes.length > 0 || appliedFilters.date !== "all") && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setAppliedFilters(null);
+                        localStorage.removeItem('corteo_map_filters');
+                        console.log("🧹 Cleared all applied filters");
+                      }}
+                      className="ml-2 text-xs px-2 py-1 h-auto bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
+                    >
+                      Clear Filters
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
