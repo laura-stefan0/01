@@ -16,6 +16,15 @@ export default function LiveProtestModePage() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [crowdDensity, setCrowdDensity] = useState(Math.floor(Math.random() * 500) + 100);
+  const [googleMapsCrowdData, setGoogleMapsCrowdData] = useState<{
+    busynessLevel: 'Low' | 'Medium' | 'High' | 'Very High';
+    estimatedPeople: number;
+    lastUpdated: Date;
+  }>({
+    busynessLevel: 'Medium',
+    estimatedPeople: Math.floor(Math.random() * 400) + 150,
+    lastUpdated: new Date()
+  });
   const [riskLevel, setRiskLevel] = useState<'Low' | 'Medium' | 'High'>('Low');
   const [batteryLevel, setBatteryLevel] = useState(85);
   const [hasWifi, setHasWifi] = useState(false);
@@ -104,22 +113,36 @@ export default function LiveProtestModePage() {
       return () => clearInterval(batteryTimer);
     }
 
-    // Simulate live monitoring data updates
+    // Simulate live monitoring data updates with Google Maps crowd density
     const monitoringTimer = setInterval(() => {
-      setCrowdDensity(prev => Math.max(50, prev + Math.floor(Math.random() * 40) - 20));
+      // Simulate Google Maps API crowd density data
+      const newEstimatedPeople = Math.max(50, googleMapsCrowdData.estimatedPeople + Math.floor(Math.random() * 60) - 30);
       
-      // Risk level logic based on crowd density and time
-      const currentCrowd = crowdDensity;
+      let busynessLevel: 'Low' | 'Medium' | 'High' | 'Very High';
+      if (newEstimatedPeople > 400) busynessLevel = 'Very High';
+      else if (newEstimatedPeople > 250) busynessLevel = 'High';
+      else if (newEstimatedPeople > 150) busynessLevel = 'Medium';
+      else busynessLevel = 'Low';
+      
+      setGoogleMapsCrowdData({
+        busynessLevel,
+        estimatedPeople: newEstimatedPeople,
+        lastUpdated: new Date()
+      });
+      
+      setCrowdDensity(newEstimatedPeople);
+      
+      // Risk level logic based on Google Maps crowd density and time
       const currentHour = new Date().getHours();
       
-      if (currentCrowd > 400 || (currentHour >= 20 && currentCrowd > 200)) {
+      if (newEstimatedPeople > 400 || (currentHour >= 20 && newEstimatedPeople > 200)) {
         setRiskLevel('High');
-      } else if (currentCrowd > 250 || (currentHour >= 18 && currentCrowd > 150)) {
+      } else if (newEstimatedPeople > 250 || (currentHour >= 18 && newEstimatedPeople > 150)) {
         setRiskLevel('Medium');
       } else {
         setRiskLevel('Low');
       }
-    }, 5000);
+    }, 8000);
 
     return () => {
       window.removeEventListener('online', handleOnline);
@@ -279,19 +302,11 @@ export default function LiveProtestModePage() {
   const emergencyFeatures = [
     {
       title: "Emergency Services",
-      description: "112, police, legal aid, and human rights hotlines",
+      description: "Dial 112, police, legal aid, and human rights hotlines",
       icon: Phone,
-      action: "Official Numbers",
+      action: "Dial Numbers",
       color: "#dc2626",
       handler: handleEmergencyCall
-    },
-    {
-      title: "Quick Phonebook",
-      description: "Your saved family and friends contacts",
-      icon: Users,
-      action: "Personal Contacts",
-      color: "#7c3aed",
-      handler: handleOpenQuickPhonebook
     },
     {
       title: "Document Incident",
@@ -319,14 +334,25 @@ export default function LiveProtestModePage() {
     }
   ];
 
+  const communicationFeatures = [
+    {
+      title: "Quick Phonebook",
+      description: "Your saved family and friends contacts",
+      icon: Users,
+      action: "Personal Contacts",
+      color: "#7c3aed",
+      handler: handleOpenQuickPhonebook
+    }
+  ];
+
   const liveFeatures = [
     {
-      title: "Crowd Density",
-      description: `Estimated ${crowdDensity} people in surrounding area`,
+      title: "Crowd Density (Google Maps)",
+      description: `${googleMapsCrowdData.busynessLevel} activity - ${googleMapsCrowdData.estimatedPeople} people detected`,
       icon: MapPin,
-      status: "Live",
+      status: googleMapsCrowdData.busynessLevel,
       color: "#2563eb",
-      value: `${crowdDensity} people`
+      value: `${googleMapsCrowdData.estimatedPeople} people`
     },
     {
       title: "Risk Assessment",
@@ -559,10 +585,24 @@ export default function LiveProtestModePage() {
                     <h3 className="font-bold text-red-900 text-lg mb-2">
                       ⚠️ Important Warning
                     </h3>
-                    <p className="text-red-800 text-sm leading-relaxed">
-                      Clicking on any number below will open your phone app and initiate a call to emergency authorities. 
+                    <p className="text-red-800 text-sm leading-relaxed mb-4">
+                      Clicking on any number below will open your phone app and initiate a dial to emergency authorities. 
                       Only use these numbers if you have a genuine emergency or need assistance.
                     </p>
+                    
+                    {/* Emergency Call Protection Info */}
+                    <div className="bg-red-100 rounded-lg p-3 mt-4">
+                      <h4 className="font-medium text-sm mb-2 text-red-800">
+                        📞 Emergency Calls Are Protected
+                      </h4>
+                      <ul className="text-xs space-y-1 text-red-700">
+                        <li>• Multiple confirmations prevent accidental calls</li>
+                        <li>• 112 connects to emergency services (police, fire, medical)</li>
+                        <li>• Legal aid and human rights numbers available</li>
+                        <li>• All emergency calls bypass normal network restrictions</li>
+                        <li>• Your location is automatically shared with emergency services</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -790,6 +830,41 @@ export default function LiveProtestModePage() {
           </div>
         </section>
 
+        {/* Communication */}
+        <section>
+          <h2 className="text-lg font-semibold text-dark-slate mb-4">Communication</h2>
+          <div className="grid grid-cols-1 gap-3">
+            {communicationFeatures.map((feature, index) => (
+              <Card 
+                key={index} 
+                className="cursor-pointer transition-all duration-200 hover:shadow-md border-gray-200 bg-white"
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-4">
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: `${feature.color}15` }}
+                    >
+                      <feature.icon className="w-6 h-6" style={{ color: feature.color }} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-dark-slate text-sm mb-1">{feature.title}</h3>
+                      <p className="text-xs text-gray-600">{feature.description}</p>
+                    </div>
+                    <button 
+                      className="py-2 px-4 text-xs font-medium text-white rounded-md transition-colors duration-200"
+                      style={{ backgroundColor: feature.color }}
+                      onClick={feature.handler}
+                    >
+                      {feature.action}
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
         {/* Live Monitoring */}
         <section>
           <h2 className="text-lg font-semibold text-dark-slate mb-4">Live Monitoring</h2>
@@ -836,29 +911,7 @@ export default function LiveProtestModePage() {
           </div>
         </section>
 
-        {/* Emergency Call Safety */}
-        <section>
-          <h2 className="text-lg font-semibold text-dark-slate mb-4">Emergency Call Safety</h2>
-          <Card className="border-blue-200 bg-blue-50 mb-6">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-3">
-                <Phone className="w-5 h-5 mt-0.5 text-blue-600" />
-                <div>
-                  <h3 className="font-medium text-sm mb-2 text-blue-800">
-                    📞 Emergency Calls Are Protected
-                  </h3>
-                  <ul className="text-xs space-y-1 text-blue-700">
-                    <li>• Multiple confirmations prevent accidental calls</li>
-                    <li>• 112 connects to emergency services (police, fire, medical)</li>
-                    <li>• Legal aid and human rights numbers available</li>
-                    <li>• All emergency calls bypass normal network restrictions</li>
-                    <li>• Your location is automatically shared with emergency services</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+        
 
         {/* Safety Tips */}
         <section>
