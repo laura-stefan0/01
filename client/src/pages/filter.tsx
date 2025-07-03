@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,21 @@ export default function Filter() {
   const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
   const [dateFilter, setDateFilter] = useState("all");
   const [organizerFilter, setOrganizerFilter] = useState("all");
+
+  // Load saved filters on component mount
+  useEffect(() => {
+    const savedFilters = localStorage.getItem('corteo_map_filters');
+    if (savedFilters) {
+      try {
+        const filterData = JSON.parse(savedFilters);
+        setSelectedCauses(filterData.causes || []);
+        setDateFilter(filterData.date || "all");
+        setOrganizerFilter(filterData.organizer || "all");
+      } catch (error) {
+        console.error("Error loading saved filters:", error);
+      }
+    }
+  }, []);
 
   const causes = [
     "Environment",
@@ -35,6 +50,15 @@ export default function Filter() {
   };
 
   const handleApplyFilters = () => {
+    // Store filters in localStorage for the MapView to read
+    const filterData = {
+      causes: selectedCauses,
+      date: dateFilter,
+      organizer: organizerFilter,
+      appliedAt: Date.now()
+    };
+    localStorage.setItem('corteo_map_filters', JSON.stringify(filterData));
+    
     // Navigate back to map with filters applied
     setLocation("/discover");
   };
@@ -43,6 +67,8 @@ export default function Filter() {
     setSelectedCauses([]);
     setDateFilter("all");
     setOrganizerFilter("all");
+    // Clear stored filters
+    localStorage.removeItem('corteo_map_filters');
   };
 
   return (

@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/co
 import { ProtestCard } from "@/components/protest-card";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import type { Protest } from "@shared/schema";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -94,7 +94,7 @@ export function MapView() {
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   // Load cached user location from Home page on mount
   useEffect(() => {
@@ -123,6 +123,38 @@ export function MapView() {
     loadCachedLocation();
   }, []);
 
+  // Load applied filters from localStorage
+  useEffect(() => {
+    const loadAppliedFilters = () => {
+      try {
+        const savedFilters = localStorage.getItem('corteo_map_filters');
+        if (savedFilters) {
+          const filterData = JSON.parse(savedFilters);
+          setAppliedFilters({
+            causes: filterData.causes || [],
+            date: filterData.date || "all",
+            organizer: filterData.organizer || "all"
+          });
+          console.log("🎯 Loaded applied filters:", filterData);
+        }
+      } catch (error) {
+        console.error("Error loading applied filters:", error);
+      }
+    };
+
+    loadAppliedFilters();
+    
+    // Listen for storage changes (when filters are applied)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'corteo_map_filters') {
+        loadAppliedFilters();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const filters = [
     { id: "all", label: "All" },
     { id: "upcoming", label: "Upcoming" },
@@ -130,6 +162,11 @@ export function MapView() {
     { id: "featured", label: "Featured" },
   ];
   const [activeFilter, setActiveFilter] = useState("all");
+  const [appliedFilters, setAppliedFilters] = useState<{
+    causes: string[];
+    date: string;
+    organizer: string;
+  } | null>(null);
 
   // GPS location function - now syncs with Home page location storage
   const getUserLocation = async () => {
@@ -239,6 +276,53 @@ export function MapView() {
         }
 
         return matches;
+      }
+      return true;
+    })
+    .filter((protest) => {
+      // Apply saved filters from localStorage
+      if (appliedFilters) {
+        // Filter by causes (categories)
+        if (appliedFilters.causes.length > 0) {
+          const protestCategory = protest.category?.toLowerCase() || '';
+          const matchesCause = appliedFilters.causes.some(cause => 
+            protestCategory.includes(cause.toLowerCase()) || 
+            cause.toLowerCase().includes(protestCategory)
+          );
+          if (!matchesCause) return false;
+        }
+
+        // Filter by date
+        if (appliedFilters.date !== "all") {
+          const eventDate = new Date(protest.date);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          switch (appliedFilters.date) {
+            case "today":
+              const todayEnd = new Date(today);
+              todayEnd.setHours(23, 59, 59, 999);
+              if (eventDate < today || eventDate > todayEnd) return false;
+              break;
+            case "tomorrow":
+              const tomorrow = new Date(today);
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              const tomorrowEnd = new Date(tomorrow);
+              tomorrowEnd.setHours(23, 59, 59, 999);
+              if (eventDate < tomorrow || eventDate > tomorrowEnd) return false;
+              break;
+            case "week":
+              const weekEnd = new Date(today);
+              weekEnd.setDate(weekEnd.getDate() + 7);
+              if (eventDate < today || eventDate > weekEnd) return false;
+              break;
+            case "month":
+              const monthEnd = new Date(today);
+              monthEnd.setMonth(monthEnd.getMonth() + 1);
+              if (eventDate < today || eventDate > monthEnd) return false;
+              break;
+          }
+        }
       }
       return true;
     })
@@ -384,7 +468,7 @@ export function MapView() {
                         <Button 
                           size="sm" 
                           className="w-full mt-2 bg-[#E11D48] hover:bg-[#E11D48]/90"
-                          onClick={() => navigate(`/protest/${protest.id}`)}
+                          onClick={() => setLocation(`/protest/${protest.id}`)}
                         >
                           View Details
                         </Button>
@@ -478,7 +562,7 @@ export function MapView() {
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => navigate("/filter")}
+                    onClick={() => setLocation("/filter")}
                     className="px-3 py-2 hover:bg-gray-50 rounded-full"
                   >
                     <Filter className="w-4 h-4 text-gray-600 mr-2" />
@@ -512,7 +596,7 @@ export function MapView() {
                         <div 
                           key={protest.id}
                           className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                          onClick={() => navigate(`/protest/${protest.id}`)}
+                          onClick={() => setLocation(`/protest/${protest.id}`)}
                         >
                           <div className="flex items-start space-x-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
