@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
       .from('protests')
       .select('*')
       .eq('country_code', userCountryCode)
+      .eq('approved', true) // Only show approved protests
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -43,6 +44,7 @@ router.get('/featured', async (req, res) => {
       .select('*')
       .eq('featured', true)
       .eq('country_code', userCountryCode)
+      .eq('approved', true) // Only show approved protests
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -89,6 +91,7 @@ router.get('/nearby', async (req, res) => {
       .from('protests')
       .select('*')
       .eq('country_code', userCountryCode)
+      .eq('approved', true) // Only show approved protests
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -155,6 +158,7 @@ router.get('/category/:category', async (req, res) => {
       .select('*')
       .eq('category', category)
       .eq('country_code', userCountryCode)
+      .eq('approved', true) // Only show approved protests
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -187,6 +191,7 @@ router.get('/search', async (req, res) => {
       .from('protests')
       .select('*')
       .eq('country_code', userCountryCode)
+      .eq('approved', true) // Only show approved protests
       .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%,location.ilike.%${query}%`)
       .order('created_at', { ascending: false });
 
@@ -261,6 +266,7 @@ router.post('/', async (req, res) => {
       attendees: 0,
       distance: "0.5 mi",
       featured: false,
+      approved: false, // New submissions require approval
       event_url: eventUrl || null
     };
 
@@ -282,9 +288,9 @@ router.post('/', async (req, res) => {
 
     console.log('✅ Protest created successfully in protests table:', newProtest.id);
     res.status(201).json({ 
-      message: 'Protest submitted successfully', 
+      message: 'Event submitted successfully', 
       protest: newProtest,
-      note: 'Your protest has been created and is now visible to users.'
+      note: 'Your event has been submitted and is pending approval. We will review it shortly.'
     });
   } catch (error) {
     console.error("Failed to create protest:", error);

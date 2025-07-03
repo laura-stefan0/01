@@ -33,6 +33,7 @@ export const protests = pgTable("protests", {
   country_code: text("country_code").notNull().default("IT"),
   attendees: integer("attendees").notNull().default(0),
   featured: boolean("featured").notNull().default(false),
+  approved: boolean("approved").notNull().default(false), // New submissions require approval
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
