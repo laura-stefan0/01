@@ -6,7 +6,7 @@ import { MapView } from "@/components/map-view";
  */
 export default function DiscoverPage() {
   return (
-    <div className="h-screen w-screen">
+    <div className="h-[calc(100vh-4rem)] w-full overflow-hidden">
       <MapView />
     </div>
   );

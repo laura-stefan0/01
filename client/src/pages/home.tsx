@@ -614,18 +614,18 @@ export default function HomePage() {
       {/* Get Involved Section */}
       <section>
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Get Involved</h2>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Add an event */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 shadow-xl cursor-pointer">
-                <CardContent className="p-4">
-                  <Button 
-                    className="w-full bg-white text-indigo-600 hover:bg-gray-50 font-semibold shadow-none border-0 h-12"
-                  >
-                    <TrendingUp className="w-5 h-5 mr-2" />
-                    Add an event
-                  </Button>
+              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%)'
+              }}>
+                <CardContent className="p-4 text-center relative z-10">
+                  <div className="flex flex-col items-center space-y-2">
+                    <TrendingUp className="w-8 h-8 text-white" />
+                    <h3 className="font-bold text-base text-white drop-shadow-lg">Add an event</h3>
+                  </div>
                 </CardContent>
               </Card>
             </DialogTrigger>
@@ -859,13 +859,14 @@ export default function HomePage() {
           </Dialog>
 
           {/* Make a Difference */}
-          <Card className="bg-activist-blue">
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2 text-white">Make a Difference</h3>
-              <p className="text-sm mb-3 text-white">Your donation helps support activists and organizations fighting for change.</p>
-              <Button className="w-full bg-white text-activist-blue hover:bg-clean-white">
-                Donate Now
-              </Button>
+          <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+            background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
+          }}>
+            <CardContent className="p-4 text-center relative z-10">
+              <div className="flex flex-col items-center space-y-2">
+                <Target className="w-8 h-8 text-white" />
+                <h3 className="font-bold text-base text-white drop-shadow-lg">Make a Difference</h3>
+              </div>
             </CardContent>
           </Card>
         </div>

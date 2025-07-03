@@ -233,7 +233,7 @@ export function MapView() {
         protest.title?.toLowerCase() || '',
         protest.description?.toLowerCase() || '',
         protest.category?.toLowerCase() || '',
-        protest.location?.toLowerCase() || '',
+        protest.city?.toLowerCase() || '',
         protest.address?.toLowerCase() || ''
       ];
       return searchFields.some(field => field.includes(query));
@@ -288,14 +288,14 @@ export function MapView() {
           protest.title?.toLowerCase() || '',
           protest.description?.toLowerCase() || '',
           protest.category?.toLowerCase() || '',
-          protest.location?.toLowerCase() || '',
+          protest.city?.toLowerCase() || '',
           protest.address?.toLowerCase() || ''
         ];
 
         const matches = searchFields.some(field => field.includes(query));
 
         if (matches) {
-          console.log(`✅ Match found: ${protest.title} in ${protest.location}`);
+          console.log(`✅ Match found: ${protest.title} in ${protest.city}`);
         }
 
         return matches;
@@ -441,9 +441,9 @@ export function MapView() {
     : filteredProtests;
 
   return (
-    <div className="relative h-full">
-      {/* Map Container - Full Screen Height */}
-      <div className="h-screen relative">
+    <div className="relative h-full w-full">
+      {/* Map Container - Full Height */}
+      <div className="h-full w-full relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full bg-gray-50">
             <div className="text-center">
@@ -480,7 +480,7 @@ export function MapView() {
                     <Popup>
                       <div className="p-2 max-w-xs">
                         <h3 className="font-semibold text-sm mb-1">{protest.title}</h3>
-                        <p className="text-xs text-gray-600 mb-2">{protest.location}</p>
+                        <p className="text-xs text-gray-600 mb-2">{protest.city}</p>
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-gray-500">{formatDateTime(protest.date, protest.time)}</span>
                           <Badge className="text-xs px-2 py-1 bg-[#FECDD3] text-[#E11D48]">
@@ -549,24 +549,24 @@ export function MapView() {
               )}
             </MapContainer>
 
-            {/* Overlay Search Controls - Airbnb Style */}
-            <div className="absolute top-4 left-4 right-4 z-[1000]">
-              <div className="bg-white rounded-full shadow-lg border border-gray-200 p-2">
-                <div className="flex items-center space-x-3">
-                  <div className="relative flex-1">
+            {/* Overlay Search Controls - Mobile Optimized */}
+            <div className="absolute top-3 left-3 right-3 z-[1000]">
+              <div className="bg-white rounded-full shadow-lg border border-gray-200 p-1.5">
+                <div className="flex items-center space-x-2">
+                  <div className="relative flex-1 min-w-0">
                     <Input
                       type="text"
-                      placeholder="Search protests, cities, or addresses..."
+                      placeholder="Search protests or locations..."
                       value={searchQuery}
                       onChange={(e) => handleSearchChange(e.target.value)}
-                      className="pl-10 pr-10 py-3 border-0 bg-transparent text-sm placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="pl-9 pr-8 py-2 border-0 bg-transparent text-sm placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 h-9"
                     />
                     {isGeocoding ? (
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4">
+                      <div className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-4 h-4">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                       </div>
                     ) : (
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     )}
                     {searchQuery && (
                       <button
@@ -575,13 +575,13 @@ export function MapView() {
                           setSearchLocation(null);
                           setSearchLocationName("");
                         }}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 hover:text-gray-600"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 hover:text-gray-600"
                       >
                         ✕
                       </button>
                     )}
                   </div>
-                  <div className="h-6 w-px bg-gray-300"></div>
+                  <div className="h-5 w-px bg-gray-300"></div>
                   <Button 
                     variant="ghost" 
                     size="sm"
@@ -589,10 +589,10 @@ export function MapView() {
                       console.log("🎯 Filter button clicked, navigating to /filter");
                       navigate("/filter");
                     }}
-                    className="px-3 py-2 hover:bg-gray-50 rounded-full"
+                    className="px-2.5 py-2 hover:bg-gray-50 rounded-full h-9"
                   >
-                    <Filter className="w-4 h-4 text-gray-600 mr-2" />
-                    Filters
+                    <Filter className="w-4 h-4 text-gray-600" />
+                    <span className="ml-1.5 text-sm hidden sm:inline">Filters</span>
                   </Button>
                 </div>
               </div>
@@ -644,7 +644,7 @@ export function MapView() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-gray-900 truncate">{protest.title}</p>
-                              <p className="text-sm text-gray-600 truncate">{protest.location}</p>
+                              <p className="text-sm text-gray-600 truncate">{protest.city}</p>
                               <div className="flex items-center space-x-2 mt-1">
                                 <Badge className="text-xs bg-[#FECDD3] text-[#E11D48]">
                                   {protest.category?.toUpperCase()}
