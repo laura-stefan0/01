@@ -21,6 +21,12 @@ export default function LiveProtestModePage() {
   const [hasWifi, setHasWifi] = useState(false);
   const [hasMobileData, setHasMobileData] = useState(false);
   const [showEmergencyContacts, setShowEmergencyContacts] = useState(false);
+  const [showQuickPhonebook, setShowQuickPhonebook] = useState(false);
+  const [quickContacts, setQuickContacts] = useState(() => {
+    const saved = localStorage.getItem('corteo-quick-contacts');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [editingContact, setEditingContact] = useState<{name: string; number: string; id?: string} | null>(null);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -144,7 +150,49 @@ export default function LiveProtestModePage() {
         duration: 5000,
       });
       setShowEmergencyContacts(false);
+      setShowQuickPhonebook(false);
     }
+  };
+
+  const handleOpenQuickPhonebook = () => {
+    setShowQuickPhonebook(true);
+  };
+
+  const handleSaveContact = () => {
+    if (!editingContact?.name || !editingContact?.number) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter both name and phone number.",
+        duration: 3000,
+      });
+      return;
+    }
+
+    const newContacts = editingContact.id
+      ? quickContacts.map(c => c.id === editingContact.id ? editingContact : c)
+      : [...quickContacts, { ...editingContact, id: Date.now().toString() }];
+
+    setQuickContacts(newContacts);
+    localStorage.setItem('corteo-quick-contacts', JSON.stringify(newContacts));
+    setEditingContact(null);
+    
+    toast({
+      title: "Contact Saved",
+      description: `${editingContact.name} has been saved to your quick contacts.`,
+      duration: 3000,
+    });
+  };
+
+  const handleDeleteContact = (contactId: string) => {
+    const updatedContacts = quickContacts.filter(c => c.id !== contactId);
+    setQuickContacts(updatedContacts);
+    localStorage.setItem('corteo-quick-contacts', JSON.stringify(updatedContacts));
+    
+    toast({
+      title: "Contact Deleted",
+      description: "Contact has been removed from your quick phonebook.",
+      duration: 3000,
+    });
   };
 
   const handleStartRecording = () => {
@@ -230,12 +278,20 @@ export default function LiveProtestModePage() {
 
   const emergencyFeatures = [
     {
-      title: "Emergency Contacts",
-      description: "Quick access to emergency and legal aid numbers",
+      title: "Emergency Services",
+      description: "112, police, legal aid, and human rights hotlines",
       icon: Phone,
-      action: "View Contacts",
+      action: "Official Numbers",
       color: "#dc2626",
       handler: handleEmergencyCall
+    },
+    {
+      title: "Quick Phonebook",
+      description: "Your saved family and friends contacts",
+      icon: Users,
+      action: "Personal Contacts",
+      color: "#7c3aed",
+      handler: handleOpenQuickPhonebook
     },
     {
       title: "Document Incident",
@@ -267,7 +323,7 @@ export default function LiveProtestModePage() {
     {
       title: "Crowd Density",
       description: `Estimated ${crowdDensity} people in surrounding area`,
-      icon: Users,
+      icon: MapPin,
       status: "Live",
       color: "#2563eb",
       value: `${crowdDensity} people`
@@ -284,6 +340,196 @@ export default function LiveProtestModePage() {
 
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+      {/* Quick Phonebook Screen */}
+      {showQuickPhonebook && (
+        <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
+          {/* Phonebook Header */}
+          <header className="bg-purple-600 text-white sticky top-0 z-70">
+            <div className="px-4 py-4 flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowQuickPhonebook(false)}
+                className="text-white hover:bg-purple-700"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <h1 className="text-xl font-bold">Quick Phonebook</h1>
+              <div className="w-9"></div>
+            </div>
+          </header>
+
+          <div className="px-4 py-6 space-y-6">
+            {/* Info Message */}
+            <Card className="border-purple-200 bg-purple-50">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Users className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-bold text-purple-900 text-sm mb-2">
+                      📱 Quick Access to Your Contacts
+                    </h3>
+                    <p className="text-purple-800 text-xs leading-relaxed">
+                      Save up to 5 emergency contacts (family, friends, trusted people) for quick access during protests. 
+                      All contacts are stored locally on your device.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Add/Edit Contact Form */}
+            {(editingContact !== null || quickContacts.length < 5) && (
+              <Card className="border-gray-200">
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-4">
+                    {editingContact?.id ? "Edit Contact" : "Add New Contact"}
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., Mom, Dad, Best Friend"
+                        value={editingContact?.name || ""}
+                        onChange={(e) => setEditingContact(prev => 
+                          prev ? { ...prev, name: e.target.value } : { name: e.target.value, number: "" }
+                        )}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="+39 123 456 7890"
+                        value={editingContact?.number || ""}
+                        onChange={(e) => setEditingContact(prev => 
+                          prev ? { ...prev, number: e.target.value } : { name: "", number: e.target.value }
+                        )}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      />
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        onClick={handleSaveContact}
+                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                        size="sm"
+                      >
+                        {editingContact?.id ? "Update" : "Save"} Contact
+                      </Button>
+                      {editingContact && (
+                        <Button 
+                          onClick={() => setEditingContact(null)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Saved Contacts List */}
+            {quickContacts.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-900">Your Quick Contacts ({quickContacts.length}/5)</h3>
+                {quickContacts.map((contact) => (
+                  <Card key={contact.id} className="border-gray-200 hover:shadow-md transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                            <Phone className="w-5 h-5 text-purple-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-900">{contact.name}</h4>
+                            <p className="text-sm text-gray-600">{contact.number}</p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => handleCallNumber(contact.number, contact.name)}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            Call
+                          </Button>
+                          <Button
+                            onClick={() => setEditingContact(contact)}
+                            size="sm"
+                            variant="outline"
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteContact(contact.id)}
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* Empty State */}
+            {quickContacts.length === 0 && !editingContact && (
+              <Card className="border-gray-200 bg-gray-50">
+                <CardContent className="p-6 text-center">
+                  <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <h3 className="font-medium text-gray-900 mb-2">No Quick Contacts Yet</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Add your most important emergency contacts for quick access during protests.
+                  </p>
+                  <Button
+                    onClick={() => setEditingContact({ name: "", number: "" })}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Add Your First Contact
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Quick Actions */}
+            <Card className="border-gray-200 bg-gray-50">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-3">💡 Quick Tips</h3>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Add your most trusted emergency contacts</li>
+                  <li>• Include international format (+39 for Italy)</li>
+                  <li>• Test call your contacts before protests</li>
+                  <li>• Keep this list updated and current</li>
+                  <li>• Maximum 5 contacts for quick access</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Close Button */}
+            <Button
+              onClick={() => setShowQuickPhonebook(false)}
+              variant="outline"
+              className="w-full py-3 text-lg"
+            >
+              Close Phonebook
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Emergency Contacts Screen */}
       {showEmergencyContacts && (
         <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
