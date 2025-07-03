@@ -85,3 +85,32 @@ export function useSearchProtests(query: string, country?: string) {
     enabled: !!query && query.length > 0,
   });
 }
+
+export function useSavedProtests(userId?: number) {
+  return useQuery<Protest[]>({
+    queryKey: ["/api/saved-protests", userId],
+    queryFn: async () => {
+      const response = await fetch(`/api/saved-protests`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch saved protests');
+      }
+      return response.json();
+    },
+    enabled: !!userId,
+  });
+}
+
+export function useTodaysEvents(userId?: number, userLat?: number, userLng?: number) {
+  return useQuery<Protest[]>({
+    queryKey: ["/api/saved-protests/today", userId, userLat, userLng],
+    queryFn: async () => {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      const response = await fetch(`/api/saved-protests/today?date=${today}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch today\'s events');
+      }
+      return response.json();
+    },
+    enabled: !!userId,
+  });
+}

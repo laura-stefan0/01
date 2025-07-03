@@ -20,6 +20,96 @@ async function initializeTables() {
 }
 
 // Get saved protests for a user
+router.get("/", async (req, res) => {
+  try {
+    await initializeTables();
+    const userId = 1; // For now using default user ID
+    
+    // Get saved protest IDs
+    const { data: savedData, error: savedError } = await supabase
+      .from('saved_protests')
+      .select('protest_id')
+      .eq('user_id', userId);
+
+    if (savedError) {
+      console.error('❌ Error fetching saved protests:', savedError);
+      return res.status(500).json({ error: "Failed to fetch saved protests" });
+    }
+
+    if (!savedData || savedData.length === 0) {
+      return res.json([]);
+    }
+
+    // Get the actual protest data
+    const protestIds = savedData.map(item => item.protest_id);
+    const { data: protests, error: protestsError } = await supabase
+      .from('protests')
+      .select('*')
+      .in('id', protestIds)
+      .eq('approved', true);
+
+    if (protestsError) {
+      console.error('❌ Error fetching protest details:', protestsError);
+      return res.status(500).json({ error: "Failed to fetch protest details" });
+    }
+
+    console.log(`✅ Successfully fetched ${protests?.length || 0} saved protests for user ${userId}`);
+    res.json(protests || []);
+  } catch (error) {
+    console.error('❌ Error in /saved route:', error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get today's saved events with location validation
+router.get("/today", async (req, res) => {
+  try {
+    await initializeTables();
+    const userId = 1; // For now using default user ID
+    const { date } = req.query;
+    
+    if (!date) {
+      return res.status(400).json({ error: "Date parameter is required" });
+    }
+
+    // Get saved protest IDs
+    const { data: savedData, error: savedError } = await supabase
+      .from('saved_protests')
+      .select('protest_id')
+      .eq('user_id', userId);
+
+    if (savedError) {
+      console.error('❌ Error fetching saved protests:', savedError);
+      return res.status(500).json({ error: "Failed to fetch saved protests" });
+    }
+
+    if (!savedData || savedData.length === 0) {
+      return res.json([]);
+    }
+
+    // Get the actual protest data for today
+    const protestIds = savedData.map(item => item.protest_id);
+    const { data: protests, error: protestsError } = await supabase
+      .from('protests')
+      .select('*')
+      .in('id', protestIds)
+      .eq('approved', true)
+      .eq('date', date);
+
+    if (protestsError) {
+      console.error('❌ Error fetching today\'s protest details:', protestsError);
+      return res.status(500).json({ error: "Failed to fetch today's protest details" });
+    }
+
+    console.log(`✅ Successfully fetched ${protests?.length || 0} today's saved events for user ${userId}`);
+    res.json(protests || []);
+  } catch (error) {
+    console.error('❌ Error in /today route:', error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get saved protests for a user (legacy endpoint)
 router.get("/saved", async (req, res) => {
   try {
     await initializeTables();
@@ -180,14 +270,53 @@ router.get("/archived", async (req, res) => {
   }
 });
 
-// Check in to a protest (archive it)
+// Check in to a protest (archive it) with location validation
 router.post("/checkin", async (req, res) => {
   try {
     const userId = 1; // For now using default user ID
-    const { protestId, notes } = req.body;
+    const { protestId, notes, userLat, userLng } = req.body;
 
     if (!protestId) {
       return res.status(400).json({ error: "Protest ID is required" });
+    }
+
+    // Get the protest details first to validate location
+    const { data: protest, error: protestError } = await supabase
+      .from('protests')
+      .select('*')
+      .eq('id', protestId)
+      .single();
+
+    if (protestError || !protest) {
+      console.error('❌ Error fetching protest for check-in:', protestError);
+      return res.status(404).json({ error: "Protest not found" });
+    }
+
+    // Validate location if coordinates are provided
+    if (userLat && userLng) {
+      const protestLat = parseFloat(protest.latitude);
+      const protestLng = parseFloat(protest.longitude);
+      
+      // Calculate distance between user and protest location
+      const distance = calculateDistance(userLat, userLng, protestLat, protestLng);
+      
+      // Allow check-in if within 5km (very lenient for events)
+      if (distance > 5) {
+        return res.status(400).json({ 
+          error: "You must be near the event location to check in",
+          distance: distance.toFixed(1) + " km away"
+        });
+      }
+    }
+
+    // Validate date (must be today)
+    const today = new Date().toISOString().split('T')[0];
+    if (protest.date !== today) {
+      return res.status(400).json({ 
+        error: "You can only check in on the day of the event",
+        eventDate: protest.date,
+        today: today
+      });
     }
 
     // Check if already checked in
@@ -224,11 +353,23 @@ router.post("/checkin", async (req, res) => {
       .eq('protest_id', protestId);
 
     console.log(`✅ Successfully checked in to protest ${protestId} for user ${userId}`);
-    res.json({ success: true });
+    res.json({ success: true, message: "Successfully checked in!" });
   } catch (error) {
     console.error('❌ Error in /checkin route:', error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// Helper function to calculate distance between two points
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
 
 export default router;

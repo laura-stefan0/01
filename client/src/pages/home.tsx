@@ -12,6 +12,7 @@ import { getCachedUserLocation, getUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
 import { ProtestCard } from "@/components/protest-card";
+import { TodaysEvents } from "@/components/todays-events";
 import { useFeaturedProtests, useNearbyProtests } from "@/hooks/use-protests";
 import { useUser } from "@/hooks/use-user";
 import { useWhatsNew } from "@/hooks/use-whats-new";
@@ -557,6 +558,9 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      {/* Today's Events Section */}
+      <TodaysEvents userCoordinates={referenceCoordinates} />
 
       {/* Featured Section */}
       <section className="mb-6">
