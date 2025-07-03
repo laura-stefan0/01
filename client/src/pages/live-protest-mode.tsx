@@ -413,48 +413,46 @@ export default function LiveProtestModePage() {
       }}>
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Rotating circles */}
+          {/* Smoothly rotating circles */}
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="absolute rounded-full border-2 border-white/20 animate-spin"
+              className="absolute rounded-full border-2 border-white/20"
               style={{
                 width: `${150 + i * 50}px`,
                 height: `${150 + i * 50}px`,
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                animationDuration: `${8 + i * 2}s`,
-                animationDelay: `${i * 0.3}s`,
-                animationDirection: i % 2 === 0 ? 'normal' : 'reverse'
+                animation: `smoothRotate ${12 + i * 4}s linear infinite ${i % 2 === 0 ? 'normal' : 'reverse'}`
               }}
             />
           ))}
           
-          {/* Pulsing dots */}
+          {/* Smoothly floating dots */}
           {[...Array(12)].map((_, i) => (
             <div
               key={`dot-${i}`}
-              className="absolute w-2 h-2 bg-white/40 rounded-full animate-pulse"
+              className="absolute w-2 h-2 bg-white/40 rounded-full"
               style={{
                 top: `${20 + Math.sin(i * 0.5) * 60}%`,
                 left: `${20 + Math.cos(i * 0.5) * 60}%`,
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: '2s'
+                animation: `smoothFloat ${4 + i * 0.5}s ease-in-out infinite`,
+                animationDelay: `${i * 0.3}s`
               }}
             />
           ))}
 
-          {/* Floating geometric shapes */}
+          {/* Smoothly floating geometric shapes */}
           {[...Array(8)].map((_, i) => (
             <div
               key={`shape-${i}`}
-              className="absolute opacity-20 animate-bounce"
+              className="absolute opacity-20"
               style={{
                 top: `${10 + (i * 12)}%`,
                 left: `${5 + (i * 11)}%`,
-                animationDelay: `${i * 0.4}s`,
-                animationDuration: '3s'
+                animation: `smoothBounce ${6 + i * 0.8}s ease-in-out infinite`,
+                animationDelay: `${i * 0.6}s`
               }}
             >
               <div 
@@ -470,73 +468,12 @@ export default function LiveProtestModePage() {
         {/* Main Content */}
         <div className="relative z-10 flex items-center justify-center min-h-screen px-8">
           <div className="text-center max-w-sm">
-            {/* Main Icon with Transformation Effect */}
-            <div className="relative mb-8">
-              <div className="w-24 h-24 mx-auto relative">
-                {/* Outer rotating ring */}
-                <div className="absolute inset-0 border-4 border-white/30 rounded-full animate-spin" style={{ animationDuration: '3s' }} />
-                
-                {/* Inner pulsing circle */}
-                <div className="absolute inset-2 bg-white/20 rounded-full animate-pulse" />
-                
-                {/* Icon container with morphing effect */}
-                <div 
-                  className="absolute inset-4 bg-white rounded-full flex items-center justify-center transition-all duration-500 shadow-lg"
-                  style={{
-                    transform: `scale(${0.8 + loadingStep * 0.04})`,
-                    boxShadow: `0 0 ${20 + loadingStep * 5}px rgba(255, 255, 255, 0.5)`
-                  }}
-                >
-                  <CurrentIcon 
-                    className="text-rose-600 transition-all duration-300"
-                    style={{ 
-                      width: `${20 + loadingStep * 2}px`, 
-                      height: `${20 + loadingStep * 2}px` 
-                    }}
-                  />
-                </div>
+            
 
-                {/* Progress indicators around the circle */}
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`absolute w-3 h-3 rounded-full transition-all duration-300 ${
-                      i <= loadingStep ? 'bg-white shadow-lg' : 'bg-white/30'
-                    }`}
-                    style={{
-                      top: '50%',
-                      left: '50%',
-                      transform: `translate(-50%, -50%) rotate(${i * 60}deg) translateY(-45px)`,
-                      animationDelay: `${i * 0.1}s`
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* App Name with Glitch Effect */}
+            {/* App Name */}
             <div className="relative mb-6">
-              <h1 className="text-4xl font-bold text-white mb-2 relative">
-                <span className="relative z-10">Corteo</span>
-                {/* Glitch layers */}
-                <span 
-                  className="absolute top-0 left-0 text-4xl font-bold text-red-300 opacity-70"
-                  style={{
-                    transform: `translate(${Math.sin(Date.now() * 0.01) * 2}px, ${Math.cos(Date.now() * 0.015) * 1}px)`,
-                    animation: 'glitch1 0.5s infinite'
-                  }}
-                >
-                  Corteo
-                </span>
-                <span 
-                  className="absolute top-0 left-0 text-4xl font-bold text-blue-300 opacity-50"
-                  style={{
-                    transform: `translate(${Math.cos(Date.now() * 0.012) * -2}px, ${Math.sin(Date.now() * 0.008) * 1}px)`,
-                    animation: 'glitch2 0.7s infinite'
-                  }}
-                >
-                  Corteo
-                </span>
+              <h1 className="text-4xl font-bold text-white mb-2">
+                Corteo
               </h1>
               <div className="text-white/90 text-lg font-medium">
                 Live Protest Mode
@@ -561,45 +498,34 @@ export default function LiveProtestModePage() {
             <div className="w-full max-w-xs mx-auto">
               <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-white to-rose-200 rounded-full transition-all duration-500 ease-out relative"
+                  className="h-full bg-gradient-to-r from-white to-rose-200 rounded-full transition-all duration-1000 ease-out relative"
                   style={{ width: `${(loadingStep + 1) * 16.66}%` }}
                 >
                   {/* Shimmer effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
                 </div>
               </div>
-              <div className="flex justify-between mt-2 text-xs text-white/60">
-                <span>Connecting...</span>
-                <span>{Math.round((loadingStep + 1) * 16.66)}%</span>
-              </div>
             </div>
 
-            {/* Safety notice */}
-            <div className="mt-8 text-xs text-white/70 leading-relaxed">
-              <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                🔒 Establishing secure emergency protocols<br/>
-                📍 Optimizing location & safety features<br/>
-                🚨 Ready for live monitoring
-              </div>
-            </div>
+            
           </div>
         </div>
 
-        {/* Additional CSS for glitch animations */}
+        {/* Additional CSS for smooth animations */}
         <style jsx>{`
-          @keyframes glitch1 {
-            0%, 100% { transform: translate(0px, 0px); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
+          @keyframes smoothRotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
           }
           
-          @keyframes glitch2 {
-            0%, 100% { transform: translate(0px, 0px); }
-            25% { transform: translate(2px, 0px); }
-            50% { transform: translate(-2px, 2px); }
-            75% { transform: translate(2px, -2px); }
+          @keyframes smoothFloat {
+            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.4; }
+            50% { transform: translateY(-10px) scale(1.1); opacity: 0.7; }
+          }
+          
+          @keyframes smoothBounce {
+            0%, 100% { transform: translateY(0px) rotate(45deg) scale(1); }
+            50% { transform: translateY(-15px) rotate(45deg) scale(1.2); }
           }
         `}</style>
       </div>
