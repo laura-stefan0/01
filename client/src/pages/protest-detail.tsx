@@ -189,7 +189,7 @@ export default function ProtestDetail() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background animate-in fade-in duration-300 ease-out">
+    <div className="flex flex-col min-h-screen bg-background animate-in fade-in duration-300 ease-out max-w-md mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b bg-white">
         <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
@@ -220,6 +220,16 @@ export default function ProtestDetail() {
             </h1>
           </div>
 
+          {/* Description */}
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">About this protest</h3>
+              <p className="text-gray-700 leading-relaxed">
+                {protest.description}
+              </p>
+            </CardContent>
+          </Card>
+
           {/* Event Details */}
           <Card>
             <CardContent className="p-4 space-y-4">
@@ -247,16 +257,6 @@ export default function ProtestDetail() {
                   </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Description */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold text-gray-900 mb-3">About this protest</h3>
-              <p className="text-gray-700 leading-relaxed">
-                {protest.description}
-              </p>
             </CardContent>
           </Card>
 
