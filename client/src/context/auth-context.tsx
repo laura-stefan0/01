@@ -38,10 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
     
-    // Add 5 seconds delay to show loading screen clearly
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
+    // Set loading to false immediately after checking localStorage
+    setIsLoading(false);
   }, []);
 
   const signIn = async (username: string, password: string): Promise<void> => {
