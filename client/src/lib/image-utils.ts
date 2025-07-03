@@ -109,16 +109,7 @@ export function getImageUrl(imageUrl: string | null | undefined, category: strin
   return getCategoryFallbackImage(category);
 }
 
-/**
- * Check if an image URL is from scraping vs fallback
- */
-export function isScrapedImage(imageUrl: string | null | undefined): boolean {
-  if (!imageUrl) return false;
-  
-  // Consider it scraped if it's not from our known fallback sources
-  const fallbackSources = ['images.unsplash.com', 'source.unsplash.com', 'cdn.pixabay.com'];
-  return !fallbackSources.some(source => imageUrl.includes(source));
-}
+
 
 /**
  * Create image error handler for a specific category
