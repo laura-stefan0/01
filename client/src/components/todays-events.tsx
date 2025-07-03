@@ -64,11 +64,11 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   const handleCheckIn = async (protestId: string) => {
     setCheckingIn(protestId);
-    
+
     try {
       // Get current location for check-in validation
       let currentLocation = userCoordinates;
-      
+
       // Skip cached location for now - we'll use passed coordinates or fresh location
 
       if (!currentLocation) {
@@ -131,12 +131,10 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
   if (!todaysEvents || todaysEvents.length === 0) {
     return (
       <section className="mb-6">
-        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6">
+        <div className="bg-orange-500 rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
             <CalendarDays className="w-6 h-6 text-white" />
             <h2 className="text-xl font-bold text-white">Are you going today?</h2>
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
           </div>
           <Card className="border-0 bg-white/95 backdrop-blur-sm">
             <CardContent className="p-8 text-center">
@@ -158,9 +156,8 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   return (
     <section className="mb-6">
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6">
+      <div className="bg-orange-500 rounded-2xl p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
           <CalendarDays className="w-6 h-6 text-white" />
           <h2 className="text-xl font-bold text-white">Are you going today?</h2>
           <div className="ml-auto">
@@ -168,7 +165,6 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
               {todaysEvents.length} event{todaysEvents.length !== 1 ? 's' : ''}
             </Badge>
           </div>
-          <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
         </div>
         <div className="space-y-4">
           {todaysEvents.map((event) => (
@@ -211,7 +207,7 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
                     <p className="text-xs text-gray-500 text-center">Tap when you arrive</p>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-50 rounded-lg p-3 space-y-2">
                   <div className="flex items-center text-sm text-gray-700">
                     <Clock className="w-4 h-4 mr-2 text-emerald-600" />
@@ -222,7 +218,7 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
                     <span>{event.address}, {event.city}</span>
                   </div>
                 </div>
-                
+
                 {event.description && (
                   <div className="mt-3 p-3 bg-emerald-50 rounded-lg">
                     <p className="text-sm text-gray-700 line-clamp-2">
