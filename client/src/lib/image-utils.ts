@@ -68,6 +68,29 @@ export function getMapColor(category: string): string {
 }
 
 /**
+ * Check if an image URL is from a scraped source that might have CORS issues
+ */
+function isScrapedImage(imageUrl: string): boolean {
+  // Common domains that typically have CORS restrictions
+  const scrapedDomains = [
+    'greenpeace.org',
+    'arcigay.it',
+    'ultima-generazione.com',
+    'labas.org',
+    'infoaut.org',
+    'noborders.it',
+    'sherwood.news',
+    'facebook.com',
+    'instagram.com',
+    'twitter.com',
+    'x.com'
+  ];
+  
+  // Check if the URL contains any of the scraped domains
+  return scrapedDomains.some(domain => imageUrl.includes(domain));
+}
+
+/**
  * Get the best image URL with fallback logic
  * Uses proxy for scraped images to bypass CORS, falls back to category images
  */
