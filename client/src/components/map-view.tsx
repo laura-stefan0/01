@@ -15,6 +15,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { geocodeLocation, findItalianCity, type GeocodeResult } from "@/lib/geocoding";
 import { getCachedUserLocation } from "@/lib/geolocation";
+import { formatDateTime } from "@/lib/date-utils";
 
 // Fix for default marker icons in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -481,7 +482,7 @@ export function MapView() {
                         <h3 className="font-semibold text-sm mb-1">{protest.title}</h3>
                         <p className="text-xs text-gray-600 mb-2">{protest.location}</p>
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-500">{protest.date} • {protest.time}</span>
+                          <span className="text-gray-500">{formatDateTime(protest.date, protest.time)}</span>
                           <Badge className="text-xs px-2 py-1 bg-[#FECDD3] text-[#E11D48]">
                             {protest.category?.toUpperCase()}
                           </Badge>
@@ -648,7 +649,7 @@ export function MapView() {
                                 <Badge className="text-xs bg-[#FECDD3] text-[#E11D48]">
                                   {protest.category?.toUpperCase()}
                                 </Badge>
-                                <span className="text-xs text-gray-500">{protest.date} • {protest.time}</span>
+                                <span className="text-xs text-gray-500">{formatDateTime(protest.date, protest.time)}</span>
                               </div>
                             </div>
                           </div>
