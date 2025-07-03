@@ -772,12 +772,12 @@ export default function HomePage() {
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Help us improve</h2>
         <Dialog>
           <DialogTrigger asChild>
-            <Card className="cursor-pointer border-2 border-solid border-pink-200 hover:border-pink-300 transition-colors bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 dark:from-pink-800/30 dark:via-purple-800/30 dark:to-indigo-800/30 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_0)] bg-[length:16px_16px] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.1)_1px,transparent_0)]"></div>
+            <Card className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-200 dark:from-pink-700/60 dark:via-purple-700/60 dark:to-indigo-700/60 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.4)_1px,transparent_0)] bg-[length:16px_16px] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)]"></div>
               <CardContent className="p-4 text-center relative z-10">
                 <div className="flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 bg-gradient-to-br from-pink-200 to-purple-200 dark:from-pink-700/40 dark:to-purple-700/40 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <Heart className="w-6 h-6 text-pink-600 dark:text-pink-300" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-300 to-purple-300 dark:from-pink-600/60 dark:to-purple-600/60 rounded-full flex items-center justify-center backdrop-blur-sm shadow-md">
+                    <Heart className="w-6 h-6 text-pink-700 dark:text-pink-200" />
                   </div>
                   <h3 className="font-medium text-dark-slate dark:text-white">Share your feedback</h3>
                 </div>
