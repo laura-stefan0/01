@@ -260,11 +260,7 @@ export default function HomePage() {
         queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] })
       ]);
 
-      // Show success toast
-      toast({
-        title: "Content refreshed",
-        description: "Location and protest data updated successfully",
-      });
+      // Success - no toast notification needed
       
     } catch (error) {
       console.error('Refresh failed:', error);
@@ -427,10 +423,10 @@ export default function HomePage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing || isLoadingLocation}
-              className="transition-all duration-200 hover:bg-gray-100 active:scale-95"
+              className="transition-all duration-200 hover:bg-gray-100"
             >
-              <RefreshCw className={`w-4 h-4 transition-transform duration-300 ${
-                (isRefreshing || isLoadingLocation) ? 'animate-spin' : 'hover:rotate-180'
+              <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
+                (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
               }`} />
             </Button>
 
