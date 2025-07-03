@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/co
 import { ProtestCard } from "@/components/protest-card";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import type { Protest } from "@shared/schema";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -94,7 +94,7 @@ export function MapView() {
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
 
   // Load cached user location from Home page on mount
   useEffect(() => {
@@ -490,7 +490,7 @@ export function MapView() {
                         <Button 
                           size="sm" 
                           className="w-full mt-2 bg-[#E11D48] hover:bg-[#E11D48]/90"
-                          onClick={() => setLocation(`/protest/${protest.id}`)}
+                          onClick={() => navigate(`/protest/${protest.id}`)}
                         >
                           View Details
                         </Button>
@@ -584,7 +584,10 @@ export function MapView() {
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => setLocation("/filter")}
+                    onClick={() => {
+                      console.log("🎯 Filter button clicked, navigating to /filter");
+                      navigate("/filter");
+                    }}
                     className="px-3 py-2 hover:bg-gray-50 rounded-full"
                   >
                     <Filter className="w-4 h-4 text-gray-600 mr-2" />
@@ -618,7 +621,7 @@ export function MapView() {
                         <div 
                           key={protest.id}
                           className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                          onClick={() => setLocation(`/protest/${protest.id}`)}
+                          onClick={() => navigate(`/protest/${protest.id}`)}
                         >
                           <div className="flex items-start space-x-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
