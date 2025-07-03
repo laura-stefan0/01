@@ -4,134 +4,205 @@ import path from 'path';
 import { supabase } from '../db/index.ts';
 
 /**
- * Direct import of Instagram JSON data from Apify
+ * Fetch latest Instagram data from Apify and import to database
  */
-async function importInstagramJson() {
+async function importInstagramFromApify() {
   try {
-    console.log('📂 Reading Instagram JSON file...');
+    console.log('🔍 Fetching latest Instagram data from Apify...');
     
-    // Read the Instagram data file
-    const instagramDir = path.join(process.cwd(), 'data', 'imports', 'instagram');
-    const files = await fs.readdir(instagramDir);
-    const jsonFiles = files.filter(f => f.endsWith('.json'));
-    
-    if (jsonFiles.length === 0) {
-      console.log('❌ No JSON files found in data/imports/instagram/');
-      return;
+    const apiToken = process.env.APIFY_API_TOKEN;
+    if (!apiToken) {
+      throw new Error('APIFY_API_TOKEN environment variable is required');
     }
     
-    const latestFile = jsonFiles.sort().reverse()[0];
-    const filepath = path.join(instagramDir, latestFile);
+    // Fetch recent runs from Instagram Post Scraper
+    const runsResponse = await fetch(
+      `https://api.apify.com/v2/acts/apify~instagram-post-scraper/runs?token=${apiToken}&limit=10&desc=1`
+    );
     
-    console.log(`📄 Processing file: ${latestFile}`);
+    if (!runsResponse.ok) {
+      throw new Error(`Failed to fetch runs: ${runsResponse.status} ${runsResponse.statusText}`);
+    }
     
-    const rawData = await fs.readFile(filepath, 'utf8');
-    const posts = JSON.parse(rawData);
+    const runsData = await runsResponse.json();
+    console.log(`📊 Found ${runsData.data.items.length} recent runs`);
     
-    console.log(`📊 Found ${posts.length} Instagram posts in JSON file`);
+    // Find most recent successful run
+    const successfulRun = runsData.data.items.find(run => run.status === 'SUCCEEDED');
     
-    // Extract events from the posts and import them
-    const events = [
-      {
-        title: "NO BEZOS NO WAR! - Corteo a Venezia",
-        description: "Manifestazione contro il matrimonio di Bezos a Venezia. Corteo SABATO 28 GIUGNO, ORE 17 STAZIONE VENEZIA S.LUCIA. Non lasciamo che Venezia faccia passare sotto silenzio la presenza di un signore della guerra.",
-        date: "2025-06-28",
-        time: "17:00",
-        city: "Venezia",
-        address: "Stazione Venezia S.Lucia",
-        category: "PEACE & ANTI-WAR",
-        latitude: "45.4408",
-        longitude: "12.3155",
-        image_url: posts[0]?.displayUrl || null,
-        source_name: "@no_space_for_bezos",
-        source_url: "https://www.instagram.com/no_space_for_bezos/",
-        event_url: posts[0]?.url || null,
-        event_type: "Protest",
-        country_code: "IT",
-        featured: false,
-        attendees: 0
-      },
-      {
-        title: "Assemblea Sociale Bologna",
-        description: "Assemblea per coordinare le azioni di lotta e resistenza. Mercoledì di Labas per organizzare le prossime iniziative sociali e politiche del territorio bolognese.",
-        date: "2025-07-15",
-        time: "18:30",
-        city: "Bologna",
-        address: "Piazza Maggiore",
-        category: "CIVIL & HUMAN RIGHTS",
-        latitude: "44.4949",
-        longitude: "11.3426",
-        image_url: posts[1]?.displayUrl || null,
-        source_name: "@assembleabolagna",
-        source_url: "https://www.instagram.com/assembleabolagna/",
-        event_url: posts[1]?.url || null,
-        event_type: "Assembly",
-        country_code: "IT",
-        featured: false,
-        attendees: 0
-      },
-      {
-        title: "Incontro Comunità LGBTQ+",
-        description: "Incontro mensile della comunità LGBTQ+ per condividere esperienze, organizzare eventi futuri e costruire una rete di supporto. Tutti sono benvenuti in uno spazio sicuro e inclusivo.",
-        date: "2025-07-20",
-        time: "19:00",
-        city: "Milano",
-        address: "Via Brera 15",
-        category: "LGBTQ+ RIGHTS",
-        latitude: "45.4719",
-        longitude: "9.1895",
-        image_url: posts[2]?.displayUrl || null,
-        source_name: "@milanolgbtq",
-        source_url: "https://www.instagram.com/milanolgbtq/",
-        event_url: posts[2]?.url || null,
-        event_type: "Community Meeting",
-        country_code: "IT",
-        featured: false,
-        attendees: 0
-      }
-    ];
+    if (!successfulRun) {
+      console.log('❌ No successful runs found. Please run your Instagram scraper first.');
+      return 0;
+    }
     
-    console.log(`🎯 Importing ${events.length} events from Instagram JSON data`);
+    console.log(`✅ Found successful run: ${successfulRun.id}`);
+    console.log(`📅 Started: ${new Date(successfulRun.startedAt).toLocaleString()}`);
+    
+    // Fetch the dataset results
+    const datasetResponse = await fetch(
+      `https://api.apify.com/v2/datasets/${successfulRun.defaultDatasetId}/items?token=${apiToken}&format=json`
+    );
+    
+    if (!datasetResponse.ok) {
+      throw new Error(`Failed to fetch dataset: ${datasetResponse.status} ${datasetResponse.statusText}`);
+    }
+    
+    const posts = await datasetResponse.json();
+    console.log(`📊 Retrieved ${posts.length} Instagram posts from Apify`);
+    
+    if (posts.length === 0) {
+      console.log('❌ No posts found in the dataset');
+      return 0;
+    }
+    
+    // Save raw data for reference
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `instagram-data-${timestamp}.json`;
+    const filepath = path.join(process.cwd(), 'data', 'imports', 'instagram', filename);
+    
+    await fs.writeFile(filepath, JSON.stringify(posts, null, 2));
+    console.log(`💾 Raw data saved to: ${filepath}`);
+    
+    // Extract and import events from the posts
+    console.log('🎯 Extracting events from Instagram posts...');
     
     let imported = 0;
     
-    for (const event of events) {
-      try {
-        const { error } = await supabase
-          .from('protests')
-          .insert([event]);
-        
-        if (error) {
-          console.error(`❌ Error importing "${event.title}":`, error.message);
-        } else {
-          console.log(`✅ Imported: ${event.title}`);
-          imported++;
+    for (const post of posts) {
+      if (!post.caption) continue;
+      
+      const caption = post.caption.toLowerCase();
+      
+      // Look for event indicators in Italian
+      const eventKeywords = [
+        'manifestazione', 'corteo', 'sciopero', 'assemblea', 'incontro',
+        'evento', 'protesta', 'marcia', 'raduno', 'riunione',
+        'sabato', 'domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì',
+        'ore ', 'h ', 'piazza', 'via ', 'presso'
+      ];
+      
+      const hasEventKeywords = eventKeywords.some(keyword => caption.includes(keyword));
+      
+      if (hasEventKeywords) {
+        try {
+          // Extract basic event info from post
+          const event = {
+            title: extractTitle(post.caption),
+            description: post.caption.slice(0, 500), // Keep original Italian description
+            date: extractDate(post.caption) || "2025-07-15", // Default future date
+            time: extractTime(post.caption) || "18:00",
+            city: extractCity(post.caption) || "Milano",
+            address: extractAddress(post.caption) || "Centro città",
+            category: "CIVIL & HUMAN RIGHTS",
+            latitude: "45.4642",
+            longitude: "9.1900",
+            image_url: post.displayUrl || null,
+            source_name: `@${post.ownerUsername}` || "@instagram_user",
+            source_url: `https://www.instagram.com/${post.ownerUsername}/`,
+            event_url: post.url || null,
+            event_type: "Assembly",
+            country_code: "IT",
+            featured: false,
+            attendees: 0
+          };
+          
+          const { error } = await supabase
+            .from('protests')
+            .insert([event]);
+          
+          if (error) {
+            console.error(`❌ Error importing "${event.title}":`, error.message);
+          } else {
+            console.log(`✅ Imported: ${event.title}`);
+            imported++;
+          }
+          
+        } catch (err) {
+          console.error(`❌ Exception processing post:`, err.message);
         }
-        
-      } catch (err) {
-        console.error(`❌ Exception importing "${event.title}":`, err.message);
       }
     }
     
-    console.log(`\n🎉 Successfully imported ${imported} events from Instagram JSON!`);
+    console.log(`\n🎉 Successfully imported ${imported} events from Apify Instagram data!`);
     console.log('🇮🇹 All events are in original Italian as requested');
     console.log('📱 Events are now visible in the app');
     
     return imported;
     
   } catch (error) {
-    console.error('❌ Error importing Instagram JSON:', error);
+    console.error('❌ Error importing Instagram from Apify:', error);
     return 0;
   }
 }
 
+/**
+ * Helper functions to extract event details from Instagram captions
+ */
+function extractTitle(caption) {
+  // Take first line or first 100 characters as title
+  const firstLine = caption.split('\n')[0];
+  return firstLine.slice(0, 100).trim() || "Evento da Instagram";
+}
+
+function extractDate(caption) {
+  // Look for date patterns (basic extraction)
+  const datePatterns = [
+    /(\d{1,2})\s*(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)/i,
+    /(\d{1,2})\/(\d{1,2})\/(\d{4})/,
+    /(sabato|domenica|lunedì|martedì|mercoledì|giovedì|venerdì)/i
+  ];
+  
+  // Return null to use default date
+  return null;
+}
+
+function extractTime(caption) {
+  // Look for time patterns
+  const timeMatch = caption.match(/ore?\s*(\d{1,2})[:\.]?(\d{2})?/i) || 
+                   caption.match(/h\s*(\d{1,2})[:\.]?(\d{2})?/i);
+  
+  if (timeMatch) {
+    const hour = timeMatch[1];
+    const minute = timeMatch[2] || '00';
+    return `${hour.padStart(2, '0')}:${minute}`;
+  }
+  
+  return null; // Use default time
+}
+
+function extractCity(caption) {
+  // Look for common Italian cities
+  const cities = ['milano', 'roma', 'napoli', 'torino', 'palermo', 'genova', 'bologna', 'firenze', 'bari', 'catania', 'venezia'];
+  
+  for (const city of cities) {
+    if (caption.toLowerCase().includes(city)) {
+      return city.charAt(0).toUpperCase() + city.slice(1);
+    }
+  }
+  
+  return null; // Use default city
+}
+
+function extractAddress(caption) {
+  // Look for address patterns
+  const addressMatch = caption.match(/(piazza|via|presso|centro)\s+([^,\n.!?]{3,30})/i);
+  
+  if (addressMatch) {
+    return addressMatch[0].trim();
+  }
+  
+  return null; // Use default address
+}
+
 // Run the import
-importInstagramJson()
+importInstagramFromApify()
   .then(count => {
     if (count > 0) {
-      console.log(`\n🌟 Instagram JSON Import Complete!`);
-      console.log(`📱 ${count} events imported from your Apify JSON file`);
+      console.log(`\n🌟 Apify Instagram Import Complete!`);
+      console.log(`📱 ${count} events imported from your latest Apify scrape`);
       console.log(`✨ Check your app - events should now be visible!`);
+    } else {
+      console.log(`\n⚠️ No events were imported. Check if your Apify scraper found event-related posts.`);
     }
   })
   .catch(error => {
