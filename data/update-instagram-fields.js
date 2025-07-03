@@ -27,6 +27,38 @@ async function updateInstagramFields() {
         )
       },
       {
+
+/**
+ * Extract the best available image URL from Instagram post
+ */
+function extractBestImageUrl(post) {
+  // Try different image URL fields in order of preference
+  if (post.displayUrl) {
+    console.log(`📸 Using displayUrl: ${post.displayUrl}`);
+    return post.displayUrl;
+  }
+  
+  if (post.images && Array.isArray(post.images) && post.images.length > 0) {
+    console.log(`📸 Using first image from images array: ${post.images[0]}`);
+    return post.images[0];
+  }
+  
+  if (post.thumbnail) {
+    console.log(`📸 Using thumbnail: ${post.thumbnail}`);
+    return post.thumbnail;
+  }
+  
+  if (post.url && post.url.includes('instagram.com')) {
+    // Try to construct image URL from post URL (fallback)
+    console.log(`📸 No direct image URL found for post: ${post.url}`);
+    return null;
+  }
+  
+  console.log(`⚠️ No image URL found for Instagram post`);
+  return null;
+}
+
+
         // Bologna assembly - from @labas_bo (Wednesday event)
         eventTitle: "Social Assembly Bologna", 
         instagramPost: instagramData.find(post => 
@@ -63,10 +95,8 @@ async function updateInstagramFields() {
       const accountMatch = instagramPost.inputUrl.match(/instagram\.com\/([^\/]+)/);
       const accountName = accountMatch ? accountMatch[1] : 'Unknown';
       
-      // Get the best image (first image from the post)
-      const imageUrl = instagramPost.displayUrl || 
-                      (instagramPost.images && instagramPost.images[0]) || 
-                      null;
+      // Get the best image URL from Instagram post
+      const imageUrl = extractBestImageUrl(instagramPost);
       
       // Prepare update data
       const updateData = {

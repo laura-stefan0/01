@@ -241,20 +241,20 @@ function generateTitle(rawTitle) {
   
   let title = rawTitle.trim();
   
-  // Remove common prefixes and suffixes
+  // Remove common prefixes and suffixes (keeping Italian)
   title = title.replace(/^(evento|iniziativa|manifestazione|appuntamento):\s*/i, '');
   title = title.replace(/\s*-\s*(evento|iniziativa|manifestazione|appuntamento)$/i, '');
   
-  // Remove dates and locations from titles (like Instagram scraper removes emojis)
+  // Remove dates and locations from titles
   title = title.replace(/\b\d{1,2}\/\d{1,2}\/?\d{0,4}\b/g, ''); // Remove dates like 15/07 or 15/07/2025
   title = title.replace(/\b\d{1,2}\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\b/gi, ''); // Remove "15 luglio"
   title = title.replace(/\b(lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica)\s+\d{1,2}\b/gi, ''); // Remove "sabato 15"
   
-  // Remove location indicators from title (keep Italian locations intact)
+  // Remove location indicators from title (preserve Italian city names)
   title = title.replace(/^(a\s+|in\s+|presso\s+)/i, '');
   title = title.replace(/\s*-\s*(milano|roma|napoli|torino|venezia|firenze|bologna|bari|palermo|genova)$/i, '');
   
-  // Remove quotes (like Instagram removes specific emojis)
+  // Remove quotes
   title = title.replace(/^["""]/, '').replace(/["""]$/, '');
   
   // Remove hashtags if any leaked through
@@ -271,12 +271,12 @@ function generateTitle(rawTitle) {
     title = title.slice(0, 97) + '...';
   }
   
-  // Ensure proper capitalization
+  // Ensure proper capitalization (preserving Italian)
   if (title.length > 0) {
     title = title.charAt(0).toUpperCase() + title.slice(1);
   }
   
-  // Fallback if title becomes empty
+  // Fallback if title becomes empty (keeping Italian)
   return title || 'Evento Senza Titolo';
 }
 
@@ -1171,15 +1171,15 @@ async function scrapeWebsite(source) {
             continue;
           }
 
-          // Create event object
+          // Create event object (keeping all text in original Italian)
           const cleanedDescription = cleanDescription(description, title);
           
           const event = {
-            title: title, // Already generated and cleaned by generateTitle()
-            description: cleanedDescription.slice(0, 2500),
+            title: title, // Keep original Italian title
+            description: cleanedDescription.slice(0, 2500), // Keep original Italian description
             category: categorizeEvent(title, description),
-            city: locationInfo.city || 'N/A',
-            address: locationInfo.address || 'N/A',
+            city: locationInfo.city || 'N/A', // Keep original Italian city name
+            address: locationInfo.address || 'N/A', // Keep original Italian address
             latitude: locationInfo.coordinates?.lat || 0,
             longitude: locationInfo.coordinates?.lng || 0,
             date: date || 'N/A',

@@ -90,6 +90,9 @@ function extractEventFromPost(post) {
   
   console.log(`🎯 Found potential event in post by @${post.ownerUsername}`);
   
+  // Extract best available image URL from Instagram post
+  const imageUrl = extractBestImageUrl(post);
+  
   // Extract event details
   const event = {
     title: extractTitle(caption),
@@ -99,7 +102,7 @@ function extractEventFromPost(post) {
     location: extractLocation(caption),
     address: extractAddress(caption),
     category: determineCategory(caption),
-    image_url: post.displayUrl || null,
+    image_url: imageUrl,
     source_url: post.url,
     source: 'instagram',
     source_account: post.ownerUsername,
@@ -109,6 +112,36 @@ function extractEventFromPost(post) {
   };
   
   return event;
+}
+
+/**
+ * Extract the best available image URL from Instagram post
+ */
+function extractBestImageUrl(post) {
+  // Try different image URL fields in order of preference
+  if (post.displayUrl) {
+    console.log(`📸 Using displayUrl: ${post.displayUrl}`);
+    return post.displayUrl;
+  }
+  
+  if (post.images && Array.isArray(post.images) && post.images.length > 0) {
+    console.log(`📸 Using first image from images array: ${post.images[0]}`);
+    return post.images[0];
+  }
+  
+  if (post.thumbnail) {
+    console.log(`📸 Using thumbnail: ${post.thumbnail}`);
+    return post.thumbnail;
+  }
+  
+  if (post.url && post.url.includes('instagram.com')) {
+    // Try to construct image URL from post URL (fallback)
+    console.log(`📸 No direct image URL found for post: ${post.url}`);
+    return null;
+  }
+  
+  console.log(`⚠️ No image URL found for Instagram post`);
+  return null;
 }
 
 /**
