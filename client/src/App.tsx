@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -34,6 +35,7 @@ import { ThemeProvider } from "@/context/theme-context";
 import { Navbar } from "@/components/navbar";
 import { SavedProtestsProvider } from "@/context/saved-protests-context";
 import LiveProtestModePage from "./pages/live-protest-mode";
+import { LoadingScreen } from "@/components/loading-screen";
 
 /**
  * Layout component that conditionally shows navbar
@@ -86,16 +88,7 @@ function AuthenticatedRouter() {
   const { isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="app-background">
-        <div className="min-h-screen flex items-center justify-center animate-in fade-in duration-500 ease-out">
-          <div className="text-center transition-all duration-300 ease-in-out">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
