@@ -6,7 +6,7 @@ import { MapView } from "@/components/map-view";
  */
 export default function DiscoverPage() {
   return (
-    <div className="animate-in fade-in duration-300 ease-out">
+    <div className="max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       <MapView />
     </div>
   );
