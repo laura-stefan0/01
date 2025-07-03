@@ -122,8 +122,3 @@ export default function Transparency() {
     </div>
   );
 }
-```
-
-```
-The background of the Transparency page is updated to use the app-background class.
-```
