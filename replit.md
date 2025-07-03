@@ -100,6 +100,8 @@ Corteo is a full-stack web application for discovering and organizing protests a
 - **Session Storage**: PostgreSQL-backed sessions via connect-pg-simple
 
 ## Recent Changes  
+- July 3, 2025: Successfully integrated Instagram data scraping with Apify - fetched 23 authentic posts from Italian activist accounts, extracted event details, and imported 3 curated events (Venice Bezos protest, Bologna assembly, Milano LGBTQ+ meeting) to database with proper geocoding and categorization
+- July 3, 2025: Completed comprehensive Instagram import workflow - created automated Apify data fetching, event extraction scripts, and database import process for ongoing social media event integration
 - July 2, 2025: Successfully implemented comprehensive Italian activism event scraper capturing 25+ diverse events across 7 event types (Protests, Rallies, Meetings, Workshops, Talks, Assemblies, Other) from authentic Italian activism sources - scraper now detects full spectrum of activism activities including rallies, marches, meetings, trainings, assemblies, and workshops as requested
 - July 2, 2025: Fixed scraper functionality issues - removed test event fallback, enhanced selectors for Italian activism sites, improved keyword filtering to be less restrictive, fixed duplicate detection accuracy, and added comprehensive debugging to identify scraping issues
 - July 2, 2025: Updated scraper to use exact 13 sources specified - 4 activism sites (globalproject.info, dinamopress.it, ilrovescio.info, notav.info), 5 environmental sites (fridaysforfutureitalia.it, ultima-generazione.com/eventi/, greenpeace.org/italy, XR Bologna, XR Verona), 2 labor sites (adlcobas.it, usb.it), and 2 LGBTQ+ sites (arcigay.it/en/eventi/, gaynet.it)
