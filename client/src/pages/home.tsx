@@ -49,6 +49,7 @@ export default function HomePage() {
   const [userRealLocation, setUserRealLocation] = useState<string | null>(null);
   const [manualLocation, setManualLocation] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [userCoordinates, setUserCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [manualLocationCoordinates, setManualLocationCoordinates] = useState<{latitude: number, longitude: number} | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -219,20 +220,61 @@ export default function HomePage() {
   const fetchUserRealLocation = async (forceRefresh = false) => {
     setIsLoadingLocation(true);
     try {
+      console.log('📍 Getting user coordinates...');
       // Clear cache if force refresh is requested
       if (forceRefresh) {
         localStorage.removeItem('corteo_cached_location');
         localStorage.removeItem('corteo_location_timestamp');
+        console.log('🔄 Cleared location cache for fresh fetch');
       }
       const locationResult = await getCachedUserLocation();
       setUserRealLocation(locationResult.formatted);
       setUserCoordinates(locationResult.coordinates);
+      console.log('✅ Location updated:', locationResult.formatted, locationResult.coordinates);
     } catch (error) {
       console.error('Failed to get user location:', error);
       setUserRealLocation(null);
       setUserCoordinates(null);
     } finally {
       setIsLoadingLocation(false);
+    }
+  };
+
+  // Enhanced refresh function with better animations and data refetch
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    
+    try {
+      // Clear location cache and fetch fresh location
+      await fetchUserRealLocation(true);
+      
+      // Add a small delay for visual feedback
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Invalidate all queries to refresh data
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["/api/protests"] }),
+        queryClient.invalidateQueries({ queryKey: ["/api/protests/featured"] }),
+        queryClient.invalidateQueries({ queryKey: ["/api/protests/nearby"] }),
+        queryClient.invalidateQueries({ queryKey: ["/api/whats-new"] }),
+        queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] })
+      ]);
+
+      // Show success toast
+      toast({
+        title: "Content refreshed",
+        description: "Location and protest data updated successfully",
+      });
+      
+    } catch (error) {
+      console.error('Refresh failed:', error);
+      toast({
+        title: "Refresh failed", 
+        description: "Unable to update content. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -383,18 +425,13 @@ export default function HomePage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={(e) => {
-                e.preventDefault();
-                fetchUserRealLocation(true);
-                // Also refresh protests data
-                queryClient.invalidateQueries({ queryKey: ["/api/protests"] });
-                queryClient.invalidateQueries({ queryKey: ["/api/protests/featured"] });
-                queryClient.invalidateQueries({ queryKey: ["/api/protests/nearby"] });
-                queryClient.invalidateQueries({ queryKey: ["/api/whats-new"] });
-              }}
-              disabled={isLoadingLocation}
+              onClick={handleRefresh}
+              disabled={isRefreshing || isLoadingLocation}
+              className="transition-all duration-200 hover:bg-gray-100 active:scale-95"
             >
-              <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 transition-transform duration-300 ${
+                (isRefreshing || isLoadingLocation) ? 'animate-spin' : 'hover:rotate-180'
+              }`} />
             </Button>
 
             {/* Notification bell */}
