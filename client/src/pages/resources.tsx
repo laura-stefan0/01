@@ -53,7 +53,8 @@ export default function ResourcesPage() {
   ];
 
   return (
-    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="min-h-screen bg-gray-50">
+      <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       <div>
       {/* Page Header */}
       <section className="mb-8">
@@ -158,6 +159,7 @@ export default function ResourcesPage() {
           </button>
         </div>
       </section>
+      </div>
       </div>
     </div>
   );
