@@ -1,5 +1,6 @@
+
 import { Card, CardContent } from "@/components/ui/card";
-import { Shield, Phone, BookOpen, Users, AlertTriangle, FileText } from "lucide-react";
+import { Shield, Phone, BookOpen, Users, AlertTriangle, FileText, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -13,16 +14,19 @@ export default function ResourcesPage() {
   const forYouResources = [
     {
       title: "Know Your Rights",
+      description: "Legal protections and civil rights",
       icon: Shield,
       link: "/know-your-rights"
     },
     {
       title: "Safety Tips",
-      icon: Phone,
+      description: "Stay safe during protests",
+      icon: AlertTriangle,
       link: "/safety-tips"
     },
     {
       title: "Emergency Contacts",
+      description: "Important numbers and contacts",
       icon: Phone,
       link: "#"
     }
@@ -31,67 +35,48 @@ export default function ResourcesPage() {
   const additionalResources = [
     {
       title: "Legal Support",
+      description: "Access to legal aid and representation",
       icon: BookOpen,
       link: "#"
     },
     {
       title: "Community Groups",
+      description: "Connect with local activist networks",
       icon: Users,
       link: "#"
     },
     {
       title: "Incident Reporting",
-      icon: AlertTriangle,
+      description: "Report violations and document incidents",
+      icon: FileText,
       link: "#"
     }
   ];
 
   return (
-    <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="px-4 py-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Page Header */}
-      <section className="mb-6">
+      <section className="mb-8">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <h1 className="text-lg font-semibold text-dark-slate">Resources</h1>
+            <h1 className="text-2xl font-medium text-dark-slate mb-1">Resources</h1>
+            <p className="text-sm text-gray-600">Essential tools and information for activists</p>
           </div>
         </div>
       </section>
 
       {/* For You Section */}
-      <section className="space-y-4 mb-8">
-        <div className="rounded-lg p-4" style={{ backgroundColor: '#e11d48' }}>
-          <h2 className="text-lg font-semibold text-white mb-6">For You</h2>
-          <div className="grid grid-cols-3 gap-4">
-            {forYouResources.map((resource, index) => (
-              <Card 
-                key={index} 
-                className="cursor-pointer transition-all duration-200 bg-white"
-                onClick={() => {
-                  console.log('Navigating to:', resource.link);
-                  if (resource.link !== "#") {
-                    navigate(resource.link);
-                  }
-                }}
-              >
-                <CardContent className="p-4 flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: '#e11d4819', color: '#e11d48' }}>
-                    <resource.icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-medium text-foreground text-sm">{resource.title}</h3>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      <section className="mb-10">
+        <div className="mb-6">
+          <h2 className="text-lg font-medium text-dark-slate mb-2">For You</h2>
+          <p className="text-sm text-gray-600">Personalized resources based on your location</p>
         </div>
-      </section>
-
-      {/* Additional Resources */}
-      <section className="space-y-4">
-        <div className="grid grid-cols-3 gap-4">
-          {additionalResources.map((resource, index) => (
+        
+        <div className="space-y-3">
+          {forYouResources.map((resource, index) => (
             <Card 
               key={index} 
-              className="cursor-pointer transition-all duration-200"
+              className="cursor-pointer transition-all duration-200 hover:shadow-sm border-gray-200 bg-white"
               onClick={() => {
                 console.log('Navigating to:', resource.link);
                 if (resource.link !== "#") {
@@ -99,14 +84,74 @@ export default function ResourcesPage() {
                 }
               }}
             >
-              <CardContent className="p-4 flex flex-col items-center text-center">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: '#e11d4819', color: '#e11d48' }}>
-                  <resource.icon className="w-6 h-6" />
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#e11d4810' }}>
+                      <resource.icon className="w-5 h-5" style={{ color: '#e11d48' }} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-dark-slate text-sm mb-1">{resource.title}</h3>
+                      <p className="text-xs text-gray-600">{resource.description}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
                 </div>
-                <h3 className="font-medium text-foreground text-sm">{resource.title}</h3>
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      {/* More Resources Section */}
+      <section>
+        <div className="mb-6">
+          <h2 className="text-lg font-medium text-dark-slate mb-2">More Resources</h2>
+          <p className="text-sm text-gray-600">Additional support and tools</p>
+        </div>
+        
+        <div className="space-y-3">
+          {additionalResources.map((resource, index) => (
+            <Card 
+              key={index} 
+              className="cursor-pointer transition-all duration-200 hover:shadow-sm border-gray-200 bg-white"
+              onClick={() => {
+                console.log('Navigating to:', resource.link);
+                if (resource.link !== "#") {
+                  navigate(resource.link);
+                }
+              }}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
+                      <resource.icon className="w-5 h-5 text-gray-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-dark-slate text-sm mb-1">{resource.title}</h3>
+                      <p className="text-xs text-gray-600">{resource.description}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Help Section */}
+      <section className="mt-12 mb-6">
+        <div className="text-center py-6 px-4 bg-gray-50 rounded-lg">
+          <h3 className="text-sm font-medium text-dark-slate mb-2">Need Help?</h3>
+          <p className="text-xs text-gray-600 mb-4">
+            Contact our support team for assistance with any of these resources
+          </p>
+          <div className="flex items-center justify-center text-xs" style={{ color: '#e11d48' }}>
+            <Phone className="w-4 h-4 mr-1" />
+            <span>Get Support</span>
+          </div>
         </div>
       </section>
     </div>
