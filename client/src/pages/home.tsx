@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, Heart, ChevronDown, RefreshCw, Calendar, Check } from "lucide-react";
-import { getCachedUserLocation } from "@/lib/geolocation";
+import { getCachedUserLocation, getUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
 import { ProtestCard } from "@/components/protest-card";
@@ -226,9 +226,11 @@ export default function HomePage() {
       if (forceRefresh) {
         localStorage.removeItem('corteo_cached_location');
         localStorage.removeItem('corteo_location_timestamp');
+        localStorage.removeItem('corteo_user_location_cache');
         console.log('🔄 Cleared location cache for fresh fetch');
       }
-      const locationResult = await getCachedUserLocation();
+      // Use direct getUserLocation if force refresh, otherwise use cached version
+      const locationResult = forceRefresh ? await getUserLocation() : await getCachedUserLocation();
       setUserRealLocation(locationResult.formatted);
       setUserCoordinates(locationResult.coordinates);
       console.log('✅ Location updated:', locationResult.formatted, locationResult.coordinates);

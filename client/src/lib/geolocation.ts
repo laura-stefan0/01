@@ -54,7 +54,7 @@ export const getCurrentPosition = (): Promise<Coordinates> => {
     const options: PositionOptions = {
       enableHighAccuracy: true, // Request high accuracy
       timeout: 10000, // 10 second timeout
-      maximumAge: 300000 // Accept cached position up to 5 minutes old
+      maximumAge: 0 // Force fresh position, no cache
     };
 
     // Get current position
