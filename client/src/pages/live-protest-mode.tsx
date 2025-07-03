@@ -404,10 +404,10 @@ export default function LiveProtestModePage() {
   ];
 
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto max-w-screen-sm mx-auto">
+    <div className="min-h-screen bg-white overflow-y-auto max-w-md mx-auto">
       {/* Police Interaction Guide Screen */}
       {showPoliceGuide && (
-        <div className="min-h-screen bg-white overflow-y-auto max-w-md mx-auto">
+        <div className="fixed inset-0 bg-white z-50 overflow-y-auto max-w-md mx-auto">
           {/* Police Guide Header */}
           <header className="bg-blue-600 text-white sticky top-0 z-70">
             <div className="px-4 py-4 flex items-center justify-between max-w-full">
@@ -590,7 +590,7 @@ export default function LiveProtestModePage() {
 
       {/* Quick Phonebook Screen */}
       {showQuickPhonebook && (
-        <div className="min-h-screen bg-white overflow-y-auto max-w-md mx-auto">
+        <div className="fixed inset-0 bg-white z-50 overflow-y-auto max-w-md mx-auto">
           {/* Phonebook Header */}
           <header className="bg-purple-600 text-white sticky top-0 z-70">
             <div className="px-4 py-4 flex items-center justify-between max-w-full">
@@ -780,7 +780,7 @@ export default function LiveProtestModePage() {
 
       {/* Emergency Contacts Screen */}
       {showEmergencyContacts && (
-        <div className="min-h-screen bg-white overflow-y-auto max-w-md mx-auto">
+        <div className="fixed inset-0 bg-white z-50 overflow-y-auto max-w-md mx-auto">
           {/* Emergency Header */}
           <header className="bg-red-600 text-white sticky top-0 z-70">
             <div className="px-4 py-4 flex items-center justify-between max-w-full">
@@ -1003,7 +1003,7 @@ export default function LiveProtestModePage() {
         </div>
       </header>
 
-      <div className="px-4 py-6 space-y-6 max-w-sm mx-auto w-full">
+      <div className="px-4 py-6 space-y-6">
         {/* Status Bar */}
         <div className="bg-gray-50 rounded-lg p-4 w-full">
           <div className="flex items-center justify-between mb-2">
