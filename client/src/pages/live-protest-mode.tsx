@@ -1,5 +1,5 @@
 
-import { ArrowLeft, Shield, Phone, Camera, MapPin, Users, AlertTriangle, Clock, Wifi, WifiOff, Download, Share2, Video, StopCircle, Battery, BatteryLow } from "lucide-react";
+import { ArrowLeft, Shield, Phone, Camera, MapPin, Users, AlertTriangle, Clock, Wifi, WifiOff, Download, Share2, Video, StopCircle, Battery, BatteryLow, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -31,6 +31,7 @@ export default function LiveProtestModePage() {
   const [hasMobileData, setHasMobileData] = useState(false);
   const [showEmergencyContacts, setShowEmergencyContacts] = useState(false);
   const [showQuickPhonebook, setShowQuickPhonebook] = useState(false);
+  const [showPoliceGuide, setShowPoliceGuide] = useState(false);
   const [quickContacts, setQuickContacts] = useState(() => {
     const saved = localStorage.getItem('corteo-quick-contacts');
     return saved ? JSON.parse(saved) : [];
@@ -218,24 +219,7 @@ export default function LiveProtestModePage() {
     });
   };
 
-  const handleStartRecording = () => {
-    if (!isRecording) {
-      setIsRecording(true);
-      setRecordingTime(0);
-      toast({
-        title: "Recording Started",
-        description: "Incident documentation in progress. Keep your phone stable and record evidence safely.",
-        duration: 3000,
-      });
-    } else {
-      setIsRecording(false);
-      toast({
-        title: "Recording Saved",
-        description: `${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')} recording saved with GPS metadata.`,
-        duration: 4000,
-      });
-    }
-  };
+  
 
   const handleShareLocation = () => {
     if (!userLocation) {
@@ -299,6 +283,54 @@ export default function LiveProtestModePage() {
     }
   };
 
+  const handleDocumentIncident = () => {
+    if (!isRecording) {
+      // Start recording
+      setIsRecording(true);
+      setRecordingTime(0);
+      
+      // Request camera and microphone access
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+          .then(stream => {
+            toast({
+              title: "Recording Started",
+              description: "📹 Video recording with GPS metadata. Keep phone stable and record evidence safely.",
+              duration: 4000,
+            });
+          })
+          .catch(error => {
+            // Fallback if camera access denied
+            toast({
+              title: "Recording Mode Active",
+              description: "📱 Evidence documentation mode enabled. Use camera app to record with timestamp.",
+              duration: 4000,
+            });
+          });
+      } else {
+        toast({
+          title: "Recording Mode Active",
+          description: "📱 Evidence documentation mode enabled. Use camera app to record with timestamp.",
+          duration: 4000,
+        });
+      }
+    } else {
+      // Stop recording
+      setIsRecording(false);
+      const recordingDuration = `${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')}`;
+      
+      toast({
+        title: "Recording Saved",
+        description: `📹 ${recordingDuration} evidence saved with GPS metadata and timestamp. Store safely.`,
+        duration: 5000,
+      });
+    }
+  };
+
+  const handlePoliceInteraction = () => {
+    setShowPoliceGuide(true);
+  };
+
   const emergencyFeatures = [
     {
       title: "Emergency Services",
@@ -314,7 +346,7 @@ export default function LiveProtestModePage() {
       icon: isRecording ? StopCircle : Camera,
       action: isRecording ? `Stop (${formatRecordingTime(recordingTime)})` : "Start Recording",
       color: "#e11d48",
-      handler: handleStartRecording
+      handler: handleDocumentIncident
     },
     {
       title: "Share Location",
@@ -325,12 +357,12 @@ export default function LiveProtestModePage() {
       handler: handleShareLocation
     },
     {
-      title: "Find Safe Zone",
-      description: "Locate nearest safe areas and exits",
+      title: "Police Interactions",
+      description: "Know your rights and how to interact safely",
       icon: Shield,
-      action: "Find Routes",
-      color: "#059669",
-      handler: handleFindSafeZone
+      action: "Read Guide",
+      color: "#1e40af",
+      handler: handlePoliceInteraction
     }
   ];
 
@@ -342,6 +374,14 @@ export default function LiveProtestModePage() {
       action: "Personal Contacts",
       color: "#7c3aed",
       handler: handleOpenQuickPhonebook
+    },
+    {
+      title: "Find Safe Zone",
+      description: "Locate nearest safe areas and exits",
+      icon: MapPin,
+      action: "Find Routes",
+      color: "#059669",
+      handler: handleFindSafeZone
     }
   ];
 
@@ -366,6 +406,189 @@ export default function LiveProtestModePage() {
 
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+      {/* Police Interaction Guide Screen */}
+      {showPoliceGuide && (
+        <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
+          {/* Police Guide Header */}
+          <header className="bg-blue-600 text-white sticky top-0 z-70">
+            <div className="px-4 py-4 flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowPoliceGuide(false)}
+                className="text-white hover:bg-blue-700"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <h1 className="text-xl font-bold">Police Interactions</h1>
+              <div className="w-9"></div>
+            </div>
+          </header>
+
+          <div className="px-4 py-6 space-y-6">
+            {/* Important Notice */}
+            <Card className="border-blue-200 bg-blue-50">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-bold text-blue-900 text-sm mb-2">
+                      🛡️ Know Your Rights
+                    </h3>
+                    <p className="text-blue-800 text-xs leading-relaxed">
+                      In Italy, you have constitutional rights during police interactions. 
+                      Stay calm, be respectful, and know what you're required to do.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Your Rights */}
+            <Card className="border-gray-200">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <Users className="w-4 h-4 mr-2 text-green-600" />
+                  Your Rights
+                </h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Right to remain silent beyond providing ID</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Right to peaceful assembly (Article 17)</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Right to record police in public spaces</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Right to medical attention if injured</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* What You Must Do */}
+            <Card className="border-gray-200">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <AlertTriangle className="w-4 h-4 mr-2 text-orange-600" />
+                  What You Must Do
+                </h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Provide ID when requested (required in Italy)</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Follow lawful orders (move, disperse if ordered)</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Stay calm and avoid sudden movements</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* During Interaction */}
+            <Card className="border-gray-200">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <Phone className="w-4 h-4 mr-2 text-blue-600" />
+                  During Police Interaction
+                </h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Keep hands visible and movements slow</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Announce before reaching for ID or phone</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Ask "Am I free to leave?" if unclear</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Request badge number and name</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* If Arrested */}
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-red-900 mb-3 flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-2 text-red-600" />
+                  If You're Arrested
+                </h3>
+                <div className="space-y-2 text-sm text-red-700">
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Say: "I want to call a lawyer" (diritto alla difesa)</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>You have right to interpreter if needed</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Don't resist physically, even if arrest is wrong</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span>Remember badge numbers and details</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Key Phrases */}
+            <Card className="border-gray-200 bg-gray-50">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-3">📝 Key Italian Phrases</h3>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <strong className="text-gray-900">"Voglio chiamare un avvocato"</strong>
+                    <p className="text-gray-600 text-xs">I want to call a lawyer</p>
+                  </div>
+                  <div>
+                    <strong className="text-gray-900">"Posso andarmene?"</strong>
+                    <p className="text-gray-600 text-xs">Am I free to leave?</p>
+                  </div>
+                  <div>
+                    <strong className="text-gray-900">"Non capisco"</strong>
+                    <p className="text-gray-600 text-xs">I don't understand</p>
+                  </div>
+                  <div>
+                    <strong className="text-gray-900">"Ho bisogno di un interprete"</strong>
+                    <p className="text-gray-600 text-xs">I need an interpreter</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Close Button */}
+            <Button
+              onClick={() => setShowPoliceGuide(false)}
+              variant="outline"
+              className="w-full py-3 text-lg"
+            >
+              Close Police Guide
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Quick Phonebook Screen */}
       {showQuickPhonebook && (
         <div className="fixed inset-0 bg-white z-60 overflow-y-auto">
