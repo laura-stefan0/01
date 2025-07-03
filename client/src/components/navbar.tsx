@@ -42,8 +42,8 @@ export function Navbar() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-[1002] pb-safe w-full">
-      <div className="max-w-sm mx-auto px-4">
-        <div className="flex items-center justify-around py-3 px-2 pb-safe">
+      <div className="max-w-sm mx-auto px-4 pl-[0px] pr-[0px]">
+        <div className="flex items-center justify-around py-3 px-2 pb-safe pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
           {navItems.map((item) => (
             <NavLink
               key={item.id}
