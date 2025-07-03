@@ -18,6 +18,8 @@ export default function LiveProtestModePage() {
   const [crowdDensity, setCrowdDensity] = useState(Math.floor(Math.random() * 500) + 100);
   const [riskLevel, setRiskLevel] = useState<'Low' | 'Medium' | 'High'>('Low');
   const [batteryLevel, setBatteryLevel] = useState(85);
+  const [hasWifi, setHasWifi] = useState(false);
+  const [hasMobileData, setHasMobileData] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -25,6 +27,31 @@ export default function LiveProtestModePage() {
     
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+
+    // Check network connection type
+    const checkNetworkType = () => {
+      if ('connection' in navigator) {
+        const connection = (navigator as any).connection;
+        if (connection) {
+          const connectionType = connection.effectiveType || connection.type;
+          setHasWifi(connectionType === 'wifi' || connection.type === 'wifi');
+          setHasMobileData(['slow-2g', '2g', '3g', '4g', '5g'].includes(connectionType) || connection.type === 'cellular');
+        }
+      } else {
+        // Fallback detection for browsers without Network Information API
+        setHasWifi(navigator.onLine);
+        setHasMobileData(navigator.onLine);
+      }
+    };
+
+    checkNetworkType();
+    
+    if ('connection' in navigator) {
+      const connection = (navigator as any).connection;
+      if (connection) {
+        connection.addEventListener('change', checkNetworkType);
+      }
+    }
     
     // Time and recording timer
     const timer = setInterval(() => {
@@ -103,21 +130,54 @@ export default function LiveProtestModePage() {
       { name: "Human Rights Defense", number: "+39 06 4825 1001" }
     ];
 
+    // First confirmation to prevent accidental calls
+    const confirmEmergency = window.confirm(
+      "⚠️ EMERGENCY CALL CONFIRMATION ⚠️\n\n" +
+      "This will initiate an emergency call. Only proceed if you have a genuine emergency.\n\n" +
+      "Click OK to see call options or Cancel to abort."
+    );
+
+    if (!confirmEmergency) {
+      toast({
+        title: "Emergency Call Cancelled",
+        description: "Emergency call was cancelled. You can access emergency numbers anytime from this menu.",
+        duration: 3000,
+      });
+      return;
+    }
+
+    // Second step: Choose which number to call
     const choice = window.confirm(
       "Emergency Call Options:\n\n" +
-      "1. 112 - Emergency Services\n" +
-      "2. Legal Aid Hotline\n" +
-      "3. Human Rights Defense\n\n" +
-      "Click OK to call Emergency Services (112) or Cancel to choose manually"
+      "1. 112 - Emergency Services (Police/Fire/Medical)\n" +
+      "2. Legal Aid Hotline - For legal assistance\n" +
+      "3. Human Rights Defense - For rights violations\n\n" +
+      "Click OK to call Emergency Services (112)\n" +
+      "Click Cancel to see all numbers without calling"
     );
 
     if (choice) {
-      window.location.href = "tel:112";
+      // Final confirmation before dialing 112
+      const finalConfirm = window.confirm(
+        "🚨 CALLING EMERGENCY SERVICES (112) 🚨\n\n" +
+        "This will immediately dial emergency services.\n" +
+        "Only proceed if you have a real emergency.\n\n" +
+        "Click OK to dial 112 now."
+      );
+      
+      if (finalConfirm) {
+        window.location.href = "tel:112";
+        toast({
+          title: "Calling Emergency Services",
+          description: "Dialing 112 - Emergency Services. Stay calm and provide your location.",
+          duration: 5000,
+        });
+      }
     } else {
       toast({
-        title: "Emergency Contacts",
-        description: "Long press any number to copy: 112, +39 06 8511 0020, +39 06 4825 1001",
-        duration: 5000,
+        title: "Emergency Contact Numbers",
+        description: "112 (Emergency) • +39 06 8511 0020 (Legal Aid) • +39 06 4825 1001 (Human Rights)",
+        duration: 8000,
       });
     }
   };
@@ -206,9 +266,9 @@ export default function LiveProtestModePage() {
   const emergencyFeatures = [
     {
       title: "Emergency Contacts",
-      description: "Quick access to legal aid and emergency numbers",
+      description: "Secure access to emergency and legal aid numbers",
       icon: Phone,
-      action: "Call Now",
+      action: "Emergency Call",
       color: "#dc2626",
       handler: handleEmergencyCall
     },
@@ -283,12 +343,42 @@ export default function LiveProtestModePage() {
                 {batteryLevel}%
               </span>
             </div>
-            {/* Connectivity Indicator */}
-            {isOnline ? (
-              <Wifi className="w-5 h-5 text-green-600" />
-            ) : (
-              <WifiOff className="w-5 h-5 text-red-600" />
-            )}
+            {/* Connectivity Indicators */}
+            <div className="flex items-center space-x-2">
+              {/* Wi-Fi Indicator */}
+              {hasWifi ? (
+                <div className="flex items-center space-x-1">
+                  <Wifi className="w-4 h-4 text-green-600" />
+                  <span className="text-xs text-green-600">WiFi</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-1">
+                  <WifiOff className="w-4 h-4 text-gray-400" />
+                  <span className="text-xs text-gray-400">WiFi</span>
+                </div>
+              )}
+              
+              {/* Mobile Data Indicator */}
+              {hasMobileData ? (
+                <div className="flex items-center space-x-1">
+                  <div className="flex space-x-0.5">
+                    <div className="w-1 h-2 bg-green-600 rounded-sm"></div>
+                    <div className="w-1 h-3 bg-green-600 rounded-sm"></div>
+                    <div className="w-1 h-4 bg-green-600 rounded-sm"></div>
+                  </div>
+                  <span className="text-xs text-green-600">Mobile</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-1">
+                  <div className="flex space-x-0.5">
+                    <div className="w-1 h-2 bg-gray-400 rounded-sm"></div>
+                    <div className="w-1 h-3 bg-gray-400 rounded-sm"></div>
+                    <div className="w-1 h-4 bg-gray-400 rounded-sm"></div>
+                  </div>
+                  <span className="text-xs text-gray-400">Mobile</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -386,6 +476,30 @@ export default function LiveProtestModePage() {
               </Card>
             ))}
           </div>
+        </section>
+
+        {/* Emergency Call Safety */}
+        <section>
+          <h2 className="text-lg font-semibold text-dark-slate mb-4">Emergency Call Safety</h2>
+          <Card className="border-blue-200 bg-blue-50 mb-6">
+            <CardContent className="p-4">
+              <div className="flex items-start space-x-3">
+                <Phone className="w-5 h-5 mt-0.5 text-blue-600" />
+                <div>
+                  <h3 className="font-medium text-sm mb-2 text-blue-800">
+                    📞 Emergency Calls Are Protected
+                  </h3>
+                  <ul className="text-xs space-y-1 text-blue-700">
+                    <li>• Multiple confirmations prevent accidental calls</li>
+                    <li>• 112 connects to emergency services (police, fire, medical)</li>
+                    <li>• Legal aid and human rights numbers available</li>
+                    <li>• All emergency calls bypass normal network restrictions</li>
+                    <li>• Your location is automatically shared with emergency services</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </section>
 
         {/* Safety Tips */}
