@@ -435,7 +435,7 @@ export default function HomePage() {
               className="transition-all duration-200 hover:bg-gray-100"
             >
               {showSuccess ? (
-                <Check className="w-4 h-4 animate-in fade-in duration-300" />
+                <Check className="w-5 h-5 animate-in fade-in duration-300" />
               ) : (
                 <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
                   (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
