@@ -68,8 +68,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         {children}
         {/* Show navbar only on main routes */}
         {!shouldHideNavbar && <Navbar />}
-        {/* Add bottom padding when navbar is visible */}
-        {!shouldHideNavbar && <div className="h-20" />}
+        {/* Add bottom padding when navbar is visible - matches navbar height */}
+        {!shouldHideNavbar && <div className="h-16" />}
       </div>
     </div>
   );

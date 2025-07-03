@@ -335,7 +335,7 @@ export function MapView() {
 
   return (
     <div className="relative h-full">
-      {/* Map Container - Full Height */}
+      {/* Map Container - Full Height with proper navbar spacing */}
       <div className="h-[calc(100vh-64px)] relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full bg-gray-50">
