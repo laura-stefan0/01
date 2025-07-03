@@ -71,8 +71,8 @@ export default function CreateProtest() {
     },
     onSuccess: () => {
       toast({
-        title: "🎉 Event Submitted Successfully!",
-        description: "Thank you for your contribution! Your event will be reviewed and published shortly.",
+        title: "🎉 Event submitted successfully!",
+        description: "Thank you for your contribution! Your event will be reviewed.",
         variant: "success",
         className: "border-green-200 bg-green-50 text-green-800 success-bounce",
       });
