@@ -30,27 +30,29 @@ export default function ResourcesPage() {
 
   return (
     <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
-      <div className="grid grid-cols-3 gap-3">
-        {protestResources.map((resource, index) => (
-          <Card 
-            key={index} 
-            className="cursor-pointer"
-            onClick={() => {
-              console.log('Navigating to:', resource.link);
-              if (resource.link !== "#") {
-                navigate(resource.link);
-              }
-            }}
-          >
-            <CardContent className="p-4 flex flex-col items-center text-center">
-              <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
-                <resource.icon className="w-6 h-6 text-activist-blue" />
-              </div>
-              <h3 className="font-medium text-foreground text-sm">{resource.title}</h3>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <section className="space-y-4">
+        <div className="grid grid-cols-3 gap-3">
+          {protestResources.map((resource, index) => (
+            <Card 
+              key={index} 
+              className="cursor-pointer transition-all duration-200"
+              onClick={() => {
+                console.log('Navigating to:', resource.link);
+                if (resource.link !== "#") {
+                  navigate(resource.link);
+                }
+              }}
+            >
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-lg bg-activist-blue/10 flex items-center justify-center mb-3">
+                  <resource.icon className="w-6 h-6 text-activist-blue" />
+                </div>
+                <h3 className="font-medium text-foreground text-sm">{resource.title}</h3>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
