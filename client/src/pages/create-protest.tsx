@@ -95,7 +95,7 @@ export default function CreateProtest() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.category || !formData.event_type || !formData.location || !formData.address || !formData.date || !formData.time) {
+    if (!formData.title || !formData.category || !formData.event_type || !formData.location || !formData.date) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
