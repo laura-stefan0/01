@@ -6,8 +6,10 @@ import { MapView } from "@/components/map-view";
  */
 export default function DiscoverPage() {
   return (
-    <div className="fixed inset-0 bottom-16 w-full overflow-hidden">
-      <MapView />
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="max-w-md mx-auto h-[calc(100vh-5rem)] overflow-hidden">
+        <MapView />
+      </div>
     </div>
   );
 }
