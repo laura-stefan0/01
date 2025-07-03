@@ -23,6 +23,7 @@ interface CreateProtestData {
   date: string;
   time: string;
   image_url?: string;
+  url?: string;
 }
 
 export default function CreateProtest() {
@@ -41,7 +42,8 @@ export default function CreateProtest() {
     longitude: -122.4194,
     date: "",
     time: "",
-    image_url: ""
+    image_url: "",
+    url: ""
   });
 
   
@@ -269,7 +271,17 @@ export default function CreateProtest() {
                 />
               </div>
 
-              
+              {/* URL */}
+              <div className="space-y-2">
+                <Label htmlFor="url">Event URL</Label>
+                <Input
+                  id="url"
+                  type="url"
+                  value={formData.url || ''}
+                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                  placeholder="https://example.com/event-details"
+                />
+              </div>
 
               {/* Submit Button */}
               <Button 

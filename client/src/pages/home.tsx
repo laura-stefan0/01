@@ -35,6 +35,7 @@ interface CreateProtestData {
   date: string;
   time: string;
   image_url?: string;
+  url?: string;
 }
 
 export default function HomePage() {
@@ -62,7 +63,8 @@ export default function HomePage() {
     longitude: -122.4194,
     date: "",
     time: "",
-    image_url: ""
+    image_url: "",
+    url: ""
   });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -668,6 +670,18 @@ export default function HomePage() {
                   type="time"
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                />
+              </div>
+
+              {/* URL */}
+              <div className="space-y-2">
+                <Label htmlFor="url">Event URL</Label>
+                <Input
+                  id="url"
+                  type="url"
+                  value={formData.url || ''}
+                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                  placeholder="https://example.com/event-details"
                 />
               </div>
 
