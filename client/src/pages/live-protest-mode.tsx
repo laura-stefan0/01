@@ -42,12 +42,12 @@ export default function LiveProtestModePage() {
   // Loading sequence effect
   useEffect(() => {
     const loadingSteps = [
-      { step: 0, text: "Initializing Live Mode...", duration: 800 },
-      { step: 1, text: "Securing connections...", duration: 900 },
-      { step: 2, text: "Activating safety protocols...", duration: 700 },
-      { step: 3, text: "Establishing emergency links...", duration: 800 },
-      { step: 4, text: "Optimizing location services...", duration: 600 },
-      { step: 5, text: "Live Mode activated", duration: 500 }
+      { step: 0, text: "Initializing Live Mode...", duration: 1200 },
+      { step: 1, text: "Securing connections...", duration: 1300 },
+      { step: 2, text: "Activating safety protocols...", duration: 1100 },
+      { step: 3, text: "Establishing emergency links...", duration: 1200 },
+      { step: 4, text: "Optimizing location services...", duration: 1000 },
+      { step: 5, text: "Live Mode activated", duration: 1200 }
     ];
 
     let currentStep = 0;
