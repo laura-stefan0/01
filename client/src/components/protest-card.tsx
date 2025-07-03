@@ -5,7 +5,7 @@ import type { Protest } from "@shared/schema";
 import { MapPin, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { formatDateTime } from "@/lib/date-utils";
-import { getCategoryColor, getImageUrl, createImageErrorHandler } from "@/lib/image-utils";
+import { getCategoryColor, getImageUrl } from "@/lib/image-utils";
 import { useSavedProtests } from "@/context/saved-protests-context";
 
 interface ProtestCardProps {
@@ -50,11 +50,13 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
             className={`h-4 w-4 ${isProtestSaved(protest.id) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
           />
         </Button>
-        <img 
-          src={getImageUrl(protest.image_url, protest.category)} 
-          alt={protest.title}
-          className="w-full h-32 object-cover"
-          onError={createImageErrorHandler(protest.category)}
+        <div 
+          className="w-full h-32 bg-cover bg-center bg-gray-200"
+          style={{
+            backgroundImage: `url(${getImageUrl(protest.image_url, protest.category)})`
+          }}
+          role="img"
+          aria-label={protest.title}
         />
         <CardContent className="p-4 h-32 flex flex-col justify-between">
           <div>
@@ -79,11 +81,13 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   return (
     <Card className="overflow-hidden h-20 cursor-pointer border border-gray-200 fade-in relative" onClick={handleClick}>
       <div className="flex h-full">
-        <img 
-          src={getImageUrl(protest.image_url, protest.category)}
-          alt={protest.title}
-          className="w-20 h-full object-cover flex-shrink-0"
-          onError={createImageErrorHandler(protest.category)}
+        <div 
+          className="w-20 h-full bg-cover bg-center bg-gray-200 flex-shrink-0"
+          style={{
+            backgroundImage: `url(${getImageUrl(protest.image_url, protest.category)})`
+          }}
+          role="img"
+          aria-label={protest.title}
         />
         <CardContent className="p-3 flex-1 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">
