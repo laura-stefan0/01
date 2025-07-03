@@ -772,7 +772,7 @@ export default function HomePage() {
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Help us improve</h2>
         <Dialog>
           <DialogTrigger asChild>
-            <Card className="cursor-pointer border-0 shadow-xl relative overflow-hidden" style={{
+            <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
               background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
             }}>
               <CardContent className="p-4 text-center relative z-10">
