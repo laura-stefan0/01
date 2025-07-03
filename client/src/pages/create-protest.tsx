@@ -30,7 +30,7 @@ export default function CreateProtest() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+
   const [formData, setFormData] = useState<CreateProtestData>({
     title: "",
     description: "",
@@ -46,9 +46,9 @@ export default function CreateProtest() {
     url: ""
   });
 
-  
 
-  
+
+
 
   const createProtestMutation = useMutation({
     mutationFn: async (data: CreateProtestData & { image_url?: string }) => {
@@ -62,17 +62,18 @@ export default function CreateProtest() {
           image_url: data.image_url,
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Event Submitted! ✅",
-        description: "Your event has been submitted - we'll review it and thank you for your contribution!",
+        title: "🎉 Event Submitted Successfully!",
+        description: "Thank you for contributing to the movement! Your event is now live and helping others discover meaningful activism opportunities.",
+        variant: "success",
         className: "border-green-200 bg-green-50 text-green-800 success-bounce",
       });
       // Invalidate protests queries to refresh the data
@@ -91,7 +92,7 @@ export default function CreateProtest() {
     },
   });
 
-  
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

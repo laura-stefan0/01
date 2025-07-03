@@ -104,25 +104,23 @@ export default function HomePage() {
           image_url: data.image_url,
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Event Submitted! ✅",
-        description: "Your event has been submitted - we'll review it and thank you for your contribution!",
-        className: "border-green-200 bg-green-50 text-green-800 success-bounce",
+        title: "🎉 Event Submitted Successfully!",
+        description: "Thank you for contributing to the movement! Your event is now live and helping others discover meaningful activism opportunities.",
+        variant: "success",
       });
-      // Invalidate protests queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["/api/protests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/protests/featured"] });
       queryClient.invalidateQueries({ queryKey: ["/api/protests/nearby"] });
       setIsDialogOpen(false);
-      // Reset form
       setFormData({
         title: "",
         description: "",
@@ -393,7 +391,7 @@ export default function HomePage() {
             >
               <RefreshCw className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
             </Button>
-            
+
             {/* Notification bell */}
             <Button 
               variant="ghost" 
@@ -559,7 +557,7 @@ export default function HomePage() {
                 We appreciate any details you can provide about this event to help others discover and participate in meaningful activism.
               </div>
             </DialogHeader>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Event Name */}
               <div className="space-y-2">
