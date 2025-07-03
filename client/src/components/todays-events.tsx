@@ -131,22 +131,22 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
   if (!todaysEvents || todaysEvents.length === 0) {
     return (
       <section className="mb-6">
-        <div className="bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 rounded-2xl p-6">
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
             <CalendarDays className="w-6 h-6 text-white" />
-            <h2 className="text-xl font-bold text-white">Today's Events</h2>
+            <h2 className="text-xl font-bold text-white">Are you going today?</h2>
             <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
           </div>
           <Card className="border-0 bg-white/95 backdrop-blur-sm">
             <CardContent className="p-8 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-100 to-purple-100 flex items-center justify-center">
-                  <CalendarDays className="w-10 h-10 text-rose-600" />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-100 to-cyan-100 flex items-center justify-center">
+                  <CalendarDays className="w-10 h-10 text-emerald-600" />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800 text-lg">No saved events for today</p>
-                  <p className="text-gray-600 mt-2">Save events you're interested in to see them here on event day!</p>
+                  <p className="font-bold text-gray-800 text-lg">No events saved for today</p>
+                  <p className="text-gray-600 mt-2">When you save events happening today, you'll see them here with check-in options!</p>
                 </div>
               </div>
             </CardContent>
@@ -158,14 +158,14 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   return (
     <section className="mb-6">
-      <div className="bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 rounded-2xl p-6">
+      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
           <CalendarDays className="w-6 h-6 text-white" />
-          <h2 className="text-xl font-bold text-white">Today's Events</h2>
+          <h2 className="text-xl font-bold text-white">Are you going today?</h2>
           <div className="ml-auto">
-            <Badge className="bg-white text-rose-600 font-bold text-lg px-3 py-1 animate-bounce">
-              {todaysEvents.length}
+            <Badge className="bg-white text-emerald-600 font-bold text-lg px-3 py-1 animate-bounce">
+              {todaysEvents.length} event{todaysEvents.length !== 1 ? 's' : ''}
             </Badge>
           </div>
           <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
@@ -177,48 +177,58 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-4 h-4 bg-gradient-to-r from-rose-500 to-purple-500 rounded-full animate-pulse"></div>
+                      <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full animate-pulse"></div>
                       <h3 className="font-bold text-gray-800 text-xl">{event.title}</h3>
                     </div>
-                    <Badge className={`${getCategoryColor(event.category)} text-white text-sm font-bold px-3 py-1`}>
-                      {event.category}
-                    </Badge>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge className={`${getCategoryColor(event.category)} text-white text-sm font-bold px-3 py-1`}>
+                        {event.category}
+                      </Badge>
+                      <Badge className="bg-emerald-100 text-emerald-700 text-xs font-medium px-2 py-1">
+                        Saved
+                      </Badge>
+                    </div>
                   </div>
-                  <Button
-                    onClick={() => handleCheckIn(String(event.id))}
-                    disabled={checkingIn === String(event.id)}
-                    className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white ml-4 transition-all duration-300 transform hover:scale-110 font-bold text-base px-6 py-3"
-                    size="lg"
-                  >
-                    {checkingIn === String(event.id) ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Checking in...
-                      </div>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-6 h-6 mr-2" />
-                        Check-in Now!
-                      </>
-                    )}
-                  </Button>
+                  <div className="flex flex-col gap-2 ml-4">
+                    <Button
+                      onClick={() => handleCheckIn(String(event.id))}
+                      disabled={checkingIn === String(event.id)}
+                      className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white transition-all duration-300 transform hover:scale-105 font-bold text-base px-6 py-3"
+                      size="lg"
+                    >
+                      {checkingIn === String(event.id) ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Checking in...
+                        </div>
+                      ) : (
+                        <>
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Yes, I'm going!
+                        </>
+                      )}
+                    </Button>
+                    <p className="text-xs text-gray-500 text-center">Tap when you arrive</p>
+                  </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Clock className="w-4 h-4 mr-2" />
-                    <span>{event.time}</span>
+                <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                  <div className="flex items-center text-sm text-gray-700">
+                    <Clock className="w-4 h-4 mr-2 text-emerald-600" />
+                    <span className="font-medium">{event.time}</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <MapPin className="w-4 h-4 mr-2" />
+                  <div className="flex items-center text-sm text-gray-700">
+                    <MapPin className="w-4 h-4 mr-2 text-emerald-600" />
                     <span>{event.address}, {event.city}</span>
                   </div>
                 </div>
                 
                 {event.description && (
-                  <p className="text-sm text-gray-700 mt-2 line-clamp-2">
-                    {event.description}
-                  </p>
+                  <div className="mt-3 p-3 bg-emerald-50 rounded-lg">
+                    <p className="text-sm text-gray-700 line-clamp-2">
+                      {event.description}
+                    </p>
+                  </div>
                 )}
               </CardContent>
             </Card>

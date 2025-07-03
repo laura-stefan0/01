@@ -66,11 +66,14 @@ router.get("/today", async (req, res) => {
   try {
     await initializeTables();
     const userId = 1; // For now using default user ID
-    const { date } = req.query;
+    let { date } = req.query;
     
+    // If no date provided, use today's date
     if (!date) {
-      return res.status(400).json({ error: "Date parameter is required" });
+      date = new Date().toISOString().split('T')[0];
     }
+    
+    console.log(`🔍 Fetching saved events for date: ${date}, user: ${userId}`);
 
     // Get saved protest IDs
     const { data: savedData, error: savedError } = await supabase
