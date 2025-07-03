@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, MessageCircle, Sparkles, Star, Zap, ChevronDown, RefreshCw, Calendar, Check } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, MessageCircle, Sparkles, Star, Zap, ChevronDown, RefreshCw, Calendar, Check, TrendingUp } from "lucide-react";
 import { getCachedUserLocation, getUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -611,11 +611,16 @@ export default function HomePage() {
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Did we miss one?</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button 
-              className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white py-4 text-base font-medium"
-            >
-              Add an event
-            </Button>
+            <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 shadow-xl cursor-pointer">
+              <CardContent className="p-4">
+                <Button 
+                  className="w-full bg-white text-indigo-600 hover:bg-gray-50 font-semibold shadow-none border-0 h-12"
+                >
+                  <TrendingUp className="w-5 h-5 mr-2" />
+                  Add an event
+                </Button>
+              </CardContent>
+            </Card>
           </DialogTrigger>
           <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
