@@ -772,13 +772,14 @@ export default function HomePage() {
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Help us improve</h2>
         <Dialog>
           <DialogTrigger asChild>
-            <Card className="cursor-pointer border-0 shadow-2xl hover:shadow-3xl transition-all duration-300 bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400 dark:from-pink-500 dark:via-purple-500 dark:to-indigo-500 relative overflow-hidden transform hover:scale-105 hover:-translate-y-1 animate-pulse">
+            <Card className="cursor-pointer border-0 shadow-2xl bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400 dark:from-pink-500 dark:via-purple-500 dark:to-indigo-500 relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.6)_1px,transparent_0)] bg-[length:16px_16px] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_0)]"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer"></div>
               <CardContent className="p-6 text-center relative z-10">
                 <div className="flex flex-col items-center space-y-3">
-                  <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-500 dark:from-pink-300 dark:to-purple-300 rounded-full flex items-center justify-center backdrop-blur-sm shadow-xl animate-bounce">
-                    <Heart className="w-8 h-8 text-white dark:text-pink-900 animate-pulse" />
+                  <div className="flex items-center space-x-2">
+                    <Heart className="w-6 h-6 text-white dark:text-white" />
+                    <Heart className="w-8 h-8 text-white dark:text-white" />
+                    <Heart className="w-6 h-6 text-white dark:text-white" />
                   </div>
                   <h3 className="font-bold text-lg text-white dark:text-white drop-shadow-lg">Share your feedback</h3>
                 </div>
