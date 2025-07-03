@@ -772,12 +772,12 @@ export default function HomePage() {
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Help us improve</h2>
         <Dialog>
           <DialogTrigger asChild>
-            <Card className="cursor-pointer border-2 border-dashed border-gray-300 hover:border-activist-blue transition-colors bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-pink-900/10 dark:via-purple-900/10 dark:to-indigo-900/10 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:16px_16px] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)]"></div>
+            <Card className="cursor-pointer border-2 border-solid border-pink-200 hover:border-pink-300 transition-colors bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 dark:from-pink-800/30 dark:via-purple-800/30 dark:to-indigo-800/30 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_0)] bg-[length:16px_16px] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.1)_1px,transparent_0)]"></div>
               <CardContent className="p-4 text-center relative z-10">
                 <div className="flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-purple-100 dark:from-pink-800/20 dark:to-purple-800/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <Heart className="w-6 h-6 text-pink-500 dark:text-pink-400" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-200 to-purple-200 dark:from-pink-700/40 dark:to-purple-700/40 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <Heart className="w-6 h-6 text-pink-600 dark:text-pink-300" />
                   </div>
                   <h3 className="font-medium text-dark-slate dark:text-white">Share your feedback</h3>
                 </div>
