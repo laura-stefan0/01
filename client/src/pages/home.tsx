@@ -27,6 +27,7 @@ interface CreateProtestData {
   title: string;
   description: string;
   category: string;
+  event_type: string;
   location: string;
   address: string;
   latitude: number;
@@ -54,6 +55,7 @@ export default function HomePage() {
     title: "",
     description: "",
     category: "",
+    event_type: "",
     location: "",
     address: "",
     latitude: 37.7749,
@@ -122,6 +124,7 @@ export default function HomePage() {
         title: "",
         description: "",
         category: "",
+        event_type: "",
         location: "",
         address: "",
         latitude: 37.7749,
@@ -143,7 +146,7 @@ export default function HomePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.category || !formData.location || !formData.address || !formData.date || !formData.time) {
+    if (!formData.title || !formData.category || !formData.event_type || !formData.location || !formData.address || !formData.date || !formData.time) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -156,12 +159,24 @@ export default function HomePage() {
   };
 
   const categories = [
-    "Climate",
-    "Pride", 
-    "Workers",
-    "Justice",
     "Environment",
-    "Education"
+    "LGBTQ+",
+    "Women's Rights",
+    "Labor",
+    "Racial & Social Justice",
+    "Civil & Human Rights",
+    "Healthcare & Education",
+    "Peace & Anti-War",
+    "Transparency & Anti-Corruption",
+    "Other"
+  ];
+
+  const eventTypes = [
+    "Protest",
+    "Workshop",
+    "Assembly",
+    "Talk",
+    "Other"
   ];
 
   // Handle country selection change
@@ -543,9 +558,9 @@ export default function HomePage() {
             </DialogHeader>
             
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Title */}
+              {/* Event Name */}
               <div className="space-y-2">
-                <Label htmlFor="title">Event Title *</Label>
+                <Label htmlFor="title">Event name *</Label>
                 <Input
                   id="title"
                   value={formData.title}
@@ -555,25 +570,29 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* Description */}
+              {/* Type */}
               <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Join us for a peaceful demonstration to demand climate action..."
-                  rows={4}
-                  required
-                />
+                <Label htmlFor="event_type">Type *</Label>
+                <Select value={formData.event_type} onValueChange={(value) => setFormData({ ...formData, event_type: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select event type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {eventTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              {/* Category */}
+              {/* Cause */}
               <div className="space-y-2">
-                <Label htmlFor="category">Category *</Label>
+                <Label htmlFor="category">Cause *</Label>
                 <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
+                    <SelectValue placeholder="Select a cause" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((category) => (
@@ -583,6 +602,18 @@ export default function HomePage() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Any other info */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Any other info</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Additional details about the event, meeting point, what to bring, etc..."
+                  rows={3}
+                />
               </div>
 
               {/* Location */}

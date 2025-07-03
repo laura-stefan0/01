@@ -234,9 +234,9 @@ router.get('/:id', async (req, res) => {
 // Create new protest
 router.post('/', async (req, res) => {
   try {
-    const { title, description, category, location, address, latitude, longitude, date, time, imageUrl, eventUrl } = req.body;
+    const { title, description, category, event_type, location, address, latitude, longitude, date, time, imageUrl, eventUrl } = req.body;
 
-    if (!title || !description || !category || !location || !address || !latitude || !longitude || !date || !time) {
+    if (!title || !category || !event_type || !location || !address || !latitude || !longitude || !date || !time) {
       return res.status(400).json({ message: "Required fields missing" });
     }
 
@@ -249,6 +249,7 @@ router.post('/', async (req, res) => {
       title,
       description,
       category,
+      event_type,
       location,
       address,
       latitude,
