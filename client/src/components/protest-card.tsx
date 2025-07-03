@@ -52,16 +52,16 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
         </Button>
         <CardContent className="p-4 flex flex-col justify-between h-full">
           <div>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
                 {protest.category}
               </Badge>
               <span className="text-sm text-gray-500">{protest.distance}</span>
             </div>
-            <h3 className="font-semibold text-dark-slate mb-2 line-clamp-2 leading-relaxed">{protest.title}</h3>
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">{protest.description}</p>
+            <h3 className="font-semibold text-dark-slate mb-1 line-clamp-2">{protest.title}</h3>
+            <p className="text-sm text-gray-600 mb-2 line-clamp-2">{protest.description}</p>
           </div>
-          <div className="text-sm text-gray-500 space-y-1">
+          <div className="text-sm text-gray-500">
             <p className="font-medium">{formatDateTime(protest.date, protest.time)}</p>
             <p className="truncate">{protest.location}</p>
           </div>
@@ -73,7 +73,7 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
   return (
     <Card className="overflow-hidden h-20 cursor-pointer border border-gray-200 fade-in relative" onClick={handleClick}>
       <CardContent className="p-3 flex flex-col justify-between h-full">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-1">
             <Badge className={`${getCategoryColor(protest.category)} text-white text-xs`}>
               {protest.category.toUpperCase()}
             </Badge>
@@ -90,9 +90,9 @@ export function ProtestCard({ protest, variant = "compact" }: ProtestCardProps) 
               </Button>
             </div>
           </div>
-          <div className="flex-1 space-y-1">
-            <h3 className="font-medium text-dark-slate text-sm line-clamp-1 leading-relaxed">{protest.title}</h3>
-            <p className="text-xs text-gray-500">{protest.location}</p>
+          <div className="flex-1">
+            <h3 className="font-medium text-dark-slate text-sm mb-1 line-clamp-1">{protest.title}</h3>
+            <p className="text-xs text-gray-500 mb-1">{protest.location}</p>
             <p className="text-xs text-gray-600 font-medium">{formatDateTime(protest.date, protest.time)}</p>
           </div>
         </CardContent>
