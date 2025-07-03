@@ -30,6 +30,15 @@ export default function ResourcesPage() {
 
   return (
     <div className="px-4 py-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+      {/* Page Header */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <h1 className="text-lg font-semibold text-dark-slate">Resources</h1>
+          </div>
+        </div>
+      </section>
+
       <section className="space-y-4">
         <div className="grid grid-cols-3 gap-3">
           {protestResources.map((resource, index) => (
