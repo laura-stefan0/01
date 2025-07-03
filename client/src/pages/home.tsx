@@ -767,6 +767,90 @@ export default function HomePage() {
         </Dialog>
       </section>
 
+      {/* Feedback Section */}
+      <section className="mb-6">
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Help us improve</h2>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Card className="cursor-pointer border-2 border-dashed border-gray-300 hover:border-activist-blue transition-colors">
+              <CardContent className="p-4 text-center">
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <h3 className="font-medium text-dark-slate">Share your feedback</h3>
+                  <p className="text-sm text-gray-600">Tell us how we can make Corteo better for activists</p>
+                </div>
+              </CardContent>
+            </Card>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-lg">Share Your Feedback</DialogTitle>
+              <div className="text-sm text-gray-600 mt-2">
+                Your suggestions help us build a better platform for activists and organizers.
+              </div>
+            </DialogHeader>
+
+            <form className="space-y-4" onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const feedbackType = formData.get('feedbackType') as string;
+              const message = formData.get('message') as string;
+              
+              // Here you would typically send this to your backend
+              console.log('Feedback submitted:', { feedbackType, message });
+              
+              toast({
+                title: "Thank you for your feedback!",
+                description: "We appreciate your input and will review it carefully.",
+                variant: "success",
+              });
+              
+              // Reset form
+              (e.target as HTMLFormElement).reset();
+            }}>
+              {/* Feedback Type */}
+              <div className="space-y-2">
+                <Label htmlFor="feedbackType">What would you like to share?</Label>
+                <Select name="feedbackType" required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select feedback type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="suggestion">Feature suggestion</SelectItem>
+                    <SelectItem value="bug">Report a bug</SelectItem>
+                    <SelectItem value="improvement">App improvement</SelectItem>
+                    <SelectItem value="content">Content feedback</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Message */}
+              <div className="space-y-2">
+                <Label htmlFor="message">Your message</Label>
+                <Textarea
+                  name="message"
+                  placeholder="Tell us what you think, what could be improved, or any ideas you have..."
+                  rows={4}
+                  required
+                />
+              </div>
+
+              {/* Submit Button */}
+              <Button type="submit" className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
+                Send Feedback
+              </Button>
+
+              <div className="text-xs text-gray-500 text-center">
+                We read every piece of feedback and use it to improve Corteo.
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </section>
+
       {/* Donations Section */}
       <section>
         <h2 className="text-lg font-semibold text-dark-slate mb-3">Support Us</h2>
