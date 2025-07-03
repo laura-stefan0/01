@@ -230,10 +230,18 @@ export default function HomePage() {
         console.log('🔄 Cleared location cache for fresh fetch');
       }
       // Use direct getUserLocation if force refresh, otherwise use cached version
-      const locationResult = forceRefresh ? await getUserLocation() : await getCachedUserLocation();
-      setUserRealLocation(locationResult.formatted);
-      setUserCoordinates(locationResult.coordinates);
-      console.log('✅ Location updated:', locationResult.formatted, locationResult.coordinates);
+      if (forceRefresh) {
+        console.log('🔄 Force refresh: calling getUserLocation with fresh coordinates');
+        const locationResult = await getUserLocation(true);
+        setUserRealLocation(locationResult.formatted);
+        setUserCoordinates(locationResult.coordinates);
+        console.log('✅ Force refresh complete:', locationResult.formatted, locationResult.coordinates);
+      } else {
+        const locationResult = await getCachedUserLocation();
+        setUserRealLocation(locationResult.formatted);
+        setUserCoordinates(locationResult.coordinates);
+        console.log('✅ Cached location updated:', locationResult.formatted, locationResult.coordinates);
+      }
     } catch (error) {
       console.error('Failed to get user location:', error);
       setUserRealLocation(null);

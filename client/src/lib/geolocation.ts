@@ -40,9 +40,10 @@ interface GeolocationError {
 
 /**
  * Get user's current position using browser geolocation API
+ * @param forceRefresh - If true, forces fresh GPS reading
  * @returns Promise<Coordinates> - User's latitude and longitude
  */
-export const getCurrentPosition = (): Promise<Coordinates> => {
+export const getCurrentPosition = (forceRefresh = false): Promise<Coordinates> => {
   return new Promise((resolve, reject) => {
     // Check if geolocation is supported
     if (!navigator.geolocation) {
@@ -53,8 +54,8 @@ export const getCurrentPosition = (): Promise<Coordinates> => {
     // Options for geolocation request
     const options: PositionOptions = {
       enableHighAccuracy: true, // Request high accuracy
-      timeout: 10000, // 10 second timeout
-      maximumAge: 0 // Force fresh position, no cache
+      timeout: forceRefresh ? 15000 : 10000, // Longer timeout for forced refresh
+      maximumAge: forceRefresh ? 0 : 0 // Always force fresh position
     };
 
     // Get current position
@@ -140,14 +141,15 @@ export const reverseGeocode = async (coordinates: Coordinates): Promise<Location
 
 /**
  * Complete geolocation workflow: get position and reverse geocode
+ * @param forceRefresh - If true, forces fresh GPS reading
  * @returns Promise<LocationResult> - Complete location information
  */
-export const getUserLocation = async (): Promise<LocationResult> => {
+export const getUserLocation = async (forceRefresh = false): Promise<LocationResult> => {
   try {
     // Step 1: Get user's current coordinates
-    console.log('📍 Getting user coordinates...');
-    const coordinates = await getCurrentPosition();
-    console.log('✅ Coordinates obtained:', coordinates);
+    console.log(`📍 Getting user coordinates... (forceRefresh: ${forceRefresh})`);
+    const coordinates = await getCurrentPosition(forceRefresh);
+    console.log('✅ Fresh coordinates obtained:', coordinates);
     
     // Step 2: Reverse geocode coordinates to readable address
     console.log('🌍 Reverse geocoding coordinates...');
