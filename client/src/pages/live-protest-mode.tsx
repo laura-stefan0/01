@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Shield, Phone, Camera, MapPin, Users, AlertTriangle, Clock, Wifi, WifiOff, Download, Share2, Video, StopCircle, Battery, BatteryLow, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,7 +40,7 @@ export default function LiveProtestModePage() {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
@@ -62,14 +61,14 @@ export default function LiveProtestModePage() {
     };
 
     checkNetworkType();
-    
+
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
       if (connection) {
         connection.addEventListener('change', checkNetworkType);
       }
     }
-    
+
     // Time and recording timer
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -97,7 +96,7 @@ export default function LiveProtestModePage() {
     if ('getBattery' in navigator) {
       (navigator as any).getBattery().then((battery: any) => {
         setBatteryLevel(Math.round(battery.level * 100));
-        
+
         battery.addEventListener('levelchange', () => {
           setBatteryLevel(Math.round(battery.level * 100));
         });
@@ -110,7 +109,7 @@ export default function LiveProtestModePage() {
       const batteryTimer = setInterval(() => {
         setBatteryLevel(prev => Math.max(10, prev - Math.random()));
       }, 30000);
-      
+
       return () => clearInterval(batteryTimer);
     }
 
@@ -118,24 +117,24 @@ export default function LiveProtestModePage() {
     const monitoringTimer = setInterval(() => {
       // Simulate Google Maps API crowd density data
       const newEstimatedPeople = Math.max(50, googleMapsCrowdData.estimatedPeople + Math.floor(Math.random() * 60) - 30);
-      
+
       let busynessLevel: 'Low' | 'Medium' | 'High' | 'Very High';
       if (newEstimatedPeople > 400) busynessLevel = 'Very High';
       else if (newEstimatedPeople > 250) busynessLevel = 'High';
       else if (newEstimatedPeople > 150) busynessLevel = 'Medium';
       else busynessLevel = 'Low';
-      
+
       setGoogleMapsCrowdData({
         busynessLevel,
         estimatedPeople: newEstimatedPeople,
         lastUpdated: new Date()
       });
-      
+
       setCrowdDensity(newEstimatedPeople);
-      
+
       // Risk level logic based on Google Maps crowd density and time
       const currentHour = new Date().getHours();
-      
+
       if (newEstimatedPeople > 400 || (currentHour >= 20 && newEstimatedPeople > 200)) {
         setRiskLevel('High');
       } else if (newEstimatedPeople > 250 || (currentHour >= 18 && newEstimatedPeople > 150)) {
@@ -165,7 +164,7 @@ export default function LiveProtestModePage() {
       "Only proceed if you have a real emergency or need.\n\n" +
       "Click OK to dial now."
     );
-    
+
     if (finalConfirm) {
       window.location.href = `tel:${number}`;
       toast({
@@ -199,7 +198,7 @@ export default function LiveProtestModePage() {
     setQuickContacts(newContacts);
     localStorage.setItem('corteo-quick-contacts', JSON.stringify(newContacts));
     setEditingContact(null);
-    
+
     toast({
       title: "Contact Saved",
       description: `${editingContact.name} has been saved to your quick contacts.`,
@@ -211,7 +210,7 @@ export default function LiveProtestModePage() {
     const updatedContacts = quickContacts.filter(c => c.id !== contactId);
     setQuickContacts(updatedContacts);
     localStorage.setItem('corteo-quick-contacts', JSON.stringify(updatedContacts));
-    
+
     toast({
       title: "Contact Deleted",
       description: "Contact has been removed from your quick phonebook.",
@@ -219,7 +218,7 @@ export default function LiveProtestModePage() {
     });
   };
 
-  
+
 
   const handleShareLocation = () => {
     if (!userLocation) {
@@ -232,7 +231,7 @@ export default function LiveProtestModePage() {
     }
 
     const locationText = `🚨 PROTEST ALERT 🚨\nMy current location: ${userLocation.lat.toFixed(6)}, ${userLocation.lng.toFixed(6)}\n\nGoogle Maps: https://maps.google.com/?q=${userLocation.lat},${userLocation.lng}\n\nTime: ${currentTime.toLocaleString()}\nSent from Corteo Live Protest Mode`;
-    
+
     if (navigator.share) {
       navigator.share({
         title: "Emergency Location Share",
@@ -261,7 +260,7 @@ export default function LiveProtestModePage() {
     // Open maps with user location
     const mapsUrl = `https://maps.google.com/?q=${userLocation.lat},${userLocation.lng}&layer=transit`;
     window.open(mapsUrl, '_blank');
-    
+
     toast({
       title: "Safe Zone Search",
       description: "Opening maps with your location. Look for public buildings, metro stations, and police stations.",
@@ -288,7 +287,7 @@ export default function LiveProtestModePage() {
       // Start recording
       setIsRecording(true);
       setRecordingTime(0);
-      
+
       // Request camera and microphone access
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
@@ -318,7 +317,7 @@ export default function LiveProtestModePage() {
       // Stop recording
       setIsRecording(false);
       const recordingDuration = `${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')}`;
-      
+
       toast({
         title: "Recording Saved",
         description: `📹 ${recordingDuration} evidence saved with GPS metadata and timestamp. Store safely.`,
@@ -408,7 +407,7 @@ export default function LiveProtestModePage() {
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto max-w-screen-sm mx-auto">
       {/* Police Interaction Guide Screen */}
       {showPoliceGuide && (
-        <div className="fixed inset-0 bg-white z-60 overflow-y-auto max-w-screen-sm mx-auto">
+        <div className="min-h-screen bg-white overflow-y-auto max-w-md mx-auto">
           {/* Police Guide Header */}
           <header className="bg-blue-600 text-white sticky top-0 z-70">
             <div className="px-4 py-4 flex items-center justify-between max-w-full">
@@ -591,7 +590,7 @@ export default function LiveProtestModePage() {
 
       {/* Quick Phonebook Screen */}
       {showQuickPhonebook && (
-        <div className="fixed inset-0 bg-white z-60 overflow-y-auto max-w-screen-sm mx-auto">
+        <div className="min-h-screen bg-white overflow-y-auto max-w-md mx-auto">
           {/* Phonebook Header */}
           <header className="bg-purple-600 text-white sticky top-0 z-70">
             <div className="px-4 py-4 flex items-center justify-between max-w-full">
@@ -781,7 +780,7 @@ export default function LiveProtestModePage() {
 
       {/* Emergency Contacts Screen */}
       {showEmergencyContacts && (
-        <div className="fixed inset-0 bg-white z-60 overflow-y-auto max-w-screen-sm mx-auto">
+        <div className="min-h-screen bg-white overflow-y-auto max-w-md mx-auto">
           {/* Emergency Header */}
           <header className="bg-red-600 text-white sticky top-0 z-70">
             <div className="px-4 py-4 flex items-center justify-between max-w-full">
@@ -812,7 +811,7 @@ export default function LiveProtestModePage() {
                       Clicking on any number below will open your phone app and initiate a dial to emergency authorities. 
                       Only use these numbers if you have a genuine emergency or need assistance.
                     </p>
-                    
+
                     {/* Emergency Call Protection Info */}
                     <div className="bg-red-100 rounded-lg p-3 mt-4">
                       <h4 className="font-medium text-sm mb-2 text-red-800">
@@ -942,7 +941,7 @@ export default function LiveProtestModePage() {
           <h1 className="text-xl font-bold text-dark-slate">Live Protest Mode</h1>
           <div className="w-9"></div> {/* Spacer for centering */}
         </div>
-        
+
         {/* Status Indicators Row */}
         <div className="px-4 pb-3 flex items-center justify-center space-x-4">
           {/* Battery Indicator - Always show */}
@@ -981,7 +980,7 @@ export default function LiveProtestModePage() {
               Signal
             </span>
           </div>
-          
+
           {/* Wi-Fi Indicator - Only show when active */}
           {hasWifi && (
             <div className="flex items-center space-x-1">
@@ -989,7 +988,7 @@ export default function LiveProtestModePage() {
               <span className="text-xs text-green-600">WiFi</span>
             </div>
           )}
-          
+
           {/* Mobile Data Indicator - Only show when active */}
           {hasMobileData && (
             <div className="flex items-center space-x-1">
@@ -1134,7 +1133,7 @@ export default function LiveProtestModePage() {
           </div>
         </section>
 
-        
+
 
         {/* Safety Tips */}
         <section className="w-full">
