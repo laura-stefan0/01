@@ -239,7 +239,7 @@ router.get('/:id', async (req, res) => {
 // Create new protest
 router.post('/', async (req, res) => {
   try {
-    const { title, description, category, event_type, location, address, latitude, longitude, date, time, imageUrl, eventUrl } = req.body;
+    const { title, description, category, event_type, location, address, latitude, longitude, date, time, imageUrl } = req.body;
 
     if (!title || !category || !event_type || !location || !address || !latitude || !longitude || !date || !time) {
       return res.status(400).json({ message: "Required fields missing" });
@@ -264,10 +264,7 @@ router.post('/', async (req, res) => {
       image_url: imageUrl || `https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/teemu-paananen-rd5uNIUJCF0-unsplash.jpg`,
       country_code: userCountryCode,
       attendees: 0,
-      distance: "0.5 mi",
-      featured: false,
-      approved: false, // New submissions require approval
-      event_url: eventUrl || null
+      featured: false
     };
 
     console.log('📤 Inserting protest to Supabase protests table');
