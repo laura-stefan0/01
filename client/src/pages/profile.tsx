@@ -71,6 +71,26 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
+      {/* My Protests */}
+      <Card>
+        <CardContent className="p-0 divide-y divide-gray-100">
+          <div 
+            className="p-4 flex items-center justify-between cursor-pointer"
+            onClick={() => navigate('/profile/saved')}
+          >
+            <span className="text-dark-slate">Saved Protests</span>
+            <div className="w-4 h-4 text-gray-400">→</div>
+          </div>
+          <div 
+            className="p-4 flex items-center justify-between cursor-pointer"
+            onClick={() => navigate('/profile/archived')}
+          >
+            <span className="text-dark-slate">Attended Protests</span>
+            <div className="w-4 h-4 text-gray-400">→</div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Navigation Options */}
       <Card>
         <CardContent className="p-0 divide-y divide-gray-100">

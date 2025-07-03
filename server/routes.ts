@@ -11,6 +11,7 @@ import laws from "./routes/laws";
 import whatsNew from "./routes/whats-new";
 import imageUpdater from "./routes/image-updater";
 import imageProxyRouter from './routes/image-proxy';
+import savedProtests from "./routes/saved-protests";
 
 // Protests data (using local data for now as fallback)
 const protestsData = [
@@ -53,6 +54,9 @@ export function registerRoutes(app: Express) {
 
   // Image updater routes - fetch and update protest images
   app.use("/api/images", imageUpdater);
+
+  // Saved protests routes - handle user bookmarks and check-ins
+  app.use("/api/user/protests", savedProtests);
 
   // User profile route (demo)
   app.get("/api/user/profile", (req, res) => {

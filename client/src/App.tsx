@@ -16,6 +16,8 @@ import ProfilePage from "./pages/profile";
 import ProfileSettingsPage from "./pages/profile/settings";
 import ProfileMorePage from "./pages/profile/more";
 import ProfileThemeSettingsPage from "./pages/profile/settings/theme";
+import SavedProtestsPage from "./pages/profile/saved";
+import ArchivedProtestsPage from "./pages/profile/archived";
 
 // Other pages
 import SignIn from "./pages/sign-in";
@@ -50,6 +52,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     '/profile/settings',
     '/profile/settings/theme',
     '/profile/more',
+    '/profile/saved',
+    '/profile/archived',
     '/theme-settings',
     '/create-protest',
     '/know-your-rights',
@@ -106,6 +110,8 @@ function AuthenticatedRouter() {
         <Route path="/profile/settings" element={<ProfileSettingsPage />} />
         <Route path="/profile/settings/theme" element={<ProfileThemeSettingsPage />} />
         <Route path="/profile/more" element={<ProfileMorePage />} />
+        <Route path="/profile/saved" element={<SavedProtestsPage />} />
+        <Route path="/profile/archived" element={<ArchivedProtestsPage />} />
 
         {/* Other pages */}
         <Route path="/protest/:id" element={<ProtestDetail />} />

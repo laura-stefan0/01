@@ -73,6 +73,23 @@ export const whatsNew = pgTable("whats_new", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+// Saved Protests table for user bookmarks
+export const savedProtests = pgTable("saved_protests", {
+  id: serial("id").primaryKey(),
+  user_id: integer("user_id").notNull(),
+  protest_id: text("protest_id").notNull(), // UUID from Supabase
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+// Archived Protests table for user check-ins
+export const archivedProtests = pgTable("archived_protests", {
+  id: serial("id").primaryKey(),
+  user_id: integer("user_id").notNull(),
+  protest_id: text("protest_id").notNull(), // UUID from Supabase
+  checked_in_at: timestamp("checked_in_at", { withTimezone: true }).defaultNow(),
+  notes: text("notes"), // Optional notes about the experience
+});
+
 // Type exports for compatibility
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
@@ -84,3 +101,7 @@ export type Law = typeof laws.$inferSelect;
 export type InsertLaw = typeof laws.$inferInsert;
 export type WhatsNew = typeof whatsNew.$inferSelect;
 export type InsertWhatsNew = typeof whatsNew.$inferInsert;
+export type SavedProtest = typeof savedProtests.$inferSelect;
+export type InsertSavedProtest = typeof savedProtests.$inferInsert;
+export type ArchivedProtest = typeof archivedProtests.$inferSelect;
+export type InsertArchivedProtest = typeof archivedProtests.$inferInsert;
