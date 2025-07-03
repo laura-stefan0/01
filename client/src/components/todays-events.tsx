@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Clock, Users, CheckCircle } from "lucide-react";
+import { MapPin, Clock, Users, CheckCircle, CalendarDays } from "lucide-react";
 import { useTodaysEvents } from "@/hooks/use-protests";
 import { useUser } from "@/hooks/use-user";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -129,7 +129,20 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
   }
 
   if (!todaysEvents || todaysEvents.length === 0) {
-    return null; // Don't show section if no events today
+    return (
+      <section className="mb-6">
+        <h2 className="text-lg font-semibold text-dark-slate mb-3">Today's Events</h2>
+        <Card className="border border-gray-200 bg-white">
+          <CardContent className="p-4 text-center text-gray-500">
+            <div className="flex flex-col items-center gap-2">
+              <CalendarDays className="w-8 h-8 text-gray-400" />
+              <p>No saved events for today</p>
+              <p className="text-sm">Save events you're interested in to see them here on event day!</p>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+    );
   }
 
   return (
