@@ -1,6 +1,4 @@
-The code modifies the ArchivedProtestsPage component to use the app-background class for theming consistency.
-```
-```replit_final_file
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
