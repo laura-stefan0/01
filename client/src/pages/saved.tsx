@@ -14,7 +14,8 @@ export default function SavedPage() {
 
   if (savedProtests.length === 0) {
     return (
-    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="min-h-screen bg-gray-50">
+      <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       <div>
         {/* Page Header */}
         <section className="mb-6">
@@ -44,11 +45,13 @@ export default function SavedPage() {
         </div>
       </div>
     </div>
+    </div>
     );
   }
 
   return (
-    <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+    <div className="min-h-screen bg-gray-50">
+      <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       <div>
       {/* Page Header */}
       <section className="mb-6">
@@ -86,6 +89,7 @@ export default function SavedPage() {
           </Button>
         </div>
       </div>
+    </div>
     </div>
     </div>
   );

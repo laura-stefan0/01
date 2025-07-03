@@ -158,7 +158,7 @@ export default function ResourcesPage() {
           </button>
         </div>
       </section>
-    </div>
+      </div>
     </div>
   );
 }
