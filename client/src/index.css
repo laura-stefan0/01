@@ -302,7 +302,7 @@ body[style*="background-image"] .app-background {
   --movement-green: hsl(158, 89%, 40%); /* #059669 */
   --clean-white: hsl(210, 40%, 98%); /* #F8FAFC */
   --dark-slate: hsl(215, 25%, 27%); /* #1E293B */
-  
+
   /* New light theme specific colors */
   --inactive-icon: hsl(218, 11%, 65%); /* #94A3B8 - Inactive nav icons */
   --category-label-bg: hsl(347, 77%, 92%); /* #FECDD3 - Category label background */
@@ -331,7 +331,7 @@ body[style*="background-image"] .app-background {
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(343, 81%, 62%); /* #F43F5E - Focus ring */
   --radius: 0.5rem;
-  
+
   /* Inactive icons */
   --inactive-icon: hsl(217, 10%, 64%); /* #9CA3AF */
 }
@@ -422,7 +422,7 @@ body[style*="background-image"] .app-background {
   .dark [class*="border-"] {
     border-color: #2A2A2A !important;
   }
-  
+
   .dark .card {
     border: 1px solid #2A2A2A !important;
   }
@@ -539,7 +539,7 @@ body[style*="background-image"] .app-background {
   [data-radix-dialog-overlay] {
     z-index: 9998 !important;
   }
-  
+
   [data-radix-dialog-content] {
     z-index: 9999 !important;
   }
@@ -548,7 +548,7 @@ body[style*="background-image"] .app-background {
   .leaflet-container {
     z-index: 1;
   }
-  
+
   .leaflet-control-container {
     z-index: 800;
   }
@@ -560,7 +560,7 @@ body[style*="background-image"] .app-background {
   .dark .hover\\:bg-gray-100:hover {
     background-color: inherit !important;
   }
-  
+
   /* Disable card hover background changes */
   .card:hover,
   .dark .card:hover {
@@ -654,7 +654,7 @@ body[style*="background-image"] .app-background {
     box-shadow: none !important;
     border-color: inherit !important;
   }
-  
+
   /* Remove hover effects from ghost variant buttons specifically - override Tailwind classes */
   .dark .btn-ghost:hover,
   .dark button[class*="ghost"]:hover,
@@ -670,7 +670,7 @@ body[style*="background-image"] .app-background {
     opacity: 1 !important;
     box-shadow: none !important;
   }
-  
+
   /* Specifically target header buttons with ArrowLeft icons - override all hover states */
   .dark header button svg[class*="lucide-arrow-left"]:hover,
   .dark header button:has(svg[class*="lucide-arrow-left"]):hover,
@@ -679,7 +679,7 @@ body[style*="background-image"] .app-background {
     background-color: transparent !important;
     color: inherit !important;
   }
-  
+
   /* Override any remaining accent hover effects on buttons */
   .dark button:hover[class*="ghost"],
   button:hover[class*="ghost"] {
@@ -776,3 +776,13 @@ body[style*="background-image"] .app-background {
 .leaflet-control-attribution {
   display: none !important;
 }
+
+  /* Hide scrollbar for webkit browsers */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }

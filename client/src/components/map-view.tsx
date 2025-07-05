@@ -111,8 +111,8 @@ const createEventIcon = (eventType: string) => {
 
 // Icon creation function for cluster markers
 const createClusterIcon = (count: number) => {
-  const size = count < 10 ? 40 : count < 100 ? 50 : 60;
-  const fontSize = count < 10 ? 14 : count < 100 ? 16 : 18;
+  const size = count < 10 ? 32 : count < 100 ? 40 : 48;
+  const fontSize = count < 10 ? 12 : count < 100 ? 14 : 16;
   
   return L.divIcon({
     html: `<div style="background-color: #E11D48; color: white; width: ${size}px; height: ${size}px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: ${fontSize}px; font-weight: bold;">${count}</div>`,
@@ -980,7 +980,7 @@ export function MapView() {
             </SheetTitle>
           </SheetHeader>
 
-          <div className="h-full overflow-y-auto pb-6">
+          <div className="h-full overflow-y-auto pb-6 scrollbar-hide">
             {isLoading ? (
               <div className="space-y-3">
                 <Skeleton className="h-20 w-full" />
