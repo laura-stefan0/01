@@ -98,9 +98,9 @@ const createEventIcon = (eventType: string) => {
     'Talk': '🎤',
     'Other': '🧭'
   };
-  
+
   const emoji = iconMap[eventType as keyof typeof iconMap] || '📣';
-  
+
   return L.divIcon({
     html: `<div style="background-color: white; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #E11D48; box-shadow: 0 2px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px;">${emoji}</div>`,
     className: 'custom-marker',
@@ -113,7 +113,7 @@ const createEventIcon = (eventType: string) => {
 const createClusterIcon = (count: number) => {
   const size = count < 10 ? 32 : count < 100 ? 40 : 48;
   const fontSize = count < 10 ? 12 : count < 100 ? 14 : 16;
-  
+
   return L.divIcon({
     html: `<div style="background-color: #E11D48; color: white; width: ${size}px; height: ${size}px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: ${fontSize}px; font-weight: bold;">${count}</div>`,
     className: 'custom-cluster-marker',
@@ -129,7 +129,7 @@ export function MapView() {
   const [searchLocation, setSearchLocation] = useState<[number, number] | null>(null);
   const [searchLocationName, setSearchLocationName] = useState<string>("");
   const [isLocating, setIsLocating] = useState(false);
-  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [isGeocoding] = useState(false);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const navigate = useNavigate();
@@ -181,7 +181,7 @@ export function MapView() {
     };
 
     loadAppliedFilters();
-    
+
     // Listen for storage changes (when filters are applied)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'corteo_map_filters') {
@@ -207,7 +207,7 @@ export function MapView() {
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('focus', handleFocus);
     window.addEventListener('corteo-filters-applied', handleFiltersApplied);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', handleFocus);
@@ -357,7 +357,7 @@ export function MapView() {
           const eventDate = new Date(protest.date);
           const today = new Date();
           today.setHours(0, 0, 0, 0);
-          
+
           switch (appliedFilters.date) {
             case "today":
               const todayEnd = new Date(today);
@@ -407,37 +407,37 @@ export function MapView() {
     const currentProtest = protests[currentIndex];
     const lat = parseFloat(currentProtest.latitude!);
     const lng = parseFloat(currentProtest.longitude!);
-    
+
     // Find other protests at the same location (within 0.001 degrees ~ 100m)
     const sameLocationProtests = protests
       .map((protest, index) => ({ protest, index }))
       .filter(({ protest, index }) => {
         if (index >= currentIndex) return false; // Only count previous protests
         if (!protest.latitude || !protest.longitude) return false;
-        
+
         const protestLat = parseFloat(protest.latitude);
         const protestLng = parseFloat(protest.longitude);
-        
+
         const latDiff = Math.abs(lat - protestLat);
         const lngDiff = Math.abs(lng - protestLng);
-        
+
         return latDiff < 0.001 && lngDiff < 0.001;
       });
-    
+
     // Calculate offset based on number of protests already placed at this location
     const offsetCount = sameLocationProtests.length;
-    
+
     if (offsetCount === 0) {
       return [lat, lng]; // No offset needed
     }
-    
+
     // Create circular offset pattern
     const angle = (offsetCount * 60) * (Math.PI / 180); // 60 degrees apart
     const offsetDistance = 0.002; // ~200m offset
-    
+
     const offsetLat = lat + (offsetDistance * Math.cos(angle));
     const offsetLng = lng + (offsetDistance * Math.sin(angle));
-    
+
     return [offsetLat, offsetLng];
   };
 
@@ -485,35 +485,35 @@ export function MapView() {
 
     events.forEach((event, index) => {
       if (processed.has(index) || !event.latitude || !event.longitude) return;
-      
+
       const lat = parseFloat(event.latitude);
       const lng = parseFloat(event.longitude);
-      
+
       // Find all nearby events
       const cluster = [event];
       processed.add(index);
-      
+
       events.forEach((otherEvent, otherIndex) => {
         if (processed.has(otherIndex) || !otherEvent.latitude || !otherEvent.longitude) return;
-        
+
         const otherLat = parseFloat(otherEvent.latitude);
         const otherLng = parseFloat(otherEvent.longitude);
-        
+
         // Calculate distance between events
         const distance = Math.sqrt(
           Math.pow(lat - otherLat, 2) + Math.pow(lng - otherLng, 2)
         );
-        
+
         if (distance <= clusterDistance) {
           cluster.push(otherEvent);
           processed.add(otherIndex);
         }
       });
-      
+
       // Calculate cluster center
       const centerLat = cluster.reduce((sum, e) => sum + parseFloat(e.latitude), 0) / cluster.length;
       const centerLng = cluster.reduce((sum, e) => sum + parseFloat(e.longitude), 0) / cluster.length;
-      
+
       clusters.push({
         id: `cluster-${clusters.length}`,
         events: cluster,
@@ -523,7 +523,7 @@ export function MapView() {
         isCluster: cluster.length > 1
       });
     });
-    
+
     return clusters;
   };
 
