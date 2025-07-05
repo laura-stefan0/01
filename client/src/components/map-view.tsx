@@ -65,6 +65,30 @@ function MapBoundsUpdater({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
   return null;
 }
 
+// Component to track map zoom for clustering
+function MapZoomUpdater({ onZoomChange }: { onZoomChange: (zoom: number) => void }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const updateZoom = () => {
+      const zoom = map.getZoom();
+      onZoomChange(zoom);
+    };
+
+    // Update zoom initially
+    updateZoom();
+
+    // Update zoom when map zooms
+    map.on('zoomend', updateZoom);
+
+    return () => {
+      map.off('zoomend', updateZoom);
+    };
+  }, [map, onZoomChange]);
+
+  return null;
+}
+
 // Custom marker icons based on event type
 const createEventIcon = (eventType: string) => {
   const iconMap = {
@@ -82,6 +106,19 @@ const createEventIcon = (eventType: string) => {
     className: 'custom-marker',
     iconSize: [32, 32],
     iconAnchor: [16, 16]
+  });
+};
+
+// Icon creation function for cluster markers
+const createClusterIcon = (count: number) => {
+  const size = count < 10 ? 40 : count < 100 ? 50 : 60;
+  const fontSize = count < 10 ? 14 : count < 100 ? 16 : 18;
+  
+  return L.divIcon({
+    html: `<div style="background-color: #E11D48; color: white; width: ${size}px; height: ${size}px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: ${fontSize}px; font-weight: bold;">${count}</div>`,
+    className: 'custom-cluster-marker',
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2]
   });
 };
 
@@ -430,15 +467,78 @@ export function MapView() {
     console.log(`🔍 Search results: ${filteredProtests.length} protests found for "${searchQuery}"`);
   }
 
-  // Filter protests that are visible in current map bounds
-  const protestsInView = mapBounds 
-    ? filteredProtests.filter(protest => {
-        if (!protest.latitude || !protest.longitude) return false;
-        const lat = parseFloat(protest.latitude);
-        const lng = parseFloat(protest.longitude);
-        return mapBounds.contains([lat, lng]);
+  // Clustering logic based on zoom level
+  const getClusterDistance = (zoom: number) => {
+    // Distance threshold for clustering (in degrees)
+    // Higher zoom = smaller distance = more separated clusters
+    if (zoom >= 16) return 0.001;  // Very close zoom - show individual events
+    if (zoom >= 14) return 0.003;  // Close zoom - small clusters
+    if (zoom >= 12) return 0.008;  // Medium zoom - medium clusters  
+    if (zoom >= 10) return 0.02;   // Far zoom - large clusters
+    return 0.05;                   // Very far zoom - very large clusters
+  };
+
+  const clusterEvents = (events: any[], zoom: number) => {
+    const clusterDistance = getClusterDistance(zoom);
+    const clusters: any[] = [];
+    const processed = new Set();
+
+    events.forEach((event, index) => {
+      if (processed.has(index) || !event.latitude || !event.longitude) return;
+      
+      const lat = parseFloat(event.latitude);
+      const lng = parseFloat(event.longitude);
+      
+      // Find all nearby events
+      const cluster = [event];
+      processed.add(index);
+      
+      events.forEach((otherEvent, otherIndex) => {
+        if (processed.has(otherIndex) || !otherEvent.latitude || !otherEvent.longitude) return;
+        
+        const otherLat = parseFloat(otherEvent.latitude);
+        const otherLng = parseFloat(otherEvent.longitude);
+        
+        // Calculate distance between events
+        const distance = Math.sqrt(
+          Math.pow(lat - otherLat, 2) + Math.pow(lng - otherLng, 2)
+        );
+        
+        if (distance <= clusterDistance) {
+          cluster.push(otherEvent);
+          processed.add(otherIndex);
+        }
+      });
+      
+      // Calculate cluster center
+      const centerLat = cluster.reduce((sum, e) => sum + parseFloat(e.latitude), 0) / cluster.length;
+      const centerLng = cluster.reduce((sum, e) => sum + parseFloat(e.longitude), 0) / cluster.length;
+      
+      clusters.push({
+        id: `cluster-${clusters.length}`,
+        events: cluster,
+        count: cluster.length,
+        latitude: centerLat,
+        longitude: centerLng,
+        isCluster: cluster.length > 1
+      });
+    });
+    
+    return clusters;
+  };
+
+  // Get current zoom level for clustering
+  const [currentZoom, setCurrentZoom] = useState(mapZoom);
+
+  // Create clusters based on current zoom level  
+  const eventClusters = clusterEvents(filteredProtests, currentZoom);
+
+  // Filter clusters that are visible in current map bounds
+  const clustersInView = mapBounds 
+    ? eventClusters.filter(cluster => {
+        return mapBounds.contains([cluster.latitude, cluster.longitude]);
       })
-    : filteredProtests;
+    : eventClusters;
 
   return (
     <div className="relative h-full w-full">
@@ -463,43 +563,82 @@ export function MapView() {
             >
               <MapCenterUpdater center={userLocation} zoom={15} />
               <MapBoundsUpdater onBoundsChange={setMapBounds} />
+              <MapZoomUpdater onZoomChange={setCurrentZoom} />
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              {filteredProtests
-                .filter(protest => protest.latitude && protest.longitude)
-                .map((protest, index) => {
-                  const offsetPosition = getOffsetPosition(filteredProtests.filter(p => p.latitude && p.longitude), index);
+              {eventClusters.map((cluster, index) => {
+                if (cluster.isCluster) {
+                  // Render cluster marker
                   return (
                     <Marker
-                      key={protest.id}
-                      position={offsetPosition}
-                      icon={createEventIcon(protest.event_type || 'Protest')}
+                      key={cluster.id}
+                      position={[cluster.latitude, cluster.longitude]}
+                      icon={createClusterIcon(cluster.count)}
                     >
-                    <Popup>
-                      <div className="p-2 max-w-xs">
-                        <h3 className="font-semibold text-sm mb-1">{protest.title}</h3>
-                        <p className="text-xs text-gray-600 mb-2">{protest.city}</p>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-500">{formatDateTime(protest.date, protest.time)}</span>
-                          <Badge className="text-xs px-2 py-1 bg-[#FECDD3] text-[#E11D48]">
-                            {protest.category?.toUpperCase()}
-                          </Badge>
+                      <Popup>
+                        <div className="p-2 max-w-xs">
+                          <h3 className="font-semibold text-sm mb-3">{cluster.count} Events in this area</h3>
+                          <div className="space-y-2 max-h-48 overflow-y-auto">
+                            {cluster.events.slice(0, 5).map((event: any) => (
+                              <div key={event.id} className="p-2 border rounded bg-gray-50 cursor-pointer hover:bg-gray-100"
+                                   onClick={() => navigate(`/protest/${event.id}`)}>
+                                <p className="font-medium text-xs">{event.title}</p>
+                                <p className="text-xs text-gray-600">{event.city}</p>
+                                <Badge className="text-xs px-1 py-0.5 bg-[#FECDD3] text-[#E11D48] mt-1">
+                                  {event.category?.toUpperCase()}
+                                </Badge>
+                              </div>
+                            ))}
+                            {cluster.events.length > 5 && (
+                              <p className="text-xs text-gray-500 text-center pt-2">
+                                +{cluster.events.length - 5} more events
+                              </p>
+                            )}
+                          </div>
+                          <div className="mt-3 pt-2 border-t">
+                            <p className="text-xs text-gray-500 text-center">
+                              Zoom in to see individual events
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs text-gray-700 mt-2 line-clamp-2">{protest.description}</p>
-                        <Button 
-                          size="sm" 
-                          className="w-full mt-2 bg-[#E11D48] hover:bg-[#E11D48]/90"
-                          onClick={() => navigate(`/protest/${protest.id}`)}
-                        >
-                          View Details
-                        </Button>
-                      </div>
-                    </Popup>
+                      </Popup>
                     </Marker>
                   );
-                })}
+                } else {
+                  // Render individual event marker
+                  const event = cluster.events[0];
+                  return (
+                    <Marker
+                      key={event.id}
+                      position={[cluster.latitude, cluster.longitude]}
+                      icon={createEventIcon(event.event_type || 'Protest')}
+                    >
+                      <Popup>
+                        <div className="p-2 max-w-xs">
+                          <h3 className="font-semibold text-sm mb-1">{event.title}</h3>
+                          <p className="text-xs text-gray-600 mb-2">{event.city}</p>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-gray-500">{formatDateTime(event.date, event.time)}</span>
+                            <Badge className="text-xs px-2 py-1 bg-[#FECDD3] text-[#E11D48]">
+                              {event.category?.toUpperCase()}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-gray-700 mt-2 line-clamp-2">{event.description}</p>
+                          <Button 
+                            size="sm" 
+                            className="w-full mt-2 bg-[#E11D48] hover:bg-[#E11D48]/90"
+                            onClick={() => navigate(`/protest/${event.id}`)}
+                          >
+                            View Details
+                          </Button>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                }
+              })}
 
               {/* User Location Marker */}
               {userLocation && (
@@ -827,7 +966,7 @@ export function MapView() {
             >
               <List className="w-4 h-4" />
               <span className="text-sm font-medium">
-                {protestsInView.length} protest{protestsInView.length !== 1 ? 's' : ''} in area
+                {clustersInView.reduce((total, cluster) => total + cluster.count, 0)} protest{clustersInView.reduce((total, cluster) => total + cluster.count, 0) !== 1 ? 's' : ''} in area
               </span>
               <ChevronUp className="w-4 h-4" />
             </Button>
@@ -837,7 +976,7 @@ export function MapView() {
         <SheetContent side="bottom" className="h-[70vh] rounded-t-lg z-[9999]">
           <SheetHeader className="pb-4">
             <SheetTitle className="text-left">
-              Protests in this area ({protestsInView.length})
+              Protests in this area ({clustersInView.reduce((total, cluster) => total + cluster.count, 0)})
             </SheetTitle>
           </SheetHeader>
 
@@ -848,9 +987,9 @@ export function MapView() {
                 <Skeleton className="h-20 w-full" />
                 <Skeleton className="h-20 w-full" />
               </div>
-            ) : protestsInView.length > 0 ? (
+            ) : clustersInView.length > 0 ? (
               <div className="space-y-3">
-                {protestsInView.map((protest, index) => (
+                {clustersInView.flatMap(cluster => cluster.events).map((protest, index) => (
                   <ProtestCard 
                     key={`bottom-sheet-${protest.id}-${index}`} 
                     protest={protest} 
