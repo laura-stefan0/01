@@ -473,7 +473,7 @@ export default function HomePage() {
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 mb-4">
           <Button
             variant="outline"
             size="sm"
@@ -502,6 +502,9 @@ export default function HomePage() {
             Saved
           </Button>
         </div>
+
+        {/* Today's Events Check-in */}
+        <TodaysEvents userCoordinates={referenceCoordinates} />
       </section>
 
       {/* News Section */}
@@ -591,8 +594,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Today's Events Section */}
-      <TodaysEvents userCoordinates={referenceCoordinates} />
+      
 
       {/* Featured Section */}
       <section className="mb-6">
