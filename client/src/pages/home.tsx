@@ -419,105 +419,115 @@ export default function HomePage() {
     <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Welcome Section */}
-      <section className="mb-8">
-        {/* Main Welcome Card */}
-        <div className="bg-gradient-to-br from-[#e11d48] via-[#dc2626] to-[#be185d] rounded-2xl p-6 shadow-xl mb-4">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-white mb-2">
-                {isAuthenticated && user?.username 
-                  ? `Welcome back, ${user.username}` 
-                  : 'Welcome back'
-                }
-              </h1>
-              
-              {/* Location */}
+      <section className="mb-6 bg-gradient-to-br from-[#e11d48] via-[#dc2626] to-[#be185d] rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+        {/* Header Row */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-white mb-3 truncate">
+              {isAuthenticated && user?.username 
+                ? `Welcome back, ${user.username}` 
+                : 'Welcome back'
+              }
+            </h1>
+            
+            {/* Location Display */}
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-4 h-4 text-white" />
+              </div>
               <LocationSelector
                 currentLocation={displayLocation}
                 selectedCountry={selectedCountry}
                 onLocationSelect={handleLocationSelect}
                 onCountryChange={handleCountryChange}
               >
-                <button className="flex items-center gap-2 hover:bg-white/10 rounded-lg px-3 py-2 transition-all duration-200 text-white">
-                  <MapPin className="w-4 h-4 text-white/80" />
-                  <div className="text-left">
-                    <div className="text-sm font-medium">
+                <button className="flex items-center gap-2 hover:bg-white/10 rounded-lg px-3 py-2 transition-all duration-200 text-white min-w-0">
+                  <div className="text-left min-w-0">
+                    <div className="text-sm font-medium truncate">
                       {isLoadingLocation ? 'Getting location...' : city}
                     </div>
                     <div className="text-xs text-white/70">
                       {selectedCountry === 'it' ? 'Italy' : selectedCountry === 'us' ? 'United States' : 'United Kingdom'}
                     </div>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-white/60" />
+                  <ChevronDown className="w-4 h-4 text-white/80 flex-shrink-0" />
                 </button>
               </LocationSelector>
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleRefresh}
-                disabled={isRefreshing || isLoadingLocation || showSuccess}
-                className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white border-0"
-                aria-label="Refresh content"
-              >
-                {showSuccess ? (
-                  <Check className="w-4 h-4 text-green-300" />
-                ) : (
-                  <RefreshCw className={`w-4 h-4 ${
-                    (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
-                  }`} />
-                )}
-              </Button>
-
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/notifications')}
-                className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white border-0"
-                aria-label="View notifications"
-              >
-                <Bell className="w-4 h-4" />
-              </Button>
-            </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-3 gap-3">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 ml-3">
             <Button
               variant="ghost"
-              onClick={() => navigate('/filter')}
-              className="flex-col gap-2 p-4 h-20 bg-white/15 hover:bg-white/25 text-white border-0 rounded-xl"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing || isLoadingLocation || showSuccess}
+              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-0 transition-all duration-200"
+              aria-label="Refresh content"
             >
-              <Search className="w-5 h-5" />
-              <span className="text-xs font-medium">Explore</span>
+              {showSuccess ? (
+                <Check className="w-5 h-5 text-green-300" />
+              ) : (
+                <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
+                  (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
+                }`} />
+              )}
             </Button>
-            
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/discover')}
-              className="flex-col gap-2 p-4 h-20 bg-white/15 hover:bg-white/25 text-white border-0 rounded-xl"
+
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/notifications')}
+              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-0 transition-all duration-200"
+              aria-label="View notifications"
             >
-              <MapPin className="w-5 h-5" />
-              <span className="text-xs font-medium">Map</span>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/saved')}
-              className="flex-col gap-2 p-4 h-20 bg-white/15 hover:bg-white/25 text-white border-0 rounded-xl"
-            >
-              <BookOpen className="w-5 h-5" />
-              <span className="text-xs font-medium">Saved</span>
+              <Bell className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
-        {/* Today's Events Card */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-100">
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/filter')}
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
+            aria-label="Explore events"
+          >
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+              <Search className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-medium">Explore</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/discover')}
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
+            aria-label="View map"
+          >
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-medium">Map</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/saved')}
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
+            aria-label="View saved events"
+          >
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-medium">Saved</span>
+          </Button>
+        </div>
+
+        {/* Today's Events */}
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
           <TodaysEvents userCoordinates={referenceCoordinates} />
         </div>
       </section>
