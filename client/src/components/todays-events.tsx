@@ -152,9 +152,9 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
           </Badge>
         </div>
       </div>
-        <div className="space-y-3">
-          {todaysEvents.map((event) => (
-            <Card key={event.id} className="border-0 bg-white">
+      <div className="space-y-3">
+        {todaysEvents.map((event) => (
+          <Card key={event.id} className="border-0 bg-white">
               <CardContent className="p-4">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex-1">
@@ -214,7 +214,6 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
               </CardContent>
             </Card>
           ))}
-        </div>
       </div>
     </div>
   );
