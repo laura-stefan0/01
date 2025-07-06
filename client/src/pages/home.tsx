@@ -420,14 +420,31 @@ export default function HomePage() {
     <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
         
-        {/* Hero Section with Welcome Message */}
-        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-activist-blue via-purple-600 to-pink-600 p-6 text-white">
+        {/* Header Section with Actions */}
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500 via-blue-600 to-purple-600 p-6 text-white">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-2xl font-bold mb-1">Welcome back!</h1>
-                <p className="text-white/90 text-sm">Ready to make a difference today?</p>
+                <h1 className="text-2xl font-bold mb-1">Corteo</h1>
+                <div className="flex items-center gap-2 text-white/90">
+                  <MapPin className="w-4 h-4" />
+                  <LocationSelector
+                    currentLocation={displayLocation}
+                    selectedCountry={selectedCountry}
+                    onLocationSelect={handleLocationSelect}
+                    onCountryChange={handleCountryChange}
+                  >
+                    <button className="flex items-center gap-1 hover:text-white transition-colors text-sm">
+                      {isLoadingLocation ? (
+                        <span>Getting location...</span>
+                      ) : (
+                        <span>{city}</span>
+                      )}
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                  </LocationSelector>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -456,67 +473,207 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Location Display */}
-            <div className="flex items-center gap-2 text-white/90">
-              <MapPin className="w-4 h-4" />
-              <LocationSelector
-                currentLocation={displayLocation}
-                selectedCountry={selectedCountry}
-                onLocationSelect={handleLocationSelect}
-                onCountryChange={handleCountryChange}
+            {/* Quick Actions in Header */}
+            <div className="grid grid-cols-3 gap-3">
+              <Button
+                variant="ghost"
+                className="h-16 flex flex-col items-center justify-center gap-1 text-white hover:bg-white/10 border border-white/20"
+                onClick={() => navigate('/discover')}
               >
-                <button className="flex items-center gap-1 hover:text-white transition-colors text-sm">
-                  {isLoadingLocation ? (
-                    <span>Getting location...</span>
-                  ) : (
-                    <span>{city}</span>
-                  )}
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-              </LocationSelector>
+                <Compass className="w-5 h-5" />
+                <span className="text-xs font-medium">Explore</span>
+              </Button>
+              
+              <Button
+                variant="ghost"
+                className="h-16 flex flex-col items-center justify-center gap-1 text-white hover:bg-white/10 border border-white/20"
+                onClick={() => navigate('/filter')}
+              >
+                <Filter className="w-5 h-5" />
+                <span className="text-xs font-medium">Filter</span>
+              </Button>
+              
+              <Button
+                variant="ghost"
+                className="h-16 flex flex-col items-center justify-center gap-1 text-white hover:bg-white/10 border border-white/20"
+                onClick={() => navigate('/saved')}
+              >
+                <Heart className="w-5 h-5" />
+                <span className="text-xs font-medium">Saved</span>
+              </Button>
             </div>
           </div>
         </section>
 
-        {/* Quick Actions */}
+        {/* Latest News Section */}
         <section className="mb-6">
-          <div className="grid grid-cols-4 gap-3">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xl font-bold text-dark-slate">Latest News</h2>
+          </div>
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {whatsNewLoading ? (
+              <>
+                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
+              </>
+            ) : whatsNewData.length > 0 ? (
+              whatsNewData.map((news) => {
+                const handleCardClick = () => {
+                  if (news.cta_url) {
+                    if (news.cta_url.startsWith('http://') || news.cta_url.startsWith('https://')) {
+                      window.open(news.cta_url, '_blank');
+                    } else if (news.cta_url.startsWith('/')) {
+                      navigate(news.cta_url);
+                    } else {
+                      navigate(`/${news.cta_url}`);
+                    }
+                  }
+                };
+
+                return (
+                  <div 
+                    key={news.id} 
+                    className={`relative w-56 h-36 flex-shrink-0 rounded-xl overflow-hidden border border-gray-200 shadow-md ${
+                      news.cta_url ? 'cursor-pointer hover:shadow-lg transform hover:scale-105 transition-all duration-200' : ''
+                    }`}
+                    onClick={handleCardClick}
+                    role={news.cta_url ? 'button' : undefined}
+                    tabIndex={news.cta_url ? 0 : undefined}
+                  >
+                    {news.image_url ? (
+                      <>
+                        <img 
+                          src={news.image_url} 
+                          alt={news.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 right-0 p-3">
+                          <h3 className="text-white font-semibold text-sm leading-tight">{news.title}</h3>
+                          {news.cta_text && (
+                            <p className="text-white/80 text-xs mt-1">{news.cta_text}</p>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-activist-blue to-activist-blue/80 flex flex-col justify-center items-center p-4 text-white">
+                        <h3 className="text-sm font-semibold text-center leading-tight mb-2">{news.title}</h3>
+                        {news.cta_text && (
+                          <p className="text-xs opacity-90 text-center">{news.cta_text}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="w-56 h-36 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                <p className="text-gray-500 text-sm">No news available</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Featured Section */}
+        <section className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Star className="w-5 h-5 text-yellow-500" />
+            <h2 className="text-xl font-bold text-dark-slate">Featured Events</h2>
+          </div>
+
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {featuredLoading ? (
+              <>
+                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
+              </>
+            ) : featuredProtests.length > 0 ? (
+              featuredProtests.map((protest, index) => (
+                <div key={`featured-${protest.id}-${index}`} className="w-5/6 flex-shrink-0">
+                  <ProtestCard protest={protest} variant="featured" />
+                </div>
+              ))
+            ) : (
+              <div className="w-5/6 h-64 flex-shrink-0 rounded-xl bg-gray-100 flex items-center justify-center">
+                <p className="text-gray-500">No featured events</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Nearby Events */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-green-600" />
+              <h2 className="text-xl font-bold text-dark-slate">Near You</h2>
+            </div>
             <Button
-              variant="outline"
-              className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-activist-blue hover:bg-activist-blue/5"
+              variant="ghost"
+              size="sm"
               onClick={() => navigate('/discover')}
+              className="text-activist-blue hover:text-activist-blue/80"
             >
-              <Compass className="w-6 h-6 text-activist-blue" />
-              <span className="text-xs font-medium">Explore</span>
+              View map <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
-            
-            <Button
-              variant="outline"
-              className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-purple-500 hover:bg-purple-50"
-              onClick={() => navigate('/filter')}
-            >
-              <Filter className="w-6 h-6 text-purple-600" />
-              <span className="text-xs font-medium">Filter</span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-green-500 hover:bg-green-50"
-              onClick={() => navigate('/saved')}
-            >
-              <Heart className="w-6 h-6 text-green-600" />
-              <span className="text-xs font-medium">Saved</span>
-            </Button>
-            
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
+          </div>
+
+          <div className="space-y-3">
+            {nearbyLoading ? (
+              <>
+                <Skeleton className="h-24 w-full rounded-lg" />
+                <Skeleton className="h-24 w-full rounded-lg" />
+                <Skeleton className="h-24 w-full rounded-lg" />
+              </>
+            ) : nearbyProtests.length > 0 ? (
+              sortProtestsByDistance(nearbyProtests).slice(0, 4).map((protest, index) => (
+                <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} variant="compact" />
+              ))
+            ) : (
+              <Card className="p-6 text-center border-dashed border-2">
+                <MapPin className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-500 mb-2">No events found near you</p>
                 <Button
                   variant="outline"
-                  className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-red-500 hover:bg-red-50"
+                  size="sm"
+                  onClick={() => navigate('/discover')}
+                  className="text-activist-blue hover:text-activist-blue/80"
                 >
-                  <Plus className="w-6 h-6 text-red-600" />
-                  <span className="text-xs font-medium">Create</span>
+                  Explore all events
                 </Button>
+              </Card>
+            )}
+          </div>
+        </section>
+
+        {/* Get Involved Section */}
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Zap className="w-5 h-5 text-yellow-500" />
+            <h2 className="text-xl font-bold text-dark-slate">Get Involved</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            {/* Create Event */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Card className="cursor-pointer border-0 relative overflow-hidden hover:shadow-lg transition-shadow" style={{
+                  background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
+                }}>
+                  <CardContent className="p-4 relative z-10">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Plus className="w-8 h-8 text-white" />
+                        <div>
+                          <h3 className="font-bold text-white">Create Event</h3>
+                          <p className="text-white/80 text-sm">Add a new protest or action</p>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </div>
+                  </CardContent>
+                </Card>
               </DialogTrigger>
               <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
@@ -666,191 +823,7 @@ export default function HomePage() {
                 </form>
               </DialogContent>
             </Dialog>
-          </div>
-        </section>
 
-        {/* What's New Section - Enhanced */}
-        <section className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xl font-bold text-dark-slate">Latest News</h2>
-            <Badge variant="secondary" className="bg-activist-blue/10 text-activist-blue">
-              {whatsNewData.length} updates
-            </Badge>
-          </div>
-          <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {whatsNewLoading ? (
-              <>
-                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
-                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
-                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
-              </>
-            ) : whatsNewData.length > 0 ? (
-              whatsNewData.map((news) => {
-                const handleCardClick = () => {
-                  if (news.cta_url) {
-                    if (news.cta_url.startsWith('http://') || news.cta_url.startsWith('https://')) {
-                      window.open(news.cta_url, '_blank');
-                    } else if (news.cta_url.startsWith('/')) {
-                      navigate(news.cta_url);
-                    } else {
-                      navigate(`/${news.cta_url}`);
-                    }
-                  }
-                };
-
-                return (
-                  <div 
-                    key={news.id} 
-                    className={`relative w-56 h-36 flex-shrink-0 rounded-xl overflow-hidden border border-gray-200 shadow-md ${
-                      news.cta_url ? 'cursor-pointer hover:shadow-lg transform hover:scale-105 transition-all duration-200' : ''
-                    }`}
-                    onClick={handleCardClick}
-                    role={news.cta_url ? 'button' : undefined}
-                    tabIndex={news.cta_url ? 0 : undefined}
-                  >
-                    {news.image_url ? (
-                      <>
-                        <img 
-                          src={news.image_url} 
-                          alt={news.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 right-0 p-3">
-                          <h3 className="text-white font-semibold text-sm leading-tight">{news.title}</h3>
-                          {news.cta_text && (
-                            <p className="text-white/80 text-xs mt-1">{news.cta_text}</p>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-activist-blue to-activist-blue/80 flex flex-col justify-center items-center p-4 text-white">
-                        <h3 className="text-sm font-semibold text-center leading-tight mb-2">{news.title}</h3>
-                        {news.cta_text && (
-                          <p className="text-xs opacity-90 text-center">{news.cta_text}</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })
-            ) : (
-              <div className="w-56 h-36 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
-                <p className="text-gray-500 text-sm">No news available</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Today's Events Section - Enhanced */}
-        <section className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-activist-blue" />
-              <h2 className="text-xl font-bold text-dark-slate">Happening Today</h2>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/filter?filter=today')}
-              className="text-activist-blue hover:text-activist-blue/80"
-            >
-              View all <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-          <TodaysEvents userCoordinates={referenceCoordinates} />
-        </section>
-
-        {/* Featured Section - Enhanced */}
-        <section className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-yellow-500" />
-              <h2 className="text-xl font-bold text-dark-slate">Featured Events</h2>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/filter?filter=featured')}
-              className="text-activist-blue hover:text-activist-blue/80"
-            >
-              View all <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-
-          <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {featuredLoading ? (
-              <>
-                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
-                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
-                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
-              </>
-            ) : featuredProtests.length > 0 ? (
-              featuredProtests.map((protest, index) => (
-                <div key={`featured-${protest.id}-${index}`} className="w-5/6 flex-shrink-0">
-                  <ProtestCard protest={protest} variant="featured" />
-                </div>
-              ))
-            ) : (
-              <div className="w-5/6 h-64 flex-shrink-0 rounded-xl bg-gray-100 flex items-center justify-center">
-                <p className="text-gray-500">No featured events</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Nearby Events - Enhanced */}
-        <section className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-green-600" />
-              <h2 className="text-xl font-bold text-dark-slate">Near You</h2>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/discover')}
-              className="text-activist-blue hover:text-activist-blue/80"
-            >
-              Map view <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-
-          <div className="space-y-3">
-            {nearbyLoading ? (
-              <>
-                <Skeleton className="h-24 w-full rounded-lg" />
-                <Skeleton className="h-24 w-full rounded-lg" />
-                <Skeleton className="h-24 w-full rounded-lg" />
-              </>
-            ) : nearbyProtests.length > 0 ? (
-              sortProtestsByDistance(nearbyProtests).slice(0, 4).map((protest, index) => (
-                <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} variant="compact" />
-              ))
-            ) : (
-              <Card className="p-6 text-center border-dashed border-2">
-                <MapPin className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-500 mb-2">No events found near you</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/discover')}
-                  className="text-activist-blue hover:text-activist-blue/80"
-                >
-                  Explore all events
-                </Button>
-              </Card>
-            )}
-          </div>
-        </section>
-
-        {/* Get Involved Section - Enhanced */}
-        <section className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Zap className="w-5 h-5 text-yellow-500" />
-            <h2 className="text-xl font-bold text-dark-slate">Get Involved</h2>
-          </div>
-          <div className="grid grid-cols-1 gap-3">
             {/* Share your feedback */}
             <Dialog>
               <DialogTrigger asChild>
@@ -931,24 +904,6 @@ export default function HomePage() {
                 </form>
               </DialogContent>
             </Dialog>
-
-            {/* Support the movement */}
-            <Card className="cursor-pointer border-0 relative overflow-hidden hover:shadow-lg transition-shadow" style={{
-              background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
-            }}>
-              <CardContent className="p-4 relative z-10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Heart className="w-8 h-8 text-white" />
-                    <div>
-                      <h3 className="font-bold text-white">Support the movement</h3>
-                      <p className="text-white/80 text-sm">Make activism accessible to all</p>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-white" />
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </section>
       </div>
