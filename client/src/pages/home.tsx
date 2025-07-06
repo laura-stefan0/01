@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, MessageCircle, Sparkles, Star, Zap, ChevronDown, ChevronRight, RefreshCw, Calendar, Check, TrendingUp } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, MessageCircle, Sparkles, Star, Zap, ChevronDown, RefreshCw, Calendar, Check, TrendingUp } from "lucide-react";
 import { getCachedUserLocation, getUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -652,26 +652,25 @@ export default function HomePage() {
       </section>
 
       {/* Get Involved Section */}
-      <section className="mb-8">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Get Involved</h2>
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <Users className="w-5 h-5 text-green-600" />
+          <h2 className="text-lg font-semibold text-dark-slate">Get Involved</h2>
+        </div>
         <div className="space-y-3">
           {/* Add an event */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <div className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                      <TrendingUp className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 text-base">Add an event</h3>
-                      <p className="text-gray-500 text-sm mt-0.5">Share activism events with the community</p>
-                    </div>
+              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%)'
+              }}>
+                <CardContent className="p-4 text-center relative z-10">
+                  <div className="flex flex-col items-center space-y-2">
+                    <TrendingUp className="w-8 h-8 text-white" />
+                    <h3 className="font-bold text-base text-white drop-shadow-lg">Add an event</h3>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </DialogTrigger>
             <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
@@ -825,20 +824,16 @@ export default function HomePage() {
           {/* Share your feedback */}
           <Dialog>
             <DialogTrigger asChild>
-              <div className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 bg-rose-50 rounded-xl flex items-center justify-center group-hover:bg-rose-100 transition-colors">
-                      <MessageCircle className="w-5 h-5 text-rose-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 text-base">Share your feedback</h3>
-                      <p className="text-gray-500 text-sm mt-0.5">Help us improve the platform for everyone</p>
-                    </div>
+              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+                background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
+              }}>
+                <CardContent className="p-4 text-center relative z-10">
+                  <div className="flex flex-col items-center space-y-2">
+                    <MessageCircle className="w-8 h-8 text-white" />
+                    <h3 className="font-bold text-base text-white drop-shadow-lg">Share your feedback</h3>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
@@ -906,21 +901,19 @@ export default function HomePage() {
             </DialogContent>
           </Dialog>
 
-          {/* Make a Difference */}
-          <div className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                  <Target className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 text-base">Make a Difference</h3>
-                  <p className="text-gray-500 text-sm mt-0.5">Support movements fighting for change</p>
-                </div>
+          {/* Donate now */}
+          <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+            background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
+          }}>
+            <CardContent className="p-4 text-center relative z-10">
+              <div className="flex flex-col items-center space-y-2">
+                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M13.8 11.2L20.2 7c.6-.4.6-1.4 0-1.8L13.8.8c-.5-.3-1.1-.3-1.6 0L5.8 5.2c-.6.4-.6 1.4 0 1.8l6.4 4.2c.5.3 1.1.3 1.6 0zM10 16v5c0 .6.4 1 1 1h2c.6 0 1-.4 1-1v-5l-2-1.3L10 16zm8-2.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5zM4 13.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5z"/>
+                </svg>
+                <h3 className="font-bold text-base text-white drop-shadow-lg">Donate now</h3>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
       </div>
