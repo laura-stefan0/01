@@ -418,29 +418,29 @@ export default function HomePage() {
   return (
     <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
-      {/* Location Section with Notification Bell */}
+      {/* Welcome Section */}
       <section className="mb-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
-            <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold text-dark-slate">Welcome back</h1>
+            <div className="flex items-center gap-2 mt-1">
               <MapPin className="w-4 h-4 text-gray-600" />
-              <span className="text-sm text-gray-600">Your location</span>
+              <LocationSelector
+                currentLocation={displayLocation}
+                selectedCountry={selectedCountry}
+                onLocationSelect={handleLocationSelect}
+                onCountryChange={handleCountryChange}
+              >
+                <button className="flex items-center gap-1 hover:text-gray-800 transition-colors text-sm text-gray-600">
+                  {isLoadingLocation ? (
+                    <span>Getting location...</span>
+                  ) : (
+                    <span>{city}</span>
+                  )}
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </LocationSelector>
             </div>
-            <LocationSelector
-              currentLocation={displayLocation}
-              selectedCountry={selectedCountry}
-              onLocationSelect={handleLocationSelect}
-              onCountryChange={handleCountryChange}
-            >
-              <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
-                {isLoadingLocation ? (
-                  <span className="text-gray-500">Getting location...</span>
-                ) : (
-                  <span>{city}</span>
-                )}
-                <ChevronDown className="w-3 h-3" />
-              </button>
-            </LocationSelector>
           </div>
 
           <div className="flex items-center gap-2">
@@ -470,6 +470,37 @@ export default function HomePage() {
               <Bell className="w-5 h-5 text-gray-600" />
             </Button>
           </div>
+        </div>
+
+        {/* Quick Action Buttons */}
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/filter')}
+            className="flex-1 flex items-center gap-2 text-sm"
+          >
+            <Search className="w-4 h-4" />
+            Explore
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/discover')}
+            className="flex-1 flex items-center gap-2 text-sm"
+          >
+            <MapPin className="w-4 h-4" />
+            View map
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/saved')}
+            className="flex-1 flex items-center gap-2 text-sm"
+          >
+            <BookOpen className="w-4 h-4" />
+            Saved
+          </Button>
         </div>
       </section>
 
@@ -566,7 +597,10 @@ export default function HomePage() {
       {/* Featured Section */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-dark-slate">Featured</h2>
+          <div className="flex items-center gap-2">
+            <Star className="w-5 h-5 text-amber-500" />
+            <h2 className="text-lg font-semibold text-dark-slate">Featured</h2>
+          </div>
         </div>
 
         {/* Horizontal Scrolling Featured Cards - Wider */}
@@ -589,7 +623,10 @@ export default function HomePage() {
 
       {/* Nearby */}
       <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby</h2>
+        <div className="flex items-center gap-2 mb-3">
+          <MapPin className="w-5 h-5 text-blue-500" />
+          <h2 className="text-lg font-semibold text-dark-slate">Nearby</h2>
+        </div>
 
         {/* Vertical List of Protest Cards */}
         <div className="space-y-4">
@@ -613,7 +650,10 @@ export default function HomePage() {
 
       {/* Get Involved Section */}
       <section>
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Get Involved</h2>
+        <div className="flex items-center gap-2 mb-3">
+          <Users className="w-5 h-5 text-green-600" />
+          <h2 className="text-lg font-semibold text-dark-slate">Get Involved</h2>
+        </div>
         <div className="space-y-3">
           {/* Add an event */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
