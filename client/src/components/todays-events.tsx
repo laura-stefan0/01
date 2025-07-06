@@ -104,54 +104,54 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   if (isLoading) {
     return (
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Today's Events</h2>
-        <div className="space-y-3">
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
+      <div className="bg-[#e11d48] rounded-xl p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <CalendarDays className="w-5 h-5 text-white" />
+          <h2 className="text-lg font-semibold text-white">Are you going today?</h2>
         </div>
-      </section>
+        <div className="space-y-3">
+          <Skeleton className="h-24 w-full rounded-lg" />
+          <Skeleton className="h-24 w-full rounded-lg" />
+        </div>
+      </div>
     );
   }
 
   if (!todaysEvents || todaysEvents.length === 0) {
     return (
-      <section className="mb-6">
-        <div className="bg-[#e11d48] rounded-xl p-4">
-          <div className="flex items-center gap-3 mb-4">
-            <CalendarDays className="w-5 h-5 text-white" />
-            <h2 className="text-lg font-semibold text-white">Are you going today?</h2>
-          </div>
-          <Card className="border-0 bg-white">
-            <CardContent className="p-6 text-center">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
-                  <CalendarDays className="w-8 h-8 text-gray-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800">No events saved for today</p>
-                  <p className="text-gray-600 text-sm mt-1">When you save events happening today, you'll see them here with check-in options!</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="mb-6">
       <div className="bg-[#e11d48] rounded-xl p-4">
         <div className="flex items-center gap-3 mb-4">
           <CalendarDays className="w-5 h-5 text-white" />
           <h2 className="text-lg font-semibold text-white">Are you going today?</h2>
-          <div className="ml-auto">
-            <Badge className="bg-white text-[#e11d48] font-medium text-sm px-2 py-1">
-              {todaysEvents.length} event{todaysEvents.length !== 1 ? 's' : ''}
-            </Badge>
-          </div>
         </div>
+        <Card className="border-0 bg-white">
+          <CardContent className="p-6 text-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                <CalendarDays className="w-8 h-8 text-gray-400" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-800">No events saved for today</p>
+                <p className="text-gray-600 text-sm mt-1">When you save events happening today, you'll see them here with check-in options!</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-[#e11d48] rounded-xl p-4">
+      <div className="flex items-center gap-3 mb-4">
+        <CalendarDays className="w-5 h-5 text-white" />
+        <h2 className="text-lg font-semibold text-white">Are you going today?</h2>
+        <div className="ml-auto">
+          <Badge className="bg-white text-[#e11d48] font-medium text-sm px-2 py-1">
+            {todaysEvents.length} event{todaysEvents.length !== 1 ? 's' : ''}
+          </Badge>
+        </div>
+      </div>
         <div className="space-y-3">
           {todaysEvents.map((event) => (
             <Card key={event.id} className="border-0 bg-white">
@@ -216,6 +216,6 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

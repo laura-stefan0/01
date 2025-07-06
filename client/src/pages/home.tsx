@@ -419,7 +419,7 @@ export default function HomePage() {
     <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Welcome Section */}
-      <section className="mb-6">
+      <section className="mb-6 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
             <h1 className="text-xl font-semibold text-dark-slate">Welcome back</h1>
