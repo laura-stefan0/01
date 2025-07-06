@@ -7,7 +7,7 @@ import { MapView } from "@/components/map-view";
 export default function DiscoverPage() {
   return (
     <div className="max-w-md mx-auto app-background min-h-screen">
-      <div className="max-w-md mx-auto h-[calc(100vh-5rem)] overflow-hidden relative">
+      <div className="max-w-md mx-auto h-screen overflow-hidden relative">
         <MapView />
       </div>
     </div>

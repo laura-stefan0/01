@@ -966,7 +966,7 @@ export function MapView() {
             >
               <List className="w-4 h-4" />
               <span className="text-sm font-medium">
-                {clustersInView.reduce((total, cluster) => total + cluster.count, 0)} protest{clustersInView.reduce((total, cluster) => total + cluster.count, 0) !== 1 ? 's' : ''} in area
+                {eventClusters.reduce((total, cluster) => total + cluster.count, 0)} protest{eventClusters.reduce((total, cluster) => total + cluster.count, 0) !== 1 ? 's' : ''} in area
               </span>
               <ChevronUp className="w-4 h-4" />
             </Button>
@@ -976,7 +976,7 @@ export function MapView() {
         <SheetContent side="bottom" className="h-[70vh] rounded-t-lg z-[9999]">
           <SheetHeader className="pb-4">
             <SheetTitle className="text-left">
-              Protests in this area ({clustersInView.reduce((total, cluster) => total + cluster.count, 0)})
+              Protests in this area ({eventClusters.reduce((total, cluster) => total + cluster.count, 0)})
             </SheetTitle>
           </SheetHeader>
 
@@ -987,9 +987,9 @@ export function MapView() {
                 <Skeleton className="h-20 w-full" />
                 <Skeleton className="h-20 w-full" />
               </div>
-            ) : clustersInView.length > 0 ? (
+            ) : eventClusters.length > 0 ? (
               <div className="space-y-3">
-                {clustersInView.flatMap(cluster => cluster.events).map((protest, index) => (
+                {eventClusters.flatMap(cluster => cluster.events).map((protest, index) => (
                   <ProtestCard 
                     key={`bottom-sheet-${protest.id}-${index}`} 
                     protest={protest} 
