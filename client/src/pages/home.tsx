@@ -652,32 +652,26 @@ export default function HomePage() {
       </section>
 
       {/* Get Involved Section */}
-      <section>
-        <div className="flex items-center gap-2 mb-6">
-          <Users className="w-5 h-5 text-green-600" />
-          <h2 className="text-lg font-semibold text-dark-slate">Get Involved</h2>
-        </div>
-        <div className="grid grid-cols-1 gap-4">
+      <section className="mb-8">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Get Involved</h2>
+        <div className="space-y-3">
           {/* Add an event */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Card className="cursor-pointer border-0 relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] hover:shadow-xl" style={{
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%)'
-              }}>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <CardContent className="p-6 relative z-10">
+              <div className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:border-gray-200">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-white" />
+                    <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                      <TrendingUp className="w-5 h-5 text-blue-600" />
                     </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="font-bold text-lg text-white mb-1">Add an event</h3>
-                      <p className="text-white/80 text-sm">Share activism events with the community</p>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 text-base">Add an event</h3>
+                      <p className="text-gray-500 text-sm mt-0.5">Share activism events with the community</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
                   </div>
-                </CardContent>
-              </Card>
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </div>
+              </div>
             </DialogTrigger>
             <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
@@ -831,23 +825,20 @@ export default function HomePage() {
           {/* Share your feedback */}
           <Dialog>
             <DialogTrigger asChild>
-              <Card className="cursor-pointer border-0 relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] hover:shadow-xl" style={{
-                background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
-              }}>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <CardContent className="p-6 relative z-10">
+              <div className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:border-gray-200">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <MessageCircle className="w-6 h-6 text-white" />
+                    <div className="w-11 h-11 bg-rose-50 rounded-xl flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+                      <MessageCircle className="w-5 h-5 text-rose-600" />
                     </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="font-bold text-lg text-white mb-1">Share your feedback</h3>
-                      <p className="text-white/80 text-sm">Help us improve the platform for everyone</p>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 text-base">Share your feedback</h3>
+                      <p className="text-gray-500 text-sm mt-0.5">Help us improve the platform for everyone</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
                   </div>
-                </CardContent>
-              </Card>
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </div>
+              </div>
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
@@ -916,23 +907,20 @@ export default function HomePage() {
           </Dialog>
 
           {/* Make a Difference */}
-          <Card className="cursor-pointer border-0 relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] hover:shadow-xl" style={{
-            background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
-          }}>
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <CardContent className="p-6 relative z-10">
+          <div className="group cursor-pointer bg-white border border-gray-100 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:border-gray-200">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <Target className="w-6 h-6 text-white" />
+                <div className="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                  <Target className="w-5 h-5 text-emerald-600" />
                 </div>
-                <div className="flex-1 text-left">
-                  <h3 className="font-bold text-lg text-white mb-1">Make a Difference</h3>
-                  <p className="text-white/80 text-sm">Support movements fighting for change</p>
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-base">Make a Difference</h3>
+                  <p className="text-gray-500 text-sm mt-0.5">Support movements fighting for change</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
               </div>
-            </CardContent>
-          </Card>
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            </div>
+          </div>
         </div>
       </section>
       </div>
