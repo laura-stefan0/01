@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, MessageCircle, Sparkles, Star, Zap, ChevronDown, RefreshCw, Calendar, Check, TrendingUp } from "lucide-react";
+import { Bell, Users, MapPin, Search, Shield, CheckSquare, Lock, BookOpen, Target, Printer, Phone, MessageCircle, Sparkles, Star, Zap, ChevronDown, RefreshCw, Calendar, Check, TrendingUp, Plus, ArrowRight, Clock, Filter, Compass, Heart, Award } from "lucide-react";
 import { getCachedUserLocation, getUserLocation } from "@/lib/geolocation";
 import { calculateDistance } from "@/lib/distance-utils";
 import { findCityCoordinates } from "@/lib/geocoding";
@@ -418,88 +419,280 @@ export default function HomePage() {
   return (
     <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
-      {/* Location Section with Notification Bell */}
-      <section className="mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-gray-600" />
-              <span className="text-sm text-gray-600">Your location</span>
+        
+        {/* Hero Section with Welcome Message */}
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-activist-blue via-purple-600 to-pink-600 p-6 text-white">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-2xl font-bold mb-1">Welcome back!</h1>
+                <p className="text-white/90 text-sm">Ready to make a difference today?</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRefresh}
+                  disabled={isRefreshing || isLoadingLocation || showSuccess}
+                  className="text-white hover:bg-white/10 transition-all duration-200"
+                >
+                  {showSuccess ? (
+                    <Check className="w-5 h-5 animate-in fade-in duration-300" />
+                  ) : (
+                    <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
+                      (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
+                    }`} />
+                  )}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => navigate('/notifications')}
+                  className="text-white hover:bg-white/10"
+                >
+                  <Bell className="w-5 h-5" />
+                </Button>
+              </div>
             </div>
-            <LocationSelector
-              currentLocation={displayLocation}
-              selectedCountry={selectedCountry}
-              onLocationSelect={handleLocationSelect}
-              onCountryChange={handleCountryChange}
-            >
-              <button className="flex items-center gap-1 hover:text-gray-800 transition-colors font-medium text-left mt-1">
-                {isLoadingLocation ? (
-                  <span className="text-gray-500">Getting location...</span>
-                ) : (
-                  <span>{city}</span>
-                )}
-                <ChevronDown className="w-3 h-3" />
-              </button>
-            </LocationSelector>
-          </div>
 
-          <div className="flex items-center gap-2">
-            {/* Refresh location button */}
+            {/* Location Display */}
+            <div className="flex items-center gap-2 text-white/90">
+              <MapPin className="w-4 h-4" />
+              <LocationSelector
+                currentLocation={displayLocation}
+                selectedCountry={selectedCountry}
+                onLocationSelect={handleLocationSelect}
+                onCountryChange={handleCountryChange}
+              >
+                <button className="flex items-center gap-1 hover:text-white transition-colors text-sm">
+                  {isLoadingLocation ? (
+                    <span>Getting location...</span>
+                  ) : (
+                    <span>{city}</span>
+                  )}
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </LocationSelector>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="mb-6">
+          <div className="grid grid-cols-4 gap-3">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isRefreshing || isLoadingLocation || showSuccess}
-              className="transition-all duration-200 hover:bg-gray-100"
+              variant="outline"
+              className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-activist-blue hover:bg-activist-blue/5"
+              onClick={() => navigate('/discover')}
             >
-              {showSuccess ? (
-                <Check className="w-5 h-5 animate-in fade-in duration-300" />
-              ) : (
-                <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
-                  (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
-                }`} />
-              )}
+              <Compass className="w-6 h-6 text-activist-blue" />
+              <span className="text-xs font-medium">Explore</span>
             </Button>
+            
+            <Button
+              variant="outline"
+              className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-purple-500 hover:bg-purple-50"
+              onClick={() => navigate('/filter')}
+            >
+              <Filter className="w-6 h-6 text-purple-600" />
+              <span className="text-xs font-medium">Filter</span>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-green-500 hover:bg-green-50"
+              onClick={() => navigate('/saved')}
+            >
+              <Heart className="w-6 h-6 text-green-600" />
+              <span className="text-xs font-medium">Saved</span>
+            </Button>
+            
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-20 flex flex-col items-center justify-center gap-2 border-2 hover:border-red-500 hover:bg-red-50"
+                >
+                  <Plus className="w-6 h-6 text-red-600" />
+                  <span className="text-xs font-medium">Create</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-lg">Add Event</DialogTitle>
+                  <div className="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-lg">
+                    We appreciate any details you can provide about this event to help others discover and participate in meaningful activism.
+                  </div>
+                </DialogHeader>
 
-            {/* Notification bell */}
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/notifications')}
-            >
-              <Bell className="w-5 h-5 text-gray-600" />
-            </Button>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Event Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Event name *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="March for Climate Action"
+                      required
+                    />
+                  </div>
+
+                  {/* Type */}
+                  <div className="space-y-2">
+                    <Label htmlFor="event_type">Type *</Label>
+                    <Select value={formData.event_type} onValueChange={(value) => setFormData({ ...formData, event_type: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select event type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {eventTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Cause */}
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Cause *</Label>
+                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a cause" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Any other info */}
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Any other info</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Additional details about the event, meeting point, what to bring, etc..."
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* Address */}
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      placeholder="City Hall, 1 Dr Carlton B Goodlett Pl"
+                    />
+                  </div>
+
+                  {/* City */}
+                  <div className="space-y-2">
+                    <Label htmlFor="location">City *</Label>
+                    <div className="relative">
+                      <Input
+                        id="location"
+                        value={formData.location}
+                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        placeholder="San Francisco, CA"
+                        className="pl-10"
+                        required
+                      />
+                      <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+
+                  {/* Date */}
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date *</Label>
+                    <div className="relative">
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        className="pl-10"
+                        required
+                      />
+                      <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+
+                  {/* Time */}
+                  <div className="space-y-2">
+                    <Label htmlFor="time">Time</Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      value={formData.time}
+                      onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                    />
+                  </div>
+
+                  {/* URL */}
+                  <div className="space-y-2">
+                    <Label htmlFor="url">Event URL</Label>
+                    <Input
+                      id="url"
+                      type="url"
+                      value={formData.url || ''}
+                      onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                      placeholder="https://example.com/event-details"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
+                    disabled={createProtestMutation.isPending}
+                  >
+                    {createProtestMutation.isPending ? "Submitting..." : "Submit Event"}
+                  </Button>
+
+                  <div className="text-xs text-gray-500 text-center mt-2">
+                    Your event will be reviewed before being published.
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* News Section */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">What's new</h2>
-        <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {whatsNewLoading ? (
-            <>
-              <Skeleton className="w-48 h-32 flex-shrink-0" />
-              <Skeleton className="w-48 h-32 flex-shrink-0" />
-              <Skeleton className="w-48 h-32 flex-shrink-0" />
-            </>
-          ) : whatsNewData.length > 0 ? (
-            whatsNewData.map((news) => {
-                console.log('📄 News item:', news.title);
-                console.log('🖼️ Image URL:', news.image_url);
-                console.log('📊 Full news object:', news);
-
+        {/* What's New Section - Enhanced */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xl font-bold text-dark-slate">Latest News</h2>
+            <Badge variant="secondary" className="bg-activist-blue/10 text-activist-blue">
+              {whatsNewData.length} updates
+            </Badge>
+          </div>
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {whatsNewLoading ? (
+              <>
+                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-56 h-36 flex-shrink-0 rounded-xl" />
+              </>
+            ) : whatsNewData.length > 0 ? (
+              whatsNewData.map((news) => {
                 const handleCardClick = () => {
-                  // Check if there's a CTA URL to navigate to
                   if (news.cta_url) {
                     if (news.cta_url.startsWith('http://') || news.cta_url.startsWith('https://')) {
-                      // External URL - open in new tab
                       window.open(news.cta_url, '_blank');
                     } else if (news.cta_url.startsWith('/')) {
-                      // Internal route - navigate within app
                       navigate(news.cta_url);
                     } else {
-                      // Relative URL - treat as internal route
                       navigate(`/${news.cta_url}`);
                     }
                   }
@@ -508,44 +701,31 @@ export default function HomePage() {
                 return (
                   <div 
                     key={news.id} 
-                    className={`relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 ${
-                      news.cta_url ? 'cursor-pointer' : ''
+                    className={`relative w-56 h-36 flex-shrink-0 rounded-xl overflow-hidden border border-gray-200 shadow-md ${
+                      news.cta_url ? 'cursor-pointer hover:shadow-lg transform hover:scale-105 transition-all duration-200' : ''
                     }`}
                     onClick={handleCardClick}
                     role={news.cta_url ? 'button' : undefined}
                     tabIndex={news.cta_url ? 0 : undefined}
-                    onKeyDown={(e) => {
-                      if (news.cta_url && (e.key === 'Enter' || e.key === ' ')) {
-                        e.preventDefault();
-                        handleCardClick();
-                      }
-                    }}
                   >
                     {news.image_url ? (
-                      <img 
-                        src={news.image_url} 
-                        alt={news.title}
-                        className="w-full h-full object-cover"
-                        onLoad={() => console.log('✅ Image loaded successfully:', news.image_url)}
-                        onError={(e) => {
-                          console.error('❌ Image failed to load:', news.image_url);
-                          // Show text-based card instead of hiding
-                          const imgElement = e.currentTarget as HTMLImageElement;
-                          const parentDiv = imgElement.parentElement;
-                          if (parentDiv) {
-                            parentDiv.innerHTML = `
-                              <div class="w-full h-full bg-gradient-to-br from-activist-blue to-activist-blue/80 flex flex-col justify-center items-center p-3 text-white">
-                                <h3 class="text-sm font-semibold text-center leading-tight mb-1">${news.title}</h3>
-                                ${news.cta_text ? `<p class="text-xs opacity-90 text-center">${news.cta_text}</p>` : ''}
-                              </div>
-                            `;
-                          }
-                        }}
-                      />
+                      <>
+                        <img 
+                          src={news.image_url} 
+                          alt={news.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 right-0 p-3">
+                          <h3 className="text-white font-semibold text-sm leading-tight">{news.title}</h3>
+                          {news.cta_text && (
+                            <p className="text-white/80 text-xs mt-1">{news.cta_text}</p>
+                          )}
+                        </div>
+                      </>
                     ) : (
-                      // Show text-based card for items without images
-                      <div className="w-full h-full bg-gradient-to-br from-activist-blue to-activist-blue/80 flex flex-col justify-center items-center p-3 text-white">
-                        <h3 className="text-sm font-semibold text-center leading-tight mb-1">{news.title}</h3>
+                      <div className="w-full h-full bg-gradient-to-br from-activist-blue to-activist-blue/80 flex flex-col justify-center items-center p-4 text-white">
+                        <h3 className="text-sm font-semibold text-center leading-tight mb-2">{news.title}</h3>
                         {news.cta_text && (
                           <p className="text-xs opacity-90 text-center">{news.cta_text}</p>
                         )}
@@ -554,325 +734,223 @@ export default function HomePage() {
                   </div>
                 );
               })
-          ) : (
-            <div className="w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100"></div>
-          )}
-        </div>
-      </section>
-
-      {/* Today's Events Section */}
-      <TodaysEvents userCoordinates={referenceCoordinates} />
-
-      {/* Featured Section */}
-      <section className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-dark-slate">Featured</h2>
-        </div>
-
-        {/* Horizontal Scrolling Featured Cards - Wider */}
-        <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {featuredLoading ? (
-            <>
-              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
-              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
-              <Skeleton className="w-5/6 h-56 flex-shrink-0" />
-            </>
-          ) : (
-            featuredProtests.map((protest, index) => (
-              <div key={`featured-${protest.id}-${index}`} className="w-5/6 flex-shrink-0">
-                <ProtestCard protest={protest} variant="featured" />
+            ) : (
+              <div className="w-56 h-36 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                <p className="text-gray-500 text-sm">No news available</p>
               </div>
-            ))
-          )}
-        </div>
-      </section>
+            )}
+          </div>
+        </section>
 
-      {/* Nearby */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Nearby</h2>
-
-        {/* Vertical List of Protest Cards */}
-        <div className="space-y-4">
-          {nearbyLoading ? (
-            <>
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </>
-          ) : nearbyProtests.length > 0 ? (
-            sortProtestsByDistance(nearbyProtests).slice(0, 5).map((protest, index) => (
-              <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} />
-            ))
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No protests found</p>
+        {/* Today's Events Section - Enhanced */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-activist-blue" />
+              <h2 className="text-xl font-bold text-dark-slate">Happening Today</h2>
             </div>
-          )}
-        </div>
-      </section>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/filter?filter=today')}
+              className="text-activist-blue hover:text-activist-blue/80"
+            >
+              View all <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+          <TodaysEvents userCoordinates={referenceCoordinates} />
+        </section>
 
-      {/* Get Involved Section */}
-      <section>
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">Get Involved</h2>
-        <div className="space-y-3">
-          {/* Add an event */}
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%)'
-              }}>
-                <CardContent className="p-4 text-center relative z-10">
-                  <div className="flex flex-col items-center space-y-2">
-                    <TrendingUp className="w-8 h-8 text-white" />
-                    <h3 className="font-bold text-base text-white drop-shadow-lg">Add an event</h3>
-                  </div>
-                </CardContent>
-              </Card>
-            </DialogTrigger>
-            <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-lg">Add Event</DialogTitle>
-                <div className="text-sm text-gray-600 mt-2 p-3 bg-gray-50 rounded-lg">
-                  We appreciate any details you can provide about this event to help others discover and participate in meaningful activism.
+        {/* Featured Section - Enhanced */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-yellow-500" />
+              <h2 className="text-xl font-bold text-dark-slate">Featured Events</h2>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/filter?filter=featured')}
+              className="text-activist-blue hover:text-activist-blue/80"
+            >
+              View all <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {featuredLoading ? (
+              <>
+                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
+                <Skeleton className="w-5/6 h-64 flex-shrink-0 rounded-xl" />
+              </>
+            ) : featuredProtests.length > 0 ? (
+              featuredProtests.map((protest, index) => (
+                <div key={`featured-${protest.id}-${index}`} className="w-5/6 flex-shrink-0">
+                  <ProtestCard protest={protest} variant="featured" />
                 </div>
-              </DialogHeader>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Event Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="title">Event name *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="March for Climate Action"
-                    required
-                  />
-                </div>
-
-                {/* Type */}
-                <div className="space-y-2">
-                  <Label htmlFor="event_type">Type *</Label>
-                  <Select value={formData.event_type} onValueChange={(value) => setFormData({ ...formData, event_type: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select event type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {eventTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Cause */}
-                <div className="space-y-2">
-                  <Label htmlFor="category">Cause *</Label>
-                  <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a cause" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Any other info */}
-                <div className="space-y-2">
-                  <Label htmlFor="description">Any other info</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Additional details about the event, meeting point, what to bring, etc..."
-                    rows={3}
-                  />
-                </div>
-
-                {/* Address */}
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="City Hall, 1 Dr Carlton B Goodlett Pl"
-                  />
-                </div>
-
-                {/* City */}
-                <div className="space-y-2">
-                  <Label htmlFor="location">City *</Label>
-                  <div className="relative">
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      placeholder="San Francisco, CA"
-                      className="pl-10"
-                      required
-                    />
-                    <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
-
-                {/* Date */}
-                <div className="space-y-2">
-                  <Label htmlFor="date">Date *</Label>
-                  <div className="relative">
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="pl-10"
-                      required
-                    />
-                    <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
-
-                {/* Time */}
-                <div className="space-y-2">
-                  <Label htmlFor="time">Time</Label>
-                  <Input
-                    id="time"
-                    type="time"
-                    value={formData.time}
-                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                  />
-                </div>
-
-                {/* URL */}
-                <div className="space-y-2">
-                  <Label htmlFor="url">Event URL</Label>
-                  <Input
-                    id="url"
-                    type="url"
-                    value={formData.url || ''}
-                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                    placeholder="https://example.com/event-details"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <Button 
-                  type="submit" 
-                  className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white"
-                  disabled={createProtestMutation.isPending}
-                >
-                  {createProtestMutation.isPending ? "Submitting..." : "Submit Event"}
-                </Button>
-
-                <div className="text-xs text-gray-500 text-center mt-2">
-                  Your event will be reviewed before being published.
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {/* Share your feedback */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
-                background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
-              }}>
-                <CardContent className="p-4 text-center relative z-10">
-                  <div className="flex flex-col items-center space-y-2">
-                    <MessageCircle className="w-8 h-8 text-white" />
-                    <h3 className="font-bold text-base text-white drop-shadow-lg">Share your feedback</h3>
-                  </div>
-                </CardContent>
-              </Card>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-lg">Share Your Feedback</DialogTitle>
-                <div className="text-sm text-gray-600 mt-2">
-                  Your suggestions help us build a better platform for activists and organizers.
-                </div>
-              </DialogHeader>
-
-              <form className="space-y-4" onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target as HTMLFormElement);
-                const feedbackType = formData.get('feedbackType') as string;
-                const message = formData.get('message') as string;
-
-                // Here you would typically send this to your backend
-                console.log('Feedback submitted:', { feedbackType, message });
-
-                toast({
-                  title: "Thank you for your feedback!",
-                  description: "We appreciate your input and will review it carefully.",
-                  variant: "success",
-                });
-
-                // Reset form
-                (e.target as HTMLFormElement).reset();
-              }}>
-                {/* Feedback Type */}
-                <div className="space-y-2">
-                  <Label htmlFor="feedbackType">What would you like to share?</Label>
-                  <Select name="feedbackType" required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select feedback type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="suggestion">Feature suggestion</SelectItem>
-                      <SelectItem value="bug">Report a bug</SelectItem>
-                      <SelectItem value="improvement">App improvement</SelectItem>
-                      <SelectItem value="content">Content feedback</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Message */}
-                <div className="space-y-2">
-                  <Label htmlFor="message">Your message</Label>
-                  <Textarea
-                    name="message"
-                    placeholder="Tell us what you think, what could be improved, or any ideas you have..."
-                    rows={4}
-                    required
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <Button type="submit" className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
-                  Send Feedback
-                </Button>
-
-                <div className="text-xs text-gray-500 text-center">
-                  We read every piece of feedback and use it to improve Corteo.
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {/* Donate now */}
-          <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
-            background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
-          }}>
-            <CardContent className="p-4 text-center relative z-10">
-              <div className="flex flex-col items-center space-y-2">
-                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13.8 11.2L20.2 7c.6-.4.6-1.4 0-1.8L13.8.8c-.5-.3-1.1-.3-1.6 0L5.8 5.2c-.6.4-.6 1.4 0 1.8l6.4 4.2c.5.3 1.1.3 1.6 0zM10 16v5c0 .6.4 1 1 1h2c.6 0 1-.4 1-1v-5l-2-1.3L10 16zm8-2.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5zM4 13.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5z"/>
-                </svg>
-                <h3 className="font-bold text-base text-white drop-shadow-lg">Donate now</h3>
+              ))
+            ) : (
+              <div className="w-5/6 h-64 flex-shrink-0 rounded-xl bg-gray-100 flex items-center justify-center">
+                <p className="text-gray-500">No featured events</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+            )}
+          </div>
+        </section>
+
+        {/* Nearby Events - Enhanced */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-green-600" />
+              <h2 className="text-xl font-bold text-dark-slate">Near You</h2>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/discover')}
+              className="text-activist-blue hover:text-activist-blue/80"
+            >
+              Map view <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            {nearbyLoading ? (
+              <>
+                <Skeleton className="h-24 w-full rounded-lg" />
+                <Skeleton className="h-24 w-full rounded-lg" />
+                <Skeleton className="h-24 w-full rounded-lg" />
+              </>
+            ) : nearbyProtests.length > 0 ? (
+              sortProtestsByDistance(nearbyProtests).slice(0, 4).map((protest, index) => (
+                <ProtestCard key={`nearby-${protest.id}-${index}`} protest={protest} variant="compact" />
+              ))
+            ) : (
+              <Card className="p-6 text-center border-dashed border-2">
+                <MapPin className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-500 mb-2">No events found near you</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/discover')}
+                  className="text-activist-blue hover:text-activist-blue/80"
+                >
+                  Explore all events
+                </Button>
+              </Card>
+            )}
+          </div>
+        </section>
+
+        {/* Get Involved Section - Enhanced */}
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Zap className="w-5 h-5 text-yellow-500" />
+            <h2 className="text-xl font-bold text-dark-slate">Get Involved</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            {/* Share your feedback */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Card className="cursor-pointer border-0 relative overflow-hidden hover:shadow-lg transition-shadow" style={{
+                  background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
+                }}>
+                  <CardContent className="p-4 relative z-10">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <MessageCircle className="w-8 h-8 text-white" />
+                        <div>
+                          <h3 className="font-bold text-white">Share your feedback</h3>
+                          <p className="text-white/80 text-sm">Help us improve Corteo</p>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-lg">Share Your Feedback</DialogTitle>
+                  <div className="text-sm text-gray-600 mt-2">
+                    Your suggestions help us build a better platform for activists and organizers.
+                  </div>
+                </DialogHeader>
+
+                <form className="space-y-4" onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target as HTMLFormElement);
+                  const feedbackType = formData.get('feedbackType') as string;
+                  const message = formData.get('message') as string;
+
+                  console.log('Feedback submitted:', { feedbackType, message });
+
+                  toast({
+                    title: "Thank you for your feedback!",
+                    description: "We appreciate your input and will review it carefully.",
+                    variant: "success",
+                  });
+
+                  (e.target as HTMLFormElement).reset();
+                }}>
+                  <div className="space-y-2">
+                    <Label htmlFor="feedbackType">What would you like to share?</Label>
+                    <Select name="feedbackType" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select feedback type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="suggestion">Feature suggestion</SelectItem>
+                        <SelectItem value="bug">Report a bug</SelectItem>
+                        <SelectItem value="improvement">App improvement</SelectItem>
+                        <SelectItem value="content">Content feedback</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Your message</Label>
+                    <Textarea
+                      name="message"
+                      placeholder="Tell us what you think, what could be improved, or any ideas you have..."
+                      rows={4}
+                      required
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full bg-activist-blue hover:bg-activist-blue/90 text-white">
+                    Send Feedback
+                  </Button>
+
+                  <div className="text-xs text-gray-500 text-center">
+                    We read every piece of feedback and use it to improve Corteo.
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            {/* Support the movement */}
+            <Card className="cursor-pointer border-0 relative overflow-hidden hover:shadow-lg transition-shadow" style={{
+              background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
+            }}>
+              <CardContent className="p-4 relative z-10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Heart className="w-8 h-8 text-white" />
+                    <div>
+                      <h3 className="font-bold text-white">Support the movement</h3>
+                      <p className="text-white/80 text-sm">Make activism accessible to all</p>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-white" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
       </div>
     </div>
   );
