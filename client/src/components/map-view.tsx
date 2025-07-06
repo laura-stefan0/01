@@ -580,7 +580,7 @@ export function MapView() {
                       <Popup>
                         <div className="p-2 max-w-xs">
                           <h3 className="font-semibold text-sm mb-3">{cluster.count} Events in this area</h3>
-                          <div className="space-y-2 max-h-48 overflow-y-auto">
+                          <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-hide">
                             {cluster.events.slice(0, 5).map((event: any) => (
                               <div key={event.id} className="p-2 border rounded bg-gray-50 cursor-pointer hover:bg-gray-100"
                                    onClick={() => navigate(`/protest/${event.id}`)}>

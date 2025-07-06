@@ -780,10 +780,22 @@ body[style*="background-image"] .app-background {
 
   /* Hide scrollbar for webkit browsers */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
   }
 
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
+    display: none !important;  /* Chrome, Safari and Opera */
+  }
+
+  /* Hide scrollbars in Leaflet popups */
+  .leaflet-popup-content .scrollbar-hide,
+  .leaflet-popup-content div[class*="overflow-y-auto"] {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  .leaflet-popup-content .scrollbar-hide::-webkit-scrollbar,
+  .leaflet-popup-content div[class*="overflow-y-auto"]::-webkit-scrollbar {
+    display: none !important;
   }
