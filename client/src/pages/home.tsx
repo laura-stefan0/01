@@ -419,19 +419,19 @@ export default function HomePage() {
     <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Welcome Section */}
-      <section className="mb-6 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <section className="mb-6 bg-gradient-to-br from-[#e11d48] to-[#be185d] rounded-xl p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
-            <h1 className="text-xl font-semibold text-dark-slate">Welcome back</h1>
+            <h1 className="text-xl font-semibold text-white">Welcome back</h1>
             <div className="flex items-center gap-2 mt-1">
-              <MapPin className="w-4 h-4 text-gray-600" />
+              <MapPin className="w-4 h-4 text-white/80" />
               <LocationSelector
                 currentLocation={displayLocation}
                 selectedCountry={selectedCountry}
                 onLocationSelect={handleLocationSelect}
                 onCountryChange={handleCountryChange}
               >
-                <button className="flex items-center gap-1 hover:text-gray-800 transition-colors text-sm text-gray-600">
+                <button className="flex items-center gap-1 hover:text-white transition-colors text-sm text-white/90">
                   {isLoadingLocation ? (
                     <span>Getting location...</span>
                   ) : (
@@ -450,7 +450,7 @@ export default function HomePage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing || isLoadingLocation || showSuccess}
-              className="transition-all duration-200 hover:bg-gray-100"
+              className="transition-all duration-200 hover:bg-white/10 text-white"
             >
               {showSuccess ? (
                 <Check className="w-5 h-5 animate-in fade-in duration-300" />
@@ -466,8 +466,9 @@ export default function HomePage() {
               variant="ghost" 
               size="sm"
               onClick={() => navigate('/notifications')}
+              className="hover:bg-white/10 text-white"
             >
-              <Bell className="w-5 h-5 text-gray-600" />
+              <Bell className="w-5 h-5" />
             </Button>
           </div>
         </div>
@@ -478,7 +479,7 @@ export default function HomePage() {
             variant="outline"
             size="sm"
             onClick={() => navigate('/filter')}
-            className="flex-1 flex items-center gap-2 text-sm"
+            className="flex-1 flex items-center gap-2 text-sm bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
           >
             <Search className="w-4 h-4" />
             Explore
@@ -487,7 +488,7 @@ export default function HomePage() {
             variant="outline"
             size="sm"
             onClick={() => navigate('/discover')}
-            className="flex-1 flex items-center gap-2 text-sm"
+            className="flex-1 flex items-center gap-2 text-sm bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
           >
             <MapPin className="w-4 h-4" />
             View map
@@ -496,7 +497,7 @@ export default function HomePage() {
             variant="outline"
             size="sm"
             onClick={() => navigate('/saved')}
-            className="flex-1 flex items-center gap-2 text-sm"
+            className="flex-1 flex items-center gap-2 text-sm bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
           >
             <BookOpen className="w-4 h-4" />
             Saved

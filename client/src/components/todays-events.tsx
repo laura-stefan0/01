@@ -104,16 +104,14 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   if (isLoading) {
     return (
-      <div className="border-t border-gray-100 pt-4 mt-4">
-        <div className="bg-gradient-to-r from-[#e11d48] to-[#be185d] rounded-xl p-4">
-          <div className="flex items-center gap-3 mb-4">
-            <CalendarDays className="w-5 h-5 text-white" />
-            <h3 className="text-lg font-semibold text-white">Are you going today?</h3>
-          </div>
-          <div className="space-y-3">
-            <Skeleton className="h-24 w-full rounded-lg" />
-            <Skeleton className="h-24 w-full rounded-lg" />
-          </div>
+      <div className="border-t border-white/20 pt-4 mt-4">
+        <div className="flex items-center gap-3 mb-4">
+          <CalendarDays className="w-5 h-5 text-white" />
+          <h3 className="text-lg font-semibold text-white">Are you going today?</h3>
+        </div>
+        <div className="space-y-3">
+          <Skeleton className="h-24 w-full rounded-lg" />
+          <Skeleton className="h-24 w-full rounded-lg" />
         </div>
       </div>
     );
