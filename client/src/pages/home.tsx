@@ -419,41 +419,54 @@ export default function HomePage() {
     <div className="min-h-screen app-background">
       <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Welcome Section */}
-      <section className="mb-6 bg-gradient-to-br from-[#e11d48] to-[#be185d] rounded-xl p-4 shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex flex-col">
-            <h1 className="text-xl font-semibold text-white">Welcome back</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <MapPin className="w-4 h-4 text-white/80" />
+      <section className="mb-6 bg-gradient-to-br from-[#e11d48] via-[#dc2626] to-[#be185d] rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-white mb-2">
+              {isAuthenticated && user?.username 
+                ? `Welcome back, ${user.username}` 
+                : 'Welcome back'
+              }
+            </h1>
+            
+            {/* Location Info */}
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-white" />
+              </div>
               <LocationSelector
                 currentLocation={displayLocation}
                 selectedCountry={selectedCountry}
                 onLocationSelect={handleLocationSelect}
                 onCountryChange={handleCountryChange}
               >
-                <button className="flex items-center gap-1 hover:text-white transition-colors text-sm text-white/90">
-                  {isLoadingLocation ? (
-                    <span>Getting location...</span>
-                  ) : (
-                    <span>{city}</span>
-                  )}
-                  <ChevronDown className="w-3 h-3" />
+                <button className="flex items-center gap-2 hover:bg-white/10 rounded-lg px-2 py-1 transition-all duration-200 text-white">
+                  <div className="text-left">
+                    <div className="text-sm font-medium">
+                      {isLoadingLocation ? 'Getting location...' : city}
+                    </div>
+                    <div className="text-xs text-white/70">
+                      {selectedCountry === 'it' ? 'Italy' : selectedCountry === 'us' ? 'United States' : 'United Kingdom'}
+                    </div>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-white/80" />
                 </button>
               </LocationSelector>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Refresh location button */}
+          {/* Action Icons */}
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing || isLoadingLocation || showSuccess}
-              className="transition-all duration-200 hover:bg-white/10 text-white"
+              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-0 transition-all duration-200"
             >
               {showSuccess ? (
-                <Check className="w-5 h-5 animate-in fade-in duration-300" />
+                <Check className="w-5 h-5 text-green-300" />
               ) : (
                 <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${
                   (isRefreshing || isLoadingLocation) ? 'animate-spin' : ''
@@ -461,46 +474,50 @@ export default function HomePage() {
               )}
             </Button>
 
-            {/* Notification bell */}
             <Button 
               variant="ghost" 
               size="sm"
               onClick={() => navigate('/notifications')}
-              className="hover:bg-white/10 text-white"
+              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-0 transition-all duration-200"
             >
-              <Bell className="w-5 h-5" />
+              <Bell className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
-        {/* Quick Action Buttons */}
-        <div className="flex gap-2 mb-4">
+        {/* Quick Action Cards */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
             onClick={() => navigate('/filter')}
-            className="flex-1 flex items-center gap-2 text-sm bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
           >
-            <Search className="w-4 h-4" />
-            Explore
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+              <Search className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-medium">Explore</span>
           </Button>
+          
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
             onClick={() => navigate('/discover')}
-            className="flex-1 flex items-center gap-2 text-sm bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
           >
-            <MapPin className="w-4 h-4" />
-            View map
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-medium">Map</span>
           </Button>
+          
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
             onClick={() => navigate('/saved')}
-            className="flex-1 flex items-center gap-2 text-sm bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
           >
-            <BookOpen className="w-4 h-4" />
-            Saved
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-medium">Saved</span>
           </Button>
         </div>
 

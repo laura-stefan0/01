@@ -104,16 +104,16 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   if (isLoading) {
     return (
-      <div className="border-t border-gray-100 pt-4 mt-4">
-        <div className="bg-gradient-to-r from-[#e11d48] to-[#be185d] rounded-xl p-4">
-          <div className="flex items-center gap-3 mb-4">
-            <CalendarDays className="w-5 h-5 text-white" />
-            <h3 className="text-lg font-semibold text-white">Are you going today?</h3>
+      <div className="border-t border-white/20 pt-6 mt-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+            <CalendarDays className="w-4 h-4 text-white" />
           </div>
-          <div className="space-y-3">
-            <Skeleton className="h-24 w-full rounded-lg" />
-            <Skeleton className="h-24 w-full rounded-lg" />
-          </div>
+          <h3 className="text-lg font-semibold text-white">Today's events</h3>
+        </div>
+        <div className="space-y-3">
+          <Skeleton className="h-20 w-full rounded-xl bg-white/10" />
+          <Skeleton className="h-20 w-full rounded-xl bg-white/10" />
         </div>
       </div>
     );
@@ -121,43 +121,40 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
 
   if (!todaysEvents || todaysEvents.length === 0) {
     return (
-      <div className="border-t border-gray-100 pt-4 mt-4">
-        <div className="bg-gradient-to-r from-[#e11d48] to-[#be185d] rounded-xl p-4">
-          <div className="flex items-center gap-3 mb-4">
-            <CalendarDays className="w-5 h-5 text-white" />
-            <h3 className="text-lg font-semibold text-white">Are you going today?</h3>
+      <div className="border-t border-white/20 pt-6 mt-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+            <CalendarDays className="w-4 h-4 text-white" />
           </div>
-          <Card className="border-0 bg-white/95 backdrop-blur-sm">
-            <CardContent className="p-4 text-center">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[#e11d48]/10 flex items-center justify-center">
-                  <CalendarDays className="w-6 h-6 text-[#e11d48]" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800 text-sm">No events saved for today</p>
-                  <p className="text-gray-600 text-xs mt-1">When you save events happening today, you'll see them here with check-in options!</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <h3 className="text-lg font-semibold text-white">Today's events</h3>
+        </div>
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+          <div className="text-center">
+            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3">
+              <CalendarDays className="w-6 h-6 text-white" />
+            </div>
+            <p className="font-medium text-white text-sm mb-1">No events for today</p>
+            <p className="text-white/70 text-xs">When you save events happening today, you'll see them here!</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="border-t border-gray-100 pt-4 mt-4">
-      <div className="bg-gradient-to-r from-[#e11d48] to-[#be185d] rounded-xl p-4">
-        <div className="flex items-center gap-3 mb-4">
-          <CalendarDays className="w-5 h-5 text-white" />
-          <h3 className="text-lg font-semibold text-white">Are you going today?</h3>
-          <div className="ml-auto">
-            <Badge className="bg-white/20 backdrop-blur-sm text-white font-medium text-sm px-3 py-1 border border-white/30">
-              {todaysEvents.length} event{todaysEvents.length !== 1 ? 's' : ''}
-            </Badge>
+    <div className="border-t border-white/20 pt-6 mt-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+            <CalendarDays className="w-4 h-4 text-white" />
           </div>
+          <h3 className="text-lg font-semibold text-white">Today's events</h3>
         </div>
-        <div className="space-y-3">
+        <Badge className="bg-white/20 backdrop-blur-sm text-white font-medium text-sm px-3 py-1 border border-white/30 rounded-full">
+          {todaysEvents.length}
+        </Badge>
+      </div>
+      <div className="space-y-3">
           {todaysEvents.map((event) => (
             <Card key={event.id} className="border-0 bg-white/95 backdrop-blur-sm shadow-lg">
               <CardContent className="p-4">
@@ -219,7 +216,6 @@ export function TodaysEvents({ userCoordinates }: TodaysEventsProps) {
               </CardContent>
             </Card>
           ))}
-        </div>
       </div>
     </div>
   );
