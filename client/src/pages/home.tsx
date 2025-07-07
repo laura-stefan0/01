@@ -417,9 +417,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen app-background">
-      <div className="px-4 py-4 space-y-6 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
+      <div className="px-4 py-6 space-y-4 max-w-md mx-auto animate-in fade-in duration-300 ease-out">
       {/* Welcome Section */}
-      <section className="mb-6 bg-gradient-to-br from-[#e11d48] via-[#dc2626] to-[#be185d] rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+      <section className="mb-4 bg-gradient-to-br from-[#e11d48] via-[#dc2626] to-[#be185d] rounded-3xl p-6 shadow-sm backdrop-blur-sm">
         {/* Header Row */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1 min-w-0">
@@ -488,53 +488,53 @@ export default function HomePage() {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-2 mb-6">
           <Button
             variant="ghost"
             onClick={() => navigate('/filter')}
-            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-2xl transition-all duration-200 active:scale-95"
             aria-label="Explore events"
           >
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-              <Search className="w-4 h-4" />
+            <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center">
+              <Search className="w-5 h-5" />
             </div>
-            <span className="text-xs font-medium">Explore</span>
+            <span className="text-xs font-semibold">Explore</span>
           </Button>
           
           <Button
             variant="ghost"
             onClick={() => navigate('/discover')}
-            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-2xl transition-all duration-200 active:scale-95"
             aria-label="View map"
           >
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-              <MapPin className="w-4 h-4" />
+            <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center">
+              <MapPin className="w-5 h-5" />
             </div>
-            <span className="text-xs font-medium">Map</span>
+            <span className="text-xs font-semibold">Map</span>
           </Button>
           
           <Button
             variant="ghost"
             onClick={() => navigate('/saved')}
-            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-xl transition-all duration-200"
+            className="h-auto flex-col gap-2 p-4 bg-white/15 backdrop-blur-sm hover:bg-white/25 text-white border-0 rounded-2xl transition-all duration-200 active:scale-95"
             aria-label="View saved events"
           >
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-              <BookOpen className="w-4 h-4" />
+            <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center">
+              <BookOpen className="w-5 h-5" />
             </div>
-            <span className="text-xs font-medium">Saved</span>
+            <span className="text-xs font-semibold">Saved</span>
           </Button>
         </div>
 
         {/* Today's Events */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
           <TodaysEvents userCoordinates={referenceCoordinates} />
         </div>
       </section>
 
       {/* News Section */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-dark-slate mb-3">What's new</h2>
+      <section className="mb-4">
+        <h2 className="text-xl font-bold text-dark-slate mb-4 px-1">What's new</h2>
         <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {whatsNewLoading ? (
             <>
@@ -567,8 +567,8 @@ export default function HomePage() {
                 return (
                   <div 
                     key={news.id} 
-                    className={`relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 ${
-                      news.cta_url ? 'cursor-pointer' : ''
+                    className={`relative w-48 h-32 flex-shrink-0 rounded-2xl overflow-hidden shadow-sm ${
+                      news.cta_url ? 'cursor-pointer active:scale-95 transition-transform duration-150' : ''
                     }`}
                     onClick={handleCardClick}
                     role={news.cta_url ? 'button' : undefined}
@@ -622,11 +622,13 @@ export default function HomePage() {
       
 
       {/* Featured Section */}
-      <section className="mb-6">
-        <div className="flex items-center justify-between mb-3">
+      <section className="mb-4">
+        <div className="flex items-center justify-between mb-4 px-1">
           <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-amber-500" />
-            <h2 className="text-lg font-semibold text-dark-slate">Featured</h2>
+            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+              <Star className="w-4 h-4 text-amber-500" />
+            </div>
+            <h2 className="text-xl font-bold text-dark-slate">Featured</h2>
           </div>
         </div>
 
@@ -649,10 +651,12 @@ export default function HomePage() {
       </section>
 
       {/* Nearby */}
-      <section className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <MapPin className="w-5 h-5 text-blue-500" />
-          <h2 className="text-lg font-semibold text-dark-slate">Nearby</h2>
+      <section className="mb-4">
+        <div className="flex items-center gap-2 mb-4 px-1">
+          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+            <MapPin className="w-4 h-4 text-blue-500" />
+          </div>
+          <h2 className="text-xl font-bold text-dark-slate">Nearby</h2>
         </div>
 
         {/* Vertical List of Protest Cards */}
@@ -676,21 +680,25 @@ export default function HomePage() {
       </section>
 
       {/* Get Involved Section */}
-      <section>
-        <div className="flex items-center gap-2 mb-3">
-          <Users className="w-5 h-5 text-green-600" />
-          <h2 className="text-lg font-semibold text-dark-slate">Get Involved</h2>
+      <section className="pb-8">
+        <div className="flex items-center gap-2 mb-4 px-1">
+          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+            <Users className="w-4 h-4 text-green-600" />
+          </div>
+          <h2 className="text-xl font-bold text-dark-slate">Get Involved</h2>
         </div>
         <div className="space-y-3">
           {/* Add an event */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+              <Card className="cursor-pointer border-0 relative overflow-hidden rounded-2xl shadow-sm active:scale-95 transition-transform duration-150" style={{
                 background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%)'
               }}>
-                <CardContent className="p-4 text-center relative z-10">
-                  <div className="flex flex-col items-center space-y-2">
-                    <TrendingUp className="w-8 h-8 text-white" />
+                <CardContent className="p-5 text-center relative z-10">
+                  <div className="flex flex-col items-center space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
                     <h3 className="font-bold text-base text-white drop-shadow-lg">Add an event</h3>
                   </div>
                 </CardContent>
@@ -848,12 +856,14 @@ export default function HomePage() {
           {/* Share your feedback */}
           <Dialog>
             <DialogTrigger asChild>
-              <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+              <Card className="cursor-pointer border-0 relative overflow-hidden rounded-2xl shadow-sm active:scale-95 transition-transform duration-150" style={{
                 background: 'linear-gradient(135deg, #e11d48 0%, #be185d 50%, #9f1239 100%)'
               }}>
-                <CardContent className="p-4 text-center relative z-10">
-                  <div className="flex flex-col items-center space-y-2">
-                    <MessageCircle className="w-8 h-8 text-white" />
+                <CardContent className="p-5 text-center relative z-10">
+                  <div className="flex flex-col items-center space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                      <MessageCircle className="w-6 h-6 text-white" />
+                    </div>
                     <h3 className="font-bold text-base text-white drop-shadow-lg">Share your feedback</h3>
                   </div>
                 </CardContent>
@@ -926,14 +936,16 @@ export default function HomePage() {
           </Dialog>
 
           {/* Donate now */}
-          <Card className="cursor-pointer border-0 relative overflow-hidden" style={{
+          <Card className="cursor-pointer border-0 relative overflow-hidden rounded-2xl shadow-sm active:scale-95 transition-transform duration-150" style={{
             background: 'linear-gradient(135deg, #059669 0%, #0891b2 50%, #0284c7 100%)'
           }}>
-            <CardContent className="p-4 text-center relative z-10">
-              <div className="flex flex-col items-center space-y-2">
-                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13.8 11.2L20.2 7c.6-.4.6-1.4 0-1.8L13.8.8c-.5-.3-1.1-.3-1.6 0L5.8 5.2c-.6.4-.6 1.4 0 1.8l6.4 4.2c.5.3 1.1.3 1.6 0zM10 16v5c0 .6.4 1 1 1h2c.6 0 1-.4 1-1v-5l-2-1.3L10 16zm8-2.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5zM4 13.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5z"/>
-                </svg>
+            <CardContent className="p-5 text-center relative z-10">
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13.8 11.2L20.2 7c.6-.4.6-1.4 0-1.8L13.8.8c-.5-.3-1.1-.3-1.6 0L5.8 5.2c-.6.4-.6 1.4 0 1.8l6.4 4.2c.5.3 1.1.3 1.6 0zM10 16v5c0 .6.4 1 1 1h2c.6 0 1-.4 1-1v-5l-2-1.3L10 16zm8-2.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5zM4 13.5V21c0 .6.4 1 1 1s1-.4 1-1v-7.5l-2 1.5z"/>
+                  </svg>
+                </div>
                 <h3 className="font-bold text-base text-white drop-shadow-lg">Donate now</h3>
               </div>
             </CardContent>
