@@ -1,12 +1,20 @@
-import { createClient } from '@supabase/supabase-js';
 import axios from 'axios';
 import { load } from 'cheerio';
+import postgres from 'postgres';
+import dotenv from 'dotenv';
 
-// Initialize Supabase client
-const SUPABASE_URL = 'https://mfzlajgnahbhwswpqzkj.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1memxhamduYWhiaHdzd3BxemtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDU5NjYsImV4cCI6MjA2NjQyMTk2Nn0.o2OKrJrTDW7ivxZUl8lYS73M35zf7JYO_WoAmg-Djbo';
+// Load environment variables
+dotenv.config();
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize PostgreSQL client
+const sql = postgres(process.env.DATABASE_URL, {
+  host: process.env.PGHOST,
+  port: parseInt(process.env.PGPORT),
+  database: process.env.PGDATABASE,
+  username: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  ssl: false
+});
 
 // Date range filter: 30 days in the past to future events
 const getDateRange = () => {
@@ -675,16 +683,12 @@ async function checkDuplicate(title, date, city) {
   try {
     const cleanTitleForDupe = cleanTitle(title).toLowerCase();
 
-    const { data, error } = await supabase
-      .from('protests')
-      .select('id, title, city')
-      .eq('city', city)
-      .limit(30);
-
-    if (error) {
-      console.log('⚠️ Error checking duplicates:', error.message);
-      return false;
-    }
+    const data = await sql`
+      SELECT id, title, city 
+      FROM protests 
+      WHERE city = ${city}
+      LIMIT 30
+    `;
 
     const isDuplicate = data.some(event => {
       const existingTitle = cleanTitle(event.title).toLowerCase();
@@ -724,35 +728,44 @@ async function saveEventToDatabase(event) {
     const eventTitle = event.title || 'Evento Senza Titolo';
     const cleanedDescription = cleanDescription(event.description || 'Nessuna descrizione disponibile', eventTitle);
     
-    const eventData = {
-      title: eventTitle,
-      description: cleanedDescription,
-      category: event.category || 'OTHER',
-      city: event.city === 'N/A' ? 'Milano' : (event.city || 'Milano'),
-      address: event.address === 'N/A' ? 'N/A' : (event.address || 'N/A'),
-      latitude: String(event.latitude || 45.4642),
-      longitude: String(event.longitude || 9.1900),
-      date: event.date === 'N/A' ? null : event.date,
-      time: event.time || 'N/A',
-      image_url: event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.OTHER,
-      event_type: determineEventType(cleanedTitle, cleanedDescription),
-      event_url: event.event_url || null,
-      country_code: 'IT',
-      featured: false,
-      attendees: 0,
-      source_name: event.source_name || 'enhanced-scraper',
-      source_url: event.source_url || ''
-    };
-
-    const { data, error } = await supabase
-      .from('protests')
-      .insert([eventData])
-      .select();
-
-    if (error) {
-      console.error(`❌ Error saving event "${event.title}":`, error.message);
-      return false;
-    }
+    const data = await sql`
+      INSERT INTO protests (
+        title, 
+        description, 
+        category, 
+        city, 
+        address, 
+        latitude, 
+        longitude, 
+        date, 
+        time, 
+        image_url, 
+        event_type, 
+        event_url, 
+        country_code, 
+        featured, 
+        attendees,
+        distance
+      ) VALUES (
+        ${eventTitle},
+        ${cleanedDescription},
+        ${event.category || 'OTHER'},
+        ${event.city === 'N/A' ? 'Milano' : (event.city || 'Milano')},
+        ${event.address === 'N/A' ? 'N/A' : (event.address || 'N/A')},
+        ${String(event.latitude || 45.4642)},
+        ${String(event.longitude || 9.1900)},
+        ${event.date === 'N/A' ? null : event.date},
+        ${event.time || 'N/A'},
+        ${event.image_url || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.OTHER},
+        ${determineEventType(eventTitle, cleanedDescription)},
+        ${event.event_url || null},
+        ${'IT'},
+        ${false},
+        ${0},
+        ${'N/A'}
+      )
+      RETURNING id
+    `;
 
     console.log(`✅ Saved event: "${event.title}" (ID: ${data[0].id})`);
     return true;
