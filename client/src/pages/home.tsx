@@ -490,10 +490,10 @@ export default function HomePage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/filter')}
-              className="h-20 flex-col gap-3 p-6 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+              className="h-24 flex-col gap-3 p-8 hover:bg-gray-50 rounded-2xl transition-all duration-200"
             >
-              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <Search className="w-5 h-5 text-blue-600" />
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                <Search className="w-6 h-6 text-blue-600" />
               </div>
               <span className="text-sm font-medium text-gray-700">Explore</span>
             </Button>
@@ -501,10 +501,10 @@ export default function HomePage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/discover')}
-              className="h-20 flex-col gap-3 p-6 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+              className="h-24 flex-col gap-3 p-8 hover:bg-gray-50 rounded-2xl transition-all duration-200"
             >
-              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                <MapPin className="w-5 h-5 text-green-600" />
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <MapPin className="w-6 h-6 text-green-600" />
               </div>
               <span className="text-sm font-medium text-gray-700">Map</span>
             </Button>
@@ -512,10 +512,10 @@ export default function HomePage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/saved')}
-              className="h-20 flex-col gap-3 p-6 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+              className="h-24 flex-col gap-3 p-8 hover:bg-gray-50 rounded-2xl transition-all duration-200"
             >
-              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-purple-600" />
+              <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-purple-600" />
               </div>
               <span className="text-sm font-medium text-gray-700">Saved</span>
             </Button>
