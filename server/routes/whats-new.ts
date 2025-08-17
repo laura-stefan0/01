@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { supabase } from "../../db/index.js";
+import { db } from "../../db/index";
+import { whatsNew as whatsNewTable } from "../../shared/schema";
+import { eq, desc } from "drizzle-orm";
 
 const router = Router();
 
@@ -11,34 +13,10 @@ router.get("/", async (req, res) => {
     console.log(`🔍 Fetching what's new data from whats_new table for country: ${country}`);
     
     // Get card data from the whats_new database table (includes stored image_url)
-    // First try with country_code, if that fails, get all items
-    let { data: newsData, error: tableError } = await supabase
-      .from("whats_new")
-      .select("*")
-      .eq("country_code", country)
-      .order("created_at", { ascending: false });
-    
-    // If country_code column doesn't exist, try without it
-    if (tableError && tableError.code === '42703') {
-      console.log("⚠️ country_code column not found, fetching all items");
-      const { data: allData, error: fallbackError } = await supabase
-        .from("whats_new")
-        .select("*")
-        .order("created_at", { ascending: false });
-      
-      if (fallbackError) {
-        console.error("❌ Error fetching from whats_new table:", fallbackError);
-        res.status(500).json({ error: "Failed to fetch what's new items from database" });
-        return;
-      }
-      
-      newsData = allData;
-      tableError = null;
-    } else if (tableError) {
-      console.error("❌ Error fetching from whats_new table:", tableError);
-      res.status(500).json({ error: "Failed to fetch what's new items from database" });
-      return;
-    }
+    let newsData = await db
+      .select()
+      .from(whatsNewTable)
+      .where(eq(whatsNewTable.country_code, country as string));
     
     console.log(`✅ Successfully fetched ${newsData?.length || 0} what's new items from table`);
     

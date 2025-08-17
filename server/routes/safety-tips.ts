@@ -1,5 +1,7 @@
 import express from 'express';
-import { supabase } from '../../db/index';
+import { db } from '../../db/index';
+import { safetyTips as safetyTipsTable } from '../../shared/schema';
+import { eq } from 'drizzle-orm';
 
 const router = express.Router();
 
@@ -11,16 +13,10 @@ router.get('/', async (req, res) => {
 
     console.log('🔍 Fetching safety tips for country:', userCountryCode);
 
-    const { data: safetyTips, error } = await supabase
-      .from('safety-tips')
-      .select('*')
-      .eq('country_code', userCountryCode)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching safety tips:', error);
-      return res.status(500).json({ message: "Failed to fetch safety tips" });
-    }
+    const safetyTips = await db
+      .select()
+      .from(safetyTipsTable)
+      .where(eq(safetyTipsTable.country_code, userCountryCode));
 
     console.log('✅ Successfully fetched safety tips for', userCountryCode + ':', safetyTips?.length || 0);
     res.json(safetyTips || []);
@@ -39,17 +35,10 @@ router.get('/category/:category', async (req, res) => {
 
     console.log('🔍 Fetching safety tips for category:', category, 'and country:', userCountryCode);
 
-    const { data: safetyTips, error } = await supabase
-      .from('safety-tips')
-      .select('*')
-      .eq('category', category)
-      .eq('country_code', userCountryCode)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching safety tips by category:', error);
-      return res.status(500).json({ message: "Failed to fetch safety tips by category" });
-    }
+    const safetyTips = await db
+      .select()
+      .from(safetyTipsTable)
+      .where(eq(safetyTipsTable.category, category));
 
     console.log('✅ Successfully fetched safety tips for category', category, 'in', userCountryCode + ':', safetyTips?.length || 0);
     res.json(safetyTips || []);
@@ -68,17 +57,10 @@ router.get('/type/:type', async (req, res) => {
 
     console.log('🔍 Fetching safety tips for type:', type, 'and country:', userCountryCode);
 
-    const { data: safetyTips, error } = await supabase
-      .from('safety-tips')
-      .select('*')
-      .eq('type', type)
-      .eq('country_code', userCountryCode)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching safety tips by type:', error);
-      return res.status(500).json({ message: "Failed to fetch safety tips by type" });
-    }
+    const safetyTips = await db
+      .select()
+      .from(safetyTipsTable)
+      .where(eq(safetyTipsTable.type, type));
 
     console.log('✅ Successfully fetched safety tips for type', type, 'in', userCountryCode + ':', safetyTips?.length || 0);
     res.json(safetyTips || []);

@@ -1,5 +1,7 @@
 
-import { supabase } from '../db/index';
+import { db } from '../db/index';
+import { users as usersTable } from '../shared/schema';
+import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 
 export interface SupabaseUser {
@@ -7,16 +9,16 @@ export interface SupabaseUser {
   username: string;
   email: string;
   password_hash: string;
-  name?: string;
+  name?: string | null;
   notifications: boolean;
   location: boolean;
   emails: boolean;
   language: string;
-  created_at?: string;
+  created_at?: Date | string | null;
 }
 
 export class SupabaseService {
-  public supabase = supabase;
+  public db = db;
   // Create user in Supabase
   async createUser(userData: {
     username: string;
@@ -44,94 +46,75 @@ export class SupabaseService {
       language: 'en'
     };
     
-    console.log('📤 Inserting to Supabase:', { ...insertData, password_hash: '[REDACTED]' });
+    console.log('📤 Inserting to database:', { ...insertData, password_hash: '[REDACTED]' });
     
-    const { data, error } = await supabase
-      .from('users')
-      .insert(insertData)
-      .select()
-      .single();
+    try {
+      const [data] = await this.db
+        .insert(usersTable)
+        .values(insertData)
+        .returning();
 
-    if (error) {
-      console.error('❌ Supabase insert error:', error);
-      console.error('Error details:', {
-        message: error.message,
-        hint: error.hint,
-        details: error.details,
-        code: error.code
-      });
-      throw new Error(`Failed to create user: ${error.message}`);
+      console.log('✅ User created successfully in database:', data.id);
+      return data;
+    } catch (error) {
+      console.error('❌ Database insert error:', error);
+      throw new Error(`Failed to create user: ${error}`);
     }
-
-    console.log('✅ User created successfully in Supabase:', data.id);
-    return data;
   }
 
   // Get user by username
   async getUserByUsername(username: string): Promise<SupabaseUser | null> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('username', username)
-      .single();
+    try {
+      const [data] = await this.db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.username, username));
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return null; // No rows found
-      }
-      throw new Error(`Failed to fetch user: ${error.message}`);
+      return data || null;
+    } catch (error) {
+      throw new Error(`Failed to fetch user: ${error}`);
     }
-
-    return data;
   }
 
   // Get user by email
   async getUserByEmail(email: string): Promise<SupabaseUser | null> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .single();
+    try {
+      const [data] = await this.db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, email));
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return null; // No rows found
-      }
-      throw new Error(`Failed to fetch user: ${error.message}`);
+      return data || null;
+    } catch (error) {
+      throw new Error(`Failed to fetch user: ${error}`);
     }
-
-    return data;
   }
 
   // Get user by ID
   async getUserById(id: number): Promise<SupabaseUser | null> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
-      .single();
+    try {
+      const [data] = await this.db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.id, id));
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return null; // No rows found
-      }
-      throw new Error(`Failed to fetch user: ${error.message}`);
+      return data || null;
+    } catch (error) {
+      throw new Error(`Failed to fetch user: ${error}`);
     }
-
-    return data;
   }
 
   // Get all users (for admin purposes)
   async getAllUsers(): Promise<SupabaseUser[]> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, username, email, name, notifications, location, emails, language, created_at');
+    try {
+      const data = await this.db
+        .select()
+        .from(usersTable);
 
-    if (error) {
-      throw new Error(`Failed to fetch users: ${error.message}`);
+      return data || [];
+    } catch (error) {
+      throw new Error(`Failed to fetch users: ${error}`);
     }
-
-    return data || [];
   }
 }
 

@@ -1,57 +1,45 @@
-import { createClient } from '@supabase/supabase-js';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from '../shared/schema';
 
-// Supabase configuration
-const SUPABASE_URL = 'https://mfzlajgnahbhwswpqzkj.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1memxhamduYWhiaHdzd3BxemtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDU5NjYsImV4cCI6MjA2NjQyMTk2Nn0.o2OKrJrTDW7ivxZUl8lYS73M35zf7JYO_WoAmg-Djbo';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Database configuration using local PostgreSQL
+const DATABASE_URL = process.env.DATABASE_URL!;
 
-// Debug environment variables
-console.log('🔍 Environment Check:');
-console.log('SUPABASE_URL:', SUPABASE_URL);
-console.log('SUPABASE_SERVICE_KEY present:', !!SUPABASE_SERVICE_KEY);
-console.log('SUPABASE_SERVICE_KEY length:', SUPABASE_SERVICE_KEY?.length || 0);
-console.log('Using service key for admin client:', !!SUPABASE_SERVICE_KEY);
+console.log('🔍 Database Environment Check:');
+console.log('DATABASE_URL present:', !!DATABASE_URL);
+console.log('Using local PostgreSQL database');
 
-if (!SUPABASE_SERVICE_KEY) {
-  console.error('❌ CRITICAL: SUPABASE_SERVICE_ROLE_KEY environment variable is missing!');
-  console.error('   This means the admin client is using the anon key and cannot write to the database.');
-  console.error('   Please add SUPABASE_SERVICE_ROLE_KEY to your Replit secrets.');
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is required');
 }
 
-// Public client for read operations
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Create postgres client
+const client = postgres(DATABASE_URL);
 
-// Admin client for write operations - will use service key if available, otherwise anon key
-export const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY || SUPABASE_ANON_KEY, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
+// Create drizzle instance with schema
+export const db = drizzle(client, { schema });
 
-// Test Supabase connection 
+// Legacy exports for compatibility (will be removed)
+export const supabase = db;
+export const supabaseAdmin = db;
+
+// Test database connection
 async function testConnection() {
   try {
-    console.log('🔍 Testing Supabase Connection...');
+    console.log('🔍 Testing PostgreSQL Connection...');
     
     // Simple connection test
-    const { data, error } = await supabase
-      .from('_realtime')
-      .select('*')
-      .limit(1);
+    await client`SELECT 1`;
     
-    if (error && error.code !== '42P01') {
-      console.log('❌ Supabase connection failed:', error.message);
-    } else {
-      console.log('✅ Supabase connection successful');
-      console.log('📝 Note: Database tables will be created when needed');
-    }
+    console.log('✅ PostgreSQL connection successful');
+    console.log('📝 Database is ready for operations');
     
   } catch (error) {
-    console.log('✅ Supabase client initialized - using in-memory storage for now');
+    console.error('❌ PostgreSQL connection failed:', error);
+    throw error;
   }
 }
 
 testConnection();
 
-console.log('✅ Supabase database initialized successfully');
+console.log('✅ Local PostgreSQL database initialized successfully');

@@ -1,5 +1,7 @@
 import express from 'express';
-import { supabase } from '../../db/index';
+import { db } from '../../db/index';
+import { laws as lawsTable } from '../../shared/schema';
+import { eq } from 'drizzle-orm';
 
 const router = express.Router();
 
@@ -11,16 +13,10 @@ router.get('/', async (req, res) => {
 
     console.log('🔍 Fetching laws for country:', userCountryCode);
 
-    const { data: laws, error } = await supabase
-      .from('laws')
-      .select('*')
-      .eq('country_code', userCountryCode)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching laws:', error);
-      return res.status(500).json({ message: "Failed to fetch laws" });
-    }
+    const laws = await db
+      .select()
+      .from(lawsTable)
+      .where(eq(lawsTable.country_code, userCountryCode));
 
     console.log('✅ Successfully fetched laws for', userCountryCode + ':', laws?.length || 0);
     res.json(laws || []);
@@ -39,17 +35,10 @@ router.get('/category/:category', async (req, res) => {
 
     console.log('🔍 Fetching laws for category:', category, 'and country:', userCountryCode);
 
-    const { data: laws, error } = await supabase
-      .from('laws')
-      .select('*')
-      .eq('category', category)
-      .eq('country_code', userCountryCode)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching laws by category:', error);
-      return res.status(500).json({ message: "Failed to fetch laws by category" });
-    }
+    const laws = await db
+      .select()
+      .from(lawsTable)
+      .where(eq(lawsTable.category, category));
 
     console.log('✅ Successfully fetched laws for category', category, 'in', userCountryCode + ':', laws?.length || 0);
     res.json(laws || []);
@@ -65,18 +54,13 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     console.log('🔍 Fetching law by ID from laws table:', id);
 
-    const { data: law, error } = await supabase
-      .from('laws')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const [law] = await db
+      .select()
+      .from(lawsTable)
+      .where(eq(lawsTable.id, parseInt(id)));
 
-    if (error) {
-      console.error('❌ Error fetching law:', error);
-      if (error.code === 'PGRST116') {
-        return res.status(404).json({ message: "Law not found" });
-      }
-      return res.status(500).json({ message: "Failed to fetch law" });
+    if (!law) {
+      return res.status(404).json({ message: "Law not found" });
     }
 
     console.log('✅ Successfully fetched law:', law.id);

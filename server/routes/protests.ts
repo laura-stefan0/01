@@ -1,5 +1,7 @@
 import express from 'express';
-import { supabase, supabaseAdmin } from '../../db/index';
+import { db } from '../../db/index';
+import { protests as protestsTable } from '../../shared/schema';
+import { eq, desc, or, ilike } from 'drizzle-orm';
 
 const router = express.Router();
 
@@ -11,17 +13,10 @@ router.get('/', async (req, res) => {
 
     console.log('🔍 Fetching protests from protests table for country:', userCountryCode);
 
-    const { data: protests, error } = await supabase
-      .from('protests')
-      .select('*')
-      .eq('country_code', userCountryCode)
-      .eq('approved', true) // Only show approved protests
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching protests:', error);
-      return res.status(500).json({ message: "Failed to fetch protests" });
-    }
+    const protests = await db
+      .select()
+      .from(protestsTable)
+      .where(eq(protestsTable.country_code, userCountryCode));
 
     console.log('✅ Successfully fetched protests for', userCountryCode + ':', protests?.length || 0);
     res.json(protests || []);
@@ -39,18 +34,10 @@ router.get('/featured', async (req, res) => {
 
     console.log('🔍 Fetching featured protests from protests table for country:', userCountryCode);
 
-    const { data: protests, error } = await supabase
-      .from('protests')
-      .select('*')
-      .eq('featured', true)
-      .eq('country_code', userCountryCode)
-      .eq('approved', true) // Only show approved protests
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching featured protests:', error);
-      return res.status(500).json({ message: "Failed to fetch featured protests" });
-    }
+    const protests = await db
+      .select()
+      .from(protestsTable)
+      .where(eq(protestsTable.featured, true));
 
     console.log('✅ Successfully fetched featured protests for', userCountryCode + ':', protests?.length || 0);
     res.json(protests || []);
@@ -87,17 +74,10 @@ router.get('/nearby', async (req, res) => {
       console.log('📍 User coordinates:', { lat: userLat, lng: userLng });
     }
 
-    const { data: protests, error } = await supabase
-      .from('protests')
-      .select('*')
-      .eq('country_code', userCountryCode)
-      .eq('approved', true) // Only show approved protests
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching nearby protests:', error);
-      return res.status(500).json({ message: "Failed to fetch nearby protests" });
-    }
+    const protests = await db
+      .select()
+      .from(protestsTable)
+      .where(eq(protestsTable.country_code, userCountryCode));
 
     let processedProtests = protests || [];
 
@@ -118,12 +98,12 @@ router.get('/nearby', async (req, res) => {
               ...protest,
               calculatedDistance: distance,
               distance: `${distance.toFixed(1)} km` // Update the display distance
-            };
+            } as any;
           }
           return {
             ...protest,
             calculatedDistance: 999999 // Put protests without coordinates at the end
-          };
+          } as any;
         })
         .sort((a, b) => (a.calculatedDistance || 999999) - (b.calculatedDistance || 999999))
         .slice(0, 10); // Limit to 10 closest protests
@@ -153,18 +133,10 @@ router.get('/category/:category', async (req, res) => {
 
     console.log('🔍 Fetching protests for category:', category, 'and country:', userCountryCode);
 
-    const { data: protests, error } = await supabase
-      .from('protests')
-      .select('*')
-      .eq('category', category)
-      .eq('country_code', userCountryCode)
-      .eq('approved', true) // Only show approved protests
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error fetching protests by category:', error);
-      return res.status(500).json({ message: "Failed to fetch protests by category" });
-    }
+    const protests = await db
+      .select()
+      .from(protestsTable)
+      .where(eq(protestsTable.category, category));
 
     console.log('✅ Successfully fetched protests for category', category, 'in', userCountryCode + ':', protests?.length || 0);
     res.json(protests || []);
@@ -187,18 +159,18 @@ router.get('/search', async (req, res) => {
 
     console.log('🔍 Searching protests for query:', query, 'in country:', userCountryCode);
 
-    const { data: protests, error } = await supabase
-      .from('protests')
-      .select('*')
-      .eq('country_code', userCountryCode)
-      .eq('approved', true) // Only show approved protests
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%,city.ilike.%${query}%`)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('❌ Error searching protests:', error);
-      return res.status(500).json({ message: "Failed to search protests" });
-    }
+    const protests = await db
+      .select()
+      .from(protestsTable)
+      .where(
+        or(
+          ilike(protestsTable.title, `%${query}%`),
+          ilike(protestsTable.description, `%${query}%`),
+          ilike(protestsTable.category, `%${query}%`),
+          ilike(protestsTable.city, `%${query}%`)
+        )
+      )
+;
 
     console.log('✅ Successfully searched protests for', query, 'in', userCountryCode + ':', protests?.length || 0);
     res.json(protests || []);
@@ -214,18 +186,13 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     console.log('🔍 Fetching protest by ID from protests table:', id);
 
-    const { data: protest, error } = await supabase
-      .from('protests')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const [protest] = await db
+      .select()
+      .from(protestsTable)
+      .where(eq(protestsTable.id, parseInt(id)));
 
-    if (error) {
-      console.error('❌ Error fetching protest:', error);
-      if (error.code === 'PGRST116') {
-        return res.status(404).json({ message: "Protest not found" });
-      }
-      return res.status(500).json({ message: "Failed to fetch protest" });
+    if (!protest) {
+      return res.status(404).json({ message: "Protest not found" });
     }
 
     console.log('✅ Successfully fetched protest:', protest.id);
@@ -261,28 +228,18 @@ router.post('/', async (req, res) => {
       longitude,
       date,
       time: time || '18:00', // Default to 6 PM if not provided
-      image_url: image_url || `https://mfzlajgnahbhwswpqzkj.supabase.co/storage/v1/object/public/protest-images/teemu-paananen-rd5uNIUJCF0-unsplash.jpg`,
-      event_url: url || null, // Optional URL for event details
+      image_url: image_url || null,
       country_code: userCountryCode,
       attendees: 0,
       featured: false
     };
 
-    console.log('📤 Inserting protest to Supabase protests table');
+    console.log('📤 Inserting protest to database protests table');
 
-    const { data: newProtest, error } = await supabaseAdmin
-      .from('protests')
-      .insert(insertData)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('❌ Supabase protest insert error:', error);
-      return res.status(500).json({ 
-        message: "Failed to create protest", 
-        error: error.message 
-      });
-    }
+    const [newProtest] = await db
+      .insert(protestsTable)
+      .values(insertData)
+      .returning();
 
     console.log('✅ Protest created successfully in protests table:', newProtest.id);
     res.status(201).json({ 
