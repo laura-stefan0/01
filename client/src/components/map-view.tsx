@@ -441,19 +441,12 @@ export function MapView() {
     return [offsetLat, offsetLng];
   };
 
-  // Calculate map center - prioritize valid user location, then search location, then Milan default
+  // Calculate map center - prioritize user location (from Home page cache), then search location, then Milan default
   let mapCenter: [number, number];
   let mapZoom: number;
 
-  // Check if user location is valid (not [0,0] coordinates)
-  const isValidUserLocation = userLocation && 
-    userLocation[0] !== 0 && 
-    userLocation[1] !== 0 && 
-    Math.abs(userLocation[0]) > 0.001 && 
-    Math.abs(userLocation[1]) > 0.001;
-
-  if (isValidUserLocation) {
-    // If user location is available and valid, center on it
+  if (userLocation) {
+    // If user location is available (from Home page cache or fresh GPS), center on it
     mapCenter = userLocation;
     mapZoom = 15;
     console.log(`🗺️ Centering map on user location: ${userLocation}`);
@@ -566,9 +559,9 @@ export function MapView() {
               className="h-full w-full"
               style={{ height: '100%', width: '100%' }}
               zoomControl={false}
-              key={isValidUserLocation ? `user-${userLocation![0]}-${userLocation![1]}` : searchLocation ? `search-${searchLocation[0]}-${searchLocation[1]}` : 'milan-default'}
+              key={userLocation ? `user-${userLocation[0]}-${userLocation[1]}` : searchLocation ? `search-${searchLocation[0]}-${searchLocation[1]}` : 'milan-default'}
             >
-              <MapCenterUpdater center={isValidUserLocation ? userLocation : null} zoom={15} />
+              <MapCenterUpdater center={userLocation} zoom={15} />
               <MapBoundsUpdater onBoundsChange={setMapBounds} />
               <MapZoomUpdater onZoomChange={setCurrentZoom} />
               <TileLayer
@@ -648,9 +641,9 @@ export function MapView() {
               })}
 
               {/* User Location Marker */}
-              {isValidUserLocation && (
+              {userLocation && (
                 <Marker
-                  position={userLocation!}
+                  position={userLocation}
                   icon={new L.Icon({
                     iconUrl: 'data:image/svg+xml;base64,' + btoa(`
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
