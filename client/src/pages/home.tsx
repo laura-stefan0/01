@@ -490,7 +490,7 @@ export default function HomePage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/filter')}
-              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-md transition-all duration-200"
+              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-sm transition-all duration-200"
             >
               <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
                 <Search className="w-7 h-7 text-blue-600" />
@@ -501,7 +501,7 @@ export default function HomePage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/discover')}
-              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-md transition-all duration-200"
+              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-sm transition-all duration-200"
             >
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
                 <MapPin className="w-7 h-7 text-green-600" />
@@ -512,7 +512,7 @@ export default function HomePage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/saved')}
-              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-md transition-all duration-200"
+              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-sm transition-all duration-200"
             >
               <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
                 <BookOpen className="w-7 h-7 text-purple-600" />
