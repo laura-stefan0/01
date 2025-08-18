@@ -490,34 +490,34 @@ export default function HomePage() {
             <Button
               variant="ghost"
               onClick={() => navigate('/filter')}
-              className="h-32 flex-col gap-4 p-8 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-lg transition-all duration-200"
             >
-              <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center">
-                <Search className="w-8 h-8 text-blue-600" />
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                <Search className="w-7 h-7 text-blue-600" />
               </div>
-              <span className="text-sm font-medium text-gray-700">Explore</span>
+              <span className="text-xs font-medium text-gray-700">Explore</span>
             </Button>
             
             <Button
               variant="ghost"
               onClick={() => navigate('/discover')}
-              className="h-32 flex-col gap-4 p-8 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-lg transition-all duration-200"
             >
-              <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
-                <MapPin className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <MapPin className="w-7 h-7 text-green-600" />
               </div>
-              <span className="text-sm font-medium text-gray-700">Map</span>
+              <span className="text-xs font-medium text-gray-700">Map</span>
             </Button>
             
             <Button
               variant="ghost"
               onClick={() => navigate('/saved')}
-              className="h-32 flex-col gap-4 p-8 hover:bg-gray-50 rounded-2xl transition-all duration-200"
+              className="aspect-square h-28 w-28 flex-col gap-3 p-4 hover:bg-gray-50 rounded-lg transition-all duration-200"
             >
-              <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center">
-                <BookOpen className="w-8 h-8 text-purple-600" />
+              <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
+                <BookOpen className="w-7 h-7 text-purple-600" />
               </div>
-              <span className="text-sm font-medium text-gray-700">Saved</span>
+              <span className="text-xs font-medium text-gray-700">Saved</span>
             </Button>
           </div>
         </div>
